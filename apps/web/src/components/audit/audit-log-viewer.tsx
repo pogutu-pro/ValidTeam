@@ -1,0 +1,251 @@
+'use client';
+
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useFormatter, useTranslations } from 'next-intl';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  FileText,
+  GitBranch,
+  Users,
+  Settings,
+  Webhook,
+  Key,
+  AlertCircle,
+  ChevronDown,
+  Loader2,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface AuditLogViewerProps {
+  organizationId: string;
+  resourceType?: string;
+  resourceId?: string;
+  projectId?: string;
+  issueId?: string;
+  limit?: number;
+}
+
+type FilterKey = 'all' | 'created' | 'updated' | 'deleted';
+
+const FILTER_KEYS: FilterKey[] = ['all', 'created', 'updated', 'deleted'];
+
+interface AuditLogChange {
+  from: unknown;
+  to: unknown;
+}
+
+interface AuditLogEntry {
+  id: string;
+  action: string;
+  createdAt: string;
+  changes: Record<string, AuditLogChange> | null;
+  user: {
+    name: string | null;
+    email: string | null;
+    image: string | null;
+  };
+}
+
+interface AuditLogResponse {
+  auditLogs?: AuditLogEntry[];
+}
+
+// Severity -> 2px left border token. Info is the default; trace is neutral.
+function severityBorder(action: string) {
+  if (action.includes('deleted') || action.includes('revoked')) return 'border-l-accent-rose';
+  if (action.includes('updated') || action.includes('changed')) return 'border-l-accent-amber';
+  if (action.includes('created')) return 'border-l-accent-blue';
+  return 'border-l-border';
+}
+
+export function AuditLogViewer({
+  organizationId,
+  resourceType,
+  resourceId,
+  projectId,
+  issueId,
+  limit = 50,
+}: AuditLogViewerProps) {
+  const t = useTranslations('workspaceTools');
+  const errorT = useTranslations('componentErrors.audit');
+  const formatter = useFormatter();
+  const [activeFilter, setActiveFilter] = useState<FilterKey>('all');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['audit-logs', organizationId, resourceType, resourceId, projectId, issueId, limit],
+    queryFn: async () => {
+      const params = new URLSearchParams({ organizationId, limit: limit.toString() });
+      if (resourceType) params.append('resourceType', resourceType);
+      if (resourceId) params.append('resourceId', resourceId);
+      if (projectId) params.append('projectId', projectId);
+      if (issueId) params.append('issueId', issueId);
+
+      const response = await fetch(`/api/audit-logs?${params.toString()}`);
+      const payload = await response.json().catch(() => ({ error: errorT('fetch') }));
+      if (!response.ok) {
+        throw new Error(payload.error || errorT('fetch'));
+      }
+      return payload as AuditLogResponse;
+    },
+    enabled: !!organizationId,
+  });
+
+  const allLogs = data?.auditLogs || [];
+
+  const filteredLogs =
+    activeFilter === 'all' ? allLogs : allLogs.filter((log) => log.action.includes(activeFilter));
+
+  const getActionIcon = (action: string) => {
+    if (action.startsWith('issue.')) return FileText;
+    if (action.startsWith('sprint.')) return GitBranch;
+    if (action.startsWith('project.') || action.startsWith('organization.')) return Users;
+    if (action.startsWith('custom_field.')) return Settings;
+    if (action.startsWith('webhook.')) return Webhook;
+    if (action.startsWith('api_key.')) return Key;
+    return AlertCircle;
+  };
+
+  const formatAction = (action: string) => {
+    return action
+      .split('.')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="surface-card p-5">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <span className="kicker">{t('audit.kicker')}</span>
+            <h3 className="text-sm font-semibold tracking-tight">{t('audit.title')}</h3>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-10">
+          <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="surface-card p-5">
+        <div className="mb-2 space-y-0.5">
+          <span className="kicker">{t('audit.kicker')}</span>
+          <h3 className="text-sm font-semibold tracking-tight">{t('audit.title')}</h3>
+        </div>
+        <p className="text-muted-foreground text-sm">{t('audit.loadFailed')}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="surface-card animate-fade-up space-y-4 p-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-0.5">
+          <span className="kicker">{t('audit.kicker')}</span>
+          <h3 className="text-sm font-semibold tracking-tight">{t('audit.title')}</h3>
+        </div>
+        <span className="chip">{t('audit.eventCount', { count: filteredLogs.length })}</span>
+      </div>
+
+      {/* Filter pills */}
+      <div className="flex flex-wrap items-center gap-1.5">
+        {FILTER_KEYS.map((key) => (
+          <button
+            key={key}
+            onClick={() => setActiveFilter(key)}
+            className={cn(
+              'rounded-sm border px-2.5 py-0.5 text-[11px] font-medium transition-colors duration-150',
+              'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+              activeFilter === key ? 'chip-accent' : 'chip hover:border-border-strong'
+            )}
+          >
+            {t(`audit.filters.${key}`)}
+          </button>
+        ))}
+      </div>
+
+      {/* Log rows */}
+      {filteredLogs.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-10">
+          <AlertCircle className="text-muted-foreground/30 h-8 w-8" />
+          <p className="text-muted-foreground text-sm">{t('audit.noEvents')}</p>
+        </div>
+      ) : (
+        <div className="divide-border/60 custom-scrollbar stagger -mr-2 max-h-[560px] divide-y overflow-y-auto pr-2">
+          {filteredLogs.map((log) => {
+            const Icon = getActionIcon(log.action);
+            const isExpanded = expandedId === log.id;
+            const changes = log.changes ?? {};
+            const hasChanges = Object.keys(changes).length > 0;
+
+            return (
+              <div
+                key={log.id}
+                className={cn('animate-fade-down border-l-2', severityBorder(log.action))}
+              >
+                <button
+                  aria-expanded={isExpanded}
+                  onClick={() => setExpandedId(isExpanded ? null : log.id)}
+                  className={cn(
+                    'row-interactive flex w-full items-center gap-3 px-4 py-2.5 text-left',
+                    'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
+                    isExpanded && 'bg-accent/30'
+                  )}
+                >
+                  <Avatar className="h-5 w-5 shrink-0">
+                    <AvatarImage src={log.user.image ?? undefined} />
+                    <AvatarFallback className="text-[9px] font-semibold">
+                      {log.user.name?.charAt(0) || log.user.email?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <span className="text-foreground max-w-[140px] shrink-0 truncate text-xs font-medium">
+                    {log.user.name || log.user.email}
+                  </span>
+
+                  <span className="text-muted-foreground inline-flex min-w-0 items-center gap-1.5 text-xs">
+                    <Icon className="h-3 w-3 shrink-0" />
+                    <span className="truncate">{formatAction(log.action)}</span>
+                  </span>
+
+                  <span className="text-muted-foreground ml-auto shrink-0 font-mono text-[11px]">
+                    {formatter.relativeTime(new Date(log.createdAt))}
+                  </span>
+
+                  {hasChanges && (
+                    <ChevronDown
+                      className={cn(
+                        'text-muted-foreground h-3.5 w-3.5 shrink-0 transition-transform duration-200',
+                        isExpanded && 'rotate-180'
+                      )}
+                    />
+                  )}
+                </button>
+
+                {/* Inline expansion */}
+                {isExpanded && hasChanges && (
+                  <div className="animate-fade-in space-y-1 px-4 pb-3 pl-10 pt-1 text-xs">
+                    {Object.entries(changes).map(([field, change]) => (
+                      <div key={field} className="text-muted-foreground">
+                        <span className="text-foreground font-medium">{field}:</span>{' '}
+                        <span className="line-through">{String(change.from)}</span>
+                        <span className="text-muted-foreground/60 mx-1">{t('audit.changeTo')}</span>
+                        <span className="text-foreground">{String(change.to)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

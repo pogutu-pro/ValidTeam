@@ -1,0 +1,316 @@
+/**
+ * GET /api/integrations/slack/callback?code=...&state=...
+ *
+ * Slack redirects here after the user approves the OAuth app. We:
+ *   1. validate the CSRF state cookie matches the state query param,
+ *   2. exchange the code for a bot token via oauth.v2.access,
+ *   3. upsert one row in `integration_connections` keyed on (org, 'slack'),
+ *      storing the bot token in `accessTokenEnc` (AES-256-GCM envelope) and
+ *      stashing workspace/app/bot ids in `metadata` for later API calls.
+ *
+ * Mirrors the GitHub callback shape — same state format (base64url JSON with
+ * `{n, o, u}`), same redirect targets (`/settings/integrations?...`).
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { createId } from '@paralleldrive/cuid2';
+import { auth } from '@/auth';
+import { db, and, auditLogs, eq, ne, sql } from '@tasknebula/db';
+import { integrationConnections } from '@tasknebula/db/src/schema/integration-connections';
+import { encryptToken } from '@/lib/integrations/token-crypto';
+import { hasPermission } from '@/lib/auth/permissions';
+import { SLACK_PROVIDER, SLACK_STATE_COOKIE, exchangeSlackCode } from '@/lib/integrations/slack';
+import {
+  decodeMobileIntegrationState,
+  hasPermissionForUser,
+  isMobileIntegrationState,
+  mobileIntegrationRedirect,
+} from '@/lib/integrations/mobile-oauth';
+
+export const dynamic = 'force-dynamic';
+
+interface StatePayload {
+  n: string;
+  o: string;
+  u: string;
+}
+
+class SlackWorkspaceConflictError extends Error {
+  constructor(
+    readonly code: 'workspace_already_connected' | 'disconnect_existing_workspace_first'
+  ) {
+    super(code);
+    this.name = 'SlackWorkspaceConflictError';
+  }
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  const candidate = error as { code?: string; cause?: { code?: string } };
+  return candidate?.code === '23505' || candidate?.cause?.code === '23505';
+}
+
+function decodeState(raw: string): StatePayload | null {
+  try {
+    const json = Buffer.from(raw, 'base64url').toString('utf8');
+    const parsed = JSON.parse(json);
+    if (
+      typeof parsed?.n === 'string' &&
+      typeof parsed?.o === 'string' &&
+      typeof parsed?.u === 'string'
+    ) {
+      return parsed as StatePayload;
+    }
+  } catch {
+    // fall through
+  }
+  return null;
+}
+
+function settingsRedirect(request: NextRequest, params: Record<string, string>): NextResponse {
+  const url = new URL('/settings/integrations', request.url);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  const response = NextResponse.redirect(url.toString());
+  response.cookies.delete(SLACK_STATE_COOKIE);
+  return response;
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const code = searchParams.get('code');
+  const state = searchParams.get('state');
+  const errorParam = searchParams.get('error');
+  const stateIsMobile = isMobileIntegrationState(state);
+  const mobileState = state ? decodeMobileIntegrationState(state, SLACK_PROVIDER) : null;
+
+  const session = mobileState ? null : await auth();
+  if (!mobileState && !session?.user?.id) {
+    return stateIsMobile
+      ? mobileIntegrationRedirect(request, {
+          provider: SLACK_PROVIDER,
+          status: 'error',
+          reason: 'invalid_state',
+        })
+      : NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const redirectResult = (params: Record<string, string>): NextResponse => {
+    if (mobileState || stateIsMobile) {
+      return mobileIntegrationRedirect(request, {
+        provider: SLACK_PROVIDER,
+        status: params.connected === '1' ? 'connected' : 'error',
+        reason: params.error,
+      });
+    }
+    return settingsRedirect(request, params);
+  };
+
+  if (errorParam) {
+    return redirectResult({
+      integration: SLACK_PROVIDER,
+      error: errorParam,
+    });
+  }
+  if (!code || !state) {
+    return redirectResult({
+      integration: SLACK_PROVIDER,
+      error: 'missing_code_or_state',
+    });
+  }
+
+  let organizationId: string;
+  let userId: string;
+  if (mobileState) {
+    organizationId = mobileState.organizationId;
+    userId = mobileState.userId;
+    if (!(await hasPermissionForUser(userId, organizationId, 'org:settings'))) {
+      return redirectResult({ integration: SLACK_PROVIDER, error: 'forbidden' });
+    }
+  } else {
+    const cookieState = request.cookies.get(SLACK_STATE_COOKIE)?.value;
+    if (!cookieState || cookieState !== state) {
+      return redirectResult({
+        integration: SLACK_PROVIDER,
+        error: 'invalid_state',
+      });
+    }
+
+    const decoded = decodeState(state);
+    if (!decoded || decoded.u !== session?.user?.id) {
+      return redirectResult({
+        integration: SLACK_PROVIDER,
+        error: 'invalid_state',
+      });
+    }
+
+    if (!(await hasPermission(decoded.o, 'org:settings'))) {
+      return redirectResult({
+        integration: SLACK_PROVIDER,
+        error: 'forbidden',
+      });
+    }
+    organizationId = decoded.o;
+    userId = session.user.id;
+  }
+
+  let payload;
+  try {
+    payload = await exchangeSlackCode(code);
+  } catch (err) {
+    console.error('Slack token exchange threw', err);
+    return redirectResult({
+      integration: SLACK_PROVIDER,
+      error: 'token_exchange_failed',
+    });
+  }
+
+  if (!payload.ok || !payload.access_token) {
+    console.error('Slack OAuth rejected', payload.error);
+    return redirectResult({
+      integration: SLACK_PROVIDER,
+      error: payload.error || 'no_access_token',
+    });
+  }
+
+  const accessTokenEnc = encryptToken(payload.access_token);
+  const refreshTokenEnc = payload.refresh_token ? encryptToken(payload.refresh_token) : null;
+
+  const workspaceId = payload.team?.id || null;
+  const workspaceLabel = payload.team?.name || null;
+  if (!workspaceId) {
+    return redirectResult({
+      integration: SLACK_PROVIDER,
+      error: 'workspace_identity_missing',
+    });
+  }
+
+  // Provider-specific extras we need to keep around. `botUserId` lets us
+  // filter our own bot's messages out of Events API handlers to avoid loops,
+  // and `authedUserId` is the installing user's Slack id (useful for /tn
+  // commands to scope "my issues").
+  const metadata = {
+    appId: payload.app_id || null,
+    botUserId: payload.bot_user_id || null,
+    tokenType: payload.token_type || null,
+    enterpriseId: payload.enterprise?.id || null,
+    enterpriseName: payload.enterprise?.name || null,
+    authedUserId: payload.authed_user?.id || null,
+    expiresIn: payload.expires_in ?? null,
+    connectedAt: new Date().toISOString(),
+  };
+
+  const now = new Date();
+
+  try {
+    await db.transaction(async (tx) => {
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(hashtext(${`slack-workspace:${workspaceId}`}))`
+      );
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(hashtext(${`slack-organization:${organizationId}`}))`
+      );
+
+      const [otherOwner] = await tx
+        .select({ id: integrationConnections.id })
+        .from(integrationConnections)
+        .where(
+          and(
+            eq(integrationConnections.provider, SLACK_PROVIDER),
+            eq(integrationConnections.externalAccountId, workspaceId),
+            ne(integrationConnections.organizationId, organizationId)
+          )
+        )
+        .limit(1);
+      if (otherOwner) throw new SlackWorkspaceConflictError('workspace_already_connected');
+
+      const [existing] = await tx
+        .select({
+          id: integrationConnections.id,
+          workspaceId: integrationConnections.externalAccountId,
+        })
+        .from(integrationConnections)
+        .where(
+          and(
+            eq(integrationConnections.organizationId, organizationId),
+            eq(integrationConnections.provider, SLACK_PROVIDER)
+          )
+        )
+        .limit(1);
+
+      // Re-authenticating the same installation rotates credentials. Moving
+      // an organization to another Slack workspace must be an explicit
+      // disconnect/reconnect so old channel routes are never silently rebound.
+      if (existing?.workspaceId && existing.workspaceId !== workspaceId) {
+        throw new SlackWorkspaceConflictError('disconnect_existing_workspace_first');
+      }
+
+      const connectionId = existing?.id ?? createId();
+      if (existing) {
+        await tx
+          .update(integrationConnections)
+          .set({
+            externalAccountId: workspaceId,
+            externalAccountLabel: workspaceLabel,
+            accessTokenEnc,
+            refreshTokenEnc,
+            scope: payload.scope || null,
+            metadata,
+            connectedById: userId,
+            updatedAt: now,
+          })
+          .where(eq(integrationConnections.id, existing.id));
+      } else {
+        await tx.insert(integrationConnections).values({
+          id: connectionId,
+          organizationId,
+          provider: SLACK_PROVIDER,
+          externalAccountId: workspaceId,
+          externalAccountLabel: workspaceLabel,
+          accessTokenEnc,
+          refreshTokenEnc,
+          scope: payload.scope || null,
+          metadata,
+          connectedById: userId,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+
+      await tx.insert(auditLogs).values({
+        userId,
+        organizationId,
+        action: 'organization.updated',
+        resourceType: 'integration_connection',
+        resourceId: connectionId,
+        metadata: {
+          kind: existing ? 'slack_reauthorized' : 'slack_connected',
+          provider: SLACK_PROVIDER,
+          workspaceId,
+          workspaceLabel,
+        },
+      });
+    });
+  } catch (err) {
+    if (err instanceof SlackWorkspaceConflictError) {
+      return redirectResult({
+        integration: SLACK_PROVIDER,
+        error: err.code,
+      });
+    }
+    if (isUniqueViolation(err)) {
+      return redirectResult({
+        integration: SLACK_PROVIDER,
+        error: 'workspace_already_connected',
+      });
+    }
+    console.error('Failed to persist Slack integration_connection', err);
+    return redirectResult({
+      integration: SLACK_PROVIDER,
+      error: 'persist_failed',
+    });
+  }
+
+  return redirectResult({
+    integration: SLACK_PROVIDER,
+    connected: '1',
+  });
+}

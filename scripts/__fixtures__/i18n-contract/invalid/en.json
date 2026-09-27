@@ -1,0 +1,7 @@
+{
+  "argumentType": "Total: {value, number}",
+  "pluralKind": "{position, plural, one {# result} other {# results}}",
+  "pluralOffset": "{count, plural, offset:1 one {One} other {# remaining}}",
+  "exactSelectors": "{count, plural, =0 {None} =2 {Pair} other {# items}}",
+  "selectSelectors": "{state, select, open {Open} closed {Closed} other {Unknown}}"
+}

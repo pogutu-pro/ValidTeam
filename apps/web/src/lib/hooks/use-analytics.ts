@@ -1,0 +1,116 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+
+export interface VelocityData {
+  sprints: {
+    sprintId: string;
+    sprintName: string;
+    startDate: Date;
+    endDate: Date;
+    completedIssues: number;
+    completedPoints: number;
+  }[];
+  averageVelocity: {
+    issues: number;
+    points: number;
+  };
+}
+
+export interface ProjectHealthData {
+  overview: {
+    totalIssues: number;
+    overdueIssues: number;
+    unassignedIssues: number;
+  };
+  sprints: {
+    total: number;
+    active: number;
+    completed: number;
+  };
+  issuesByStatus: {
+    status: string;
+    name: string | null;
+    color: string | null;
+    category: string | null;
+    count: number;
+  }[];
+  issuesByPriority: {
+    priority: string;
+    count: number;
+  }[];
+  issuesByType: {
+    type: string;
+    count: number;
+  }[];
+}
+
+export interface BurndownData {
+  sprintName: string;
+  startDate: Date;
+  endDate: Date;
+  totalPoints: number;
+  totalIssues: number;
+  completedPoints: number;
+  remainingPoints: number;
+  burndown: {
+    date: string;
+    ideal: number;
+    actual: number | null;
+  }[];
+}
+
+// Fetch velocity data
+export function useVelocity(projectId: string | null) {
+  const t = useTranslations('hookErrors.analytics');
+
+  return useQuery({
+    queryKey: ['analytics', 'velocity', projectId],
+    queryFn: async () => {
+      if (!projectId) return null;
+      const response = await fetch(`/api/analytics/velocity?projectId=${projectId}`);
+      if (!response.ok) throw new Error(t('velocity'));
+      return response.json() as Promise<VelocityData>;
+    },
+    enabled: !!projectId,
+  });
+}
+
+// Fetch project health data
+export function useProjectHealth(projectId: string | null) {
+  const t = useTranslations('hookErrors.analytics');
+
+  return useQuery({
+    queryKey: ['analytics', 'project-health', projectId],
+    queryFn: async () => {
+      if (!projectId) return null;
+      const response = await fetch(`/api/analytics/project-health?projectId=${projectId}`);
+      if (!response.ok) throw new Error(t('projectHealth'));
+      return response.json() as Promise<ProjectHealthData>;
+    },
+    enabled: !!projectId,
+  });
+}
+
+// Fetch burndown data
+export function useBurndown(sprintId: string | null) {
+  const t = useTranslations('hookErrors.analytics');
+
+  return useQuery({
+    queryKey: ['analytics', 'burndown', sprintId],
+    queryFn: async () => {
+      if (!sprintId) return null;
+      const response = await fetch(`/api/analytics/burndown?sprintId=${sprintId}`);
+      if (!response.ok) throw new Error(t('burndown'));
+      return response.json() as Promise<BurndownData>;
+    },
+    enabled: !!sprintId,
+  });
+}
+
+// Export issues
+export function exportIssues(projectId: string, format: 'csv' | 'json' = 'csv') {
+  const url = `/api/export/issues?projectId=${projectId}&format=${format}`;
+  window.open(url, '_blank');
+}

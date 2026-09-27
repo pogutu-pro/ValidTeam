@@ -1,0 +1,478 @@
+'use client';
+
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useFormatter, useTranslations } from 'next-intl';
+import { Bot, CheckCheck, ChevronDown, Clock, Loader2, Sparkles, Webhook, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { PageFrame } from '@/components/ui/page-frame';
+import { PageHeader } from '@/components/ui/page-header';
+import { cn } from '@/lib/utils';
+import {
+  useInbox,
+  useInboxMarkAllRead,
+  useInboxMarkRead,
+  useInboxSnooze,
+  type InboxActorType,
+  type InboxFilters,
+  type InboxItem,
+  type InboxNotificationType,
+} from '@/lib/hooks/use-inbox';
+
+const ACTOR_CHIPS: { key: InboxActorType | 'all'; labelKey: string }[] = [
+  { key: 'all', labelKey: 'inbox_actor_all' },
+  { key: 'user', labelKey: 'inbox_actor_people' },
+  { key: 'agent', labelKey: 'inbox_actor_agents' },
+  { key: 'webhook', labelKey: 'inbox_actor_webhooks' },
+  { key: 'system', labelKey: 'inbox_actor_system' },
+];
+
+const TYPE_CHIPS: { key: InboxNotificationType | 'all'; labelKey: string }[] = [
+  { key: 'all', labelKey: 'inbox_type_all' },
+  { key: 'mention', labelKey: 'inbox_type_mention' },
+  { key: 'assignment', labelKey: 'inbox_type_assignment' },
+  { key: 'comment', labelKey: 'inbox_type_comment' },
+  { key: 'reaction', labelKey: 'inbox_type_reaction' },
+  { key: 'status', labelKey: 'inbox_type_status' },
+  { key: 'due', labelKey: 'inbox_type_due' },
+];
+
+const SNOOZE_PRESETS: { labelKey: string; offsetMs: number }[] = [
+  { labelKey: 'inbox_snooze_1_hour', offsetMs: 60 * 60 * 1000 },
+  { labelKey: 'inbox_snooze_4_hours', offsetMs: 4 * 60 * 60 * 1000 },
+  { labelKey: 'inbox_snooze_tomorrow', offsetMs: 24 * 60 * 60 * 1000 },
+  { labelKey: 'inbox_snooze_next_week', offsetMs: 7 * 24 * 60 * 60 * 1000 },
+];
+
+const ACTOR_VALUES: readonly InboxActorType[] = ['user', 'agent', 'webhook', 'system'];
+const TYPE_VALUES: readonly InboxNotificationType[] = [
+  'mention',
+  'assignment',
+  'due',
+  'status',
+  'comment',
+  'reaction',
+];
+
+function parseActorParam(value: string | null): InboxActorType | 'all' {
+  return ACTOR_VALUES.includes(value as InboxActorType) ? (value as InboxActorType) : 'all';
+}
+
+function parseTypeParam(value: string | null): InboxNotificationType | 'all' {
+  return TYPE_VALUES.includes(value as InboxNotificationType)
+    ? (value as InboxNotificationType)
+    : 'all';
+}
+
+function isEnabledParam(value: string | null): boolean {
+  return value === '1' || value === 'true';
+}
+
+function getInitial(name: string | null | undefined, email: string | null | undefined) {
+  return (name || email || '?')[0]?.toUpperCase() ?? '?';
+}
+
+function InboxRow({
+  item,
+  onMarkRead,
+  onSnooze,
+  isPending,
+}: {
+  item: InboxItem;
+  onMarkRead: (id: string) => void;
+  onSnooze: (id: string, untilIso: string | null) => void;
+  isPending: boolean;
+}) {
+  const t = useTranslations('pagesHome');
+  const formatter = useFormatter();
+  const [snoozeOpen, setSnoozeOpen] = useState(false);
+  const actorTypeLabel = (actorType: InboxActorType): string => {
+    switch (actorType) {
+      case 'agent':
+        return t('inbox_actor_type_agent');
+      case 'webhook':
+        return t('inbox_actor_type_webhook');
+      case 'system':
+        return t('inbox_actor_type_system');
+      default:
+        return '';
+    }
+  };
+  const actorName =
+    item.actor?.name ||
+    item.actor?.email?.split('@')[0] ||
+    actorTypeLabel(item.actorType) ||
+    t('inbox_actor_fallback');
+  const isSnoozed = !!item.snoozedUntil && new Date(item.snoozedUntil).getTime() > Date.now();
+  const issueHref = item.issue ? `/issues/${item.issue.id}` : null;
+
+  const handleSnoozeClick = (offsetMs: number) => {
+    const until = new Date(Date.now() + offsetMs).toISOString();
+    onSnooze(item.id, until);
+    setSnoozeOpen(false);
+  };
+
+  return (
+    <div
+      className={cn(
+        'border-border group relative flex items-start gap-3 border-b px-4 py-3 transition-colors',
+        !item.isRead && 'bg-primary/[0.03]',
+        isSnoozed && 'opacity-60'
+      )}
+      data-actor-type={item.actorType}
+      data-unread={!item.isRead || undefined}
+    >
+      {!item.isRead && (
+        <span aria-hidden="true" className="bg-primary absolute inset-y-0 start-0 w-[2px]" />
+      )}
+
+      <div className="shrink-0">
+        {item.actorType === 'agent' ? (
+          <span className="bg-muted text-muted-foreground flex h-8 w-8 items-center justify-center rounded-md">
+            <Bot className="h-4 w-4" />
+          </span>
+        ) : item.actorType === 'webhook' ? (
+          <span className="bg-muted text-muted-foreground flex h-8 w-8 items-center justify-center rounded-md">
+            <Webhook className="h-4 w-4" />
+          </span>
+        ) : item.actorType === 'system' ? (
+          <span className="bg-muted text-muted-foreground flex h-8 w-8 items-center justify-center rounded-md">
+            <Zap className="h-4 w-4" />
+          </span>
+        ) : (
+          <Avatar className="ring-border h-8 w-8 ring-1">
+            <AvatarImage src={item.actor?.image || undefined} alt="" />
+            <AvatarFallback className="text-[10px] font-semibold">
+              {getInitial(item.actor?.name, item.actor?.email)}
+            </AvatarFallback>
+          </Avatar>
+        )}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-foreground min-w-0 truncate font-medium">{actorName}</span>
+          {item.project && (
+            <span className="bg-muted text-muted-foreground rounded-sm px-1.5 py-0.5 font-mono text-[10px]">
+              {item.project.key}
+            </span>
+          )}
+          {item.issue && (
+            <Link
+              href={issueHref ?? '#'}
+              className="text-muted-foreground hover:text-foreground font-mono text-[11px]"
+            >
+              {item.issue.key}
+            </Link>
+          )}
+          <span className="text-muted-foreground ms-auto text-[11px] tabular-nums">
+            {formatter.relativeTime(new Date(item.createdAt))}
+          </span>
+        </div>
+        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{item.title}</p>
+        {item.message && item.message !== item.title && (
+          <p className="text-muted-foreground/80 mt-0.5 line-clamp-2 text-xs">{item.message}</p>
+        )}
+        {isSnoozed && (
+          <p className="bg-muted/60 text-muted-foreground mt-1 inline-flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[10px]">
+            <Clock className="h-3 w-3" />
+            {t('inbox_snoozed_until', {
+              date: formatter.dateTime(new Date(item.snoozedUntil!), {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              }),
+            })}
+          </p>
+        )}
+      </div>
+
+      <div className="flex shrink-0 flex-col items-end gap-1 opacity-100 transition-opacity focus-within:opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+        {!item.isRead && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 px-0 text-[11px] sm:h-7 sm:w-auto sm:px-2"
+            onClick={() => onMarkRead(item.id)}
+            disabled={isPending}
+            aria-label={t('inbox_mark_as_read')}
+          >
+            <CheckCheck className="h-3.5 w-3.5 sm:me-1" />
+            <span className="hidden sm:inline">{t('inbox_read')}</span>
+          </Button>
+        )}
+        <div className="relative">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-8 w-8 px-0 text-[11px] sm:h-7 sm:w-auto sm:px-2"
+            onClick={() => setSnoozeOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={snoozeOpen}
+            aria-label={t('inbox_snooze')}
+          >
+            <Clock className="h-3.5 w-3.5 sm:me-1" />
+            <span className="hidden sm:inline">{t('inbox_snooze')}</span>
+          </Button>
+          {snoozeOpen && (
+            <div
+              role="menu"
+              className="border-border bg-popover absolute end-0 z-10 mt-1 w-36 rounded-md border p-1 shadow-sm"
+            >
+              {SNOOZE_PRESETS.map((preset) => (
+                <button
+                  key={preset.labelKey}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => handleSnoozeClick(preset.offsetMs)}
+                  className="hover:bg-accent focus-visible:ring-ring block min-h-8 w-full rounded-sm px-2 py-1 text-start text-xs focus-visible:ring-2 focus-visible:ring-inset"
+                >
+                  {t(preset.labelKey)}
+                </button>
+              ))}
+              {isSnoozed && (
+                <>
+                  <div className="bg-border my-1 h-px" />
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      onSnooze(item.id, null);
+                      setSnoozeOpen(false);
+                    }}
+                    className="hover:bg-accent focus-visible:ring-ring block min-h-8 w-full rounded-sm px-2 py-1 text-start text-xs focus-visible:ring-2 focus-visible:ring-inset"
+                  >
+                    {t('inbox_unsnooze')}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function InboxPageClient() {
+  const t = useTranslations('pagesHome');
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlActorChip = parseActorParam(searchParams?.get('actor') ?? null);
+  const urlTypeChip = parseTypeParam(searchParams?.get('type') ?? null);
+  const urlUnreadOnly = isEnabledParam(searchParams?.get('unread') ?? null);
+  const urlSnoozed = isEnabledParam(searchParams?.get('snoozed') ?? null);
+  const [actorChip, setActorChip] = useState<InboxActorType | 'all'>(urlActorChip);
+  const [typeChip, setTypeChip] = useState<InboxNotificationType | 'all'>(urlTypeChip);
+  const [showUnreadOnly, setShowUnreadOnly] = useState(urlUnreadOnly);
+  const [showSnoozed, setShowSnoozed] = useState(urlSnoozed);
+
+  useEffect(() => {
+    setActorChip(urlActorChip);
+    setTypeChip(urlTypeChip);
+    setShowUnreadOnly(urlUnreadOnly);
+    setShowSnoozed(urlSnoozed);
+  }, [urlActorChip, urlTypeChip, urlUnreadOnly, urlSnoozed]);
+
+  const updateUrlFilters = useCallback(
+    (next: {
+      actor?: InboxActorType | 'all';
+      type?: InboxNotificationType | 'all';
+      unread?: boolean;
+      snoozed?: boolean;
+    }) => {
+      const nextActor = next.actor ?? actorChip;
+      const nextType = next.type ?? typeChip;
+      const nextUnread = next.unread ?? showUnreadOnly;
+      const nextSnoozed = next.snoozed ?? showSnoozed;
+
+      setActorChip(nextActor);
+      setTypeChip(nextType);
+      setShowUnreadOnly(nextUnread);
+      setShowSnoozed(nextSnoozed);
+
+      const params = new URLSearchParams(searchParams?.toString() ?? '');
+      if (nextActor === 'all') {
+        params.delete('actor');
+      } else {
+        params.set('actor', nextActor);
+      }
+      if (nextType === 'all') {
+        params.delete('type');
+      } else {
+        params.set('type', nextType);
+      }
+      if (nextUnread) {
+        params.set('unread', '1');
+      } else {
+        params.delete('unread');
+      }
+      if (nextSnoozed) {
+        params.set('snoozed', '1');
+      } else {
+        params.delete('snoozed');
+      }
+
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    },
+    [actorChip, pathname, router, searchParams, showSnoozed, showUnreadOnly, typeChip]
+  );
+
+  const filters: InboxFilters = useMemo(
+    () => ({
+      actorType: actorChip === 'all' ? null : actorChip,
+      notificationType: typeChip === 'all' ? null : typeChip,
+      unread: showUnreadOnly,
+      snoozed: showSnoozed,
+    }),
+    [actorChip, typeChip, showUnreadOnly, showSnoozed]
+  );
+
+  const { data, isLoading, isError } = useInbox(filters);
+  const snooze = useInboxSnooze();
+  const markRead = useInboxMarkRead();
+  const markAllRead = useInboxMarkAllRead();
+
+  const items = data?.items ?? [];
+  const unreadVisible = items.filter((i) => !i.isRead).length;
+  const activeActor = ACTOR_CHIPS.find((chip) => chip.key === actorChip) ?? ACTOR_CHIPS[0];
+  const activeType = TYPE_CHIPS.find((chip) => chip.key === typeChip) ?? TYPE_CHIPS[0];
+
+  return (
+    <PageFrame contentClassName="max-w-4xl space-y-4">
+      <PageHeader
+        title={t('inbox_title')}
+        description={t('inbox_subtitle')}
+        actions={
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => markAllRead.mutate(filters)}
+            disabled={markAllRead.isPending || unreadVisible === 0}
+          >
+            <CheckCheck className="me-1 h-3.5 w-3.5" />
+            {t('inbox_mark_all_read')}
+          </Button>
+        }
+      />
+
+      <div
+        className="surface-card flex flex-wrap items-center gap-2 p-2 shadow-none"
+        role="toolbar"
+        aria-label={t('inbox_filter_chips')}
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-8 min-w-28 justify-between">
+              {t(activeActor?.labelKey ?? 'inbox_actor_all')}
+              <ChevronDown className="ms-2 h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuRadioGroup
+              value={actorChip}
+              onValueChange={(value) =>
+                updateUrlFilters({ actor: value as InboxActorType | 'all' })
+              }
+            >
+              {ACTOR_CHIPS.map((chip) => (
+                <DropdownMenuRadioItem key={chip.key} value={chip.key}>
+                  {t(chip.labelKey)}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-8 min-w-28 justify-between">
+              {t(activeType?.labelKey ?? 'inbox_type_all')}
+              <ChevronDown className="ms-2 h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuRadioGroup
+              value={typeChip}
+              onValueChange={(value) =>
+                updateUrlFilters({ type: value as InboxNotificationType | 'all' })
+              }
+            >
+              {TYPE_CHIPS.map((chip) => (
+                <DropdownMenuRadioItem key={chip.key} value={chip.key}>
+                  {t(chip.labelKey)}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Button
+          type="button"
+          role="checkbox"
+          aria-checked={showUnreadOnly}
+          onClick={() => updateUrlFilters({ unread: !showUnreadOnly })}
+          variant={showUnreadOnly ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-8 text-xs"
+        >
+          {t('inbox_unread_only')}
+        </Button>
+        <Button
+          type="button"
+          role="checkbox"
+          aria-checked={showSnoozed}
+          onClick={() => updateUrlFilters({ snoozed: !showSnoozed })}
+          variant={showSnoozed ? 'secondary' : 'ghost'}
+          size="sm"
+          className="h-8 text-xs"
+        >
+          {t('inbox_snoozed')}
+        </Button>
+      </div>
+
+      <div className="surface-card min-h-64 overflow-hidden shadow-none">
+        {isLoading ? (
+          <div className="text-muted-foreground flex min-h-64 items-center justify-center py-20">
+            <Loader2 className="me-2 h-4 w-4 animate-spin" />
+            {t('inbox_loading')}
+          </div>
+        ) : isError ? (
+          <div className="text-destructive flex min-h-64 items-center justify-center py-20">
+            {t('inbox_load_error')}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="flex min-h-64 flex-col items-center justify-center gap-2 px-4 py-20 text-center">
+            <Sparkles className="text-muted-foreground h-6 w-6" />
+            <p className="text-foreground text-sm font-medium">{t('inbox_empty_title')}</p>
+            <p className="text-muted-foreground max-w-xs text-xs">{t('inbox_empty_description')}</p>
+          </div>
+        ) : (
+          <ul role="list" className="[&>li:last-child>div]:border-b-0">
+            {items.map((item) => (
+              <li key={item.id}>
+                <InboxRow
+                  item={item}
+                  onMarkRead={(id) => markRead.mutate(id)}
+                  onSnooze={(id, until) => snooze.mutate({ id, until })}
+                  isPending={markRead.isPending || snooze.isPending}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </PageFrame>
+  );
+}

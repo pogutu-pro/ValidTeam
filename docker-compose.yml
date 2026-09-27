@@ -1,0 +1,291 @@
+services:
+  postgres:
+    build:
+      context: ./docker/postgres
+      dockerfile: Dockerfile
+    container_name: tasknebula-postgres
+    restart: unless-stopped
+    # Load pg_stat_statements at server start so the extension created in
+    # init.sql can actually record statements. See docs/OBSERVABILITY.md.
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - pg_stat_statements.max=10000
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set (generate with `openssl rand -hex 32`)}
+      POSTGRES_DB: ${POSTGRES_DB:-tasknebula}
+    ports:
+      # Bind to localhost only to prevent external network access to the database.
+      - '127.0.0.1:${DB_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U "$${POSTGRES_USER:-postgres}" -d "$${POSTGRES_DB:-tasknebula}"',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: &default-logging
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  redis:
+    image: redis:7-alpine
+    container_name: tasknebula-redis
+    restart: unless-stopped
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        : "$${REDIS_PASSWORD:?REDIS_PASSWORD must be set}"
+        umask 077
+        printf 'appendonly yes\nrequirepass %s\n' "$$REDIS_PASSWORD" > /tmp/redis.conf
+        exec redis-server /tmp/redis.conf
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD must be set}
+    ports:
+      - '127.0.0.1:${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD-SHELL', 'redis-cli --no-auth-warning -a "$$REDIS_PASSWORD" ping | grep -q PONG']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+  livekit:
+    image: livekit/livekit-server:v1.10.1
+    container_name: tasknebula-livekit
+    profiles: ['voice']
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      redis:
+        condition: service_healthy
+    entrypoint: ['/bin/sh', '/etc/livekit/start-livekit.sh']
+    environment:
+      LIVEKIT_NODE_IP: ${LIVEKIT_NODE_IP:-}
+      LIVEKIT_PORT: ${LIVEKIT_PORT:-7880}
+      LIVEKIT_TCP_PORT: ${LIVEKIT_TCP_PORT:-7881}
+      LIVEKIT_TURN_UDP_PORT: ${LIVEKIT_TURN_UDP_PORT:-3478}
+      LIVEKIT_RTC_START_PORT: ${LIVEKIT_RTC_START_PORT:-50000}
+      LIVEKIT_RTC_END_PORT: ${LIVEKIT_RTC_END_PORT:-50020}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-}
+      LIVEKIT_WEBHOOK_URL: ${LIVEKIT_WEBHOOK_URL:-http://127.0.0.1:${PORT:-3000}/api/chat/livekit/webhook}
+      # Optional Prometheus exporter. Default 0 = disabled; set to e.g. 6789
+      # to expose http://<host>:6789/metrics. See docs/OBSERVABILITY.md.
+      LIVEKIT_PROMETHEUS_PORT: ${LIVEKIT_PROMETHEUS_PORT:-0}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - ./docker/livekit/start-livekit.sh:/etc/livekit/start-livekit.sh:ro
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'wget -qO- "http://localhost:$${LIVEKIT_PORT:-7880}/" | grep -q OK || exit 1']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging: *default-logging
+
+  web:
+    # Pull the published image by default (instant start). Override via
+    # TASKNEBULA_IMAGE=... or run `docker compose build web` to rebuild from
+    # source — the `build:` stanza below is the fallback when the image is
+    # not available locally or on the registry.
+    image: ${TASKNEBULA_IMAGE:-neuraparse/tasknebula:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_COLLAB_ENABLED: ${NEXT_PUBLIC_COLLAB_ENABLED:-false}
+        NEXT_PUBLIC_HOCUSPOCUS_URL: ${NEXT_PUBLIC_HOCUSPOCUS_URL:-}
+    container_name: tasknebula-web
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/${POSTGRES_DB:-tasknebula}
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET must be set (generate with `openssl rand -base64 32`)}
+      AUTH_URL: ${APP_URL:-http://localhost:3000}
+      AUTH_DEBUG: ${AUTH_DEBUG:-false}
+      NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_NAME: ${APP_NAME:-TaskNebula}
+      NEXT_PUBLIC_COLLAB_ENABLED: ${NEXT_PUBLIC_COLLAB_ENABLED:-false}
+      NEXT_PUBLIC_HOCUSPOCUS_URL: ${NEXT_PUBLIC_HOCUSPOCUS_URL:-}
+      REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set}@redis:6379
+      LIVEKIT_URL: ${LIVEKIT_URL:-}
+      NEXT_PUBLIC_LIVEKIT_URL: ${NEXT_PUBLIC_LIVEKIT_URL:-}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-}
+      TURN_URL: ${TURN_URL:-}
+      TURN_USERNAME: ${TURN_USERNAME:-}
+      TURN_PASSWORD: ${TURN_PASSWORD:-}
+      # OAuth (optional)
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      SKIP_SEED: ${SKIP_SEED:-true}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
+      NODE_ENV: production
+      # Email / SMTP (optional)
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      FEATURE_EMAIL_ENABLED: ${FEATURE_EMAIL_ENABLED:-false}
+      # AI / agents / bots — enabled from Admin → Agent control (DB-backed).
+      # These env vars are an optional last-resort credential fallback for
+      # dev; prod should enter keys through the admin/workspace config UI.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AGENT_PROVIDER_HOST_ALLOWLIST: ${AGENT_PROVIDER_HOST_ALLOWLIST:-}
+      # Optional beta: dispatch issues directly to Claude Code or Codex CLI
+      # installed inside this container/custom image. Admin → Agent control
+      # still controls which workspaces may use the local handoff.
+      TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED: ${TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED:-false}
+      TASKNEBULA_LOCAL_AGENT_CWD: ${TASKNEBULA_LOCAL_AGENT_CWD:-}
+      TASKNEBULA_REPO_ROOT: ${TASKNEBULA_REPO_ROOT:-}
+      TASKNEBULA_LOCAL_CODEX_ENABLED: ${TASKNEBULA_LOCAL_CODEX_ENABLED:-false}
+      TASKNEBULA_LOCAL_CODEX_COMMAND: ${TASKNEBULA_LOCAL_CODEX_COMMAND:-codex}
+      TASKNEBULA_LOCAL_CODEX_CWD: ${TASKNEBULA_LOCAL_CODEX_CWD:-}
+      TASKNEBULA_LOCAL_CODEX_MODEL: ${TASKNEBULA_LOCAL_CODEX_MODEL:-}
+      TASKNEBULA_LOCAL_CODEX_SANDBOX: ${TASKNEBULA_LOCAL_CODEX_SANDBOX:-workspace-write}
+      TASKNEBULA_LOCAL_CODEX_TIMEOUT_SECONDS: ${TASKNEBULA_LOCAL_CODEX_TIMEOUT_SECONDS:-3600}
+      TASKNEBULA_LOCAL_CODEX_ARGS_JSON: ${TASKNEBULA_LOCAL_CODEX_ARGS_JSON:-}
+      TASKNEBULA_LOCAL_CLAUDE_ENABLED: ${TASKNEBULA_LOCAL_CLAUDE_ENABLED:-false}
+      TASKNEBULA_LOCAL_CLAUDE_COMMAND: ${TASKNEBULA_LOCAL_CLAUDE_COMMAND:-claude}
+      TASKNEBULA_LOCAL_CLAUDE_CWD: ${TASKNEBULA_LOCAL_CLAUDE_CWD:-}
+      TASKNEBULA_LOCAL_CLAUDE_MODEL: ${TASKNEBULA_LOCAL_CLAUDE_MODEL:-}
+      TASKNEBULA_LOCAL_CLAUDE_PERMISSION_MODE: ${TASKNEBULA_LOCAL_CLAUDE_PERMISSION_MODE:-auto}
+      TASKNEBULA_LOCAL_CLAUDE_MAX_TURNS: ${TASKNEBULA_LOCAL_CLAUDE_MAX_TURNS:-20}
+      TASKNEBULA_LOCAL_CLAUDE_TIMEOUT_SECONDS: ${TASKNEBULA_LOCAL_CLAUDE_TIMEOUT_SECONDS:-3600}
+      TASKNEBULA_LOCAL_CLAUDE_ARGS_JSON: ${TASKNEBULA_LOCAL_CLAUDE_ARGS_JSON:-}
+      # Cron endpoints (POST /api/cron/{standup,janitor}) are guarded by a
+      # shared secret. Set CRON_SECRET to enable them. The optional
+      # JANITOR_SYSTEM_USER_ID is the user id used as the author for janitor
+      # comments and updates; without it the janitor runs in dry-run mode.
+      CRON_SECRET: ${CRON_SECRET:?CRON_SECRET must be set (generate with `openssl rand -hex 32`)}
+      JANITOR_SYSTEM_USER_ID: ${JANITOR_SYSTEM_USER_ID:-}
+      # Optional Prometheus scrape token for GET /api/metrics. The endpoint
+      # stays unavailable when this value is unset or shorter than 16 chars.
+      METRICS_TOKEN: ${METRICS_TOKEN:-}
+      # Optional Docker Hub inbound webhook for immediate image-update
+      # detection. Pair with /api/cron/version-check as the polling fallback.
+      TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET: ${TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET:-}
+      # Optional self-update handoff. Disabled by default: the web container
+      # never receives Docker socket access and only sends a signed request to
+      # an operator-managed updater endpoint when explicitly configured.
+      TASKNEBULA_SELF_UPDATE_ENABLED: ${TASKNEBULA_SELF_UPDATE_ENABLED:-false}
+      TASKNEBULA_SELF_UPDATE_WEBHOOK_URL: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_URL:-}
+      TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET:-}
+      TASKNEBULA_SELF_UPDATE_REQUIRE_BACKUP: ${TASKNEBULA_SELF_UPDATE_REQUIRE_BACKUP:-true}
+      TASKNEBULA_SELF_UPDATE_ALLOW_INSECURE_HTTP: ${TASKNEBULA_SELF_UPDATE_ALLOW_INSECURE_HTTP:-false}
+      TASKNEBULA_UPDATE_BACKUP_DIR: ${TASKNEBULA_UPDATE_BACKUP_DIR:-/app/backups}
+    ports:
+      - '127.0.0.1:${PORT:-3000}:3000'
+    volumes:
+      - uploads_data:/app/uploads
+      - backups_data:/app/backups
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:3000/api/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    logging: *default-logging
+
+  # Default durability reconciler for approval effects and project-agent graph
+  # runs. Keep this in the base lifecycle so restarts do not strand work.
+  approval-reconciler:
+    image: alpine:3.20
+    container_name: tasknebula-approval-reconciler
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      CRON_SECRET: ${CRON_SECRET:?CRON_SECRET must be set}
+      WEB_BASE_URL: ${CRON_WEB_BASE_URL:-http://web:3000}
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        set -eu
+        while true; do
+          wget -qO /dev/null \
+            --header="x-cron-secret: $$CRON_SECRET" \
+            --post-data='' \
+            "$$WEB_BASE_URL/api/cron/agent-approval-effects" || true
+          wget -qO /dev/null \
+            --header="x-cron-secret: $$CRON_SECRET" \
+            --post-data='' \
+            "$$WEB_BASE_URL/api/cron/agent-runs" || true
+          sleep 60
+        done
+    logging: *default-logging
+
+  # Optional: lightweight cron sidecar that calls scheduled product jobs.
+  # Comment out if you prefer Vercel Cron, k8s
+  # CronJobs, or an external scheduler. The container uses busybox so the
+  # whole footprint is < 5 MB.
+  cron:
+    image: alpine:3.20
+    container_name: tasknebula-cron
+    profiles: ['cron']
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_started
+    environment:
+      CRON_SECRET: ${CRON_SECRET:-}
+      WEB_BASE_URL: ${CRON_WEB_BASE_URL:-http://web:3000}
+    entrypoint: ['/bin/sh', '-c']
+    # Daily standup at 08:00 UTC, hourly janitor, 6-hourly version check, and
+    # daily cycle-rollover at 02:00 UTC
+    # (off-peak so any cross-cycle DB churn doesn't collide with the standup
+    # digest window). busybox crond reads /etc/crontabs/root.
+    command:
+      - |
+        if [ -z "$$CRON_SECRET" ]; then
+          echo "CRON_SECRET must be set to enable the cron sidecar" >&2
+          exit 1
+        fi
+        apk add --no-cache curl > /dev/null && \
+        printf '* * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/agent-runs" -o /dev/null\n0 8 * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/standup" -o /dev/null\n0 * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/janitor" -o /dev/null\n30 * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/embeddings" -o /dev/null\n17 */6 * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/version-check" -o /dev/null\n0 2 * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/cycle-rollover" -o /dev/null\n' > /etc/crontabs/root && \
+        crond -f -l 8
+    logging: *default-logging
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:
+  backups_data:

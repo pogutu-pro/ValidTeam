@@ -1,0 +1,141 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { db, savedFilters } from '@tasknebula/db';
+import { eq, and } from 'drizzle-orm';
+import { z } from 'zod';
+import { markSavedFilterUsedForUser } from '@/lib/saved-filters/usage';
+
+export const dynamic = 'force-dynamic';
+
+const updateSavedFilterSchema = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  query: z.string().min(1).optional(),
+  criteria: z.record(z.any()).optional(),
+  isPublic: z.boolean().optional(),
+  isStarred: z.boolean().optional(),
+  viewType: z.enum(['list', 'board', 'timeline', 'calendar']).optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.enum(['asc', 'desc']).optional(),
+});
+
+/**
+ * PATCH /api/saved-filters/[filterId]
+ *
+ * Update a saved filter
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ filterId: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { filterId } = await params;
+    const body = await request.json();
+    const validatedData = updateSavedFilterSchema.parse(body);
+
+    // Check if filter exists and user owns it
+    const [existing] = await db
+      .select()
+      .from(savedFilters)
+      .where(and(eq(savedFilters.id, filterId), eq(savedFilters.userId, session.user.id)));
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Filter not found' }, { status: 404 });
+    }
+
+    // Update filter
+    const [updated] = await db
+      .update(savedFilters)
+      .set({
+        ...validatedData,
+        criteria: validatedData.criteria as any,
+        updatedAt: new Date(),
+      })
+      .where(eq(savedFilters.id, filterId))
+      .returning();
+
+    return NextResponse.json({ filter: updated });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: error.errors },
+        { status: 400 }
+      );
+    }
+
+    console.error('Update saved filter error:', error);
+    return NextResponse.json({ error: 'Failed to update saved filter' }, { status: 500 });
+  }
+}
+
+/**
+ * DELETE /api/saved-filters/[filterId]
+ *
+ * Delete a saved filter
+ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ filterId: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { filterId } = await params;
+
+    // Check if filter exists and user owns it
+    const [existing] = await db
+      .select()
+      .from(savedFilters)
+      .where(and(eq(savedFilters.id, filterId), eq(savedFilters.userId, session.user.id)));
+
+    if (!existing) {
+      return NextResponse.json({ error: 'Filter not found' }, { status: 404 });
+    }
+
+    // Delete filter
+    await db.delete(savedFilters).where(eq(savedFilters.id, filterId));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete saved filter error:', error);
+    return NextResponse.json({ error: 'Failed to delete saved filter' }, { status: 500 });
+  }
+}
+
+/**
+ * POST /api/saved-filters/[filterId]
+ *
+ * Legacy alias for usage bookkeeping. The canonical route is
+ * /api/saved-filters/[filterId]/use.
+ */
+export async function POST(
+  _request: NextRequest,
+  { params }: { params: Promise<{ filterId: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { filterId } = await params;
+    const updated = await markSavedFilterUsedForUser(filterId, session.user.id);
+
+    if (!updated) {
+      return NextResponse.json({ error: 'Filter not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ filter: updated });
+  } catch (error) {
+    console.error('Update filter usage error:', error);
+    return NextResponse.json({ error: 'Failed to update filter usage' }, { status: 500 });
+  }
+}

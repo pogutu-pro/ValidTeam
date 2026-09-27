@@ -1,0 +1,141 @@
+'use client';
+
+import { useId, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { Check, ChevronsUpDown, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useOrganizationMembers } from '@/lib/hooks/use-members';
+import { cn } from '@/lib/utils';
+
+interface AssigneePickerProps {
+  organizationId: string | null;
+  value: string | null;
+  onChange: (userId: string | null) => void;
+  disabled?: boolean;
+  ariaLabel?: string;
+}
+
+export function AssigneePicker({
+  organizationId,
+  value,
+  onChange,
+  disabled = false,
+  ariaLabel,
+}: AssigneePickerProps) {
+  const t = useTranslations('issueMisc');
+  const tRows = useTranslations('issueSidebar.rows');
+  const [open, setOpen] = useState(false);
+  const triggerLabelId = useId();
+  const triggerValueId = useId();
+  const { data, isLoading } = useOrganizationMembers(organizationId);
+
+  const members = data?.members || [];
+
+  const selectedMember = members.find((member) => member.id === value);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          role="combobox"
+          aria-expanded={open}
+          aria-labelledby={`${triggerLabelId} ${triggerValueId}`}
+          className="hover:bg-accent ease-snap h-8 w-full justify-between rounded-md px-2 text-sm transition-colors duration-150"
+          disabled={disabled || isLoading}
+        >
+          <span id={triggerLabelId} className="sr-only">
+            {ariaLabel ?? tRows('assignee')}
+          </span>
+          {selectedMember ? (
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <Avatar className="h-5 w-5">
+                <AvatarImage
+                  src={selectedMember.image || undefined}
+                  alt={selectedMember.name ?? selectedMember.email ?? t('member_avatar_alt')}
+                />
+                <AvatarFallback className="text-xs">
+                  {selectedMember.name?.[0] || selectedMember.email?.[0] || '?'}
+                </AvatarFallback>
+              </Avatar>
+              <span id={triggerValueId} className="truncate">
+                {selectedMember.name || selectedMember.email}
+              </span>
+            </div>
+          ) : (
+            <div className="text-muted-foreground flex min-w-0 flex-1 items-center gap-2">
+              <User className="h-4 w-4 shrink-0" />
+              <span id={triggerValueId} className="truncate">
+                {t('unassigned')}
+              </span>
+            </div>
+          )}
+          <ChevronsUpDown className="ml-2 h-3.5 w-3.5 shrink-0 opacity-40" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] max-w-[calc(100vw-2rem)] p-0">
+        <Command>
+          <CommandInput placeholder={t('search_members_placeholder')} />
+          <CommandList>
+            <CommandEmpty>{t('no_members_found')}</CommandEmpty>
+            <CommandGroup>
+              {/* Unassigned option */}
+              <CommandItem
+                value="unassigned"
+                onSelect={() => {
+                  onChange(null);
+                  setOpen(false);
+                }}
+              >
+                <Check className={cn('mr-2 h-4 w-4', !value ? 'opacity-100' : 'opacity-0')} />
+                <User className="text-muted-foreground mr-2 h-4 w-4" />
+                <span className="text-muted-foreground">{t('unassigned')}</span>
+              </CommandItem>
+
+              {/* Members list */}
+              {members.map((member) => (
+                <CommandItem
+                  key={member.id}
+                  value={member.name || member.email || member.id}
+                  onSelect={() => {
+                    onChange(member.id);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      value === member.id ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                  <Avatar className="mr-2 h-5 w-5">
+                    <AvatarImage src={member.image || undefined} />
+                    <AvatarFallback className="text-xs">
+                      {member.name?.[0] || member.email?.[0] || '?'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm">{member.name || t('unnamed')}</span>
+                    {member.email && (
+                      <span className="text-muted-foreground text-xs">{member.email}</span>
+                    )}
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}

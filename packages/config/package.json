@@ -1,0 +1,16 @@
+{
+  "name": "@tasknebula/config",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "files": [
+    "*.json",
+    "*.js"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.67.0",
+    "@typescript-eslint/parser": "^8.67.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.0"
+  }
+}

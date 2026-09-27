@@ -1,0 +1,196 @@
+'use client';
+
+import { BurndownData } from '@/lib/hooks/use-analytics';
+import { useFormatter, useTranslations } from 'next-intl';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ReferenceLine,
+  ResponsiveContainer,
+} from 'recharts';
+
+interface BurndownChartProps {
+  data: BurndownData;
+}
+
+type BurndownFormatter = ReturnType<typeof useFormatter>;
+type BurndownTooltipEntry = {
+  name?: string;
+  value?: number | string | null;
+  color?: string;
+};
+type BurndownTooltipProps = {
+  active?: boolean;
+  payload?: BurndownTooltipEntry[];
+  label?: string | number;
+  formatter: BurndownFormatter;
+};
+
+const formatMonthDay = (v: string, formatter: BurndownFormatter): string => {
+  try {
+    const d = new Date(v);
+    if (Number.isNaN(d.getTime())) return v;
+    return formatter.dateTime(d, { month: 'short', day: 'numeric' });
+  } catch {
+    return v;
+  }
+};
+
+const findTodayKey = (points: BurndownData['burndown']): string | null => {
+  if (!points.length) return null;
+  const todayMs = new Date().setHours(0, 0, 0, 0);
+  let bestKey: string | null = null;
+  let bestDelta = Number.POSITIVE_INFINITY;
+  for (const p of points) {
+    const t = new Date(p.date).setHours(0, 0, 0, 0);
+    if (Number.isNaN(t)) continue;
+    const delta = Math.abs(t - todayMs);
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      bestKey = p.date;
+    }
+  }
+  // Only mark today if at least one data point is within ~1 day of today
+  return bestDelta <= 1000 * 60 * 60 * 24 ? bestKey : null;
+};
+
+function BurndownTooltip({ active, payload, label, formatter }: BurndownTooltipProps) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="surface-card space-y-1 px-3 py-2 text-xs">
+      <p className="text-muted-foreground font-medium">
+        {formatMonthDay(String(label), formatter)}
+      </p>
+      {payload.map((entry) => (
+        <div
+          key={`${entry.name ?? 'series'}-${entry.value ?? 'empty'}`}
+          className="flex items-center gap-2"
+        >
+          <span
+            className="inline-block h-1.5 w-1.5 rounded-full"
+            style={{ backgroundColor: entry.color ?? 'currentColor' }}
+          />
+          <span className="text-muted-foreground">{entry.name}:</span>
+          <span className="text-foreground font-semibold tabular-nums">{entry.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="bg-card min-w-0 space-y-1 px-3 py-2.5 sm:px-4">
+      <div className="text-muted-foreground text-[10px] font-medium uppercase tracking-[0.08em]">
+        {label}
+      </div>
+      <div className="text-foreground text-xl font-semibold tabular-nums">{value}</div>
+    </div>
+  );
+}
+
+function LegendChip({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="chip inline-flex items-center gap-1.5">
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: color }} />
+      {label}
+    </span>
+  );
+}
+
+export function BurndownChart({ data }: BurndownChartProps) {
+  const t = useTranslations('charts');
+  const formatter = useFormatter();
+  const todayKey = findTodayKey(data.burndown);
+  return (
+    <div className="surface-card animate-fade-up space-y-3 p-5">
+      {/* Header */}
+      <div className="space-y-1">
+        <span className="kicker">{t('sprintProgress')}</span>
+        <h3 className="text-foreground text-base font-semibold tracking-tight">{t('burndown')}</h3>
+        <p className="text-muted-foreground text-sm">{t('burndownDescription')}</p>
+      </div>
+
+      {/* Stat tiles */}
+      <div className="bg-border border-border grid grid-cols-2 gap-px overflow-hidden border-y sm:grid-cols-4">
+        <StatTile label={t('totalPoints')} value={data.totalPoints} />
+        <StatTile label={t('completed')} value={data.completedPoints} />
+        <StatTile label={t('remaining')} value={data.remainingPoints} />
+        <StatTile label={t('totalIssues')} value={data.totalIssues} />
+      </div>
+
+      {/* Legend */}
+      <div className="flex flex-wrap items-center gap-2">
+        <LegendChip color="hsl(var(--primary))" label={t('actual')} />
+        <LegendChip color="hsl(var(--accent-emerald))" label={t('ideal')} />
+      </div>
+
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height={280}>
+        <LineChart data={data.burndown}>
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+          <XAxis
+            dataKey="date"
+            tickFormatter={(value) => formatMonthDay(value, formatter)}
+            tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            label={{
+              value: t('storyPoints'),
+              angle: -90,
+              position: 'insideLeft',
+              fill: 'hsl(var(--muted-foreground))',
+              fontSize: 11,
+            }}
+            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip content={<BurndownTooltip formatter={formatter} />} />
+          <Legend wrapperStyle={{ display: 'none' }} />
+          {todayKey ? (
+            <ReferenceLine
+              x={todayKey}
+              stroke="hsl(var(--muted-foreground))"
+              strokeDasharray="4 4"
+              strokeWidth={1}
+              label={{
+                value: t('today'),
+                position: 'top',
+                fontSize: 10,
+                fill: 'hsl(var(--muted-foreground))',
+              }}
+            />
+          ) : null}
+          <Line
+            type="monotone"
+            dataKey="ideal"
+            stroke="hsl(var(--accent-emerald))"
+            strokeDasharray="5 5"
+            strokeWidth={2}
+            name={t('idealBurndown')}
+            dot={false}
+            activeDot={{ r: 5, strokeWidth: 2 }}
+          />
+          <Line
+            type="monotone"
+            dataKey="actual"
+            stroke="hsl(var(--primary))"
+            strokeWidth={2}
+            name={t('actualBurndown')}
+            connectNulls={false}
+            dot={{ r: 3, strokeWidth: 0 }}
+            activeDot={{ r: 5, strokeWidth: 2 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}

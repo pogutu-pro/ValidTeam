@@ -1,0 +1,1998 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   TASKNEBULA DESIGN SYSTEM — calm, accountable agentic workbench
+   Single source of truth. Do not duplicate tokens elsewhere.
+   ============================================================================ */
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin-ext.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin-ext.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+/* Default workbench, auth, and public-evidence faces. Kept local for self-hosted installs. */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-ext-300-normal.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-300-normal.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-ext-500-normal.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-500-normal.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-ext-600-normal.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-600-normal.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-ext-500-normal.woff2') format('woff2');
+  unicode-range:
+    u+0100-02ba, u+02bd-02c5, u+02c7-02cc, u+02ce-02d7, u+02dd-02ff, u+0304, u+0308, u+0329,
+    u+1d00-1dbf, u+1e00-1e9f, u+1ef2-1eff, u+2020, u+20a0-20ab, u+20ad-20c0, u+2113, u+2c60-2c7f,
+    u+a720-a7ff;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+  unicode-range:
+    u+0000-00ff, u+0131, u+0152-0153, u+02bb-02bc, u+02c6, u+02da, u+02dc, u+0304, u+0308, u+0329,
+    u+2000-206f, u+20ac, u+2122, u+2191, u+2193, u+2212, u+2215, u+feff, u+fffd;
+}
+
+/* ----------------------------------------------------------------------------
+   VALIDTEAM DESIGN SYSTEM — ruby, sand, porcelain
+   Single source of truth. Do not duplicate tokens elsewhere.
+
+   Three materials carry the identity:
+     · Ruby Red   — action, focus, selection, brand accents (used sparingly)
+     · Sand       — secondary surfaces, tags, empty states, supporting chrome
+     · Porcelain  — the primary background everything else sits on
+
+   Warm, premium, precise. Cool blues, purple AI gradients and neon are
+   deliberately absent from the chrome; the `--accent-*` hues below are
+   reserved for data semantics (issue types, priorities, states), not brand.
+   ---------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans';
+    --font-mono: 'JetBrains Mono';
+
+    /* Brand materials — mirrored in src/config/brand.ts (PALETTE) */
+    --ruby: 350 71% 36%;
+    --ruby-deep: 348 72% 27%;
+    --ruby-bright: 350 66% 46%;
+    --ruby-soft: 350 62% 96%;
+    --sand: 36 34% 89%;
+    --sand-deep: 34 30% 76%;
+    --sand-pale: 36 42% 96%;
+    --porcelain: 36 33% 97%;
+
+    /* Surfaces — porcelain canvas, warm-neutral elevation steps */
+    --background: 36 33% 97%;
+    --foreground: 24 18% 10%;
+    --card: 36 50% 99%;
+    --card-foreground: 24 18% 10%;
+    --popover: 36 50% 99%;
+    --popover-foreground: 24 18% 10%;
+    --surface: 36 24% 95%;
+    --surface-2: 36 20% 92%;
+
+    /* Authenticated workbench chrome. These layers describe ownership:
+       app rail -> context -> command bar -> focused work canvas. The app
+       rail belongs to the light porcelain workbench, so it stays light here
+       and is separated from the canvas by a border rather than by value. */
+    --workbench-backdrop: 36 22% 93%;
+    --workbench-canvas: 36 46% 99%;
+    --workbench-rail: 36 26% 95%;
+    --workbench-rail-foreground: 24 18% 16%;
+    --chrome: 36 28% 96%;
+    --chrome-foreground: 24 20% 12%;
+    --context: 36 24% 94%;
+    --context-foreground: 24 16% 18%;
+
+    /* `--rail` is the marketing/brand band, not the app rail: the auth
+       shell, setup, and offline pages keep their deliberate dark panel
+       against the light workbench. */
+    --rail: 24 18% 11%;
+    --rail-foreground: 34 16% 76%;
+
+    /* Primary colors serve both as text and as solid control backgrounds.
+       The light-theme value is dark enough for WCAG AA with white text. */
+    --primary: 350 71% 36%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 350 62% 96%;
+    --primary-ring: 350 71% 36%;
+
+    /* Secondary/muted — sand. Carries tags, empty states and quiet chrome. */
+    --secondary: 36 34% 93%;
+    --secondary-foreground: 24 18% 16%;
+    --muted: 36 26% 94%;
+    --muted-foreground: 28 10% 42%;
+    --accent: 36 32% 91%;
+    --accent-foreground: 24 18% 16%;
+
+    /* Semantic accents — data semantics only (issue types, priorities).
+       Muted, earthy and deliberately not the generic SaaS neon set. */
+    --accent-blue: 214 58% 40%;
+    --accent-violet: 282 38% 44%;
+    --accent-cyan: 186 52% 32%;
+    --accent-emerald: 152 44% 32%;
+    --accent-amber: 32 78% 38%;
+    --accent-rose: 348 62% 46%;
+    --accent-indigo: 234 46% 44%;
+
+    /* State */
+    --success: 152 48% 30%;
+    --success-foreground: 0 0% 100%;
+    --warning: 32 84% 36%;
+    --warning-foreground: 0 0% 100%;
+    --destructive: 356 74% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --info: 200 58% 34%;
+    --info-foreground: 0 0% 100%;
+
+    /* Borders / inputs — warm, never neutral gray */
+    --border: 34 20% 88%;
+    --border-strong: 32 18% 79%;
+    --input: 34 20% 88%;
+    --ring: 350 71% 36%;
+
+    /* Radius — tight product geometry. Cards read as panels, not pillows. */
+    --radius: 0.1875rem; /* 3px  — buttons, inputs, menus */
+    --radius-sm: 0.125rem; /* 2px  — pills, chips, small tags */
+    --radius-lg: 0.3125rem; /* 5px  — cards, modals */
+
+    /* Shadows (warm-tinted, low key) */
+    --shadow-xs: 0 1px 2px 0 hsl(24 25% 10% / 0.04);
+    --shadow-sm: 0 1px 3px 0 hsl(24 25% 10% / 0.05), 0 1px 2px -1px hsl(24 25% 10% / 0.04);
+    --shadow-md: 0 4px 10px -2px hsl(24 25% 10% / 0.07), 0 2px 6px -2px hsl(24 25% 10% / 0.04);
+    --shadow-lg: 0 12px 28px -8px hsl(24 25% 10% / 0.1), 0 4px 10px -4px hsl(24 25% 10% / 0.05);
+    --shadow-glow: 0 0 0 1px hsl(var(--primary) / 0.14), 0 6px 18px -8px hsl(var(--primary) / 0.24);
+  }
+
+  .dark {
+    /* Warm near-black — the same material language, inverted */
+    --background: 24 14% 8%;
+    --foreground: 36 18% 92%;
+    --card: 24 12% 10%;
+    --card-foreground: 36 18% 92%;
+    --popover: 24 12% 10%;
+    --popover-foreground: 36 18% 92%;
+    --surface: 24 12% 12%;
+    --surface-2: 24 10% 15%;
+
+    --workbench-backdrop: 24 16% 6%;
+    --workbench-canvas: 24 13% 9%;
+    --workbench-rail: 24 11% 12%;
+    --workbench-rail-foreground: 34 14% 88%;
+    --chrome: 24 12% 10%;
+    --chrome-foreground: 36 18% 92%;
+    --context: 24 12% 8%;
+    --context-foreground: 34 14% 90%;
+    --rail: 24 18% 5%;
+    --rail-foreground: 34 12% 68%;
+
+    /* Primary — lifted ruby so it stays legible on warm near-black */
+    --primary: 350 72% 64%;
+    --primary-foreground: 350 60% 12%;
+    --primary-soft: 350 40% 18%;
+    --primary-ring: 350 72% 64%;
+
+    --secondary: 34 18% 16%;
+    --secondary-foreground: 36 18% 92%;
+    --muted: 24 10% 15%;
+    --muted-foreground: 34 10% 62%;
+    --accent: 34 20% 18%;
+    --accent-foreground: 36 18% 92%;
+
+    --accent-blue: 214 52% 66%;
+    --accent-violet: 282 40% 70%;
+    --accent-cyan: 186 46% 56%;
+    --accent-emerald: 152 40% 56%;
+    --accent-amber: 32 72% 60%;
+    --accent-rose: 348 58% 66%;
+    --accent-indigo: 234 44% 68%;
+
+    --success: 152 44% 52%;
+    --success-foreground: 152 50% 8%;
+    --warning: 32 78% 58%;
+    --warning-foreground: 28 44% 10%;
+    --destructive: 356 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --info: 200 48% 60%;
+    --info-foreground: 200 50% 10%;
+
+    --border: 30 8% 20%;
+    --border-strong: 30 8% 28%;
+    --input: 30 8% 20%;
+    --ring: 350 72% 64%;
+
+    --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.35);
+    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.4), 0 1px 2px -1px hsl(0 0% 0% / 0.3);
+    --shadow-md: 0 6px 14px -4px hsl(0 0% 0% / 0.5), 0 2px 6px -2px hsl(0 0% 0% / 0.35);
+    --shadow-lg: 0 14px 32px -8px hsl(0 0% 0% / 0.55), 0 6px 12px -4px hsl(0 0% 0% / 0.4);
+    --shadow-glow: 0 0 0 1px hsl(var(--primary) / 0.24), 0 8px 24px -8px hsl(var(--primary) / 0.36);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1,
+      'ss01' 1;
+    letter-spacing: 0;
+    word-spacing: 0.08em;
+  }
+  code,
+  kbd,
+  pre,
+  samp,
+  .font-mono {
+    word-spacing: 0;
+  }
+  /* Keyboard-first fallback. Component-level Radix/shadcn rings are more
+     specific and may replace this outline, while raw links and buttons never
+     lose visible focus. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  /* Selection */
+  ::selection {
+    background: hsl(var(--primary) / 0.22);
+    color: hsl(var(--foreground));
+  }
+  /* Typography base */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    letter-spacing: 0;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Theme scopes — respond to data-theme attribute written by theme-store.
+   Ruby is the ValidTeam default (`:root` above). These are optional user
+   accents, retuned to the same muted, earthy register so none of them reads
+   as a generic SaaS neon or collides with the ruby brand action colour.
+   ---------------------------------------------------------------------------- */
+
+/* tide — deep teal */
+[data-theme='ocean'] {
+  --primary: 190 62% 30%;
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 190 52% 95%;
+  --primary-ring: 190 62% 30%;
+  --ring: 190 62% 30%;
+}
+[data-theme='ocean'].dark {
+  --primary: 190 50% 58%;
+  --primary-foreground: 190 60% 10%;
+  --primary-soft: 190 52% 18%;
+  --primary-ring: 190 50% 58%;
+  --ring: 190 50% 58%;
+}
+
+/* grove — forest green */
+[data-theme='forest'] {
+  --primary: 150 48% 29%;
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 150 40% 95%;
+  --primary-ring: 150 48% 29%;
+  --ring: 150 48% 29%;
+}
+[data-theme='forest'].dark {
+  --primary: 150 42% 56%;
+  --primary-foreground: 150 50% 9%;
+  --primary-soft: 150 40% 18%;
+  --primary-ring: 150 42% 56%;
+  --ring: 150 42% 56%;
+}
+
+/* ochre — warm amber */
+[data-theme='sunset'] {
+  --primary: 22 78% 36%;
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 22 70% 95%;
+  --primary-ring: 22 78% 36%;
+  --ring: 22 78% 36%;
+}
+[data-theme='sunset'].dark {
+  --primary: 22 72% 60%;
+  --primary-foreground: 22 60% 10%;
+  --primary-soft: 22 70% 18%;
+  --primary-ring: 22 72% 60%;
+  --ring: 22 72% 60%;
+}
+
+/* plum — muted violet */
+[data-theme='purple'] {
+  --primary: 280 44% 42%;
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 280 40% 95%;
+  --primary-ring: 280 44% 42%;
+  --ring: 280 44% 42%;
+}
+[data-theme='purple'].dark {
+  --primary: 280 42% 70%;
+  --primary-foreground: 280 50% 10%;
+  --primary-soft: 280 40% 19%;
+  --primary-ring: 280 42% 70%;
+  --ring: 280 42% 70%;
+}
+
+/* mulberry — deep magenta, kept clear of the ruby brand action colour */
+[data-theme='rose'] {
+  --primary: 328 56% 41%;
+  --primary-foreground: 0 0% 100%;
+  --primary-soft: 328 50% 95%;
+  --primary-ring: 328 56% 41%;
+  --ring: 328 56% 41%;
+}
+[data-theme='rose'].dark {
+  --primary: 328 52% 68%;
+  --primary-foreground: 328 50% 10%;
+  --primary-soft: 328 50% 19%;
+  --primary-ring: 328 52% 68%;
+  --ring: 328 52% 68%;
+}
+
+/* ----------------------------------------------------------------------------
+   Visual mode scopes — respond to data-visual attribute
+   ---------------------------------------------------------------------------- */
+
+/* minimal — flatten shadows, nearly square */
+[data-visual='minimal'] {
+  --shadow-xs: 0 1px 2px 0 hsl(224 22% 10% / 0.02);
+  --shadow-sm: 0 1px 2px 0 hsl(224 22% 10% / 0.03);
+  --shadow-md: 0 2px 4px 0 hsl(224 22% 10% / 0.04);
+  --shadow-lg: 0 4px 8px -2px hsl(224 22% 10% / 0.05);
+  --radius: 0.125rem;
+  --radius-sm: 0.0625rem;
+  --radius-lg: 0.1875rem;
+}
+
+/* glass — surface-card becomes translucent with backdrop-filter */
+[data-visual='glass'] .surface-card {
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+}
+@supports (backdrop-filter: blur(1px)) {
+  [data-visual='glass'] .surface-card {
+    background: hsl(var(--card) / 0.72);
+  }
+}
+
+/* modern — default, no overrides needed */
+[data-visual='modern'] {
+}
+
+/* ----------------------------------------------------------------------------
+   Animation toggle — respond to data-animations="false" on <html>
+   ---------------------------------------------------------------------------- */
+[data-animations='false'] *,
+[data-animations='false'] *::before,
+[data-animations='false'] *::after {
+  animation-duration: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0ms !important;
+}
+[data-animations='false'] .animate-aurora,
+[data-animations='false'] .animate-pulse-ring,
+[data-animations='false'] .animate-gradient-pan,
+[data-animations='false'] .landing-marquee-track,
+[data-animations='false'] .shimmer {
+  animation: none !important;
+}
+
+/* ----------------------------------------------------------------------------
+   Scrollbars
+   ---------------------------------------------------------------------------- */
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.35);
+    background-clip: content-box;
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Reusable surface components
+   ---------------------------------------------------------------------------- */
+@layer components {
+  /* Soft raised card */
+  .surface-card {
+    @apply border-border bg-card relative rounded-lg border shadow-none;
+  }
+  .surface-card-hover {
+    transition:
+      box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.2s ease,
+      transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .surface-card-hover:hover {
+    border-color: hsl(var(--border-strong));
+    box-shadow: var(--shadow-xs);
+  }
+  /* Muted inset surface */
+  .surface-inset {
+    background: hsl(var(--surface-2) / 0.72);
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
+  }
+
+  /* Workbench composition. Desktop treats the page as a focus canvas inside
+     quieter application chrome; small screens return to edge-to-edge space. */
+  .app-workbench {
+    background: hsl(var(--workbench-backdrop));
+    color: hsl(var(--foreground));
+  }
+  .workbench-canvas {
+    background: hsl(var(--workbench-canvas));
+    border-color: hsl(var(--border-strong) / 0.72);
+    box-shadow: 0 1px 2px hsl(224 22% 10% / 0.035);
+  }
+  .workbench-commandbar {
+    background: hsl(var(--chrome));
+    color: hsl(var(--chrome-foreground));
+  }
+  .workbench-context {
+    background: hsl(var(--context));
+    color: hsl(var(--context-foreground));
+  }
+  .workbench-rail {
+    background: hsl(var(--workbench-rail));
+    color: hsl(var(--workbench-rail-foreground));
+  }
+  .command-header {
+    background: hsl(var(--chrome));
+    border-color: hsl(var(--border));
+  }
+  @media (max-width: 767px) {
+    .workbench-canvas {
+      border-color: transparent;
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+  /* Elevated glass-ish panel */
+  .surface-glass {
+    background: hsl(var(--card) / 0.75);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--radius-lg);
+  }
+
+  .auth-carbon-ui {
+    --auth-bg: #f4f4f4;
+    --auth-surface: #ffffff;
+    --auth-text: #161616;
+    --auth-text-muted: #525252;
+    --auth-border: #e0e0e0;
+    --auth-border-strong: #8d8d8d;
+    --auth-blue: #0f62fe;
+    --auth-blue-hover: #0043ce;
+    --auth-danger: #da1e28;
+    background: var(--auth-bg);
+    color: var(--auth-text);
+    color-scheme: light;
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, var(--font-sans), sans-serif;
+    word-spacing: 0;
+  }
+
+  .auth-carbon-heading {
+    color: var(--auth-text);
+    font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, var(--font-sans), sans-serif;
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: 0;
+  }
+
+  .auth-carbon-subtitle {
+    color: var(--auth-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .auth-carbon-label {
+    color: var(--auth-text);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .auth-carbon-input {
+    height: 3rem !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--auth-border-strong) !important;
+    border-radius: 0 !important;
+    background: var(--auth-bg) !important;
+    color: var(--auth-text) !important;
+    box-shadow: none !important;
+    padding-inline: 1rem !important;
+    transition: none !important;
+  }
+
+  .auth-carbon-input::placeholder {
+    color: #8d8d8d;
+  }
+
+  .auth-carbon-input:focus-visible {
+    border-bottom-color: var(--auth-blue) !important;
+    outline: 2px solid var(--auth-blue) !important;
+    outline-offset: -2px !important;
+    box-shadow: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+    --tw-ring-offset-shadow: 0 0 #0000 !important;
+  }
+
+  .auth-carbon-primary {
+    min-height: 3rem !important;
+    border-radius: 0 !important;
+    background: var(--auth-blue) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    font-weight: 400 !important;
+    transition:
+      background-color 120ms ease,
+      outline-color 120ms ease !important;
+  }
+
+  .auth-carbon-primary:hover {
+    background: var(--auth-blue-hover) !important;
+  }
+
+  .auth-carbon-secondary {
+    min-height: 3rem !important;
+    border: 1px solid var(--auth-border-strong) !important;
+    border-radius: 0 !important;
+    background: var(--auth-surface) !important;
+    color: var(--auth-text) !important;
+    box-shadow: none !important;
+    font-weight: 400 !important;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease !important;
+  }
+
+  .auth-carbon-secondary:hover {
+    background: #e0e0e0 !important;
+    border-color: #525252 !important;
+  }
+
+  .auth-carbon-link {
+    color: var(--auth-blue);
+    font-weight: 400;
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+
+  .auth-carbon-link:hover {
+    color: var(--auth-blue-hover);
+    text-decoration: underline;
+  }
+
+  .auth-carbon-alert {
+    border-radius: 0 !important;
+    padding: 0.75rem 1rem;
+  }
+
+  .auth-carbon-spinner {
+    height: 1.25rem;
+    width: 1.25rem;
+    animation: spin 1s linear infinite;
+    border: 2px solid var(--auth-border-strong);
+    border-top-color: var(--auth-blue);
+    border-radius: 999px;
+  }
+
+  /* FEAT-31 — glassmorphism panel for modals, command palette, and popovers.
+     Theme-aware: a frosted *light* surface in day mode and a frosted *dark*
+     surface in night mode, so overlays always read as elevated system-level
+     surfaces floating above the app — never a dark slab over a light page.
+
+     Layers (per theme):
+       1. translucent surface background (white in light, zinc-900 in dark)
+       2. saturated backdrop-blur for depth
+       3. 1px subtle ring for edge definition
+       4. soft inner glow (top-edge highlight) for tactile feel
+       5. matching drop shadow that doesn't compete with the ring
+
+     IMPORTANT: the `.dark .glass-panel` block below preserves the original
+     dark glass byte-for-byte — do not regress night mode when touching light.
+  */
+  .glass-panel {
+    background: rgb(255 255 255 / 0.82); /* frosted white */
+    backdrop-filter: saturate(160%) blur(20px);
+    -webkit-backdrop-filter: saturate(160%) blur(20px);
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.7),
+      0 0 0 1px rgb(15 23 42 / 0.08),
+      0 24px 48px -12px rgb(15 23 42 / 0.18),
+      0 8px 20px -8px rgb(15 23 42 / 0.12);
+    border-radius: var(--radius-lg);
+    color: hsl(var(--foreground)); /* readable text on light glass */
+  }
+  .dark .glass-panel {
+    background: rgb(24 24 27 / 0.7); /* zinc-900/70 */
+    box-shadow:
+      inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+      0 0 0 1px rgb(255 255 255 / 0.08),
+      0 24px 48px -12px rgb(0 0 0 / 0.55),
+      0 8px 20px -8px rgb(0 0 0 / 0.4);
+    color: rgb(244 244 245); /* zinc-100 — readable text on dark glass */
+  }
+  /* Fallback for browsers without backdrop-filter (Firefox in some
+     configurations): drop the translucency and lean on the solid surface. */
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-panel {
+      background: rgb(255 255 255 / 0.98);
+    }
+    .dark .glass-panel {
+      background: rgb(24 24 27 / 0.96);
+    }
+  }
+
+  /* Kanban — NEVER animate `transform` here. dnd-kit owns transform during drag;
+     any CSS transform transition (including :hover translateY) fights the sortable
+     reorder animation and makes cards snap to wrong positions. */
+  .kanban-card {
+    @apply border-border bg-card relative overflow-hidden rounded-lg border px-3 py-2.5;
+    box-shadow: none;
+    transition:
+      box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.15s ease;
+  }
+  .kanban-card:hover {
+    border-color: hsl(var(--border-strong));
+    box-shadow: var(--shadow-xs);
+  }
+  .kanban-card[data-dragging='true'] {
+    cursor: grabbing;
+    box-shadow: var(--shadow-lg);
+    border-color: hsl(var(--primary) / 0.45);
+  }
+  .kanban-column {
+    @apply border-border bg-surface/60 rounded-lg border;
+    box-shadow: none;
+  }
+  .kanban-column-header {
+    @apply border-border border-b px-3 py-2.5;
+  }
+  .kanban-column-drop-active {
+    @apply border-primary/40;
+    background: hsl(var(--primary) / 0.06);
+    box-shadow:
+      inset 0 0 0 1px hsl(var(--primary) / 0.22),
+      var(--shadow-sm);
+  }
+
+  /* Chip / badge system */
+  .chip {
+    @apply border-border bg-surface text-muted-foreground inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 text-[11px] font-medium;
+  }
+  .chip-accent {
+    @apply inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.18);
+  }
+
+  /* Section kicker / eyebrow */
+  .kicker {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Semantic accent chips (legacy compatibility shortcuts) */
+  .chip-blue {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-blue) / 0.12);
+    color: hsl(var(--accent-blue));
+    border: 1px solid hsl(var(--accent-blue) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .chip-violet {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-violet) / 0.12);
+    color: hsl(var(--accent-violet));
+    border: 1px solid hsl(var(--accent-violet) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .chip-cyan {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-cyan) / 0.12);
+    color: hsl(var(--accent-cyan));
+    border: 1px solid hsl(var(--accent-cyan) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .chip-emerald {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-emerald) / 0.12);
+    color: hsl(var(--accent-emerald));
+    border: 1px solid hsl(var(--accent-emerald) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .chip-amber {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-amber) / 0.12);
+    color: hsl(var(--accent-amber));
+    border: 1px solid hsl(var(--accent-amber) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .chip-rose {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-rose) / 0.12);
+    color: hsl(var(--accent-rose));
+    border: 1px solid hsl(var(--accent-rose) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+
+  /* Accent soft panels: colored inset surfaces (alerts / callouts) */
+  .panel-info {
+    background: hsl(var(--accent-blue) / 0.08);
+    border: 1px solid hsl(var(--accent-blue) / 0.22);
+    border-radius: var(--radius-lg);
+  }
+  .panel-success {
+    background: hsl(var(--accent-emerald) / 0.08);
+    border: 1px solid hsl(var(--accent-emerald) / 0.22);
+    border-radius: var(--radius-lg);
+  }
+  .panel-warn {
+    background: hsl(var(--accent-amber) / 0.1);
+    border: 1px solid hsl(var(--accent-amber) / 0.24);
+    border-radius: var(--radius-lg);
+  }
+  .panel-danger {
+    background: hsl(var(--accent-rose) / 0.08);
+    border: 1px solid hsl(var(--accent-rose) / 0.24);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Interactive row (hover-emphasized list item) */
+  .row-interactive {
+    @apply relative flex min-w-0 cursor-pointer items-center gap-3 px-3 py-2;
+    border-radius: var(--radius);
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .row-interactive:hover {
+    background: hsl(var(--accent) / 0.6);
+  }
+  .row-interactive[data-active='true'] {
+    background: hsl(var(--primary) / 0.075);
+    color: hsl(var(--foreground));
+    box-shadow: inset 2px 0 0 hsl(var(--primary));
+  }
+  [dir='rtl'] .row-interactive[data-active='true'] {
+    box-shadow: inset -2px 0 0 hsl(var(--primary));
+  }
+
+  /* Legacy icon tile compatibility helper; avoid for new ornamental UI. */
+  .icon-tile {
+    @apply inline-flex items-center justify-center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius);
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.18);
+  }
+  .icon-tile-accent-blue {
+    background: hsl(var(--accent-blue) / 0.1);
+    color: hsl(var(--accent-blue));
+    border-color: hsl(var(--accent-blue) / 0.2);
+  }
+  .icon-tile-accent-violet {
+    background: hsl(var(--accent-violet) / 0.1);
+    color: hsl(var(--accent-violet));
+    border-color: hsl(var(--accent-violet) / 0.2);
+  }
+  .icon-tile-accent-emerald {
+    background: hsl(var(--accent-emerald) / 0.1);
+    color: hsl(var(--accent-emerald));
+    border-color: hsl(var(--accent-emerald) / 0.2);
+  }
+  .icon-tile-accent-amber {
+    background: hsl(var(--accent-amber) / 0.1);
+    color: hsl(var(--accent-amber));
+    border-color: hsl(var(--accent-amber) / 0.2);
+  }
+  .icon-tile-accent-rose {
+    background: hsl(var(--accent-rose) / 0.1);
+    color: hsl(var(--accent-rose));
+    border-color: hsl(var(--accent-rose) / 0.2);
+  }
+  .icon-tile-accent-cyan {
+    background: hsl(var(--accent-cyan) / 0.1);
+    color: hsl(var(--accent-cyan));
+    border-color: hsl(var(--accent-cyan) / 0.2);
+  }
+
+  /* Live status pill (realtime indicator with breathing dot) */
+  .live-pill {
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 text-[11px] font-medium;
+    background: hsl(var(--accent-emerald) / 0.1);
+    color: hsl(var(--accent-emerald));
+    border: 1px solid hsl(var(--accent-emerald) / 0.22);
+    border-radius: var(--radius-sm);
+  }
+  .live-pill::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
+    animation: dot-breathe 2.2s ease-in-out infinite;
+    box-shadow: 0 0 0 3px currentColor;
+    box-shadow: 0 0 0 3px hsl(var(--accent-emerald) / 0.18);
+  }
+
+  /* Dashboard is a calm work surface, not a separate visual theme. Keep the
+     product typography and geometry so users retain orientation across routes. */
+  .dashboard-carbon {
+    word-spacing: 0;
+    background:
+      linear-gradient(180deg, hsl(var(--surface) / 0.42), transparent 180px),
+      hsl(var(--workbench-canvas));
+  }
+
+  .dashboard-carbon .row-interactive:hover {
+    background: hsl(var(--surface) / 0.8);
+  }
+
+  .dashboard-carbon :is(button, a, [role='button'], [role='tab']):focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 1px;
+  }
+
+  .metric-strip-item {
+    border-inline-end: 1px solid hsl(var(--border));
+  }
+
+  .metric-strip-item:nth-child(2n) {
+    border-inline-end: 0;
+  }
+
+  .metric-strip-item:nth-child(-n + 2) {
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  @media (min-width: 768px) {
+    .metric-strip-item:nth-child(2n) {
+      border-inline-end: 1px solid hsl(var(--border));
+    }
+
+    .metric-strip-item:nth-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .metric-strip-item:last-child {
+      border-inline-end: 0;
+    }
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Public surfaces — ValidTeam porcelain / sand / ruby scope.
+   The brand action slot is `--landing-accent-ruby*`; the older
+   `--landing-accent-blue*` names survive as aliases so no stylesheet renders a
+   generic blue by accident.
+   ---------------------------------------------------------------------------- */
+.landing-dark {
+  --landing-font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, var(--font-sans), sans-serif;
+  --landing-font-mono: 'IBM Plex Mono', var(--font-mono), ui-monospace, monospace;
+
+  --landing-porcelain: #faf7f2;
+  --landing-sand: #e7d9be;
+  --landing-sand-pale: #f5eee1;
+  --landing-ruby: #9b1b30;
+  --landing-ruby-bright: #c0243f;
+
+  --landing-bg: #faf7f2;
+  --landing-bg-elevated: #ffffff;
+  --landing-bg-card: #ffffff;
+  --landing-bg-surface: #f5efe4;
+  --landing-bg-hover: #efe7d8;
+  --landing-bg-section: #f3ecdf;
+
+  --landing-border: #e5dccb;
+  --landing-border-strong: #d2c4ab;
+  --landing-border-light: #8a8072;
+
+  --landing-text: #1c1815;
+  --landing-text-dark: #0e0b09;
+  --landing-text-body: #3d362f;
+  /* Muted copy still needs to pass WCAG AA at the 9–12px sizes used by
+     evidence rails and compact product mockups. */
+  --landing-text-muted: #5a5148;
+  --landing-text-subtle: #453d35;
+  --landing-text-icon: #6b6156;
+
+  /* Brand action — ruby. Deliberately the only saturated hue in the chrome. */
+  --landing-accent-ruby: #9b1b30;
+  --landing-accent-ruby-hover: #7a1325;
+  --landing-accent-ruby-text: #8a1830;
+  --landing-accent-ruby-solid: #9b1b30;
+  --landing-accent-ruby-solid-hover: #7a1325;
+
+  /* Legacy aliases. The brand action slot used to be named "blue" back when
+     this shell was the upstream marketing site; keep them pointing at ruby so
+     any stylesheet or third-party snippet that still uses the old name renders
+     in brand colours instead of drifting to a generic blue. */
+  --landing-accent-blue: var(--landing-accent-ruby);
+  --landing-accent-blue-hover: var(--landing-accent-ruby-hover);
+  --landing-accent-blue-text: var(--landing-accent-ruby-text);
+  --landing-accent-blue-solid: var(--landing-accent-ruby-solid);
+  --landing-accent-blue-solid-hover: var(--landing-accent-ruby-solid-hover);
+
+  /* Data hues for product mockups (status, priority, chart series). Muted and
+     earthy so the mockups read as a real product, not a template. */
+  --landing-accent-violet: #6b4e8f;
+  --landing-accent-cyan: #2c6e75;
+  --landing-accent-emerald: #3f7a52;
+  --landing-accent-amber: #b4741c;
+  --landing-accent-rose: #c4674b;
+  --landing-accent-green: #5e7a3c;
+  --landing-accent-pink: #a8556a;
+
+  --landing-shadow: 0 24px 48px -40px rgb(28 24 21 / 0.4);
+  --landing-glow: none;
+
+  --divider: #e5dccb;
+  --white: #ffffff;
+
+  color-scheme: light;
+  font-family: var(--landing-font-sans);
+  word-spacing: 0;
+  overflow-x: clip;
+}
+
+/* The marketing shell participates in the global theme. Keeping its tokens
+   fixed to the light palette made the dark-mode route matrix a false positive:
+   `<html class="dark">` changed while the entire landing surface stayed light. */
+.dark .landing-dark {
+  --landing-porcelain: #141110;
+  --landing-sand: #3a3128;
+  --landing-sand-pale: #1b1713;
+  --landing-ruby: #e0708a;
+  --landing-ruby-bright: #ec8a9f;
+
+  --landing-bg: #141110;
+  --landing-bg-elevated: #1e1a17;
+  --landing-bg-card: #1e1a17;
+  --landing-bg-surface: #17130f;
+  --landing-bg-hover: #2a2420;
+  --landing-bg-section: #17130f;
+
+  --landing-border: #2e2823;
+  --landing-border-strong: #453c34;
+  --landing-border-light: #6e6459;
+
+  --landing-text: #f5f1ea;
+  --landing-text-dark: #ffffff;
+  --landing-text-body: #d6cec2;
+  --landing-text-muted: #a79c8d;
+  --landing-text-subtle: #c4bbad;
+  --landing-text-icon: #a79c8d;
+
+  --landing-accent-ruby: #e0708a;
+  --landing-accent-ruby-hover: #e0708a;
+  --landing-accent-ruby-text: #ec8a9f;
+  --landing-accent-ruby-solid: #9b1b30;
+  --landing-accent-ruby-solid-hover: #7a1325;
+
+  --landing-accent-blue: var(--landing-accent-ruby);
+  --landing-accent-blue-hover: var(--landing-accent-ruby-hover);
+  --landing-accent-blue-text: var(--landing-accent-ruby-text);
+  --landing-accent-blue-solid: var(--landing-accent-ruby-solid);
+  --landing-accent-blue-solid-hover: var(--landing-accent-ruby-solid-hover);
+  --landing-accent-violet: #b79bd8;
+  --landing-accent-cyan: #6fc3cc;
+  --landing-accent-emerald: #7fc495;
+  --landing-accent-amber: #e0ac63;
+  --landing-accent-rose: #e39b80;
+  --landing-accent-green: #a8c583;
+  --landing-accent-pink: #d98ba0;
+  --landing-shadow: 0 24px 48px -36px rgb(0 0 0 / 0.72);
+  --divider: #2e2823;
+
+  color-scheme: dark;
+}
+
+body:has(> .landing-dark) {
+  overflow-x: hidden;
+}
+
+html:has(body > .landing-dark) {
+  overflow-x: hidden;
+}
+
+/* ----------------------------------------------------------------------------
+   Landing typography utilities
+   ---------------------------------------------------------------------------- */
+@layer utilities {
+  .font-\[420\] {
+    font-weight: 420;
+  }
+  .font-\[430\] {
+    font-weight: 430;
+  }
+  .font-\[440\] {
+    font-weight: 440;
+  }
+  .font-\[450\] {
+    font-weight: 450;
+  }
+  .docs-square-ui [class~='rounded'],
+  .docs-square-ui [class*='rounded-']:not([class*='rounded-full']) {
+    border-radius: calc(var(--radius) - 2px) !important;
+  }
+  .docs-square-ui .ProseMirror :is(pre, code, mark, img) {
+    border-radius: calc(var(--radius) - 2px) !important;
+  }
+
+  .landing-display {
+    font-family: var(--landing-font-sans);
+    font-weight: 300;
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+  .landing-title {
+    font-family: var(--landing-font-sans);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+  .landing-kicker {
+    font-family: var(--landing-font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .landing-body {
+    font-family: var(--landing-font-sans);
+    line-height: 1.62;
+    letter-spacing: 0;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .landing-dark :is(.font-mono, .landing-kbd) {
+    font-family: var(--landing-font-mono);
+  }
+
+  .landing-dark .scrollbar-none {
+    contain: layout paint;
+  }
+
+  .landing-dark :is(.chip-blue, .chip-violet, .chip-cyan, .chip-emerald, .chip-amber, .chip-rose) {
+    background: color-mix(in srgb, var(--landing-accent-blue) 9%, transparent);
+    border-color: color-mix(in srgb, var(--landing-accent-blue) 22%, transparent);
+    color: var(--landing-accent-blue-text);
+  }
+
+  .landing-dark
+    :is(
+      .icon-tile-accent-blue,
+      .icon-tile-accent-violet,
+      .icon-tile-accent-cyan,
+      .icon-tile-accent-emerald,
+      .icon-tile-accent-amber,
+      .icon-tile-accent-rose
+    ) {
+    background: color-mix(in srgb, var(--landing-accent-blue) 9%, transparent);
+    border-color: color-mix(in srgb, var(--landing-accent-blue) 22%, transparent);
+    color: var(--landing-accent-blue-text);
+  }
+
+  .landing-dark .live-pill {
+    background: color-mix(in srgb, var(--landing-accent-blue) 9%, transparent);
+    border-color: color-mix(in srgb, var(--landing-accent-blue) 24%, transparent);
+    color: var(--landing-accent-blue);
+  }
+
+  .landing-dark .live-pill::before {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--landing-accent-blue) 18%, transparent);
+  }
+
+  /* Animated shimmer (skeletons) */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--muted-foreground) / 0.08) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* Theme-aware gradient utilities — primary shifts with data-theme */
+  .bg-theme-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent-violet)) 100%);
+  }
+  .bg-primary-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.65) 100%);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Animations — spring-based, smoother, reduced-motion safe
+   ---------------------------------------------------------------------------- */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+@keyframes aurora-shift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -1%, 0) scale(1.03);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 10px hsl(var(--primary) / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+  }
+}
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes landing-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+/* Motion primitives */
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.015);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes alert-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+@keyframes realtime-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+@keyframes dot-breathe {
+  0%,
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+}
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+/* Page-level wrapper animation: MUST be opacity-only. A lingering `transform`
+   (even translateY(0)) on an ancestor creates a containing block that breaks
+   `position: fixed` for descendants like @dnd-kit's DragOverlay, causing the
+   drag ghost to mis-position. Keep this strictly opacity. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes caret-blink {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  61%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-fade-up {
+  animation: fade-up 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-fade-down {
+  animation: fade-down 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-scale-in {
+  animation: scale-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.animate-aurora {
+  animation: aurora-shift 18s ease-in-out infinite;
+}
+.animate-gradient-pan {
+  background-size: 200% 200%;
+  animation: gradient-pan 10s ease-in-out infinite;
+}
+/* Utility animations */
+.animate-blur-in {
+  animation: blur-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-pop-in {
+  animation: pop-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-alert-in {
+  animation: alert-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-toast-in {
+  animation: toast-in 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-dot-breathe {
+  animation: dot-breathe 2.4s ease-in-out infinite;
+}
+.animate-page-enter {
+  animation: page-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Realtime indicator: use as span wrapper around a status dot */
+.realtime-ping {
+  position: relative;
+  display: inline-flex;
+}
+.realtime-ping::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.6;
+  animation: realtime-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Indeterminate progress bar track (1px accent sweep) */
+.progress-bar-indeterminate {
+  position: relative;
+  overflow: hidden;
+  background: hsl(var(--muted));
+}
+.progress-bar-indeterminate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.7), transparent);
+  animation: progress-indeterminate 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.landing-marquee-track {
+  animation: landing-marquee 45s linear infinite;
+}
+.landing-marquee:hover .landing-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Staggered children helper — wrap with .stagger and items get delayed enter */
+.stagger > * {
+  opacity: 0;
+  animation: fade-up 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger > *:nth-child(2) {
+  animation-delay: 60ms;
+}
+.stagger > *:nth-child(3) {
+  animation-delay: 120ms;
+}
+.stagger > *:nth-child(4) {
+  animation-delay: 180ms;
+}
+.stagger > *:nth-child(5) {
+  animation-delay: 240ms;
+}
+.stagger > *:nth-child(6) {
+  animation-delay: 300ms;
+}
+.stagger > *:nth-child(7) {
+  animation-delay: 360ms;
+}
+.stagger > *:nth-child(8) {
+  animation-delay: 420ms;
+}
+.stagger > *:nth-child(n + 9) {
+  animation-delay: 480ms;
+}
+
+/* ----------------------------------------------------------------------------
+   Priority indicators — map to accent palette
+   ---------------------------------------------------------------------------- */
+@layer utilities {
+  .priority-indicator {
+    @apply w-1 rounded-full;
+  }
+  .priority-critical {
+    background: hsl(var(--accent-rose));
+  }
+  .priority-high {
+    background: hsl(var(--accent-amber));
+  }
+  .priority-medium {
+    background: hsl(var(--accent-blue));
+  }
+  .priority-low {
+    background: hsl(var(--muted-foreground) / 0.6);
+  }
+
+  /* Status dots */
+  .status-dot {
+    @apply inline-block h-1.5 w-1.5 rounded-full;
+  }
+  .status-live {
+    background: hsl(var(--accent-emerald));
+    box-shadow: 0 0 0 3px hsl(var(--accent-emerald) / 0.18);
+  }
+  .status-warn {
+    background: hsl(var(--accent-amber));
+    box-shadow: 0 0 0 3px hsl(var(--accent-amber) / 0.18);
+  }
+  .status-idle {
+    background: hsl(var(--muted-foreground) / 0.6);
+  }
+  .status-danger {
+    background: hsl(var(--accent-rose));
+    box-shadow: 0 0 0 3px hsl(var(--accent-rose) / 0.18);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Docs syntax highlighting — unified with accent palette
+   ---------------------------------------------------------------------------- */
+.hljs-comment,
+.hljs-quote {
+  color: hsl(var(--muted-foreground));
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+  color: hsl(var(--accent-violet));
+}
+.hljs-string,
+.hljs-title,
+.hljs-name,
+.hljs-type,
+.hljs-attribute,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: hsl(var(--accent-emerald));
+}
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-params,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: hsl(var(--accent-blue));
+}
+.hljs-variable,
+.hljs-template-variable,
+.hljs-deletion {
+  color: hsl(var(--accent-rose));
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: 700;
+}
+
+/* ----------------------------------------------------------------------------
+   Dashboard-specific foundational tokens
+   Status semantics, avatar sizes, body type, and pastel label chips.
+   Append-only — does not remove or alter existing tokens above.
+   ---------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    /* Status semantic colors — Plane-style workflow states */
+    --status-backlog: 220 9% 70%; /* light gray */
+    --status-todo: 220 9% 46%; /* mid gray */
+    --status-in-progress: 38 92% 50%; /* amber/yellow */
+    --status-done: 158 68% 42%; /* emerald */
+    --status-cancelled: 348 84% 60%; /* rose */
+  }
+  .dark {
+    --status-backlog: 220 8% 55%;
+    --status-todo: 220 8% 64%;
+    --status-in-progress: 38 92% 58%;
+    --status-done: 158 64% 54%;
+    --status-cancelled: 348 84% 68%;
+  }
+}
+
+@layer utilities {
+  /* Status dot helpers — 14px circular indicators, Plane-inspired */
+  .status-dot-backlog {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    border: 1.5px dashed hsl(var(--status-backlog));
+    background: transparent;
+    color: hsl(var(--status-backlog));
+  }
+  .status-dot-todo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    border: 1.5px solid hsl(var(--status-todo));
+    background: transparent;
+    color: hsl(var(--status-todo));
+  }
+  .status-dot-in-progress {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    border: 1.5px solid hsl(var(--status-in-progress));
+    background: linear-gradient(
+      to right,
+      hsl(var(--status-in-progress)) 0%,
+      hsl(var(--status-in-progress)) 50%,
+      transparent 50%,
+      transparent 100%
+    );
+    color: hsl(var(--status-in-progress));
+  }
+  .status-dot-done {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    border: 1.5px solid hsl(var(--status-done));
+    background: hsl(var(--status-done));
+    color: hsl(var(--status-done));
+  }
+  .status-dot-cancelled {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    border: 1.5px solid hsl(var(--status-cancelled));
+    background: hsl(var(--status-cancelled) / 0.12);
+    color: hsl(var(--status-cancelled));
+  }
+  .status-dot-cancelled::before,
+  .status-dot-cancelled::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 1.25px;
+    background: currentColor;
+    border-radius: 1px;
+    top: 50%;
+    left: 50%;
+  }
+  .status-dot-cancelled::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .status-dot-cancelled::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  /* Avatar size scale — width + height + font-size in lockstep */
+  .avatar-xs {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    line-height: 1;
+  }
+  .avatar-sm {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .avatar-md {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+    line-height: 1;
+  }
+  .avatar-lg {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  /* Body type scale — tight, modern reading sizes */
+  .body-sm {
+    font-size: 13px;
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+  }
+  .body-xs {
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: -0.003em;
+  }
+}
+
+@layer components {
+  /* Pastel label pill — soft tinted bg with deeper text + leading dot */
+  .chip-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0 0.5rem;
+    height: 20px;
+    border-radius: 9999px;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .chip-pill::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0.85;
+  }
+
+  .chip-pill-orange {
+    background: hsl(25 95% 95%);
+    color: hsl(25 75% 35%);
+  }
+  .chip-pill-emerald {
+    background: hsl(152 76% 94%);
+    color: hsl(155 65% 28%);
+  }
+  .chip-pill-blue {
+    background: hsl(212 95% 95%);
+    color: hsl(217 75% 38%);
+  }
+  .chip-pill-amber {
+    background: hsl(45 95% 92%);
+    color: hsl(35 78% 32%);
+  }
+  .chip-pill-rose {
+    background: hsl(350 92% 95%);
+    color: hsl(348 70% 38%);
+  }
+  .chip-pill-violet {
+    background: hsl(265 92% 96%);
+    color: hsl(264 65% 42%);
+  }
+  .chip-pill-cyan {
+    background: hsl(188 80% 93%);
+    color: hsl(190 78% 28%);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Landing marketing sections (src/components/marketing) — additive tokens only.
+   Scoped to .landing-dark; do not reuse outside the landing page.
+   ---------------------------------------------------------------------------- */
+.landing-dark {
+  --landing-terminal-bg: #ffffff;
+}
+
+.dark .landing-dark {
+  --landing-terminal-bg: #262626;
+}
+
+@layer utilities {
+  /* Terminal / code snippet card used by the hero and self-host sections */
+  .landing-terminal {
+    background: var(--landing-terminal-bg, #08090c);
+    border: 1px solid var(--landing-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 18px 42px -36px rgb(0 0 0 / 0.45);
+  }
+
+  /* Keycap for keyboard-shortcut vignettes (Cmd+K mock) */
+  .landing-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 0.3rem;
+    border: 1px solid var(--landing-border-strong);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background: var(--landing-bg-elevated);
+    font-family: var(--landing-font-mono);
+    font-size: 10px;
+    color: var(--landing-text-body);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Reduced-motion
+   ---------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin {
+    animation: none;
+  }
+  .animate-pulse {
+    animation: none;
+  }
+  .animate-aurora {
+    animation: none;
+  }
+  .animate-gradient-pan {
+    animation: none;
+  }
+  .animate-pulse-ring {
+    animation: none;
+  }
+  .landing-marquee-track {
+    animation: none;
+  }
+  .stagger > * {
+    opacity: 1;
+    animation: none;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

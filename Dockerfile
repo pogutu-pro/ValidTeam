@@ -1,0 +1,160 @@
+# syntax=docker.io/docker/dockerfile:1
+
+# =============================================================================
+# Next.js 15 production Dockerfile
+# Based on: https://github.com/vercel/next.js/tree/canary/examples/with-docker
+# =============================================================================
+
+# Base stage - Alpine for smaller image size
+FROM node:22-alpine AS base
+
+# Install libc6-compat for Alpine compatibility with some npm packages
+# https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
+RUN apk add --no-cache libc6-compat
+
+# Enable corepack for pnpm
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+
+WORKDIR /app
+
+# =============================================================================
+# Dependencies stage - Install only production dependencies
+# =============================================================================
+FROM base AS deps
+
+# Copy package files for dependency installation
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/db/package.json ./packages/db/
+COPY packages/types/package.json ./packages/types/
+COPY packages/config/package.json ./packages/config/
+COPY packages/mcp-server/package.json ./packages/mcp-server/
+COPY packages/mcp-server/bin ./packages/mcp-server/bin
+COPY services/hocuspocus/package.json ./services/hocuspocus/
+
+# Install dependencies (lockfile will be updated if needed)
+RUN pnpm install --frozen-lockfile
+
+# =============================================================================
+# Builder stage - Build the application
+# =============================================================================
+FROM base AS builder
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages/db/node_modules ./packages/db/node_modules
+COPY --from=deps /app/packages/types/node_modules ./packages/types/node_modules
+COPY --from=deps /app/packages/config/node_modules ./packages/config/node_modules
+COPY --from=deps /app/packages/mcp-server/node_modules ./packages/mcp-server/node_modules
+COPY --from=deps /app/services/hocuspocus/node_modules ./services/hocuspocus/node_modules
+
+# Copy source code
+COPY . .
+
+# Build arguments for public environment variables baked into the client bundle
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_COLLAB_ENABLED=false
+ARG NEXT_PUBLIC_HOCUSPOCUS_URL
+
+# Set environment variables for build
+# Dummy DATABASE_URL for build-time module evaluation only (no actual DB queries during build)
+# Real value is injected at runtime via docker-compose environment
+ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ENV NEXT_PUBLIC_COLLAB_ENABLED=$NEXT_PUBLIC_COLLAB_ENABLED
+ENV NEXT_PUBLIC_HOCUSPOCUS_URL=$NEXT_PUBLIC_HOCUSPOCUS_URL
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build the application
+RUN pnpm build
+
+# =============================================================================
+# Runner stage - Production runtime (minimal image)
+# =============================================================================
+FROM node:22-alpine AS runner
+
+# Install netcat for database checks, postgresql-client for update backups,
+# and su-exec for user switching.
+RUN apk add --no-cache netcat-openbsd postgresql-client su-exec
+
+# Enable corepack for pnpm in runner stage
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+
+WORKDIR /app
+
+# Set production environment
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy public assets
+COPY --from=builder /app/apps/web/public ./apps/web/public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+# Set the correct permission for prerender cache
+RUN mkdir -p ./apps/web/.next
+RUN chown nextjs:nodejs ./apps/web/.next
+
+# Copy standalone build output
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+# Copy static files
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+
+# Force `experimental.trustHostHeader: true` in the standalone server.
+# Next.js hard-codes this to `false` at build time unless running on Vercel
+# (`build/index.js`: `trustHostHeader: _ciinfo.hasNextSupport`). Behind our
+# nginx reverse proxy the host header is the public domain, which differs
+# from the standalone server's bound address — so when next-intl emits an
+# absolute `x-middleware-rewrite` value, Next's `relativizeURL` sees a host
+# mismatch and falls through to `proxyRequest`. That proxy then tries to
+# loop back through DNS and fails with `ECONNREFUSED 127.0.0.2:443` on
+# every locale-rewritten route (`/dashboard` → `/en/dashboard`, causing a
+# 500 right after login). Patching the embedded config blob flips the flag
+# so the standalone server builds its `initUrl` from the same host header
+# next-intl uses, the rewrite stays internal, and the proxy path is never
+# entered. Idempotent: sed is a no-op if the substring is absent.
+RUN sed -i 's/"trustHostHeader":false/"trustHostHeader":true/g' ./apps/web/server.js
+
+# Copy database package with migrations and seed
+COPY --from=builder /app/packages/db/src ./packages/db/src
+COPY --from=builder /app/packages/db/scripts ./packages/db/scripts
+COPY --from=builder /app/packages/db/drizzle ./packages/db/drizzle
+COPY --from=builder /app/packages/db/package.json ./packages/db/package.json
+COPY --from=builder /app/packages/db/drizzle.config.ts ./packages/db/drizzle.config.ts
+
+# Copy dependencies for db package
+COPY --from=builder /app/packages/types ./packages/types
+COPY --from=builder /app/packages/config ./packages/config
+
+# Copy node_modules for packages (needed for tsx and dependencies)
+COPY --from=builder /app/packages/db/node_modules ./packages/db/node_modules
+COPY --from=builder /app/packages/types/node_modules ./packages/types/node_modules
+COPY --from=builder /app/packages/config/node_modules ./packages/config/node_modules
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy entrypoint script
+COPY --chmod=755 docker-entrypoint.sh /docker-entrypoint.sh
+
+# Create writable runtime directories with correct permissions
+RUN mkdir -p ./uploads ./backups && chown -R nextjs:nodejs ./uploads ./backups ./packages
+
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Start with entrypoint script
+# This script will run migrations, seed database, and start the server
+ENTRYPOINT ["/docker-entrypoint.sh"]

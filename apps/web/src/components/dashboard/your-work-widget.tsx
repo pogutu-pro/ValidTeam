@@ -1,0 +1,161 @@
+'use client';
+
+import { useState } from 'react';
+import { useFormatter, useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useQuery } from '@tanstack/react-query';
+import { ArrowUpRight, Inbox, Loader2, Circle } from 'lucide-react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useOrganization } from '@/lib/hooks/use-organization';
+import { isApiPermissionError, throwApiResponseError } from '@/lib/client-api-errors';
+import { cn } from '@/lib/utils';
+
+type TabKey = 'assigned' | 'created' | 'subscribed';
+
+interface MyIssue {
+  id: string;
+  key: string;
+  title: string;
+  priority: string;
+  statusId: string;
+  projectId: string;
+  estimate?: number;
+  dueDate?: string | null;
+  status: { name: string; category: string; color: string };
+  project: { key: string; name: string };
+}
+
+const STATUS_COLOR: Record<string, string> = {
+  backlog: 'text-muted-foreground',
+  todo: 'text-muted-foreground',
+  in_progress: 'text-accent-blue',
+  blocked: 'text-accent-rose',
+  done: 'text-accent-emerald',
+};
+
+type WorkFormatter = ReturnType<typeof useFormatter>;
+
+function formatDue(due: string | null | undefined, formatter: WorkFormatter): string | null {
+  if (!due) return null;
+  const d = new Date(due);
+  if (Number.isNaN(d.getTime())) return null;
+  return formatter.dateTime(d, { month: 'short', day: 'numeric' });
+}
+
+function IssueLine({ issue }: { issue: MyIssue }) {
+  const formatter = useFormatter();
+  const statusCat = (issue.status?.category ?? '').toString().toLowerCase();
+  const color = STATUS_COLOR[statusCat] ?? 'text-muted-foreground';
+  const due = formatDue(issue.dueDate, formatter);
+  return (
+    <Link
+      href={`/issues/${issue.id}`}
+      className="row-interactive focus-visible:ring-ring flex min-h-10 min-w-0 items-center gap-2 rounded-md px-2 py-2 text-start transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset sm:gap-3"
+    >
+      <Circle className={cn('h-3 w-3 shrink-0', color)} fill="currentColor" />
+      <span className="text-muted-foreground w-14 shrink-0 truncate font-mono text-xs sm:w-16">
+        {issue.key}
+      </span>
+      <p className="text-foreground min-w-0 flex-1 truncate text-sm">{issue.title}</p>
+      {due && (
+        <span className="text-muted-foreground hidden shrink-0 text-[11px] sm:inline">{due}</span>
+      )}
+      <Badge variant="outline" className="max-w-[4rem] shrink-0 truncate text-[10px]">
+        {issue.project?.key ?? issue.key.split('-')[0]}
+      </Badge>
+    </Link>
+  );
+}
+
+export function YourWorkWidget() {
+  const t = useTranslations('dashboardExtra');
+  const tActions = useTranslations('actions');
+  const tHome = useTranslations('pagesHome');
+  const tIssues = useTranslations('issuesViews');
+  const { data: session } = useSession();
+  const { currentOrganizationId, currentTeamId } = useOrganization();
+  const [tab, setTab] = useState<TabKey>('assigned');
+
+  const { data, error, isLoading } = useQuery<MyIssue[]>({
+    queryKey: ['your-work', session?.user?.id, currentOrganizationId, currentTeamId, tab],
+    queryFn: async () => {
+      const params = new URLSearchParams({ view: tab });
+      if (currentOrganizationId) params.set('organizationId', currentOrganizationId);
+      if (currentTeamId) params.set('teamId', currentTeamId);
+      const response = await fetch(`/api/issues/my-issues?${params.toString()}`);
+      if (!response.ok) await throwApiResponseError(response, tIssues('loadFailed'));
+      const payload = await response.json();
+      return payload.issues || [];
+    },
+    enabled: !!session?.user?.id,
+  });
+
+  const list = (data ?? []).slice(0, 7);
+  const errorMessage = error
+    ? isApiPermissionError(error)
+      ? tHome('toast_access_denied_description')
+      : tIssues('loadFailed')
+    : null;
+
+  return (
+    <div className="surface-card min-w-0 p-4">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="text-foreground text-sm font-semibold tracking-tight">
+          {t('your_work.heading')}
+        </h2>
+        <Link
+          href="/my-issues"
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex items-center gap-1 rounded-sm text-xs transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        >
+          {tActions('view_all')}
+          <ArrowUpRight className="h-3 w-3" />
+        </Link>
+      </div>
+
+      <Tabs value={tab} onValueChange={(v) => setTab(v as TabKey)}>
+        <TabsList className="mb-3 grid h-auto w-full grid-cols-3">
+          <TabsTrigger value="assigned" className="min-w-0 truncate px-2 text-[11px] sm:text-xs">
+            {t('your_work.tab_assigned')}
+          </TabsTrigger>
+          <TabsTrigger value="created" className="min-w-0 truncate px-2 text-[11px] sm:text-xs">
+            {t('your_work.tab_created')}
+          </TabsTrigger>
+          <TabsTrigger value="subscribed" className="min-w-0 truncate px-2 text-[11px] sm:text-xs">
+            {t('your_work.tab_subscribed')}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={tab} className="mt-0">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-10">
+              <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />
+            </div>
+          ) : errorMessage ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <Inbox className="text-muted-foreground mb-2 h-7 w-7" />
+              <p className="text-foreground mb-1 text-sm font-medium">{tIssues('loadFailed')}</p>
+              <p className="text-muted-foreground text-sm">{errorMessage}</p>
+            </div>
+          ) : list.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <Inbox className="text-muted-foreground mb-2 h-7 w-7" />
+              <p className="text-muted-foreground mb-3 text-sm">{t('empty_no_items')}</p>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/my-issues?view=${tab}`}>{t('your_work.open_my_issues')}</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-0.5">
+              {list.map((issue) => (
+                <IssueLine key={issue.id} issue={issue} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

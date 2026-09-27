@@ -1,0 +1,9 @@
+---
+description: Canonical TaskNebula project instructions
+alwaysApply: true
+---
+
+Read the root `CLAUDE.md` and the nearest package `CLAUDE.md`; they are the
+single source of truth for stack, commands, tenancy, migrations, design,
+verification, and publication. Cursor-specific files are thin adapters and do
+not override those guides.

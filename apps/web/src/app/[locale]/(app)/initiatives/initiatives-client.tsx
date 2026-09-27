@@ -1,0 +1,337 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { useFormatter, useTranslations } from 'next-intl';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { ChevronDown, ChevronRight, Layers3, Loader2, Plus, Target } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { PageFrame } from '@/components/ui/page-frame';
+import { PageHeader } from '@/components/ui/page-header';
+import { useOrganization } from '@/lib/hooks/use-organization';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+
+interface InitiativeNode {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  status: string;
+  targetDate: string | null;
+  color: string | null;
+  workspaceId: string;
+  parentInitiativeId: string | null;
+  children: InitiativeNode[];
+}
+
+interface InitiativesListResponse {
+  initiatives: InitiativeNode[];
+  flat: InitiativeNode[];
+}
+
+interface RollUpResponse {
+  initiativeId: string;
+  done: number;
+  total: number;
+  percent: number;
+  projectCount: number;
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const t = useTranslations('planning');
+  const tProjects = useTranslations('pagesProjects');
+  const variant: Record<string, string> = {
+    planned: 'bg-muted text-muted-foreground',
+    active: 'bg-accent-blue/10 text-accent-blue',
+    paused: 'bg-accent-amber/10 text-accent-amber',
+    complete: 'bg-accent-emerald/10 text-accent-emerald',
+    cancelled: 'bg-accent-rose/10 text-accent-rose',
+  };
+  const labelKey: Record<string, string> = {
+    planned: 'status_planned',
+    paused: 'status_paused',
+    complete: 'status_completed',
+    cancelled: 'status_cancelled',
+  };
+  return (
+    <Badge
+      variant="outline"
+      className={cn('text-[10px] uppercase tracking-wider', variant[status] ?? variant.planned)}
+    >
+      {status === 'active' ? tProjects('statusActive') : t(labelKey[status] ?? 'status_planned')}
+    </Badge>
+  );
+}
+
+function InitiativeRow({ node, depth }: { node: InitiativeNode; depth: number }) {
+  const t = useTranslations('pagesHome');
+  const formatter = useFormatter();
+  const errorT = useTranslations('componentErrors.initiatives');
+  const [expanded, setExpanded] = useState(true);
+  const hasChildren = node.children.length > 0;
+  const targetDate = node.targetDate ? new Date(node.targetDate) : null;
+  const formattedTarget =
+    targetDate && !Number.isNaN(targetDate.getTime())
+      ? formatter.dateTime(targetDate, { year: 'numeric', month: 'short', day: 'numeric' })
+      : '—';
+
+  // Roll-up is fetched per-row but is cheap (small response) and cached.
+  const { data: rollup } = useQuery<RollUpResponse>({
+    queryKey: ['initiative-rollup', node.id],
+    queryFn: async () => {
+      const res = await fetch(`/api/initiatives/${node.id}/roll-up`);
+      if (!res.ok) throw new Error(errorT('loadRollup'));
+      return res.json();
+    },
+    staleTime: 60_000,
+  });
+
+  return (
+    <div className="border-border border-b last:border-b-0">
+      <div
+        className="hover:bg-accent/40 flex items-center gap-3 px-3 py-2.5 transition-colors"
+        style={{ paddingInlineStart: `${depth * 20 + 12}px` }}
+      >
+        <button
+          type="button"
+          aria-label={expanded ? t('initiative_collapse') : t('initiative_expand')}
+          onClick={() => setExpanded((v) => !v)}
+          className={cn(
+            'text-muted-foreground focus-visible:ring-ring -m-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2',
+            !hasChildren && 'invisible'
+          )}
+        >
+          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </button>
+
+        <Target className="text-muted-foreground h-4 w-4 shrink-0" />
+
+        <Link
+          href={`/initiatives/${node.id}`}
+          className="text-foreground hover:text-primary min-w-0 flex-1 truncate text-sm font-medium"
+        >
+          {node.name}
+        </Link>
+
+        <StatusBadge status={node.status} />
+
+        <div className="w-40 shrink-0">
+          <Progress
+            value={rollup?.percent ?? 0}
+            className="h-2"
+            aria-label={`${node.name} — ${rollup?.percent ?? 0}%`}
+          />
+        </div>
+        <div className="text-muted-foreground w-12 shrink-0 text-end font-mono text-xs tabular-nums">
+          {rollup ? `${rollup.percent}%` : '—'}
+        </div>
+        <div className="text-muted-foreground w-24 shrink-0 text-end text-xs">
+          {formattedTarget}
+        </div>
+      </div>
+
+      {expanded && hasChildren ? (
+        <div className="bg-surface/40">
+          {node.children.map((child) => (
+            <InitiativeRow key={child.id} node={child} depth={depth + 1} />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export function InitiativesClient() {
+  const t = useTranslations('pagesHome');
+  const errorT = useTranslations('componentErrors.initiatives');
+  const queryClient = useQueryClient();
+  const { currentOrganizationId } = useOrganization();
+  const { toast } = useToast();
+
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+
+  const { data, isLoading } = useQuery<InitiativesListResponse>({
+    queryKey: ['initiatives-list'],
+    queryFn: async () => {
+      const res = await fetch('/api/initiatives');
+      if (!res.ok) throw new Error(errorT('fetchList'));
+      return res.json();
+    },
+  });
+
+  const createInitiative = useMutation({
+    mutationFn: async (input: { name: string; description: string }) => {
+      if (!currentOrganizationId) {
+        throw new Error(t('initiatives_error_no_workspace'));
+      }
+      const res = await fetch('/api/initiatives', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: currentOrganizationId,
+          name: input.name,
+          description: input.description || undefined,
+        }),
+      });
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(payload?.error || t('initiatives_error_create'));
+      }
+      return payload;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['initiatives-list'] });
+      setIsCreateOpen(false);
+      setName('');
+      setDescription('');
+      toast({
+        title: t('initiatives_toast_created_title'),
+        description: t('initiatives_toast_created_description'),
+      });
+    },
+    onError: () => {
+      toast({
+        title: t('initiatives_toast_error_title'),
+        description: t('initiatives_error_generic'),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const canCreate = Boolean(currentOrganizationId);
+  const isEmpty = !data?.initiatives || data.initiatives.length === 0;
+
+  function resetDialog() {
+    setIsCreateOpen(false);
+    setName('');
+    setDescription('');
+  }
+
+  return (
+    <>
+      <PageFrame className="animate-fade-in" contentClassName="max-w-7xl">
+        <PageHeader
+          kicker={t('initiatives_kicker')}
+          title={t('initiatives_title')}
+          description={t('initiatives_subtitle')}
+          actions={
+            canCreate ? (
+              <Button size="sm" className="shrink-0" onClick={() => setIsCreateOpen(true)}>
+                <Plus className="me-2 h-4 w-4" />
+                {t('initiatives_new')}
+              </Button>
+            ) : null
+          }
+        />
+
+        {isLoading ? (
+          <div className="surface-card text-muted-foreground flex items-center justify-center py-12 shadow-none">
+            <Loader2 className="me-2 h-4 w-4 animate-spin" />
+            {t('initiatives_loading')}
+          </div>
+        ) : isEmpty ? (
+          <div className="surface-card flex flex-col items-center gap-4 px-6 py-12 text-center shadow-none">
+            <Layers3 className="text-muted-foreground h-6 w-6" />
+            <div className="space-y-1">
+              <p className="text-foreground text-sm font-medium">{t('initiatives_empty_title')}</p>
+              <p className="text-muted-foreground mx-auto max-w-sm text-sm">
+                {t('initiatives_empty_description')}
+              </p>
+            </div>
+            {canCreate ? (
+              <Button size="sm" onClick={() => setIsCreateOpen(true)}>
+                <Plus className="me-2 h-4 w-4" />
+                {t('initiatives_new')}
+              </Button>
+            ) : (
+              <p className="text-muted-foreground text-xs">{t('initiatives_empty_no_workspace')}</p>
+            )}
+          </div>
+        ) : (
+          <section className="surface-card overflow-x-auto shadow-none">
+            <h2 className="border-border border-b px-4 py-3 text-sm font-medium">
+              {t('initiatives_tree')}
+            </h2>
+            <div className="min-w-[720px]">
+              <div className="border-border bg-surface text-muted-foreground flex items-center gap-3 border-b px-3 py-2 text-[10px] font-medium uppercase tracking-wider">
+                <div className="h-4 w-4 shrink-0" />
+                <div className="h-4 w-4 shrink-0" />
+                <div className="flex-1">{t('initiatives_col_name')}</div>
+                <div className="w-[68px] shrink-0">{t('initiatives_col_status')}</div>
+                <div className="w-40 shrink-0">{t('initiatives_col_progress')}</div>
+                <div className="w-12 shrink-0 text-end">{t('initiatives_col_percent')}</div>
+                <div className="w-24 shrink-0 text-end">{t('initiatives_col_target')}</div>
+              </div>
+              {data!.initiatives.map((node) => (
+                <InitiativeRow key={node.id} node={node} depth={0} />
+              ))}
+            </div>
+          </section>
+        )}
+      </PageFrame>
+
+      <Dialog
+        open={isCreateOpen}
+        onOpenChange={(open) => (open ? setIsCreateOpen(true) : resetDialog())}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('initiatives_new')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="initiative-name">{t('initiatives_form_name')}</Label>
+              <Input
+                id="initiative-name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder={t('initiatives_form_name_placeholder')}
+                autoFocus
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="initiative-description">{t('initiatives_form_description')}</Label>
+              <Textarea
+                id="initiative-description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder={t('initiatives_form_description_placeholder')}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={resetDialog}>
+              {t('initiatives_form_cancel')}
+            </Button>
+            <Button
+              onClick={() =>
+                createInitiative.mutate({ name: name.trim(), description: description.trim() })
+              }
+              disabled={!name.trim() || !canCreate || createInitiative.isPending}
+            >
+              {createInitiative.isPending
+                ? t('initiatives_form_creating')
+                : t('initiatives_form_submit')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

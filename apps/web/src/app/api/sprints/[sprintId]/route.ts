@@ -1,0 +1,400 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { db, sprints, issues, workflowStatuses, projects } from '@tasknebula/db';
+import { eq, count, and, ne } from 'drizzle-orm';
+import { publishEvent } from '@/lib/realtime/events';
+import { runAutomations } from '@/lib/automation/evaluator';
+import { notifySprintEvent } from '@/lib/notifications/send-sprint-notification';
+import { resolveProjectCapabilityAccess } from '@/lib/auth/project-access';
+
+// Granular permission check helper
+async function checkSprintPermission(
+  userId: string,
+  projectId: string,
+  action: 'view' | 'manage' | 'start' | 'complete' | 'delete'
+): Promise<{ allowed: boolean; reason?: string; notFound?: boolean }> {
+  const access = await resolveProjectCapabilityAccess(userId, projectId);
+  if (!access.project || !access.canRead) {
+    return { allowed: false, reason: 'Sprint not found', notFound: true };
+  }
+
+  if (action === 'view') {
+    return { allowed: true };
+  }
+  const allowed = {
+    manage: access.permissions.canManageSprints,
+    start: access.permissions.canStartSprint,
+    complete: access.permissions.canCompleteSprint,
+    delete: access.permissions.canDeleteSprint,
+  }[action];
+  return allowed
+    ? { allowed: true }
+    : { allowed: false, reason: `No permission to ${action} sprints` };
+}
+
+// GET /api/sprints/[sprintId]
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ sprintId: string }> }
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { sprintId } = await params;
+
+  try {
+    const [sprint] = await db.select().from(sprints).where(eq(sprints.id, sprintId)).limit(1);
+
+    if (!sprint) {
+      return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+    }
+
+    // Permission check: caller must be able to view this sprint. Cross-org
+    // probes get a 404 so sprint existence is not leaked.
+    const permission = await checkSprintPermission(session.user.id, sprint.projectId, 'view');
+    if (!permission.allowed) {
+      if (permission.notFound) {
+        return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+      }
+      return NextResponse.json(
+        { error: permission.reason || 'Permission denied' },
+        { status: 403 }
+      );
+    }
+
+    // Get issue count and completion stats
+    const sprintIssues = await db
+      .select({
+        id: issues.id,
+        statusCategory: workflowStatuses.category,
+      })
+      .from(issues)
+      .leftJoin(workflowStatuses, eq(issues.statusId, workflowStatuses.id))
+      .where(eq(issues.sprintId, sprintId));
+
+    const issueCount = sprintIssues.length;
+    const completedCount = sprintIssues.filter((i) => i.statusCategory === 'done').length;
+    const inProgressCount = sprintIssues.filter((i) => i.statusCategory === 'in_progress').length;
+
+    return NextResponse.json({
+      ...sprint,
+      issueCount,
+      completedCount,
+      inProgressCount,
+      todoCount: issueCount - completedCount - inProgressCount,
+    });
+  } catch (error) {
+    console.error('Error fetching sprint:', error);
+    return NextResponse.json({ error: 'Failed to fetch sprint' }, { status: 500 });
+  }
+}
+
+// PATCH /api/sprints/[sprintId]
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ sprintId: string }> }
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { sprintId } = await params;
+
+  try {
+    const body = await request.json();
+    const { name, goal, startDate, endDate, status } = body;
+
+    // Fetch current sprint to get projectId
+    const [currentSprint] = await db
+      .select()
+      .from(sprints)
+      .where(eq(sprints.id, sprintId))
+      .limit(1);
+
+    if (!currentSprint) {
+      return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+    }
+
+    // Determine required permission based on status change
+    let requiredAction: 'manage' | 'start' | 'complete' = 'manage';
+    if (status === 'active' && currentSprint.status !== 'active') {
+      requiredAction = 'start';
+    } else if (status === 'completed' && currentSprint.status === 'active') {
+      requiredAction = 'complete';
+    }
+
+    // Check permission. Cross-org probes get a 404 so sprint existence is
+    // not leaked.
+    const permission = await checkSprintPermission(
+      session.user.id,
+      currentSprint.projectId,
+      requiredAction
+    );
+    if (!permission.allowed) {
+      if (permission.notFound) {
+        return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+      }
+      return NextResponse.json(
+        { error: permission.reason || 'Permission denied' },
+        { status: 403 }
+      );
+    }
+
+    // If trying to activate sprint, check for other active sprints in the same project
+    if (status === 'active' && currentSprint.status !== 'active') {
+      const [existingActiveSprint] = await db
+        .select({ id: sprints.id, name: sprints.name })
+        .from(sprints)
+        .where(
+          and(
+            eq(sprints.projectId, currentSprint.projectId),
+            eq(sprints.status, 'active'),
+            ne(sprints.id, sprintId)
+          )
+        )
+        .limit(1);
+
+      if (existingActiveSprint) {
+        return NextResponse.json(
+          {
+            error: `Cannot start sprint. "${existingActiveSprint.name}" is already active. Complete or close it first.`,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Validate dates if provided
+    const newStartDate = startDate ? new Date(startDate) : currentSprint.startDate;
+    const newEndDate = endDate ? new Date(endDate) : currentSprint.endDate;
+
+    if (newEndDate <= newStartDate) {
+      return NextResponse.json({ error: 'End date must be after start date' }, { status: 400 });
+    }
+
+    const updateData: Record<string, unknown> = {
+      updatedBy: session.user.id,
+      updatedAt: new Date(),
+    };
+
+    if (name !== undefined) updateData.name = name;
+    if (goal !== undefined) updateData.goal = goal;
+    if (startDate !== undefined) updateData.startDate = newStartDate;
+    if (endDate !== undefined) updateData.endDate = newEndDate;
+    if (status !== undefined) updateData.status = status;
+
+    // If completing sprint, move incomplete issues to backlog
+    let movedToBacklogCount = 0;
+    if (status === 'completed' && currentSprint.status === 'active') {
+      // Get incomplete issues (not in 'done' category)
+      const sprintIssues = await db
+        .select({
+          issueId: issues.id,
+          statusCategory: workflowStatuses.category,
+        })
+        .from(issues)
+        .leftJoin(workflowStatuses, eq(issues.statusId, workflowStatuses.id))
+        .where(eq(issues.sprintId, sprintId));
+
+      const incompleteIssueIds = sprintIssues
+        .filter((i) => i.statusCategory !== 'done')
+        .map((i) => i.issueId);
+
+      movedToBacklogCount = incompleteIssueIds.length;
+
+      // Move incomplete issues to backlog (remove from sprint)
+      if (incompleteIssueIds.length > 0) {
+        for (const issueId of incompleteIssueIds) {
+          await db
+            .update(issues)
+            .set({ sprintId: null, updatedAt: new Date(), updatedBy: session.user.id })
+            .where(eq(issues.id, issueId));
+        }
+      }
+    }
+
+    const [updatedSprint] = await db
+      .update(sprints)
+      .set(updateData)
+      .where(eq(sprints.id, sprintId))
+      .returning();
+
+    // Include stats about moved issues if sprint was completed
+    const response: Record<string, unknown> = { ...updatedSprint };
+    if (status === 'completed' && currentSprint.status === 'active') {
+      const remainingIssues = await db
+        .select({
+          issueId: issues.id,
+          statusCategory: workflowStatuses.category,
+        })
+        .from(issues)
+        .leftJoin(workflowStatuses, eq(issues.statusId, workflowStatuses.id))
+        .where(eq(issues.sprintId, sprintId));
+
+      response.completedIssuesCount = remainingIssues.filter(
+        (i) => i.statusCategory === 'done'
+      ).length;
+      response.movedToBacklogCount = movedToBacklogCount;
+    }
+
+    // Sprints carry no organization_id column; resolve it via the project so
+    // the realtime event survives the SSE stream's org filter.
+    const [sprintProject] = await db
+      .select({ organizationId: projects.organizationId })
+      .from(projects)
+      .where(eq(projects.id, currentSprint.projectId))
+      .limit(1);
+
+    publishEvent('sprint.updated', session.user.id, {
+      projectId: currentSprint.projectId,
+      sprintId,
+      organizationId: sprintProject?.organizationId,
+    });
+
+    // Fire automation triggers + notifications on status transitions.
+    const transitionedToActive = status === 'active' && currentSprint.status === 'planned';
+    const transitionedToCompleted = status === 'completed' && currentSprint.status === 'active';
+
+    if ((transitionedToActive || transitionedToCompleted) && updatedSprint) {
+      const [projectForEvents] = await db
+        .select({
+          id: projects.id,
+          key: projects.key,
+          name: projects.name,
+          organizationId: projects.organizationId,
+        })
+        .from(projects)
+        .where(eq(projects.id, currentSprint.projectId))
+        .limit(1);
+
+      if (projectForEvents) {
+        const trigger = transitionedToActive ? 'sprint.started' : 'sprint.completed';
+
+        void runAutomations({
+          trigger,
+          organizationId: projectForEvents.organizationId,
+          projectId: projectForEvents.id,
+          payload: {
+            sprint: updatedSprint,
+            project: {
+              id: projectForEvents.id,
+              organizationId: projectForEvents.organizationId,
+            },
+          },
+          actorUserId: session.user.id,
+        }).catch((err) => console.error(`Failed to run ${trigger} automations:`, err));
+
+        try {
+          const stats = transitionedToCompleted
+            ? {
+                issueCount: Number(response.completedIssuesCount ?? 0) + movedToBacklogCount,
+                completedCount: Number(response.completedIssuesCount ?? 0),
+                carriedOverCount: movedToBacklogCount,
+              }
+            : undefined;
+
+          notifySprintEvent({
+            eventType: trigger,
+            sprint: {
+              id: updatedSprint.id,
+              name: updatedSprint.name,
+              goal: updatedSprint.goal,
+              startDate: updatedSprint.startDate,
+              endDate: updatedSprint.endDate,
+            },
+            project: projectForEvents,
+            actorUserId: session.user.id,
+            stats,
+          });
+        } catch (notifyError) {
+          console.error('Sprint notification dispatch failed:', notifyError);
+        }
+      }
+    }
+
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error('Error updating sprint:', error);
+    return NextResponse.json({ error: 'Failed to update sprint' }, { status: 500 });
+  }
+}
+
+// DELETE /api/sprints/[sprintId]
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ sprintId: string }> }
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { sprintId } = await params;
+
+  try {
+    // Get sprint to check project
+    const [sprint] = await db
+      .select({ projectId: sprints.projectId })
+      .from(sprints)
+      .where(eq(sprints.id, sprintId))
+      .limit(1);
+
+    if (!sprint) {
+      return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+    }
+
+    // Check permission to delete sprints. Cross-org probes get a 404 so
+    // sprint existence is not leaked.
+    const permission = await checkSprintPermission(session.user.id, sprint.projectId, 'delete');
+    if (!permission.allowed) {
+      if (permission.notFound) {
+        return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+      }
+      return NextResponse.json(
+        { error: permission.reason || 'Permission denied' },
+        { status: 403 }
+      );
+    }
+
+    // Check if sprint has issues
+    const [issueCount] = await db
+      .select({ count: count() })
+      .from(issues)
+      .where(eq(issues.sprintId, sprintId));
+
+    if (issueCount && issueCount.count > 0) {
+      return NextResponse.json(
+        { error: 'Cannot delete sprint with assigned issues' },
+        { status: 400 }
+      );
+    }
+
+    const [deletedSprint] = await db.delete(sprints).where(eq(sprints.id, sprintId)).returning();
+
+    if (!deletedSprint) {
+      return NextResponse.json({ error: 'Sprint not found' }, { status: 404 });
+    }
+
+    // Sprints carry no organization_id column; resolve it via the project so
+    // the realtime event survives the SSE stream's org filter.
+    const [sprintProject] = await db
+      .select({ organizationId: projects.organizationId })
+      .from(projects)
+      .where(eq(projects.id, sprint.projectId))
+      .limit(1);
+
+    publishEvent('sprint.deleted', session.user.id, {
+      projectId: sprint.projectId,
+      sprintId,
+      organizationId: sprintProject?.organizationId,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting sprint:', error);
+    return NextResponse.json({ error: 'Failed to delete sprint' }, { status: 500 });
+  }
+}

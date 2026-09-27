@@ -1,0 +1,326 @@
+'use client';
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Star, Bell, Copy, Check, Inbox, ChevronRight, Pencil, Flag } from 'lucide-react';
+import { PresenceAvatars } from '@/components/presence/presence-avatars';
+import { ISSUE_TYPE_CONFIG, ISSUE_TYPE_FALLBACK } from './type-picker';
+import { useUpdateIssue } from '@/lib/hooks/use-issues';
+import { useUser } from '@/lib/hooks/use-user';
+import type { PinnedItem } from '@/components/dashboard/pinned-items-widget';
+import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+interface IssueHeaderProps {
+  issue: {
+    id: string;
+    key: string;
+    type: string;
+    title: string;
+    status: string;
+    number?: number;
+    projectKey?: string;
+    flagged?: boolean | null;
+  };
+}
+
+// Derive the "PROJ" prefix and the numeric/identifier suffix from whatever
+// fields are present on the issue. The canonical key looks like "ACME-23".
+function splitIssueKey(key: string): { prefix: string | null; suffix: string } {
+  const dashIdx = key.lastIndexOf('-');
+  if (dashIdx <= 0) return { prefix: null, suffix: key };
+  return { prefix: key.slice(0, dashIdx), suffix: key.slice(dashIdx + 1) };
+}
+
+interface IssueWatcher {
+  id: string;
+  userId: string;
+  user: { id: string; name: string | null; email: string | null; image: string | null };
+}
+
+/** Watch state shared with the sidebar's WatchersList via the same query key. */
+function useIssueWatch(issueId: string) {
+  const { user } = useUser();
+  const queryClient = useQueryClient();
+  const errorT = useTranslations('componentErrors.watchers');
+  // Key shape mirrors WatchersList (['watchers', issueId, projectId?]) so the
+  // header toggle and the sidebar list can never disagree.
+  const queryKey = ['watchers', issueId, undefined];
+
+  const { data } = useQuery({
+    queryKey,
+    queryFn: async (): Promise<{ watchers: IssueWatcher[] }> => {
+      const response = await fetch(`/api/watchers?issueId=${issueId}`);
+      if (!response.ok) throw new Error(errorT('fetch'));
+      return response.json();
+    },
+  });
+
+  const watchers = data?.watchers ?? [];
+  const isWatching = watchers.some((watcher) => watcher.userId === user?.id);
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['watchers', issueId] });
+
+  const addWatcher = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/watchers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ issueId }),
+      });
+      if (!response.ok) throw new Error(errorT('add'));
+      return response.json();
+    },
+    onSuccess: invalidate,
+  });
+
+  const removeWatcher = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/watchers?issueId=${issueId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error(errorT('remove'));
+      return response.json();
+    },
+    onSuccess: invalidate,
+  });
+
+  const toggle = () => {
+    if (isWatching) removeWatcher.mutate();
+    else addWatcher.mutate();
+  };
+
+  return { isWatching, toggle, isMutating: addWatcher.isPending || removeWatcher.isPending };
+}
+
+/** Star = personal pin via /api/pinned-items (idempotent on href). */
+function useIssueStar(issue: { id: string; key: string; title: string }) {
+  const queryClient = useQueryClient();
+  const errorT = useTranslations('componentErrors.pinnedItems');
+  const issueHref = `/issues/${issue.id}`;
+
+  const { data } = useQuery<PinnedItem[]>({
+    queryKey: ['pinned-items'],
+    queryFn: async () => {
+      const response = await fetch('/api/pinned-items');
+      if (!response.ok) throw new Error(errorT('fetch'));
+      const json = (await response.json()) as { items: PinnedItem[] };
+      return json.items ?? [];
+    },
+  });
+
+  // No per-entity lookup endpoint — derive starred state from the pin list.
+  const existingPin = (data ?? []).find(
+    (item) => (item.kind === 'issue' && item.entityId === issue.id) || item.href === issueHref
+  );
+
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['pinned-items'] });
+
+  const pin = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/pinned-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'issue',
+          entityId: issue.id,
+          title: `${issue.key} ${issue.title}`.trim().slice(0, 500),
+          href: issueHref,
+        }),
+      });
+      if (!response.ok) throw new Error(errorT('pinIssue'));
+      return response.json();
+    },
+    onSuccess: invalidate,
+  });
+
+  const unpin = useMutation({
+    mutationFn: async (pinId: string) => {
+      const response = await fetch(`/api/pinned-items/${pinId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error(errorT('unpinIssue'));
+      return response.json();
+    },
+    onSuccess: invalidate,
+  });
+
+  const toggle = () => {
+    if (existingPin) unpin.mutate(existingPin.id);
+    else pin.mutate();
+  };
+
+  return { isStarred: !!existingPin, toggle, isMutating: pin.isPending || unpin.isPending };
+}
+
+export function IssueHeader({ issue }: IssueHeaderProps) {
+  const t = useTranslations('issueHeader');
+  const tTypes = useTranslations('issueTypes');
+  const tExtra = useTranslations('issueHeaderExtra');
+  const [copied, setCopied] = useState(false);
+
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState(issue.title);
+  const updateIssue = useUpdateIssue();
+
+  const star = useIssueStar(issue);
+  const watch = useIssueWatch(issue.id);
+
+  const knownType = issue.type in ISSUE_TYPE_CONFIG;
+  const config = knownType ? ISSUE_TYPE_CONFIG[issue.type]! : ISSUE_TYPE_FALLBACK;
+  const TypeIcon = config.icon;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const startEditingTitle = () => {
+    setTitleDraft(issue.title);
+    setIsEditingTitle(true);
+  };
+
+  const cancelEditingTitle = () => {
+    setTitleDraft(issue.title);
+    setIsEditingTitle(false);
+  };
+
+  const commitTitle = () => {
+    const next = titleDraft.trim();
+    setIsEditingTitle(false);
+    if (!next || next === issue.title) return;
+    // useUpdateIssue applies the change optimistically and rolls back on error.
+    updateIssue.mutate({ issueId: issue.id, data: { title: next } });
+  };
+
+  const { prefix: derivedPrefix, suffix: derivedSuffix } = splitIssueKey(issue.key ?? '');
+  const projectPrefix = issue.projectKey ?? derivedPrefix ?? 'XXX';
+  const issueSuffix =
+    issue.number !== undefined && issue.number !== null
+      ? String(issue.number)
+      : derivedSuffix || issue.key;
+
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="min-w-0 flex-1 space-y-1">
+        <nav className="text-muted-foreground mb-2 flex min-w-0 flex-wrap items-center gap-1.5 text-[12px]">
+          <Inbox className="h-3.5 w-3.5 shrink-0" />
+          <Link href="/my-issues" className="hover:text-foreground min-w-0 truncate">
+            {t('breadcrumb')}
+          </Link>
+          <ChevronRight className="h-3 w-3 shrink-0 opacity-60 rtl:rotate-180" />
+          <span className="text-foreground min-w-0 truncate font-medium">{projectPrefix}</span>
+        </nav>
+        <div className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
+          <span className="inline-flex items-center gap-1.5">
+            <TypeIcon className={cn('h-3.5 w-3.5 shrink-0', config.color)} />
+            <span className="font-medium">{knownType ? tTypes(issue.type) : tTypes('issue')}</span>
+          </span>
+          <span className="text-foreground/80 font-mono">
+            {projectPrefix}-{issueSuffix}
+          </span>
+          {issue.flagged ? (
+            <span
+              className="border-accent-amber/20 bg-accent-amber/10 text-accent-amber inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-[11px] font-medium"
+              title={tExtra('flaggedHint')}
+            >
+              <Flag className="h-3 w-3 fill-current" />
+              {tExtra('flagged')}
+            </span>
+          ) : null}
+        </div>
+        {isEditingTitle ? (
+          <input
+            autoFocus
+            value={titleDraft}
+            maxLength={500}
+            aria-label={t('titleInputAria')}
+            onChange={(event) => setTitleDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                commitTitle();
+              } else if (event.key === 'Escape') {
+                event.preventDefault();
+                cancelEditingTitle();
+              }
+            }}
+            onBlur={commitTitle}
+            className="text-foreground focus-visible:ring-ring -mx-1 w-full rounded-md border border-transparent bg-transparent px-1 text-xl font-semibold tracking-tight outline-none focus-visible:ring-2 sm:text-2xl"
+          />
+        ) : (
+          <div className="group/title flex min-w-0 items-start gap-1.5">
+            <h1
+              onClick={startEditingTitle}
+              className="text-foreground min-w-0 cursor-text text-balance break-words text-xl font-semibold tracking-tight sm:text-2xl"
+            >
+              {issue.title}
+            </h1>
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label={t('editTitle')}
+              onClick={startEditingTitle}
+              className="text-muted-foreground ease-snap hover:text-foreground mt-0.5 h-9 w-9 shrink-0 rounded-md p-0 opacity-100 transition-opacity duration-150 focus-visible:opacity-100 sm:mt-1 sm:h-7 sm:w-7 sm:opacity-0 sm:group-focus-within/title:opacity-100 sm:group-hover/title:opacity-100"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex w-full flex-wrap items-center justify-start gap-1 sm:w-auto sm:shrink-0 sm:justify-end">
+        <PresenceAvatars issueId={issue.id} />
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'ease-snap min-h-10 min-w-10 gap-1.5 rounded-md transition-colors duration-150 sm:min-h-8 sm:min-w-8',
+            star.isStarred && 'text-accent-amber'
+          )}
+          onClick={star.toggle}
+          disabled={star.isMutating}
+          aria-label={star.isStarred ? t('starred') : t('star')}
+          aria-pressed={star.isStarred}
+        >
+          <Star className={cn('h-3.5 w-3.5', star.isStarred && 'fill-current')} />
+          <span className="hidden sm:inline">{star.isStarred ? t('starred') : t('star')}</span>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            'ease-snap min-h-10 min-w-10 gap-1.5 rounded-md transition-colors duration-150 sm:min-h-8 sm:min-w-8',
+            watch.isWatching && 'text-accent-blue'
+          )}
+          onClick={watch.toggle}
+          disabled={watch.isMutating}
+          aria-label={watch.isWatching ? t('watching') : t('watch')}
+          aria-pressed={watch.isWatching}
+        >
+          <Bell className={cn('h-3.5 w-3.5', watch.isWatching && 'fill-current')} />
+          <span className="hidden sm:inline">{watch.isWatching ? t('watching') : t('watch')}</span>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-foreground ease-snap min-h-10 min-w-10 gap-1.5 rounded-md transition-colors duration-150 sm:min-h-8 sm:min-w-8"
+          onClick={handleCopyLink}
+          aria-label={copied ? t('copied') : t('copyLink')}
+        >
+          {copied ? (
+            <>
+              <Check className="text-accent-emerald h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{t('copied')}</span>
+            </>
+          ) : (
+            <>
+              <Copy className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{t('copyLink')}</span>
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}

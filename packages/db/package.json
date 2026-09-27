@@ -1,0 +1,40 @@
+{
+  "name": "@tasknebula/db",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "db:migrate": "tsx src/migrate.ts",
+    "db:migrate:prod": "tsx scripts/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx src/seed.ts",
+    "db:seed:prod": "tsx scripts/seed-production.ts",
+    "db:setup": "pnpm db:migrate && pnpm db:seed",
+    "db:setup:prod": "pnpm db:migrate:prod && pnpm db:seed:prod",
+    "test:integration:agent-execution-receipts": "tsx scripts/agent-execution-receipts.integration.ts",
+    "test:integration:durable-project-agent-runs": "tsx scripts/durable-project-agent-runs.integration.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "@tasknebula/types": "workspace:*",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.5",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@tasknebula/config": "workspace:*",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.2",
+    "@types/web-push": "^3.6.4",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^8.57.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

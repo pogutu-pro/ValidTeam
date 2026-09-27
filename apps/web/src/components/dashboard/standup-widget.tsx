@@ -1,0 +1,153 @@
+'use client';
+
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Copy, Sparkles, AlertOctagon, Loader2, Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+
+interface StandupResponse {
+  id: string;
+  date: string;
+  contentMd: string;
+  blockersMd: string;
+  createdAt: string;
+}
+
+async function fetchTodayStandup(loadError: string): Promise<StandupResponse | null> {
+  const res = await fetch('/api/users/me/standup/today', { cache: 'no-store' });
+  if (res.status === 204) return null;
+  if (!res.ok) throw new Error(loadError);
+  return (await res.json()) as StandupResponse;
+}
+
+async function generatePreview(): Promise<StandupResponse> {
+  const res = await fetch('/api/users/me/standup/preview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    // Throw any server-provided message verbatim; an empty message lets the
+    // caller fall back to a localized generic error instead of hardcoded English.
+    throw new Error(text);
+  }
+  return (await res.json()) as StandupResponse;
+}
+
+export function StandupWidget() {
+  const t = useTranslations('dashboardExtra');
+  const errorT = useTranslations('componentErrors.dashboard');
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+
+  const { data, isLoading } = useQuery<StandupResponse | null>({
+    queryKey: ['standup', 'today'],
+    queryFn: () => fetchTodayStandup(errorT('loadStandup')),
+    staleTime: 60_000,
+  });
+
+  const previewMutation = useMutation({
+    mutationFn: generatePreview,
+    onSuccess: (next) => {
+      queryClient.setQueryData(['standup', 'today'], next);
+      toast({ title: t('standup.generated_title'), description: t('standup.generated_desc') });
+    },
+    onError: () => {
+      toast({
+        title: t('standup.generate_error_title'),
+        description: t('standup.unknown_error'),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const onCopy = async () => {
+    if (!data?.contentMd) return;
+    try {
+      await navigator.clipboard.writeText(data.contentMd);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+      toast({ title: t('standup.copied_title'), description: t('standup.copied_desc') });
+    } catch {
+      toast({
+        title: t('standup.copy_failed_title'),
+        description: t('standup.copy_failed_desc'),
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const hasBlockers = !!(data?.blockersMd && data.blockersMd.trim().length > 0);
+
+  return (
+    <div className="surface-card flex flex-col gap-3 p-4" data-testid="standup-widget">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-2">
+          <Sparkles className="text-primary h-4 w-4 shrink-0" aria-hidden="true" />
+          <h2 className="min-w-0 truncate text-sm font-semibold">{t('standup.heading')}</h2>
+        </div>
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
+          {data && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onCopy}
+              className="h-7 min-w-0 flex-1 px-2 text-xs sm:flex-none"
+              data-testid="standup-copy"
+            >
+              {copied ? <Check className="me-1 h-3 w-3" /> : <Copy className="me-1 h-3 w-3" />}
+              {copied ? t('standup.copied') : t('standup.copy_to_slack')}
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => previewMutation.mutate()}
+            disabled={previewMutation.isPending}
+            className="h-7 min-w-0 flex-1 px-2 text-xs sm:flex-none"
+            data-testid="standup-refresh"
+          >
+            {previewMutation.isPending ? (
+              <Loader2 className="me-1 h-3 w-3 animate-spin" />
+            ) : (
+              <Sparkles className="me-1 h-3 w-3" />
+            )}
+            {data ? t('standup.refresh') : t('standup.generate')}
+          </Button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="text-muted-foreground flex items-center text-xs">
+          <Loader2 className="me-2 h-3 w-3 animate-spin" /> {t('standup.loading')}
+        </div>
+      ) : data ? (
+        <div className="flex flex-col gap-2">
+          <pre className="text-foreground/90 m-0 whitespace-pre-wrap font-sans text-xs leading-relaxed">
+            {data.contentMd}
+          </pre>
+          {hasBlockers && (
+            <div className="border-accent-rose/40 bg-accent-rose/5 mt-2 rounded-md border p-2">
+              <div className="text-accent-rose flex items-center gap-1.5 text-xs font-semibold">
+                <AlertOctagon className="h-3 w-3" /> {t('standup.blockers')}
+              </div>
+              <pre className="text-foreground/90 m-0 mt-1 whitespace-pre-wrap font-sans text-xs">
+                {data.blockersMd}
+              </pre>
+            </div>
+          )}
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-xs">
+          {t.rich('standup.empty', {
+            em: (chunks) => <em>{chunks}</em>,
+          })}
+        </p>
+      )}
+    </div>
+  );
+}

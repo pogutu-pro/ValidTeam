@@ -1,0 +1,12 @@
+{
+  "plain": "Welcome, {name}",
+  "number": "Total: {count, number}",
+  "date": "Created {createdAt, date, short}",
+  "time": "Starts {startsAt, time, short}",
+  "select": "{state, select, open {Open for {name}} closed {Closed} other {Unknown}}",
+  "plural": "{count, plural, offset:1 =0 {No items} one {One item} other {# items for {name}}}",
+  "flattenedPlural": "{files, plural, one {# file} other {# files}}",
+  "introducedPlural": "{alerts} alerts",
+  "ordinal": "{position, selectordinal, offset:0 =0 {Not ranked} one {#st} two {#nd} few {#rd} other {#th}}",
+  "tag": "Open <link>{project}</link>"
+}

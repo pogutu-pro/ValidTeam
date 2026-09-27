@@ -1,0 +1,14 @@
+{
+  "extends": "@tasknebula/config/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    // QUAL-21: this package is the beachhead for `exactOptionalPropertyTypes`.
+    // It inherits the base flag; the explicit setting documents intent so
+    // future contributors don't disable it. See docs/TS_STRICT_MIGRATION.md.
+    "exactOptionalPropertyTypes": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+

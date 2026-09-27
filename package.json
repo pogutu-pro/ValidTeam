@@ -1,0 +1,113 @@
+{
+  "name": "tasknebula",
+  "version": "0.17.3",
+  "private": true,
+  "description": "ValidTeam — the operating system for the StratNovo team",
+  "author": "StratNovo",
+  "license": "UNLICENSED",
+  "homepage": "https://rumiamanage.com",
+  "keywords": [
+    "project-management",
+    "jira-alternative",
+    "linear-alternative",
+    "ai-powered",
+    "nextjs",
+    "react",
+    "typescript",
+    "kanban",
+    "agile",
+    "scrum"
+  ],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "i18n:check": "node --test scripts/i18n-check.test.mjs && node scripts/i18n-check.mjs",
+    "docs:check": "node scripts/docs-check.mjs",
+    "hygiene:check": "node scripts/repository-hygiene-check.mjs",
+    "ui:check": "node scripts/ui-quality-check.mjs",
+    "db:migrate": "turbo run db:migrate",
+    "db:studio": "turbo run db:studio",
+    "db:reset": "bash scripts/reset-db.sh",
+    "setup": "bash scripts/setup.sh",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --no-error-on-unmatched-pattern",
+      "prettier --write"
+    ],
+    "*.{js,cjs,mjs,jsx,json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@formatjs/icu-messageformat-parser": "^3.5.16",
+    "@types/nodemailer": "^7.0.11",
+    "eslint": "^8.57.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "dependencies": {
+    "nodemailer": "^9.0.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "flatted": "3.4.2",
+      "jws": "4.0.1",
+      "minimatch@<3.1.4": "3.1.4",
+      "minimatch@>=9.0.0 <9.0.7": "9.0.7",
+      "picomatch": "4.0.4",
+      "rollup": "4.60.4",
+      "ajv@<6.14.0": "6.14.0",
+      "bn.js@<4.12.3": "4.12.3",
+      "baseline-browser-mapping": "2.11.13",
+      "brace-expansion@<1.1.18": "1.1.18",
+      "brace-expansion@>=2.0.0 <2.1.4": "2.1.4",
+      "brace-expansion@>=5.0.0 <5.0.9": "5.0.9",
+      "caniuse-lite": "1.0.30001809",
+      "nodemailer": "9.0.5",
+      "postcss": "8.5.26",
+      "qs@>=6.11.1 <=6.15.1": "6.15.2",
+      "uuid@>=11.0.0 <11.1.1": "11.1.1",
+      "ws@>=8.0.0 <8.21.0": "8.21.0",
+      "@babel/core@<7.29.6": "7.29.6",
+      "@hono/node-server@<2.0.5": "2.1.0",
+      "axios@<1.18.0": "1.18.0",
+      "body-parser@>=2.0.0 <2.3.0": "2.3.0",
+      "dompurify@<3.4.13": "3.4.13",
+      "esbuild@<0.28.1": "0.28.1",
+      "fast-uri@<3.1.5": "3.1.5",
+      "form-data@>=4.0.0 <4.0.6": "4.0.6",
+      "hono@<4.12.34": "4.12.34",
+      "immutable@<4.3.9": "4.3.9",
+      "ip-address@<10.3.1": "10.3.1",
+      "js-yaml@>=4.0.0 <4.3.1": "4.3.1",
+      "linkify-it@<5.0.2": "5.0.2",
+      "markdown-it@<14.2.0": "14.2.0",
+      "nanoid@>=3.0.0 <3.3.17": "3.3.17",
+      "protobufjs@<7.6.5": "7.6.5",
+      "sharp@<0.35.0": "0.35.0"
+    }
+  }
+}

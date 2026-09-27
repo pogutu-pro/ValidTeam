@@ -1,0 +1,12 @@
+{
+  "plain": "Bienvenue, {name}",
+  "number": "Total : {count, number}",
+  "date": "Créé le {createdAt, date, short}",
+  "time": "Commence à {startsAt, time, short}",
+  "select": "{state, select, closed {Fermé} open {Ouvert pour {name}} other {Inconnu}}",
+  "plural": "{count, plural, offset:1 =0 {Aucun élément} one {Un élément} many {# éléments pour {name}} other {# éléments pour {name}}}",
+  "flattenedPlural": "{files} fichiers",
+  "introducedPlural": "{alerts, plural, one {# alerte} other {# alertes}}",
+  "ordinal": "{position, selectordinal, offset:0 =0 {Non classé} one {#er} other {#e}}",
+  "tag": "Ouvrir <link>{project}</link>"
+}

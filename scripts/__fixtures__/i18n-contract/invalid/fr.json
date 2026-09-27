@@ -1,0 +1,7 @@
+{
+  "argumentType": "Total : {value}",
+  "pluralKind": "{position, selectordinal, one {#er} other {#e}}",
+  "pluralOffset": "{count, plural, offset:2 one {Un} other {# restants}}",
+  "exactSelectors": "{count, plural, =0 {Aucun} =3 {Trois} other {# éléments}}",
+  "selectSelectors": "{state, select, open {Ouvert} other {Inconnu}}"
+}

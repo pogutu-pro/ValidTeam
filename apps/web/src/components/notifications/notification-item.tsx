@@ -1,0 +1,519 @@
+'use client';
+
+import { forwardRef, type MouseEvent, type ReactNode } from 'react';
+import { useFormatter, useTranslations } from 'next-intl';
+import Link from 'next/link';
+import {
+  Activity,
+  Archive,
+  AtSign,
+  Bell,
+  Bot,
+  Check,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  ExternalLink,
+  Flag,
+  FolderPlus,
+  GitBranch,
+  Link2,
+  MessageSquare,
+  Sparkles,
+  UserCheck,
+} from 'lucide-react';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { Notification, NotificationType } from '@/lib/hooks/use-notifications';
+
+/**
+ * Defensive resolver for an entity key we can group by.
+ * Notification schemas change; we check several well-known shapes.
+ */
+export function resolveStackKey(notification: Notification): string | null {
+  const n = notification as Notification & Record<string, unknown>;
+  const candidates: Array<unknown> = [
+    n.issueId,
+    n['entityId'],
+    n['targetId'],
+    n['workItemId'],
+    n['pageId'],
+    n.projectId,
+  ];
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.length > 0) return value;
+  }
+  return null;
+}
+
+export function resolveHref(notification: Notification): string | null {
+  if (notification.issueId) return `/issues/${notification.issueId}`;
+  if (
+    (notification.type === 'ai_draft_failed' || notification.type === 'agent_run_failed') &&
+    notification.projectId
+  ) {
+    return `/projects/${notification.projectId}/settings?tab=ai-agents`;
+  }
+  if (
+    (notification.type === 'project_created' || notification.type === 'project_archived') &&
+    notification.projectId
+  ) {
+    return `/projects/${notification.projectId}`;
+  }
+  return null;
+}
+
+/** Translator shape compatible with next-intl's `useTranslations` return. */
+type NotificationTranslator = (key: string) => string;
+type NotificationFormatter = ReturnType<typeof useFormatter>;
+
+export function getActorName(notification: Notification, t: NotificationTranslator): string {
+  if (notification.type === 'ai_draft_failed') return t('actor.ai_draft');
+  if (notification.type === 'agent_run_failed') return t('actor.agent_run');
+  return notification.actor?.name || notification.actor?.email?.split('@')[0] || t('actor.someone');
+}
+
+/* -------------------------------------------------------------------------- */
+/* Type → restrained semantic visual mapping */
+/* -------------------------------------------------------------------------- */
+
+type TypeVisual = {
+  Icon: typeof Bell;
+  /** Translation key (under `notifications.type_label`) for the chip label. */
+  labelKey: string;
+  /** Tailwind classes for the icon badge ring/background/foreground. */
+  tone: string;
+};
+
+const TYPE_VISUALS: Record<NotificationType, TypeVisual> = {
+  mention: {
+    Icon: AtSign,
+    labelKey: 'mention',
+    tone: 'bg-primary/10 text-primary ring-primary/30',
+  },
+  comment: {
+    Icon: MessageSquare,
+    labelKey: 'comment',
+    tone: 'bg-accent-blue/10 text-accent-blue ring-accent-blue/20',
+  },
+  assigned: {
+    Icon: UserCheck,
+    labelKey: 'assigned',
+    tone: 'bg-muted text-muted-foreground ring-border',
+  },
+  status_changed: {
+    Icon: Activity,
+    labelKey: 'status',
+    tone: 'bg-accent-blue/10 text-accent-blue ring-accent-blue/20',
+  },
+  issue_created: {
+    Icon: CheckCircle2,
+    labelKey: 'created',
+    tone: 'bg-accent-emerald/10 text-accent-emerald ring-accent-emerald/20',
+  },
+  issue_updated: {
+    Icon: GitBranch,
+    labelKey: 'updated',
+    tone: 'bg-accent-amber/10 text-accent-amber ring-accent-amber/20',
+  },
+  issue_linked: {
+    Icon: Link2,
+    labelKey: 'linked',
+    tone: 'bg-muted text-muted-foreground ring-border',
+  },
+  sprint_started: {
+    Icon: Flag,
+    labelKey: 'sprint',
+    tone: 'bg-accent-emerald/10 text-accent-emerald ring-accent-emerald/20',
+  },
+  sprint_completed: {
+    Icon: Flag,
+    labelKey: 'sprint',
+    tone: 'bg-accent-emerald/10 text-accent-emerald ring-accent-emerald/20',
+  },
+  ai_draft_failed: {
+    Icon: Sparkles,
+    labelKey: 'ai_draft',
+    tone: 'bg-destructive/10 text-destructive ring-destructive/30',
+  },
+  agent_run_failed: {
+    Icon: Bot,
+    labelKey: 'agent',
+    tone: 'bg-destructive/10 text-destructive ring-destructive/30',
+  },
+  project_created: {
+    Icon: FolderPlus,
+    labelKey: 'project_created',
+    tone: 'bg-accent-emerald/10 text-accent-emerald ring-accent-emerald/20',
+  },
+  project_archived: {
+    Icon: Archive,
+    labelKey: 'project_archived',
+    tone: 'bg-muted text-muted-foreground ring-border',
+  },
+};
+
+function getTypeVisual(type: NotificationType): TypeVisual {
+  return (
+    TYPE_VISUALS[type] ?? {
+      Icon: Bell,
+      labelKey: 'update',
+      tone: 'bg-muted text-muted-foreground ring-border',
+    }
+  );
+}
+
+/** Short reference key (e.g. "ISSUE-abc123") if we have one. */
+function getReferenceChip(notification: Notification): string | null {
+  if (notification.issueId) {
+    const tail = notification.issueId.slice(-6).toUpperCase();
+    return `ISSUE-${tail}`;
+  }
+  if (notification.projectId) {
+    const tail = notification.projectId.slice(-6).toUpperCase();
+    return `PROJ-${tail}`;
+  }
+  return null;
+}
+
+export function NotificationAvatar({ notification }: { notification: Notification }) {
+  const initial =
+    (notification.actor?.name || notification.actor?.email || '?')[0]?.toUpperCase() ?? '?';
+  const visual = getTypeVisual(notification.type);
+
+  // System/AI events: show only the typed icon, no actor avatar.
+  if (notification.type === 'ai_draft_failed' || notification.type === 'agent_run_failed') {
+    const { Icon } = visual;
+    return (
+      <span
+        className={cn('flex h-9 w-9 items-center justify-center rounded-md ring-1', visual.tone)}
+      >
+        <Icon className="h-4 w-4" />
+      </span>
+    );
+  }
+
+  // Actor-driven events: avatar with a small type badge overlay.
+  const { Icon } = visual;
+  return (
+    <span className="relative">
+      <Avatar className="ring-border h-9 w-9 ring-1">
+        <AvatarImage src={notification.actor?.image || undefined} alt="" />
+        <AvatarFallback className="bg-muted text-foreground text-[11px] font-semibold">
+          {initial}
+        </AvatarFallback>
+      </Avatar>
+      <span
+        aria-hidden="true"
+        className={cn(
+          'ring-background absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full ring-2',
+          visual.tone
+        )}
+      >
+        <Icon className="h-2.5 w-2.5" />
+      </span>
+    </span>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Timestamp formatting                                                        */
+/* -------------------------------------------------------------------------- */
+
+function formatRelative(
+  date: Date,
+  t: NotificationTranslator,
+  formatter: NotificationFormatter
+): string {
+  const diffMs = Date.now() - date.getTime();
+  if (diffMs < 60_000) return t('item.now');
+  try {
+    return formatter.relativeTime(date, { style: 'narrow' });
+  } catch {
+    return '';
+  }
+}
+
+export interface NotificationItemProps {
+  notification: Notification;
+  selected?: boolean;
+  showStackToggle?: boolean;
+  stackCount?: number;
+  stackOpen?: boolean;
+  onToggleStack?: () => void;
+  onSelect: (notification: Notification) => void;
+  onMarkRead?: (id: string) => void;
+  onMarkUnread?: (id: string) => void;
+  onArchive?: (id: string) => void;
+  onSnooze?: (id: string) => void;
+  compact?: boolean;
+}
+
+/**
+ * Single notification row.
+ *
+ * Layout (left → right):
+ *   [stack toggle] [avatar/icon] [title + body + chips] [time | hover actions] [unread dot]
+ *
+ * - Clicking the row triggers `onSelect` and auto-marks as read.
+ * - When a target href exists, the primary content uses a Link so keyboard /
+ *   middle-click navigation works without nesting action buttons.
+ * - Hover reveals an inline action bar (mark read/unread, open, snooze, archive).
+ */
+export const NotificationItem = forwardRef<HTMLDivElement, NotificationItemProps>(
+  function NotificationItem(
+    {
+      notification,
+      selected,
+      showStackToggle,
+      stackCount,
+      stackOpen,
+      onToggleStack,
+      onSelect,
+      onMarkRead,
+      onMarkUnread,
+      onArchive,
+      onSnooze,
+      compact,
+    },
+    ref
+  ) {
+    const t = useTranslations('notifications');
+    const formatter = useFormatter();
+    const actorName = getActorName(notification, t);
+    const href = resolveHref(notification);
+    const visual = getTypeVisual(notification.type);
+    const typeLabel = t(`type_label.${visual.labelKey}`);
+    const referenceChip = getReferenceChip(notification);
+    const isUnread = !notification.isRead;
+    const createdAt = new Date(notification.createdAt);
+    const relative = formatRelative(createdAt, t, formatter);
+
+    const handleRowClick = () => {
+      if (isUnread && onMarkRead) onMarkRead(notification.id);
+      onSelect(notification);
+    };
+
+    const handleAction = (event: MouseEvent<HTMLButtonElement>, fn?: (id: string) => void) => {
+      event.preventDefault();
+      event.stopPropagation();
+      fn?.(notification.id);
+    };
+
+    const primaryContent: ReactNode = (
+      <>
+        <div className="shrink-0 pt-0.5">
+          <NotificationAvatar notification={notification} />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-2">
+            <p
+              className={cn(
+                'min-w-0 flex-1 truncate text-sm leading-snug',
+                isUnread ? 'text-foreground' : 'text-foreground/90'
+              )}
+            >
+              <span className={cn('font-medium', isUnread && 'font-semibold')}>{actorName}</span>{' '}
+              <span className="text-muted-foreground">
+                {notification.title || t(`type_action.${visual.labelKey}`)}
+              </span>
+            </p>
+          </div>
+
+          {notification.message && !compact && (
+            <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
+              {notification.message}
+            </p>
+          )}
+
+          {/* Chip row */}
+          {(referenceChip || (typeof stackCount === 'number' && stackCount > 1)) && (
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+              <span className="bg-muted text-muted-foreground ring-border inline-flex items-center rounded-sm px-1.5 py-[1px] text-[10px] font-medium ring-1">
+                {typeLabel}
+              </span>
+              {referenceChip && (
+                <span className="bg-muted text-muted-foreground ring-border inline-flex items-center rounded-sm px-1.5 py-[1px] font-mono text-[10px] font-medium ring-1">
+                  {referenceChip}
+                </span>
+              )}
+              {typeof stackCount === 'number' && stackCount > 1 && (
+                <span className="bg-accent text-foreground/80 ring-border inline-flex items-center rounded-sm px-1.5 py-[1px] text-[10px] font-medium ring-1">
+                  {t('item.stack_more', { count: stackCount - 1 })}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex shrink-0 items-start gap-2">
+          <div className="flex flex-col items-end gap-1">
+            <time
+              className={cn(
+                'text-[11px] tabular-nums transition-opacity duration-150',
+                'text-muted-foreground group-hover:opacity-0'
+              )}
+              dateTime={createdAt.toISOString()}
+              title={formatter.dateTime(createdAt, { dateStyle: 'medium', timeStyle: 'short' })}
+            >
+              {relative}
+            </time>
+            {isUnread && (
+              <span
+                aria-label={t('item.unread')}
+                className="bg-primary ring-background h-2 w-2 rounded-full ring-2 group-hover:opacity-0"
+              />
+            )}
+          </div>
+        </div>
+      </>
+    );
+
+    const primaryClassName = cn(
+      'focus-visible:ring-ring flex min-w-0 flex-1 items-start text-left focus-visible:outline-none focus-visible:ring-2',
+      compact ? 'gap-2.5' : 'gap-3'
+    );
+
+    return (
+      <div
+        ref={ref}
+        data-selected={selected ? 'true' : undefined}
+        data-unread={isUnread ? 'true' : undefined}
+        className={cn(
+          'ease-snap group relative flex items-start gap-3 px-4 py-3 transition-[color,background-color,border-color,box-shadow,opacity,transform] duration-150',
+          'hover:bg-accent/50',
+          selected && 'bg-accent/70',
+          isUnread && 'bg-primary/[0.04]',
+          compact ? 'gap-2.5 py-2' : 'py-3'
+        )}
+      >
+        {isUnread && (
+          <span
+            aria-hidden="true"
+            className="bg-primary/70 absolute bottom-2 left-0 top-2 w-[2px] rounded-r-sm"
+          />
+        )}
+
+        {showStackToggle ? (
+          <button
+            type="button"
+            aria-label={stackOpen ? t('item.collapse_stack') : t('item.expand_stack')}
+            aria-expanded={stackOpen}
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleStack?.();
+            }}
+            className={cn(
+              'text-muted-foreground mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-sm',
+              'ease-snap hover:bg-accent hover:text-foreground transition-transform duration-150',
+              'focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2'
+            )}
+            data-open={stackOpen ? 'true' : undefined}
+          >
+            <ChevronRight
+              className={cn(
+                'ease-snap h-3.5 w-3.5 transition-transform duration-150',
+                stackOpen && 'rotate-90'
+              )}
+            />
+          </button>
+        ) : (
+          <span aria-hidden="true" className="mt-1 h-5 w-5 shrink-0" />
+        )}
+
+        {href ? (
+          <Link href={href} onClick={handleRowClick} className={primaryClassName}>
+            {primaryContent}
+          </Link>
+        ) : (
+          <button type="button" onClick={handleRowClick} className={primaryClassName}>
+            {primaryContent}
+          </button>
+        )}
+
+        <div
+          className={cn(
+            'border-border/60 bg-popover pointer-events-none absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-0.5 rounded-md border p-0.5 opacity-0 shadow-sm',
+            'ease-snap transition-opacity duration-150',
+            'group-hover:pointer-events-auto group-hover:opacity-100',
+            'focus-within:pointer-events-auto focus-within:opacity-100'
+          )}
+        >
+          {notification.isRead && onMarkUnread ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="text-muted-foreground hover:text-foreground h-7 w-7"
+              aria-label={t('item.mark_unread')}
+              title={t('item.mark_unread')}
+              onClick={(event) => handleAction(event, onMarkUnread)}
+            >
+              <Bell className="h-3.5 w-3.5" />
+            </Button>
+          ) : onMarkRead ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="text-muted-foreground hover:text-foreground h-7 w-7"
+              aria-label={t('item.mark_read')}
+              title={t('item.mark_read')}
+              onClick={(event) => handleAction(event, onMarkRead)}
+            >
+              <Check className="h-3.5 w-3.5" />
+            </Button>
+          ) : null}
+
+          {href && (
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="text-muted-foreground hover:text-foreground h-7 w-7"
+              aria-label={t('item.open')}
+              title={t('item.open')}
+              onClick={(event) => {
+                event.stopPropagation();
+                onSelect(notification);
+              }}
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Button>
+          )}
+
+          {onSnooze && (
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="text-muted-foreground hover:text-foreground h-7 w-7"
+              aria-label={t('item.snooze')}
+              title={t('item.snooze')}
+              onClick={(event) => handleAction(event, onSnooze)}
+            >
+              <Clock className="h-3.5 w-3.5" />
+            </Button>
+          )}
+
+          {onArchive && (
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
+              className="text-muted-foreground hover:text-foreground h-7 w-7"
+              aria-label={t('item.archive')}
+              title={t('item.archive')}
+              onClick={(event) => handleAction(event, onArchive)}
+            >
+              <Archive className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+);

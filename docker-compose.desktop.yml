@@ -1,0 +1,122 @@
+# TaskNebula Docker Desktop stack.
+#
+# This file is meant for quick local evaluation on a Mac, Windows, or Linux
+# machine that already has Docker Desktop installed. It uses only published
+# images, so it can run without cloning this repository.
+#
+# The secrets below are local-only defaults. Do not expose this stack to the
+# internet; use docker-compose.yml plus a generated .env for production.
+
+name: tasknebula
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+    environment:
+      POSTGRES_USER: tasknebula
+      POSTGRES_PASSWORD: tasknebula-desktop-postgres
+      POSTGRES_DB: tasknebula
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U tasknebula -d tasknebula']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: &default-logging
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass tasknebula-desktop-redis
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'redis-cli --no-auth-warning -a tasknebula-desktop-redis ping | grep -q PONG']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *default-logging
+
+  web:
+    image: ${TASKNEBULA_IMAGE:-neuraparse/tasknebula:0.17.3}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://tasknebula:tasknebula-desktop-postgres@postgres:5432/tasknebula
+      AUTH_SECRET: tasknebula-desktop-local-only-secret-2026-change-before-production
+      AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_NAME: TaskNebula
+      REDIS_URL: redis://:tasknebula-desktop-redis@redis:6379
+      CRON_SECRET: tasknebula-desktop-local-only-cron-secret-change-before-production
+      SKIP_SEED: 'true'
+      SEED_DEMO_DATA: 'false'
+      NODE_ENV: production
+      TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET: ${TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET:-}
+      TASKNEBULA_SELF_UPDATE_ENABLED: ${TASKNEBULA_SELF_UPDATE_ENABLED:-false}
+      TASKNEBULA_SELF_UPDATE_WEBHOOK_URL: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_URL:-}
+      TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET:-}
+    ports:
+      - '127.0.0.1:${PORT:-3000}:3000'
+    volumes:
+      - uploads_data:/app/uploads
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:3000/api/health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 5
+    logging: *default-logging
+
+  # Keep durable approval effects and project-agent runs moving across restarts.
+  approval-reconciler:
+    image: alpine:3.20
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      CRON_SECRET: tasknebula-desktop-local-only-cron-secret-change-before-production
+      WEB_BASE_URL: http://web:3000
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        set -eu
+        while true; do
+          wget -qO /dev/null \
+            --header="x-cron-secret: $$CRON_SECRET" \
+            --post-data='' \
+            "$$WEB_BASE_URL/api/cron/agent-approval-effects" || true
+          wget -qO /dev/null \
+            --header="x-cron-secret: $$CRON_SECRET" \
+            --post-data='' \
+            "$$WEB_BASE_URL/api/cron/agent-runs" || true
+          sleep 60
+        done
+    logging: *default-logging
+
+volumes:
+  postgres_data:
+  redis_data:
+  uploads_data:

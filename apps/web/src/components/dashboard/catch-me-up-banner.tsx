@@ -1,0 +1,183 @@
+'use client';
+
+/**
+ * "Welcome back" banner.
+ *
+ * Logic:
+ *   1. On mount, GET `/api/user/last-seen` to read the previous timestamp.
+ *   2. If it's been > 4 hours, show the banner.
+ *   3. POST `/api/user/last-seen` to advance the stamp so we don't re-show
+ *      on every navigation within the session.
+ *   4. When the user clicks "Catch me up", lazily fetch
+ *      `/api/inbox/catch-me-up?since=<previous lastSeen>` and render the
+ *      AI digest + action items inline.
+ */
+
+import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { Loader2, Sparkles, X, ArrowRight, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useCatchMeUp } from '@/lib/hooks/use-inbox';
+
+const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+
+function formatGap(
+  lastSeen: Date,
+  t: (key: string, values?: Record<string, number>) => string
+): string {
+  const ms = Date.now() - lastSeen.getTime();
+  const hours = Math.floor(ms / (60 * 60 * 1000));
+  if (hours < 24) return t('catchup.gap_hours', { count: hours });
+  const days = Math.floor(hours / 24);
+  return t('catchup.gap_days', { count: days });
+}
+
+export function CatchMeUpBanner() {
+  const t = useTranslations('dashboardExtra');
+  const [previousLastSeen, setPreviousLastSeen] = useState<string | null>(null);
+  const [dismissed, setDismissed] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const response = await fetch('/api/user/last-seen');
+        if (!response.ok) {
+          if (!cancelled) setReady(true);
+          return;
+        }
+        const data = (await response.json()) as { lastSeenAt: string | null };
+        if (cancelled) return;
+        if (data.lastSeenAt) {
+          const gap = Date.now() - new Date(data.lastSeenAt).getTime();
+          if (gap > FOUR_HOURS_MS) {
+            setPreviousLastSeen(data.lastSeenAt);
+          }
+        }
+        // Advance the stamp regardless so we don't re-fire on every tab change.
+        await fetch('/api/user/last-seen', { method: 'POST' });
+      } catch {
+        // Silent failure — banner stays hidden.
+      } finally {
+        if (!cancelled) setReady(true);
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const { data: digest, isFetching } = useCatchMeUp({
+    since: previousLastSeen,
+    enabled: expanded && !!previousLastSeen,
+  });
+
+  if (!ready || !previousLastSeen || dismissed) return null;
+
+  const lastSeenDate = new Date(previousLastSeen);
+
+  return (
+    <div className="surface-card border-primary/20 bg-card p-4">
+      <div className="flex items-start gap-3">
+        <Sparkles className="text-primary mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-foreground min-w-0 text-sm font-semibold">
+              {t('catchup.welcome_back')}
+            </h2>
+            <span className="text-muted-foreground inline-flex items-center gap-1 text-[10px] tabular-nums">
+              <Clock className="h-2.5 w-2.5" />
+              {t('catchup.away', { gap: formatGap(lastSeenDate, t) })}
+            </span>
+          </div>
+          <p className="text-muted-foreground mt-1 text-xs">{t('catchup.prompt')}</p>
+
+          {!expanded ? (
+            <div className="mt-3 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+              <Button size="sm" onClick={() => setExpanded(true)} className="w-full sm:w-auto">
+                <Sparkles className="me-1.5 h-3.5 w-3.5" />
+                {t('catchup.catch_me_up')}
+              </Button>
+              <Button asChild size="sm" variant="ghost" className="w-full sm:w-auto">
+                <Link href="/inbox">
+                  {t('catchup.open_inbox')}
+                  <ArrowRight className="ms-1 h-3 w-3 rtl:rotate-180" />
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-3 space-y-3">
+              {isFetching ? (
+                <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  {t('catchup.summarizing')}
+                </div>
+              ) : digest ? (
+                <>
+                  <pre className="surface-inset text-foreground whitespace-pre-wrap p-3 font-sans text-xs leading-relaxed">
+                    {digest.summary_markdown}
+                  </pre>
+                  {digest.action_items.length > 0 && (
+                    <div>
+                      <p className="text-muted-foreground mb-1.5 text-[10px] font-medium uppercase tracking-wider">
+                        {t('catchup.suggested_next_steps')}
+                      </p>
+                      <ul className="space-y-1">
+                        {digest.action_items.map((action) => (
+                          <li key={`${action.link}-${action.title}-${action.urgency}`}>
+                            <Link
+                              href={action.link}
+                              className={cn(
+                                'border-border bg-background hover:bg-muted/40 focus-visible:ring-ring flex items-center justify-between rounded-md border px-2.5 py-1.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+                                action.urgency === 'high' && 'border-accent-rose/30',
+                                action.urgency === 'medium' && 'border-accent-amber/30'
+                              )}
+                            >
+                              <span className="truncate">{action.title}</span>
+                              <span
+                                className={cn(
+                                  'ms-2 rounded-sm px-1.5 py-0.5 text-[9px] font-medium uppercase',
+                                  action.urgency === 'high' && 'bg-accent-rose/10 text-accent-rose',
+                                  action.urgency === 'medium' &&
+                                    'bg-accent-amber/10 text-accent-amber',
+                                  action.urgency === 'low' && 'bg-muted text-muted-foreground'
+                                )}
+                              >
+                                {t(`catchup.urgency.${action.urgency}`)}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <p className="text-muted-foreground/70 text-[10px]">
+                    {digest.source === 'native'
+                      ? t('catchup.source_native')
+                      : t('catchup.source_other', { source: digest.source })}
+                  </p>
+                </>
+              ) : (
+                <p className="text-muted-foreground text-xs">{t('catchup.no_summary')}</p>
+              )}
+            </div>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 shrink-0 sm:h-8 sm:w-8"
+          onClick={() => setDismissed(true)}
+          aria-label={t('catchup.dismiss')}
+        >
+          <X className="h-3 w-3" />
+        </Button>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,67 @@
+# ValidTeam collaboration service for an isolated host.
+#
+# Shape this targets: arm64 (aarch64), cgroup v2, Docker, and no inbound
+# public ports — reachable from elsewhere only over a private tunnel. That
+# rules out the usual "publish a port and put a hostname in front of it"
+# approach, because the browser is what needs to reach Hocuspocus.
+#
+# So the topology is: browser -> Cloudflare Tunnel -> cloudflared (here) ->
+# hocuspocus over the private Compose network. `expose`, not `ports`: this
+# host opens nothing, and the tunnel is the only public surface.
+#
+# The web app runs elsewhere (Vercel) against the same Neon database. That is
+# the hard coupling — see docs/DEPLOYMENT.md, "Collaboration on a separate
+# host".
+#
+# Required environment:
+#   DATABASE_URL             the same Neon database the web app uses
+#   AUTH_SECRET              the same value the web app signs collab JWTs with
+#   CLOUDFLARE_TUNNEL_TOKEN  token for the tunnel in the Cloudflare dashboard
+#
+# Optional:
+#   REDIS_URL                leave unset for a single instance; set it to run
+#                            multiple Hocuspocus nodes with pub/sub fan-out
+
+services:
+  hocuspocus:
+    build:
+      context: .
+      dockerfile: services/hocuspocus/Dockerfile
+    container_name: validteam-hocuspocus
+    restart: unless-stopped
+    environment:
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET must be set and must match the web app}
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set to the web app's database}
+      NODE_ENV: ${NODE_ENV:-production}
+      HOCUSPOCUS_PORT: '1234'
+      # Empty string is falsy, which puts the server in single-node mode.
+      REDIS_URL: ${REDIS_URL:-}
+    expose:
+      - '1234'
+    healthcheck:
+      test: ['CMD', 'node', 'src/healthcheck.mjs']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: validteam-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?CLOUDFLARE_TUNNEL_TOKEN must be set}
+    depends_on:
+      hocuspocus:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'

@@ -1,0 +1,3407 @@
+'use client';
+
+import type { FormEvent, KeyboardEvent, ReactNode } from 'react';
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useFormatter, useTranslations } from 'next-intl';
+import {
+  RoomContext,
+  RoomAudioRenderer,
+  setLogLevel as setLiveKitLogLevel,
+  useAudioPlayback,
+  useConnectionState,
+  useIsSpeaking,
+  useLocalParticipant,
+  useParticipants,
+  useRoomContext,
+  useTrackToggle,
+} from '@livekit/components-react';
+import {
+  LogLevel,
+  Room,
+  RoomEvent,
+  Track,
+  setLogLevel as setLiveKitClientLogLevel,
+  type Participant,
+} from 'livekit-client';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { PageSidebarContent } from '@/components/layout/page-sidebar-slot';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import type { ChatBootstrapResponse, ConversationMessage } from '@/lib/hooks/use-chat';
+import {
+  useCallToken,
+  useConversationMessages,
+  useConversationStream,
+  useCreateConversationMessage,
+  useDeleteConversationMessage,
+  useMarkConversationRead,
+  useModerateConversationMessages,
+  useProjectChatBootstrap,
+  useStartConversationCall,
+  useUpdateConversationMessage,
+  useLiveCalls,
+} from '@/lib/hooks/use-chat';
+import { cn } from '@/lib/utils';
+import {
+  DEFAULT_MIC_CAPTURE_OPTIONS,
+  EXTENDED_CHROMIUM_MICROPHONE_PROMPT_TIMEOUT_MS,
+  areMicrophoneDeviceLabelsVisible,
+  detectMicrophoneBrowserFamily,
+  formatMicrophonePermissionStateLabel,
+  formatMicrophoneError,
+  getMicrophonePermissionHelpMessage,
+  getMicrophonePermissionState,
+  getPendingMicrophoneJoinMessage,
+  listAudioInputDevices,
+  requestMicrophonePermission,
+  requestRawMicrophoneStream,
+  resolvePreferredAudioInputDevice,
+  resolveJoinAudioInputDeviceId,
+  shouldPreferDefaultMicrophoneForLiveJoin,
+  type MicrophoneDeviceOption,
+  type MicrophonePermissionState,
+} from '@/lib/chat/microphone';
+import { chatClientDebug, chatClientError } from '@/lib/chat/debug';
+import { isApiPermissionError, throwApiResponseError } from '@/lib/client-api-errors';
+import { useStoredVoicePreferences } from '@/lib/chat/voice-preferences';
+import {
+  ChevronDown,
+  Hash,
+  ImagePlus,
+  Loader2,
+  MessageSquareText,
+  MoreHorizontal,
+  Mic,
+  MicOff,
+  PanelLeft,
+  PhoneCall,
+  PhoneOff,
+  RefreshCw,
+  SendHorizontal,
+  Volume2,
+  TestTube2,
+  Trash2,
+  Users2,
+  X,
+} from 'lucide-react';
+import { useGlobalVoice } from '@/components/chat/global-voice-provider';
+import { useMicrophoneMessageCatalog } from '@/components/chat/use-microphone-message-catalog';
+
+const QUICK_REACTIONS = ['👍', '👀', '🚀'];
+const VOICE_CLIENT_SESSION_STORAGE_KEY = 'tasknebula.voice-client-session';
+// Previously 1_500ms, which fired before most users could even click "Allow"
+// on Safari / Firefox — the app then fell back to "muted join + pending
+// promise" and the mic never came back. 8s is long enough to cover normal
+// human reaction time on the browser permission popup without making the
+// Join button feel unresponsive.
+const JOIN_PREFLIGHT_MICROPHONE_TIMEOUT_MS = 8_000;
+const JOIN_PENDING_MICROPHONE_REQUEST_TIMEOUT_MS = 60_000;
+const MICROPHONE_TEST_TIMEOUT_MS = 2_000;
+
+function stopMediaStream(stream?: MediaStream | null) {
+  stream?.getTracks().forEach((track) => track.stop());
+}
+
+function createVoiceRoom() {
+  return new Room({
+    adaptiveStream: false,
+    dynacast: false,
+    disconnectOnPageLeave: false,
+    singlePeerConnection: false,
+    webAudioMix: false,
+  });
+}
+
+type LivekitSession = {
+  url: string;
+  token: string;
+  roomName: string;
+  audioDeviceId: string;
+  startWithMicrophone: boolean;
+};
+
+type PreparedVoiceSession = {
+  roomId: string;
+  url: string;
+  token: string;
+  roomName: string;
+  participantIdentity: string;
+};
+
+function getOrCreateVoiceClientSessionId() {
+  if (typeof window === 'undefined') {
+    return 'server';
+  }
+
+  const existing = window.sessionStorage.getItem(VOICE_CLIENT_SESSION_STORAGE_KEY);
+  if (existing) {
+    return existing;
+  }
+
+  const nextId =
+    typeof window.crypto?.randomUUID === 'function'
+      ? window.crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+  window.sessionStorage.setItem(VOICE_CLIENT_SESSION_STORAGE_KEY, nextId);
+  return nextId;
+}
+
+export function ChatShell({ projectId }: { projectId: string }) {
+  const t = useTranslations('workspaceTools');
+  const tHome = useTranslations('pagesHome');
+  const microphoneMessages = useMicrophoneMessageCatalog();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+  const voice = useGlobalVoice();
+  const [composerValue, setComposerValue] = useState('');
+  const [queuedFiles, setQueuedFiles] = useState<File[]>([]);
+  const [isCreateChannelOpen, setIsCreateChannelOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [newChannelName, setNewChannelName] = useState('');
+  const [newChannelDescription, setNewChannelDescription] = useState('');
+  const [pendingModerationAction, setPendingModerationAction] = useState<
+    'clear_deleted' | 'clear_room' | null
+  >(null);
+  const [preparedVoiceSession, setPreparedVoiceSession] = useState<PreparedVoiceSession | null>(
+    null
+  );
+  const [isVoicePanelOpen, setIsVoicePanelOpen] = useState(false);
+  const [isVoiceSetupOpen, setIsVoiceSetupOpen] = useState(false);
+  const [composerError, setComposerError] = useState<string | null>(null);
+  const [callError, setCallError] = useState<string | null>(null);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [isJoiningCall, setIsJoiningCall] = useState(false);
+  const [isPreparingVoiceSetup, setIsPreparingVoiceSetup] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const sendLockRef = useRef(false);
+  const joinCallLockRef = useRef(false);
+  const lastReadMarkerRef = useRef<string | null>(null);
+  const preparedVoiceSessionRef = useRef<PreparedVoiceSession | null>(null);
+  const prepareVoiceSessionPromiseRef = useRef<{
+    roomId: string;
+    promise: Promise<PreparedVoiceSession>;
+  } | null>(null);
+  // Capture router/searchParams/pathname in refs so the URL-sync effect
+  // does NOT re-fire on every render (each of these is a new reference per
+  // render from next/navigation). Without this, router.replace() mutates the
+  // URL, searchParams changes identity, the effect re-runs, and the page
+  // appears to "continuously refresh".
+  const routerRef = useRef(router);
+  const pathnameRef = useRef(pathname);
+  const searchParamsRef = useRef(searchParams);
+  const syncedBootstrapRoomRef = useRef<string | null>(null);
+  useEffect(() => {
+    routerRef.current = router;
+    pathnameRef.current = pathname;
+    searchParamsRef.current = searchParams;
+  });
+
+  useEffect(() => {
+    // Keep browser consoles usable. We surface actionable voice errors in the UI instead.
+    setLiveKitLogLevel(LogLevel.silent);
+    setLiveKitClientLogLevel(LogLevel.silent);
+  }, []);
+
+  const selectedRoomId = searchParams.get('roomId');
+  const { data: bootstrap, isLoading, error, refetch } = useProjectChatBootstrap(projectId);
+  const { data: liveCalls } = useLiveCalls();
+  const messagesQuery = useConversationMessages(selectedRoomId || undefined);
+  const createMessage = useCreateConversationMessage(selectedRoomId || undefined);
+  const reactToMessage = useUpdateConversationMessage(selectedRoomId || undefined);
+  const deleteMessage = useDeleteConversationMessage(selectedRoomId || undefined);
+  const moderateMessages = useModerateConversationMessages(selectedRoomId || undefined);
+  const { mutate: markConversationRead } = useMarkConversationRead(selectedRoomId || undefined);
+  const startCall = useStartConversationCall(selectedRoomId || undefined);
+  const callToken = useCallToken(selectedRoomId || undefined);
+  const stream = useConversationStream(selectedRoomId || undefined, Boolean(selectedRoomId));
+
+  const selectedRoomMeta = useMemo(() => {
+    const channel = bootstrap?.channels.find((entry) => entry.roomId === selectedRoomId);
+    if (channel) {
+      return {
+        id: channel.roomId!,
+        title: channel.name,
+        subtitle: channel.description || t('chat.projectChannel'),
+        kind: 'channel' as const,
+        activeCall: channel.activeCall || null,
+      };
+    }
+
+    const discussion = bootstrap?.recentDiscussions.find((entry) => entry.id === selectedRoomId);
+    if (discussion) {
+      return {
+        id: discussion.id,
+        title:
+          typeof discussion.context?.title === 'string'
+            ? discussion.context.title
+            : discussion.title || t('chat.discussion'),
+        subtitle:
+          discussion.kind === 'issue_thread'
+            ? (discussion.context?.key as string | undefined) || t('chat.issueDiscussion')
+            : t('chat.documentDiscussion'),
+        kind: discussion.kind,
+        activeCall: discussion.activeCall || null,
+      };
+    }
+
+    return null;
+  }, [bootstrap?.channels, bootstrap?.recentDiscussions, selectedRoomId, t]);
+
+  const messageList = messagesQuery.data || [];
+  const currentVoiceRoomId = voice.currentTarget?.roomId || null;
+  const isCurrentVoiceRoom = Boolean(selectedRoomId && currentVoiceRoomId === selectedRoomId);
+  const globalSelectedRoomCall = liveCalls?.find((call) => call.roomId === selectedRoomId) || null;
+  const localSelectedRoomCall =
+    isCurrentVoiceRoom && voice.currentSession
+      ? {
+          id: voice.currentSession.roomName,
+          participantCount: voice.participantCount || 1,
+        }
+      : null;
+  const combinedActiveCall =
+    localSelectedRoomCall ||
+    (stream.activeCall as Record<string, unknown> | null) ||
+    globalSelectedRoomCall ||
+    selectedRoomMeta?.activeCall ||
+    null;
+  const isPreparedVoiceSessionReady =
+    Boolean(selectedRoomId) &&
+    (combinedActiveCall ? preparedVoiceSession?.roomId === selectedRoomId : true);
+  const trimmedComposerValue = composerValue.trim();
+  const lastReadableMessageId =
+    messageList.length > 0 && !messageList[messageList.length - 1]?.optimistic
+      ? messageList[messageList.length - 1]?.id || null
+      : null;
+  const canSendMessages = Boolean(selectedRoomId && bootstrap?.permissions.canPostMessages);
+  const attachmentsEnabled = Boolean(bootstrap?.effectiveSettings.attachmentsEnabled);
+  const sendDisabledReason = !selectedRoomId
+    ? t('chat.send.chooseConversation')
+    : !bootstrap?.permissions.canPostMessages
+      ? t('chat.send.noPermission')
+      : queuedFiles.length > 0 && !attachmentsEnabled
+        ? t('chat.send.attachmentsDisabled')
+        : null;
+
+  useEffect(() => {
+    preparedVoiceSessionRef.current = preparedVoiceSession;
+  }, [preparedVoiceSession]);
+
+  useEffect(() => {
+    chatClientDebug('chat-shell.selected-room', {
+      projectId,
+      selectedRoomId,
+      selectedRoomTitle: selectedRoomMeta?.title || null,
+      hasCombinedActiveCall: Boolean(combinedActiveCall),
+      currentVoiceRoomId,
+      isCurrentVoiceRoom,
+    });
+  }, [
+    combinedActiveCall,
+    currentVoiceRoomId,
+    isCurrentVoiceRoom,
+    projectId,
+    selectedRoomId,
+    selectedRoomMeta?.title,
+  ]);
+
+  useEffect(() => {
+    const lastActiveRoomId = bootstrap?.lastActiveRoomId;
+    if (selectedRoomId || !lastActiveRoomId) {
+      // Reset the synced guard any time the user has an explicit room
+      // selected so a later logout/re-bootstrap can hydrate again.
+      if (selectedRoomId) {
+        syncedBootstrapRoomRef.current = null;
+      }
+      return;
+    }
+    // Only sync once per bootstrap value. Without this guard, router.replace
+    // changes searchParams which, if it were in the deps, would re-fire the
+    // effect in an infinite loop. Reading router/searchParams/pathname from
+    // refs also keeps per-render identity changes from retriggering.
+    if (syncedBootstrapRoomRef.current === lastActiveRoomId) {
+      return;
+    }
+    syncedBootstrapRoomRef.current = lastActiveRoomId;
+    const params = new URLSearchParams(searchParamsRef.current.toString());
+    params.set('roomId', lastActiveRoomId);
+    routerRef.current.replace(`${pathnameRef.current}?${params.toString()}`, { scroll: false });
+  }, [bootstrap?.lastActiveRoomId, selectedRoomId]);
+
+  useEffect(() => {
+    if (
+      !selectedRoomId ||
+      !bootstrap?.effectiveSettings.unreadTrackingEnabled ||
+      !lastReadableMessageId
+    ) {
+      return;
+    }
+
+    const nextMarker = `${selectedRoomId}:${lastReadableMessageId}`;
+    if (lastReadMarkerRef.current === nextMarker) {
+      return;
+    }
+
+    lastReadMarkerRef.current = nextMarker;
+    markConversationRead(lastReadableMessageId, {
+      onError: () => {
+        if (lastReadMarkerRef.current === nextMarker) {
+          lastReadMarkerRef.current = null;
+        }
+      },
+    });
+  }, [
+    bootstrap?.effectiveSettings.unreadTrackingEnabled,
+    lastReadableMessageId,
+    markConversationRead,
+    selectedRoomId,
+  ]);
+
+  const lastMessageId = messageList.length ? messageList[messageList.length - 1]?.id : null;
+
+  useEffect(() => {
+    messageEndRef.current?.scrollIntoView({ block: 'end' });
+  }, [lastMessageId, selectedRoomId]);
+
+  useEffect(() => {
+    setComposerError(null);
+    setCallError(null);
+    setQueuedFiles([]);
+    setComposerValue('');
+    preparedVoiceSessionRef.current = null;
+    prepareVoiceSessionPromiseRef.current = null;
+    setPreparedVoiceSession(null);
+    setIsVoiceSetupOpen(false);
+    lastReadMarkerRef.current = null;
+    sendLockRef.current = false;
+    joinCallLockRef.current = false;
+    setIsSendingMessage(false);
+    setIsJoiningCall(false);
+    setIsPreparingVoiceSetup(false);
+  }, [selectedRoomId]);
+
+  useEffect(() => {
+    if (!voice.currentSession || !voice.isMicrophoneEnabled) {
+      return;
+    }
+
+    setCallError((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const normalized = current.toLowerCase();
+      const shouldClear =
+        normalized.includes('joined muted while the browser finishes microphone access') ||
+        normalized.includes('browser is still waiting for microphone access') ||
+        normalized.includes('microphone access timed out while waiting for the browser prompt');
+
+      return shouldClear ? null : current;
+    });
+  }, [voice.currentSession, voice.isMicrophoneEnabled]);
+
+  useEffect(() => {
+    if (!isCurrentVoiceRoom || !voice.runtimeError) {
+      return;
+    }
+
+    setCallError(voice.runtimeError);
+  }, [isCurrentVoiceRoom, voice.runtimeError]);
+
+  const formatChatError = useCallback(
+    (errorValue: unknown, fallback: string) => {
+      if (isApiPermissionError(errorValue)) {
+        return tHome('toast_access_denied_description');
+      }
+      return errorValue instanceof Error ? errorValue.message : fallback;
+    },
+    [tHome]
+  );
+
+  async function handleCreateChannel() {
+    try {
+      const response = await fetch(`/api/projects/${projectId}/channels`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newChannelName,
+          description: newChannelDescription || null,
+        }),
+      });
+      if (!response.ok) {
+        await throwApiResponseError(response, t('chat.channel.createFailed'));
+      }
+      const payload = await response.json();
+
+      setIsCreateChannelOpen(false);
+      setNewChannelName('');
+      setNewChannelDescription('');
+      toast({
+        title: t('chat.channel.createdTitle'),
+        description: t('chat.channel.createdDescription', { name: payload.channel.name }),
+      });
+      await refetch();
+      if (payload.room?.id) {
+        selectRoom(payload.room.id);
+      }
+    } catch (mutationError) {
+      toast({
+        title: t('chat.channel.createFailed'),
+        description: formatChatError(mutationError, t('chat.channel.createFailed')),
+        variant: 'destructive',
+      });
+    }
+  }
+
+  function selectRoom(roomId: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('roomId', roomId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  function queueFiles(files: File[]) {
+    if (!files.length) {
+      return;
+    }
+
+    if (!attachmentsEnabled) {
+      const errorMessage = t('chat.send.attachmentsDisabled');
+      setComposerError(errorMessage);
+      toast({
+        title: t('chat.attachmentsUnavailable'),
+        description: errorMessage,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setComposerError(null);
+    setQueuedFiles((current) => [...current, ...files]);
+  }
+
+  async function handleSendMessage() {
+    if (sendLockRef.current || isSendingMessage) {
+      return;
+    }
+
+    if (!selectedRoomId || !canSendMessages) {
+      setComposerError(sendDisabledReason || t('chat.send.cannotSend'));
+      return;
+    }
+
+    if (!trimmedComposerValue && queuedFiles.length === 0) {
+      return;
+    }
+
+    if (queuedFiles.length > 0 && !attachmentsEnabled) {
+      setComposerError(t('chat.send.attachmentsDisabled'));
+      return;
+    }
+
+    try {
+      sendLockRef.current = true;
+      setIsSendingMessage(true);
+      setComposerError(null);
+      chatClientDebug('chat-shell.message.send.start', {
+        roomId: selectedRoomId,
+        bodyLength: trimmedComposerValue.length,
+        attachmentCount: queuedFiles.length,
+      });
+      await createMessage.mutateAsync({
+        body: trimmedComposerValue,
+        files: queuedFiles,
+      });
+      chatClientDebug('chat-shell.message.send.success', {
+        roomId: selectedRoomId,
+        bodyLength: trimmedComposerValue.length,
+        attachmentCount: queuedFiles.length,
+      });
+      setComposerValue('');
+      setQueuedFiles([]);
+    } catch (mutationError) {
+      const description = t('chat.message.sendFailed');
+      chatClientError('chat-shell.message.send.error', {
+        roomId: selectedRoomId,
+        bodyLength: trimmedComposerValue.length,
+        attachmentCount: queuedFiles.length,
+        error: mutationError instanceof Error ? mutationError : new Error(description),
+      });
+      setComposerError(description);
+      toast({
+        title: t('chat.message.sendFailed'),
+        description,
+        variant: 'destructive',
+      });
+    } finally {
+      sendLockRef.current = false;
+      setIsSendingMessage(false);
+    }
+  }
+
+  function handleComposerSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    void handleSendMessage();
+  }
+
+  async function handleToggleReaction(messageId: string, emoji: string) {
+    try {
+      await reactToMessage.mutateAsync({ messageId, reactionEmoji: emoji });
+    } catch {
+      toast({
+        title: t('chat.message.reactionFailed'),
+        description: t('chat.message.reactionFailed'),
+        variant: 'destructive',
+      });
+    }
+  }
+
+  async function handleDeleteMessage(messageId: string) {
+    try {
+      await deleteMessage.mutateAsync(messageId);
+    } catch {
+      toast({
+        title: t('chat.message.deleteFailed'),
+        description: t('chat.message.deleteFailed'),
+        variant: 'destructive',
+      });
+    }
+  }
+
+  async function handleModerationAction() {
+    if (!pendingModerationAction) {
+      return;
+    }
+
+    try {
+      const result = await moderateMessages.mutateAsync(pendingModerationAction);
+      toast({
+        title:
+          pendingModerationAction === 'clear_deleted'
+            ? t('chat.moderation.deletedCleared')
+            : t('chat.moderation.historyCleared'),
+        description:
+          result.affectedCount > 0
+            ? t('chat.moderation.messagesUpdated', { count: result.affectedCount })
+            : t('chat.moderation.nothingToClean'),
+      });
+      setPendingModerationAction(null);
+    } catch {
+      toast({
+        title: t('chat.moderation.actionFailed'),
+        description: t('chat.moderation.actionFailedDescription'),
+        variant: 'destructive',
+      });
+    }
+  }
+
+  function clearPreparedVoiceSession(roomId?: string | null) {
+    if (!roomId || preparedVoiceSessionRef.current?.roomId === roomId) {
+      preparedVoiceSessionRef.current = null;
+      setPreparedVoiceSession((current) =>
+        !roomId || current?.roomId === roomId ? null : current
+      );
+    }
+
+    if (!roomId || prepareVoiceSessionPromiseRef.current?.roomId === roomId) {
+      prepareVoiceSessionPromiseRef.current = null;
+    }
+  }
+
+  async function resolvePreparedVoiceSession(roomId: string) {
+    const existingPrepared = preparedVoiceSessionRef.current;
+    if (existingPrepared?.roomId === roomId) {
+      chatClientDebug('chat-shell.voice.prepare.reuse-ready', {
+        roomId,
+        roomName: existingPrepared.roomName,
+      });
+      return existingPrepared;
+    }
+
+    const existingPending = prepareVoiceSessionPromiseRef.current;
+    if (existingPending?.roomId === roomId) {
+      chatClientDebug('chat-shell.voice.prepare.reuse-pending', {
+        roomId,
+      });
+      return existingPending.promise;
+    }
+
+    const nextPromise = new Promise<PreparedVoiceSession>((resolve, reject) => {
+      chatClientDebug('chat-shell.voice.prepare.start', {
+        roomId,
+        hasCombinedActiveCall: Boolean(combinedActiveCall),
+      });
+      const timeout = window.setTimeout(() => {
+        chatClientError('chat-shell.voice.prepare.timeout', {
+          roomId,
+        });
+        reject(new Error(t('chat.voice.prepareTimeout')));
+      }, 10_000);
+
+      void (async () => {
+        try {
+          let token;
+          try {
+            chatClientDebug('chat-shell.voice.prepare.token.request', {
+              roomId,
+            });
+            token = await callToken.mutateAsync({
+              clientSessionId: getOrCreateVoiceClientSessionId(),
+            });
+          } catch (error) {
+            const message = error instanceof Error ? error.message.toLowerCase() : '';
+            if (
+              message.includes('start a call before joining') ||
+              message.includes('no active call')
+            ) {
+              chatClientDebug('chat-shell.voice.prepare.start-call', {
+                roomId,
+              });
+              await startCall.mutateAsync();
+              chatClientDebug('chat-shell.voice.prepare.token.retry-after-start', {
+                roomId,
+              });
+              token = await callToken.mutateAsync({
+                clientSessionId: getOrCreateVoiceClientSessionId(),
+              });
+            } else {
+              throw error;
+            }
+          }
+
+          const nextPreparedSession = {
+            roomId,
+            url: token.url,
+            token: token.token,
+            roomName: token.roomName,
+            participantIdentity: token.participantIdentity,
+          } satisfies PreparedVoiceSession;
+
+          preparedVoiceSessionRef.current = nextPreparedSession;
+          setPreparedVoiceSession(nextPreparedSession);
+          chatClientDebug('chat-shell.voice.prepare.success', {
+            roomId,
+            roomName: nextPreparedSession.roomName,
+            participantIdentity: nextPreparedSession.participantIdentity,
+            url: nextPreparedSession.url,
+          });
+          resolve(nextPreparedSession);
+        } catch (error) {
+          chatClientError('chat-shell.voice.prepare.error', {
+            roomId,
+            error: error instanceof Error ? error : new Error('Failed to prepare voice session'),
+          });
+          clearPreparedVoiceSession(roomId);
+          reject(error);
+        } finally {
+          window.clearTimeout(timeout);
+          if (prepareVoiceSessionPromiseRef.current?.promise === nextPromise) {
+            prepareVoiceSessionPromiseRef.current = null;
+          }
+        }
+      })();
+    });
+
+    prepareVoiceSessionPromiseRef.current = {
+      roomId,
+      promise: nextPromise,
+    };
+
+    return nextPromise;
+  }
+
+  async function prepareVoiceSession(roomId: string) {
+    return resolvePreparedVoiceSession(roomId);
+  }
+
+  function handleOpenVoiceSetup() {
+    if (!selectedRoomId || isJoiningCall || voice.currentSession || isPreparingVoiceSetup) {
+      chatClientDebug('chat-shell.voice.setup.skip', {
+        selectedRoomId,
+        isJoiningCall,
+        hasCurrentSession: Boolean(voice.currentSession),
+        isPreparingVoiceSetup,
+      });
+      return;
+    }
+
+    chatClientDebug('chat-shell.voice.setup.open', {
+      selectedRoomId,
+      hasCombinedActiveCall: Boolean(combinedActiveCall),
+    });
+    setCallError(null);
+    setIsVoiceSetupOpen(true);
+    setIsVoicePanelOpen(true);
+
+    if (!combinedActiveCall) {
+      clearPreparedVoiceSession(selectedRoomId);
+      setIsPreparingVoiceSetup(false);
+      return;
+    }
+
+    setIsPreparingVoiceSetup(true);
+    void prepareVoiceSession(selectedRoomId)
+      .catch(() => {
+        setCallError(t('chat.voice.prepareFailed'));
+      })
+      .finally(() => {
+        setIsPreparingVoiceSetup(false);
+      });
+  }
+
+  async function handleJoinCall(options: {
+    audioDeviceId: string;
+    startWithMicrophone: boolean;
+    preflightMicrophoneStream?: MediaStream | null;
+    pendingMicrophoneStreamPromise?: Promise<MediaStream | null> | null;
+  }) {
+    if (!selectedRoomId || !bootstrap || joinCallLockRef.current || voice.currentSession) {
+      return;
+    }
+
+    try {
+      joinCallLockRef.current = true;
+      setIsJoiningCall(true);
+      setCallError(null);
+      chatClientDebug('chat-shell.voice.join.start', {
+        roomId: selectedRoomId,
+        options,
+        preparedReady: preparedVoiceSession?.roomId === selectedRoomId,
+      });
+
+      const preparedSession =
+        preparedVoiceSession?.roomId === selectedRoomId
+          ? preparedVoiceSession
+          : await prepareVoiceSession(selectedRoomId);
+
+      voice.startSession({
+        session: {
+          url: preparedSession.url,
+          token: preparedSession.token,
+          roomName: preparedSession.roomName,
+          audioDeviceId: options.audioDeviceId,
+          startWithMicrophone: options.startWithMicrophone,
+          participantIdentity: preparedSession.participantIdentity,
+          preflightMicrophoneStream: options.preflightMicrophoneStream,
+          pendingMicrophoneStreamPromise: options.pendingMicrophoneStreamPromise,
+        },
+        target: {
+          roomId: selectedRoomId,
+          roomTitle: selectedRoomMeta?.title || t('chat.voice.voiceRoom'),
+          roomSubtitle: selectedRoomMeta?.subtitle || t('chat.voice.projectConversation'),
+          roomHref: `/projects/${projectId}/chat?roomId=${selectedRoomId}`,
+          projectName: bootstrap.project.name,
+          projectPath: bootstrap.project.key.toLowerCase(),
+          canManageCalls: bootstrap.permissions.canManageCalls,
+        },
+      });
+      if (options.pendingMicrophoneStreamPromise) {
+        setCallError(
+          getPendingMicrophoneJoinMessage(
+            typeof navigator !== 'undefined' ? navigator.userAgent : '',
+            microphoneMessages
+          )
+        );
+      }
+      setIsVoiceSetupOpen(false);
+      setIsVoicePanelOpen(false);
+      clearPreparedVoiceSession(selectedRoomId);
+      chatClientDebug('chat-shell.voice.join.success', {
+        roomId: selectedRoomId,
+        roomName: preparedSession.roomName,
+        participantIdentity: preparedSession.participantIdentity,
+        startWithMicrophone: options.startWithMicrophone,
+        audioDeviceId: options.audioDeviceId,
+      });
+    } catch (mutationError) {
+      const genericJoinFailed = t('chat.voice.joinFailed');
+      const genericAudioUnavailable = t('chat.voice.audioCaptureUnavailable');
+      const runtimeDescription =
+        mutationError instanceof Error ? formatLivekitRuntimeError(mutationError, t) : '';
+      const description =
+        runtimeDescription && runtimeDescription !== genericAudioUnavailable
+          ? runtimeDescription
+          : genericJoinFailed;
+      stopMediaStream(options.preflightMicrophoneStream);
+      chatClientError('chat-shell.voice.join.error', {
+        roomId: selectedRoomId,
+        options,
+        error: mutationError instanceof Error ? mutationError : new Error(genericJoinFailed),
+      });
+      setCallError(description);
+      toast({
+        title: t('chat.voice.joinFailed'),
+        description,
+        variant: 'destructive',
+      });
+    } finally {
+      joinCallLockRef.current = false;
+      setIsJoiningCall(false);
+    }
+  }
+
+  const handleCloseVoicePanel = useCallback(() => {
+    clearPreparedVoiceSession(selectedRoomId);
+    setIsVoiceSetupOpen(false);
+    setIsVoicePanelOpen(false);
+  }, [selectedRoomId]);
+
+  function handlePaste(event: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const files = Array.from(event.clipboardData.files || []);
+    if (files.length) {
+      event.preventDefault();
+      queueFiles(files);
+    }
+  }
+
+  function handleComposerKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault();
+      void handleSendMessage();
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <h1 className="sr-only">{t('chat.sidebar.projectChat')}</h1>
+        <div className="text-muted-foreground flex items-center gap-2 text-sm">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          {t('chat.loading')}
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !bootstrap) {
+    return (
+      <div className="flex h-full items-center justify-center p-6">
+        <h1 className="sr-only">{t('chat.sidebar.projectChat')}</h1>
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>{t('chat.unavailableTitle')}</CardTitle>
+            <CardDescription>
+              {formatChatError(error, t('chat.unavailableDescription'))}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!bootstrap.effectiveSettings.enabled) {
+    return (
+      <div className="p-6">
+        <h1 className="sr-only">{t('chat.sidebar.projectChat')}</h1>
+        <Card className="max-w-2xl">
+          <CardHeader>
+            <CardTitle>{t('chat.disabledTitle')}</CardTitle>
+            <CardDescription>{t('chat.disabledDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline">
+                <Link href={`/projects/${projectId}/settings?tab=chat-calls`}>
+                  {t('chat.projectSettings')}
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/settings?tab=communications">{t('chat.workspaceSettings')}</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const sidebar = (
+    <ChatSidebar
+      bootstrap={bootstrap}
+      selectedRoomId={selectedRoomId}
+      onCreateChannel={() => setIsCreateChannelOpen(true)}
+      onSelectRoom={(roomId) => {
+        setIsSidebarOpen(false);
+        selectRoom(roomId);
+      }}
+    />
+  );
+
+  return (
+    <>
+      <h1 className="sr-only">{t('chat.sidebar.projectChat')}</h1>
+      <Dialog open={isCreateChannelOpen} onOpenChange={setIsCreateChannelOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{t('chat.createChannel.title')}</DialogTitle>
+            <DialogDescription>{t('chat.createChannel.description')}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">{t('chat.createChannel.nameLabel')}</label>
+              <Input
+                value={newChannelName}
+                onChange={(event) => setNewChannelName(event.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {t('chat.createChannel.descriptionLabel')}
+              </label>
+              <Textarea
+                value={newChannelDescription}
+                onChange={(event) => setNewChannelDescription(event.target.value)}
+                className="min-h-[96px]"
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button onClick={handleCreateChannel} disabled={!newChannelName.trim()}>
+                {t('chat.createChannel.submit')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(pendingModerationAction)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingModerationAction(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {pendingModerationAction === 'clear_deleted'
+                ? t('chat.moderation.clearDeletedTitle')
+                : t('chat.moderation.clearHistoryTitle')}
+            </DialogTitle>
+            <DialogDescription>
+              {pendingModerationAction === 'clear_deleted'
+                ? t('chat.moderation.clearDeletedDescription')
+                : t('chat.moderation.clearHistoryDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setPendingModerationAction(null)}>
+              {t('chat.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => void handleModerationAction()}
+              disabled={moderateMessages.isPending}
+            >
+              {moderateMessages.isPending ? (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {t('chat.confirm')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <SheetContent side="start" className="w-[320px] p-0">
+          <SheetHeader className="border-b px-4 py-4 text-start">
+            <SheetTitle>{t('chat.conversations')}</SheetTitle>
+          </SheetHeader>
+          {sidebar}
+        </SheetContent>
+      </Sheet>
+
+      <PageSidebarContent>
+        <div className="bg-background flex h-full min-h-0 flex-col">{sidebar}</div>
+      </PageSidebarContent>
+
+      <div className="bg-workbench-canvas flex h-full min-h-0">
+        <main className="flex min-h-0 min-w-0 flex-1">
+          {selectedRoomMeta ? (
+            <>
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                <div className="bg-surface/55 border-border border-b px-3 py-3 sm:px-6">
+                  <div className="mx-auto flex w-full max-w-6xl items-start justify-between gap-4">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t('chat.conversations')}
+                        className="mt-0.5 h-8 w-8 lg:hidden"
+                        onClick={() => setIsSidebarOpen(true)}
+                      >
+                        <PanelLeft className="h-4 w-4" />
+                      </Button>
+                      <div className="min-w-0 space-y-1">
+                        <div className="flex items-center gap-2">
+                          {selectedRoomMeta.kind === 'channel' ? (
+                            <Hash className="text-muted-foreground h-4 w-4 shrink-0" />
+                          ) : (
+                            <MessageSquareText className="text-muted-foreground h-4 w-4 shrink-0" />
+                          )}
+                          <div className="truncate text-base font-semibold">
+                            {selectedRoomMeta.title}
+                          </div>
+                        </div>
+                        <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                          <span className="truncate">
+                            {selectedRoomMeta.subtitle}
+                            {combinedActiveCall
+                              ? ` · ${t('chat.inCall', { count: Number(combinedActiveCall.participantCount) || 0 })}`
+                              : ''}
+                            {stream.presence.length
+                              ? ` · ${t('chat.online', { count: stream.presence.length })}`
+                              : ''}
+                          </span>
+                          {stream.isConnected ? (
+                            <span className="live-pill shrink-0">{t('chat.live')}</span>
+                          ) : (
+                            <span className="chip-amber shrink-0">{t('chat.reconnecting')}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                      {bootstrap.permissions.canModerateMessages ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              className="h-9 w-9"
+                              aria-label={t('chat.moderationTools')}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuItem
+                              onClick={() => setPendingModerationAction('clear_deleted')}
+                            >
+                              <Trash2 className="me-2 h-4 w-4" />
+                              {t('chat.moderation.clearDeletedTitle')}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => setPendingModerationAction('clear_room')}
+                            >
+                              <Trash2 className="me-2 h-4 w-4" />
+                              {t('chat.moderation.clearHistoryTitle')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : null}
+                      {voice.currentSession ? (
+                        <Button
+                          variant={isCurrentVoiceRoom ? 'secondary' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            if (voice.currentTarget?.roomHref && !isCurrentVoiceRoom) {
+                              router.push(voice.currentTarget.roomHref);
+                            }
+                          }}
+                        >
+                          <Volume2 className="me-1.5 h-4 w-4" />
+                          {isCurrentVoiceRoom ? t('chat.voice.inCall') : t('chat.voice.openCall')}
+                        </Button>
+                      ) : null}
+                      {bootstrap.effectiveSettings.voiceEnabled ? (
+                        <Button
+                          variant={combinedActiveCall ? 'outline' : 'default'}
+                          size="sm"
+                          onClick={handleOpenVoiceSetup}
+                          disabled={
+                            isJoiningCall ||
+                            Boolean(voice.currentSession) ||
+                            (!combinedActiveCall && !bootstrap.permissions.canStartCalls)
+                          }
+                        >
+                          {isJoiningCall ? (
+                            <Loader2 className="me-1.5 h-4 w-4 animate-spin" />
+                          ) : (
+                            <PhoneCall className="me-1.5 h-4 w-4" />
+                          )}
+                          {voice.currentSession
+                            ? t('chat.voice.inCall')
+                            : combinedActiveCall
+                              ? t('chat.voice.joinCall')
+                              : t('chat.voice.startCall')}
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+
+                {callError ? (
+                  <div className="border-b px-4 py-2">
+                    <div className="border-destructive/40 bg-destructive/5 text-destructive mx-auto w-full max-w-3xl rounded-md border px-3 py-2 text-xs">
+                      {callError}
+                    </div>
+                  </div>
+                ) : null}
+
+                {combinedActiveCall ? (
+                  <div className="border-b px-4 py-2">
+                    <div className="border-accent-emerald/20 bg-accent-emerald/5 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 rounded-md border px-3 py-2 text-xs">
+                      <div className="min-w-0">
+                        <div className="text-foreground font-medium">
+                          {isCurrentVoiceRoom
+                            ? t('chat.voice.callLiveTitle')
+                            : t('chat.voice.activeCallTitle')}
+                        </div>
+                        <div className="text-muted-foreground truncate">
+                          {isCurrentVoiceRoom
+                            ? t('chat.voice.callLiveDescription')
+                            : t('chat.voice.activeCallDescription')}
+                          {combinedActiveCall && 'participantCount' in combinedActiveCall
+                            ? ` · ${t('chat.inCall', { count: Number(combinedActiveCall.participantCount) || 0 })}`
+                            : ''}
+                        </div>
+                      </div>
+                      {isCurrentVoiceRoom ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => void voice.leaveCurrentCall()}
+                        >
+                          <PhoneOff className="me-2 h-3.5 w-3.5" />
+                          {t('chat.voice.leave')}
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleOpenVoiceSetup}
+                          disabled={Boolean(voice.currentSession) || isJoiningCall}
+                        >
+                          <PhoneCall className="me-2 h-3.5 w-3.5" />
+                          {t('chat.voice.join')}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div
+                  className="min-h-0 flex-1 overflow-y-auto"
+                  role="region"
+                  aria-label={t('chat.conversations')}
+                  tabIndex={0}
+                >
+                  <div className="mx-auto flex w-full max-w-6xl flex-col px-4 py-5 sm:px-6">
+                    {messagesQuery.isLoading ? (
+                      <div className="text-muted-foreground flex items-center gap-2 py-8 text-sm">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {t('chat.loadingMessages')}
+                      </div>
+                    ) : messageList.length ? (
+                      <>
+                        {messagesQuery.hasMore ? (
+                          <div className="pb-3">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => void messagesQuery.loadMore()}
+                              disabled={messagesQuery.isLoadingMore}
+                            >
+                              {messagesQuery.isLoadingMore ? (
+                                <Loader2 className="me-2 h-3.5 w-3.5 animate-spin" />
+                              ) : null}
+                              {t('chat.loadOlder')}
+                            </Button>
+                          </div>
+                        ) : null}
+                        {messageList.map((message) => (
+                          <ChatMessageRow
+                            key={message.id}
+                            message={message}
+                            onDelete={handleDeleteMessage}
+                            onToggleReaction={handleToggleReaction}
+                          />
+                        ))}
+                      </>
+                    ) : (
+                      <div className="border-border/60 flex min-h-[320px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed px-8 text-center">
+                        <MessageSquareText className="text-muted-foreground h-6 w-6" aria-hidden />
+                        <p className="text-muted-foreground text-sm">{t('chat.noMessages')}</p>
+                      </div>
+                    )}
+                    <div ref={messageEndRef} />
+                  </div>
+                </div>
+
+                <div className="bg-surface/55 border-border border-t px-3 py-3 sm:px-6 sm:py-4">
+                  <form
+                    className="mx-auto flex w-full max-w-6xl flex-col gap-3"
+                    onSubmit={handleComposerSubmit}
+                  >
+                    {queuedFiles.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {queuedFiles.map((file, index) => (
+                          <span key={`${file.name}-${index}`} className="chip max-w-full gap-1.5">
+                            <span className="truncate">{file.name}</span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setQueuedFiles((current) =>
+                                  current.filter((_, currentIndex) => currentIndex !== index)
+                                )
+                              }
+                              className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2"
+                              aria-label={t('chat.removeFile', { name: file.name })}
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    {composerError ? (
+                      <div className="border-destructive/30 bg-destructive/5 text-destructive rounded-md border px-3 py-2 text-xs">
+                        {composerError}
+                      </div>
+                    ) : null}
+
+                    <div className="surface-card p-2">
+                      <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-2 px-1 pb-2 text-xs">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            type="button"
+                            className="border-border ease-smooth hover:bg-accent hover:text-foreground inline-flex items-center gap-1 rounded-md border px-2 py-1 transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={!attachmentsEnabled || isSendingMessage}
+                            aria-label={t('chat.attachFiles')}
+                          >
+                            <ImagePlus className="h-3.5 w-3.5" />
+                            {t('chat.attach')}
+                          </button>
+                          {sendDisabledReason ? (
+                            <span>{sendDisabledReason}</span>
+                          ) : (
+                            <span className="hidden sm:inline">{t('chat.composerHint')}</span>
+                          )}
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            multiple
+                            className="hidden"
+                            onChange={(event) => queueFiles(Array.from(event.target.files || []))}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-end gap-2">
+                        <Textarea
+                          value={composerValue}
+                          onChange={(event) => {
+                            setComposerValue(event.target.value);
+                            if (composerError) {
+                              setComposerError(null);
+                            }
+                          }}
+                          onKeyDown={handleComposerKeyDown}
+                          onPaste={handlePaste}
+                          placeholder={t('chat.composerPlaceholder')}
+                          className="max-h-[200px] min-h-[80px] flex-1 resize-none overflow-y-auto border-0 bg-transparent px-2 py-1.5 shadow-none focus-visible:ring-0"
+                          disabled={!canSendMessages || isSendingMessage}
+                        />
+
+                        <Button
+                          type="submit"
+                          size="sm"
+                          className="h-8 w-8 shrink-0 p-0"
+                          aria-label={t('chat.sendMessage')}
+                          disabled={
+                            isSendingMessage ||
+                            Boolean(sendDisabledReason) ||
+                            (!trimmedComposerValue && queuedFiles.length === 0)
+                          }
+                        >
+                          {isSendingMessage ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <SendHorizontal className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+              {bootstrap.effectiveSettings.voiceEnabled && isVoiceSetupOpen ? (
+                <aside
+                  className={cn(
+                    'hidden h-full shrink-0 overflow-hidden transition-[width,border-color] duration-200 xl:flex',
+                    isVoicePanelOpen ? 'w-[360px] border-s' : 'w-0 border-s-transparent'
+                  )}
+                >
+                  <VoiceJoinSetupPanel
+                    className={cn(
+                      'h-full w-[360px] shrink-0',
+                      !isVoicePanelOpen && 'pointer-events-none opacity-0'
+                    )}
+                    isJoining={isJoiningCall}
+                    isPreparing={isPreparingVoiceSetup}
+                    isReady={isPreparedVoiceSessionReady}
+                    onClose={handleCloseVoicePanel}
+                    onJoin={handleJoinCall}
+                  />
+                </aside>
+              ) : null}
+            </>
+          ) : (
+            <div className="flex h-full items-center justify-center p-6">
+              <div className="space-y-2 text-center">
+                <p className="text-foreground text-sm font-medium">
+                  {t('chat.selectConversation')}
+                </p>
+                <p className="text-muted-foreground max-w-xs text-sm">
+                  {t('chat.selectConversationHint')}
+                </p>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </>
+  );
+}
+
+function ChatSidebar({
+  bootstrap,
+  selectedRoomId,
+  onSelectRoom,
+  onCreateChannel,
+}: {
+  bootstrap: ChatBootstrapResponse;
+  selectedRoomId: string | null;
+  onSelectRoom: (roomId: string) => void;
+  onCreateChannel: () => void;
+}) {
+  const t = useTranslations('workspaceTools');
+  return (
+    <div className="bg-context flex h-full min-h-0 flex-col">
+      <div className="bg-context border-border border-b px-4 py-3">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 space-y-1">
+            <div className="text-muted-foreground text-[10px] font-semibold uppercase tracking-[0.18em]">
+              {t('chat.sidebar.projectChat')}
+            </div>
+            <div className="truncate text-sm font-semibold">{bootstrap.project.name}</div>
+            <div className="text-muted-foreground text-xs">{t('chat.sidebar.subtitle')}</div>
+          </div>
+          {bootstrap.permissions.canCreateChannels ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 shrink-0 px-3"
+              onClick={onCreateChannel}
+            >
+              {t('chat.sidebar.new')}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="space-y-6 px-4 py-4">
+          <section className="space-y-2">
+            <div className="text-muted-foreground px-1 text-[10px] font-semibold uppercase tracking-[0.18em]">
+              {t('chat.sidebar.channels')}
+            </div>
+            {bootstrap.channels.map((channel) => (
+              <button
+                key={channel.id}
+                type="button"
+                onClick={() => channel.roomId && onSelectRoom(channel.roomId)}
+                data-active={channel.roomId === selectedRoomId ? 'true' : undefined}
+                className="row-interactive flex w-full items-center gap-2 px-3 py-2 text-start text-sm"
+              >
+                <Hash className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 flex-1 truncate">{channel.name}</span>
+                {channel.activeCall ? (
+                  <span className="chip text-[11px]">{t('chat.sidebar.call')}</span>
+                ) : null}
+                {channel.unreadCount ? (
+                  <span className="bg-primary text-primary-foreground flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold">
+                    {channel.unreadCount > 99 ? '99+' : channel.unreadCount}
+                  </span>
+                ) : null}
+              </button>
+            ))}
+          </section>
+
+          <section className="space-y-2">
+            <div className="text-muted-foreground px-1 text-[10px] font-semibold uppercase tracking-[0.18em]">
+              {t('chat.sidebar.recent')}
+            </div>
+            {bootstrap.recentDiscussions.length ? (
+              bootstrap.recentDiscussions.map((discussion) => (
+                <button
+                  key={discussion.id}
+                  type="button"
+                  onClick={() => onSelectRoom(discussion.id)}
+                  data-active={discussion.id === selectedRoomId ? 'true' : undefined}
+                  className="row-interactive flex w-full items-start gap-2 px-3 py-2 text-start"
+                >
+                  <MessageSquareText className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-foreground truncate text-sm font-medium">
+                      {typeof discussion.context?.title === 'string'
+                        ? discussion.context.title
+                        : discussion.title || t('chat.discussion')}
+                    </div>
+                    <div className="text-muted-foreground truncate text-xs">
+                      {discussion.kind === 'issue_thread'
+                        ? (discussion.context?.key as string | undefined) || t('chat.sidebar.issue')
+                        : t('chat.sidebar.document')}
+                    </div>
+                  </div>
+                  {discussion.activeCall ? (
+                    <span className="chip text-[11px]">{t('chat.sidebar.call')}</span>
+                  ) : null}
+                  {discussion.unreadCount ? (
+                    <span className="bg-primary text-primary-foreground flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-semibold">
+                      {discussion.unreadCount > 99 ? '99+' : discussion.unreadCount}
+                    </span>
+                  ) : null}
+                </button>
+              ))
+            ) : (
+              <div className="text-muted-foreground px-1 py-3 text-sm">
+                {t('chat.sidebar.recentEmpty')}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatMessageRow({
+  message,
+  onDelete,
+  onToggleReaction,
+}: {
+  message: ConversationMessage;
+  onDelete: (messageId: string) => Promise<void>;
+  onToggleReaction: (messageId: string, emoji: string) => Promise<void>;
+}) {
+  const t = useTranslations('workspaceTools');
+  const formatter = useFormatter();
+  const authorName = message.author.name || message.author.email || t('chat.message.unknownUser');
+  const moderationLabel = message.moderation?.deletedByName
+    ? t('chat.message.deletedBy', { name: message.moderation.deletedByName })
+    : t('chat.message.deletedLabel');
+  // Heuristic: users can edit their own messages. Used for a subtle right-aligned variant.
+  const isOwnMessage = Boolean(message.canEdit) && !message.deletedAt;
+
+  return (
+    <div
+      className={cn('animate-fade-up group flex gap-3 py-3', isOwnMessage && 'flex-row-reverse')}
+    >
+      <Avatar className="mt-0.5 h-7 w-7 shrink-0">
+        <AvatarImage src={message.author.image || undefined} alt={authorName} />
+        <AvatarFallback className="text-[10px]">{getInitials(authorName)}</AvatarFallback>
+      </Avatar>
+
+      <div className={cn('min-w-0 flex-1', isOwnMessage && 'text-end')}>
+        <div
+          className={cn(
+            'flex flex-wrap items-baseline gap-x-2 gap-y-1',
+            isOwnMessage && 'justify-end'
+          )}
+        >
+          <span className="text-sm font-medium">{authorName}</span>
+          <span className="text-muted-foreground text-xs">
+            {message.optimistic
+              ? t('chat.message.sending')
+              : formatter.relativeTime(new Date(message.createdAt))}
+            {message.editedAt ? ` · ${t('chat.message.edited')}` : ''}
+          </span>
+          {message.canDelete ? (
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground text-[11px] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+              onClick={() => void onDelete(message.id)}
+            >
+              {t('chat.message.delete')}
+            </button>
+          ) : null}
+        </div>
+
+        <div
+          className={cn(
+            'text-foreground mt-1 whitespace-pre-wrap text-sm leading-relaxed',
+            message.deletedAt && 'text-muted-foreground italic',
+            isOwnMessage &&
+              !message.deletedAt &&
+              'bg-primary/8 inline-block max-w-full rounded-md px-3 py-1.5 text-start'
+          )}
+        >
+          {message.deletedAt ? t('chat.message.messageDeleted') : message.body}
+        </div>
+
+        {message.deletedAt && message.moderation?.deletedBody ? (
+          <div className="surface-inset mt-2 rounded-md px-3 py-2 text-start">
+            <div className="text-muted-foreground text-[11px] font-medium uppercase tracking-[0.12em]">
+              {moderationLabel}
+            </div>
+            <div className="text-foreground/90 mt-2 whitespace-pre-wrap text-sm leading-relaxed">
+              {message.moderation.deletedBody}
+            </div>
+          </div>
+        ) : null}
+
+        {message.attachments.length ? (
+          <div className={cn('mt-2 flex flex-wrap gap-2', isOwnMessage && 'justify-end')}>
+            {message.attachments.map((attachment) =>
+              attachment.filePath ? (
+                <a
+                  key={attachment.id}
+                  href={`/api/uploads/${attachment.filePath.split('/').pop()}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="chip hover:text-foreground transition-colors duration-200"
+                >
+                  {attachment.fileName}
+                </a>
+              ) : (
+                <span key={attachment.id} className="chip">
+                  {attachment.fileName}
+                </span>
+              )
+            )}
+          </div>
+        ) : null}
+
+        {message.deletedAt && message.moderation?.deletedAttachments.length ? (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {message.moderation.deletedAttachments.map((attachment) => (
+              <span key={attachment.id} className="chip">
+                {attachment.fileName}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
+        {!message.deletedAt && !message.optimistic ? (
+          <div className={cn('mt-2 flex flex-wrap gap-1.5', isOwnMessage && 'justify-end')}>
+            {message.reactions.map((reaction) => (
+              <button
+                key={`${message.id}-${reaction.emoji}`}
+                type="button"
+                onClick={() => void onToggleReaction(message.id, reaction.emoji)}
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs transition-colors duration-200',
+                  reaction.reactedByCurrentUser
+                    ? 'border-primary/30 bg-primary/10 text-primary'
+                    : 'border-border text-muted-foreground hover:bg-accent hover:text-foreground'
+                )}
+              >
+                <span>{reaction.emoji}</span>
+                <span className="tabular-nums">{reaction.count}</span>
+              </button>
+            ))}
+            {QUICK_REACTIONS.map((emoji) => (
+              <button
+                key={`${message.id}-${emoji}-quick`}
+                type="button"
+                onClick={() => void onToggleReaction(message.id, emoji)}
+                className="border-border text-muted-foreground hover:bg-accent hover:text-foreground inline-flex items-center rounded-full border border-dashed px-2 py-0.5 text-xs opacity-0 transition-colors duration-200 group-hover:opacity-100"
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function ChatVoiceDock({
+  className,
+  canManageCalls,
+  isVisible,
+  livekitSession,
+  onClose,
+  onEndCall,
+  onDisconnected,
+  onRuntimeError,
+}: {
+  className?: string;
+  canManageCalls: boolean;
+  isVisible: boolean;
+  livekitSession: LivekitSession | null;
+  onClose?: () => void;
+  onEndCall: () => Promise<void>;
+  onDisconnected: () => Promise<void>;
+  onRuntimeError: (message: string) => void;
+}) {
+  const t = useTranslations('workspaceTools');
+  const microphoneMessages = useMicrophoneMessageCatalog();
+  const disconnectHandledRef = useRef(false);
+  const disconnectModeRef = useRef<'leave' | 'end' | null>(null);
+  const latestOnDisconnectedRef = useRef(onDisconnected);
+  const latestOnEndCallRef = useRef(onEndCall);
+  const latestOnRuntimeErrorRef = useRef(onRuntimeError);
+
+  useEffect(() => {
+    disconnectHandledRef.current = false;
+    disconnectModeRef.current = null;
+  }, [livekitSession?.roomName]);
+
+  useEffect(() => {
+    latestOnDisconnectedRef.current = onDisconnected;
+    latestOnEndCallRef.current = onEndCall;
+    latestOnRuntimeErrorRef.current = onRuntimeError;
+  }, [onDisconnected, onEndCall, onRuntimeError]);
+
+  const handleDisconnected = useCallback(async () => {
+    if (disconnectHandledRef.current) {
+      return;
+    }
+
+    disconnectHandledRef.current = true;
+    await latestOnDisconnectedRef.current();
+
+    if (disconnectModeRef.current === 'end') {
+      await latestOnEndCallRef.current();
+    }
+  }, []);
+
+  const handleRoomError = useCallback(
+    (error: Error) => {
+      const message = formatLivekitRuntimeError(error, t);
+      if (!message) {
+        return;
+      }
+      latestOnRuntimeErrorRef.current(message);
+    },
+    [t]
+  );
+
+  const handleMediaDeviceFailure = useCallback(
+    (error?: Error) => {
+      latestOnRuntimeErrorRef.current(
+        formatMicrophoneError(error, { messages: microphoneMessages })
+      );
+    },
+    [microphoneMessages]
+  );
+
+  const handleRoomDisconnected = useCallback(() => {
+    void handleDisconnected();
+  }, [handleDisconnected]);
+
+  if (!livekitSession) {
+    return null;
+  }
+
+  return (
+    <div className={cn('bg-background flex h-full min-h-0 flex-col', className)}>
+      <div className="border-border flex items-center justify-between border-b px-4 py-3">
+        <div>
+          <div className="text-sm font-semibold">{t('chat.voice.voiceRoom')}</div>
+          <div className="text-muted-foreground text-xs">{t('chat.voice.dockSubtitle')}</div>
+        </div>
+        {onClose ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={onClose}
+            aria-label={t('chat.voice.closeVoiceRoom')}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        ) : null}
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <ManagedLiveKitRoomProvider
+          session={livekitSession}
+          onDisconnected={handleRoomDisconnected}
+          onError={handleRoomError}
+          onMediaDeviceFailure={handleMediaDeviceFailure}
+        >
+          <InlineVoiceRoom
+            canManageCalls={canManageCalls}
+            isVisible={isVisible}
+            onPrepareDisconnect={(mode) => {
+              disconnectModeRef.current = mode;
+            }}
+          />
+        </ManagedLiveKitRoomProvider>
+      </div>
+    </div>
+  );
+}
+
+function formatMicrophoneDeviceOptionLabel(
+  device: Pick<MediaDeviceInfo, 'deviceId' | 'label'>,
+  index: number,
+  fallbackLabel: (index: number) => string
+) {
+  const label = device.label.trim();
+  if (label) {
+    return label;
+  }
+
+  return fallbackLabel(index + 1);
+}
+
+function useMicrophoneEnvironment({
+  onError,
+  storedAudioDeviceId,
+  storedAudioDeviceLabel,
+  storedAudioDeviceGroupId,
+  storeAudioDevicePreference,
+  storeAudioDeviceId,
+}: {
+  onError: (message: string | null) => void;
+  storedAudioDeviceId: string;
+  storedAudioDeviceLabel: string | null;
+  storedAudioDeviceGroupId: string | null;
+  storeAudioDevicePreference: (input: {
+    audioDeviceId: string;
+    audioDeviceLabel?: string | null;
+    audioDeviceGroupId?: string | null;
+  }) => void;
+  storeAudioDeviceId: (deviceId: string) => void;
+}) {
+  const t = useTranslations('workspaceTools');
+  const microphoneMessages = useMicrophoneMessageCatalog();
+  const [microphoneDevices, setMicrophoneDevices] = useState<MicrophoneDeviceOption[]>([]);
+  const [microphonePermissionState, setMicrophonePermissionState] =
+    useState<MicrophonePermissionState>('unknown');
+  const [isRefreshingMicrophoneEnvironment, setIsRefreshingMicrophoneEnvironment] = useState(false);
+  const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+
+  const refreshMicrophoneEnvironment = useCallback(async () => {
+    setIsRefreshingMicrophoneEnvironment(true);
+
+    try {
+      const [permissionState, audioInputs] = await Promise.all([
+        getMicrophonePermissionState({ silent: true }),
+        listAudioInputDevices({ silent: true }),
+      ]);
+
+      setMicrophonePermissionState(permissionState);
+      setMicrophoneDevices(audioInputs);
+
+      if (storedAudioDeviceId !== 'default') {
+        const matchedStoredDevice = resolvePreferredAudioInputDevice(audioInputs, {
+          audioDeviceId: storedAudioDeviceId,
+          audioDeviceLabel: storedAudioDeviceLabel,
+          audioDeviceGroupId: storedAudioDeviceGroupId,
+        });
+
+        if (matchedStoredDevice) {
+          const normalizedMatchedLabel = matchedStoredDevice.label || '';
+          const normalizedMatchedGroupId = matchedStoredDevice.groupId || '';
+          const normalizedStoredLabel = storedAudioDeviceLabel || '';
+          const normalizedStoredGroupId = storedAudioDeviceGroupId || '';
+
+          if (
+            matchedStoredDevice.deviceId !== storedAudioDeviceId ||
+            normalizedMatchedLabel !== normalizedStoredLabel ||
+            normalizedMatchedGroupId !== normalizedStoredGroupId
+          ) {
+            storeAudioDevicePreference({
+              audioDeviceId: matchedStoredDevice.deviceId,
+              audioDeviceLabel: matchedStoredDevice.label,
+              audioDeviceGroupId: matchedStoredDevice.groupId,
+            });
+          }
+        } else {
+          storeAudioDeviceId('default');
+        }
+      }
+    } catch (error) {
+      onError(
+        formatMicrophoneError(error, {
+          messages: microphoneMessages,
+          userAgent,
+        })
+      );
+    } finally {
+      setIsRefreshingMicrophoneEnvironment(false);
+    }
+  }, [
+    onError,
+    microphoneMessages,
+    storeAudioDeviceId,
+    storeAudioDevicePreference,
+    storedAudioDeviceGroupId,
+    storedAudioDeviceId,
+    storedAudioDeviceLabel,
+    userAgent,
+  ]);
+
+  useEffect(() => {
+    void refreshMicrophoneEnvironment();
+
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    const handleDeviceChange = () => {
+      void refreshMicrophoneEnvironment();
+    };
+    const handleWindowFocus = () => {
+      void refreshMicrophoneEnvironment();
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        void refreshMicrophoneEnvironment();
+      }
+    };
+
+    if (navigator.mediaDevices?.addEventListener) {
+      navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+    }
+    window.addEventListener('focus', handleWindowFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (navigator.mediaDevices?.removeEventListener) {
+        navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+      }
+      window.removeEventListener('focus', handleWindowFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refreshMicrophoneEnvironment]);
+
+  const deviceLabelsVisible = useMemo(
+    () => areMicrophoneDeviceLabelsVisible(microphoneDevices),
+    [microphoneDevices]
+  );
+
+  const selectedMicrophoneLabel =
+    resolvePreferredAudioInputDevice(microphoneDevices, {
+      audioDeviceId: storedAudioDeviceId,
+      audioDeviceLabel: storedAudioDeviceLabel,
+      audioDeviceGroupId: storedAudioDeviceGroupId,
+    })?.label ||
+    (storedAudioDeviceId === 'default'
+      ? t('chat.voice.systemDefaultMic')
+      : t('chat.voice.selectedMic'));
+
+  const microphonePermissionLabel = formatMicrophonePermissionStateLabel(
+    microphonePermissionState,
+    microphoneMessages
+  );
+  const microphonePermissionHelp = getMicrophonePermissionHelpMessage(microphonePermissionState, {
+    hasDetectedDevices: microphoneDevices.length > 0,
+    labelsVisible: deviceLabelsVisible,
+    messages: microphoneMessages,
+    userAgent,
+  });
+
+  return {
+    deviceLabelsVisible,
+    isRefreshingMicrophoneEnvironment,
+    microphoneDevices,
+    microphonePermissionHelp,
+    microphonePermissionLabel,
+    microphonePermissionState,
+    refreshMicrophoneEnvironment,
+    selectedMicrophoneLabel,
+    userAgent,
+  };
+}
+
+export function VoiceJoinSetupPanel({
+  className,
+  isJoining,
+  isPreparing,
+  isReady,
+  onClose,
+  onJoin,
+}: {
+  className?: string;
+  isJoining: boolean;
+  isPreparing: boolean;
+  isReady: boolean;
+  onClose: () => void;
+  onJoin: (options: {
+    audioDeviceId: string;
+    startWithMicrophone: boolean;
+    preflightMicrophoneStream?: MediaStream | null;
+    pendingMicrophoneStreamPromise?: Promise<MediaStream | null> | null;
+  }) => Promise<void>;
+}) {
+  const t = useTranslations('workspaceTools');
+  const microphoneMessages = useMicrophoneMessageCatalog();
+  const {
+    storedAudioDeviceGroupId,
+    storedAudioDeviceId,
+    storedAudioDeviceLabel,
+    storeAudioDeviceId,
+    storeAudioDevicePreference,
+  } = useStoredVoicePreferences();
+  const [isTestingMicrophone, setIsTestingMicrophone] = useState(false);
+  const [isPreparingMicrophoneTest, setIsPreparingMicrophoneTest] = useState(false);
+  const [isSelfMonitorEnabled, setIsSelfMonitorEnabled] = useState(false);
+  const [microphoneTestLevel, setMicrophoneTestLevel] = useState(0);
+  const [setupError, setSetupError] = useState<string | null>(null);
+  const [isSubmittingJoin, setIsSubmittingJoin] = useState(false);
+  const [isUnlockingMicrophoneAccess, setIsUnlockingMicrophoneAccess] = useState(false);
+  const joinSubmissionLockRef = useRef(false);
+  const microphoneTestStreamRef = useRef<MediaStream | null>(null);
+  const microphoneTestAudioContextRef = useRef<AudioContext | null>(null);
+  const microphoneTestSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const microphoneTestAnalyserRef = useRef<AnalyserNode | null>(null);
+  const microphoneTestIntervalRef = useRef<number | null>(null);
+  const monitorAudioRef = useRef<HTMLAudioElement | null>(null);
+  const {
+    deviceLabelsVisible,
+    isRefreshingMicrophoneEnvironment,
+    microphoneDevices,
+    microphonePermissionHelp,
+    microphonePermissionLabel,
+    microphonePermissionState,
+    refreshMicrophoneEnvironment,
+    selectedMicrophoneLabel,
+  } = useMicrophoneEnvironment({
+    onError: setSetupError,
+    storedAudioDeviceId,
+    storedAudioDeviceGroupId,
+    storedAudioDeviceLabel,
+    storeAudioDevicePreference,
+    storeAudioDeviceId,
+  });
+
+  const resetMonitorAudio = useCallback(() => {
+    if (!monitorAudioRef.current) {
+      return;
+    }
+
+    try {
+      monitorAudioRef.current.pause();
+    } catch {
+      // Ignore playback teardown issues in browsers/test environments.
+    }
+    monitorAudioRef.current.srcObject = null;
+  }, []);
+
+  const stopMicrophoneTest = useCallback(async () => {
+    if (microphoneTestIntervalRef.current !== null) {
+      window.clearInterval(microphoneTestIntervalRef.current);
+      microphoneTestIntervalRef.current = null;
+    }
+
+    resetMonitorAudio();
+
+    try {
+      microphoneTestSourceRef.current?.disconnect();
+    } catch {
+      // Ignore teardown issues from partially initialized graphs.
+    }
+    microphoneTestSourceRef.current = null;
+
+    try {
+      microphoneTestAnalyserRef.current?.disconnect();
+    } catch {
+      // Ignore teardown issues from partially initialized graphs.
+    }
+    microphoneTestAnalyserRef.current = null;
+
+    if (microphoneTestAudioContextRef.current) {
+      try {
+        await microphoneTestAudioContextRef.current.close();
+      } catch {
+        // Ignore teardown failures from browsers with partial AudioContext support.
+      }
+      microphoneTestAudioContextRef.current = null;
+    }
+
+    microphoneTestStreamRef.current?.getTracks().forEach((track) => track.stop());
+    microphoneTestStreamRef.current = null;
+
+    setIsTestingMicrophone(false);
+    setIsSelfMonitorEnabled(false);
+    setMicrophoneTestLevel(0);
+  }, [resetMonitorAudio]);
+
+  useEffect(() => {
+    return () => {
+      void stopMicrophoneTest();
+    };
+  }, [stopMicrophoneTest]);
+
+  useEffect(() => {
+    const audioElement = monitorAudioRef.current;
+    if (!audioElement) {
+      return;
+    }
+
+    if (!isSelfMonitorEnabled || !isTestingMicrophone || !microphoneTestStreamRef.current) {
+      resetMonitorAudio();
+      return;
+    }
+
+    audioElement.srcObject = microphoneTestStreamRef.current;
+    audioElement.volume = 0.9;
+    const playPromise = audioElement.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {
+        setSetupError(t('chat.voice.selfMonitorBlocked'));
+      });
+    }
+
+    return () => {
+      resetMonitorAudio();
+    };
+  }, [isSelfMonitorEnabled, isTestingMicrophone, resetMonitorAudio, t]);
+
+  const requestMicrophoneStream = useCallback(async () => {
+    return requestRawMicrophoneStream(storedAudioDeviceId, {
+      interactive: true,
+      preferredDeviceGroupId: storedAudioDeviceGroupId,
+      preferredDeviceLabel: storedAudioDeviceLabel,
+      timeoutMs: MICROPHONE_TEST_TIMEOUT_MS,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+    });
+  }, [storedAudioDeviceGroupId, storedAudioDeviceId, storedAudioDeviceLabel]);
+
+  async function handleSelectMicrophone(deviceId: string) {
+    chatClientDebug('voice-setup.device.select', {
+      nextDeviceId: deviceId,
+      previousDeviceId: storedAudioDeviceId,
+    });
+    setSetupError(null);
+    const selectedDevice = microphoneDevices.find((device) => device.deviceId === deviceId);
+    if (selectedDevice) {
+      storeAudioDevicePreference({
+        audioDeviceId: selectedDevice.deviceId,
+        audioDeviceGroupId: selectedDevice.groupId,
+        audioDeviceLabel: selectedDevice.label,
+      });
+    } else {
+      storeAudioDeviceId(deviceId);
+    }
+    if (isTestingMicrophone) {
+      await stopMicrophoneTest();
+    }
+  }
+
+  async function handleToggleMicrophoneTest() {
+    if (isSubmittingJoin || isPreparingMicrophoneTest) {
+      return;
+    }
+
+    if (isTestingMicrophone) {
+      chatClientDebug('voice-setup.mic-test.stop', {
+        selectedDeviceId: storedAudioDeviceId,
+      });
+      await stopMicrophoneTest();
+      return;
+    }
+
+    try {
+      setIsPreparingMicrophoneTest(true);
+      setSetupError(null);
+      chatClientDebug('voice-setup.mic-test.start', {
+        selectedDeviceId: storedAudioDeviceId,
+      });
+      const stream = await requestMicrophoneStream();
+      await refreshMicrophoneEnvironment();
+
+      const AudioContextCtor =
+        window.AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+      if (!AudioContextCtor) {
+        throw new Error(t('chat.voice.audioContextUnavailable'));
+      }
+
+      const audioContext = new AudioContextCtor();
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+      if (audioContext.state !== 'running') {
+        throw new Error(t('chat.voice.audioContextFailed'));
+      }
+
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      analyser.smoothingTimeConstant = 0.35;
+
+      const source = audioContext.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      const buffer = new Uint8Array(analyser.frequencyBinCount);
+
+      microphoneTestStreamRef.current = stream;
+      microphoneTestAudioContextRef.current = audioContext;
+      microphoneTestSourceRef.current = source;
+      microphoneTestAnalyserRef.current = analyser;
+      microphoneTestIntervalRef.current = window.setInterval(() => {
+        analyser.getByteTimeDomainData(buffer);
+        let sum = 0;
+        for (let index = 0; index < buffer.length; index += 1) {
+          const centered = ((buffer[index] ?? 128) - 128) / 128;
+          sum += centered * centered;
+        }
+        const rms = Math.sqrt(sum / buffer.length);
+        setMicrophoneTestLevel((current) => {
+          const nextLevel = Math.min(1, rms * 2.8);
+          return Math.abs(current - nextLevel) < 0.02 ? current : nextLevel;
+        });
+      }, 110);
+      setIsTestingMicrophone(true);
+    } catch (error) {
+      await stopMicrophoneTest();
+      chatClientError('voice-setup.mic-test.error', {
+        selectedDeviceId: storedAudioDeviceId,
+        error: error instanceof Error ? error : new Error('Microphone test failed'),
+      });
+      setSetupError(formatMicrophoneError(error, { messages: microphoneMessages }));
+    } finally {
+      setIsPreparingMicrophoneTest(false);
+    }
+  }
+
+  async function handleRequestMicrophoneAccess() {
+    if (isSubmittingJoin || isPreparingMicrophoneTest || isUnlockingMicrophoneAccess) {
+      return;
+    }
+
+    try {
+      setIsUnlockingMicrophoneAccess(true);
+      setSetupError(null);
+      chatClientDebug('voice-setup.permission.unlock.start', {
+        selectedDeviceId: storedAudioDeviceId,
+        permissionState: microphonePermissionState,
+      });
+      await requestMicrophonePermission();
+      await refreshMicrophoneEnvironment();
+      chatClientDebug('voice-setup.permission.unlock.success', {
+        selectedDeviceId: storedAudioDeviceId,
+      });
+    } catch (error) {
+      chatClientError('voice-setup.permission.unlock.error', {
+        selectedDeviceId: storedAudioDeviceId,
+        error: error instanceof Error ? error : new Error('Failed to unlock microphone access'),
+      });
+      setSetupError(
+        formatMicrophoneError(error, {
+          messages: microphoneMessages,
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+        })
+      );
+    } finally {
+      setIsUnlockingMicrophoneAccess(false);
+    }
+  }
+
+  async function handleJoin(startWithMicrophone: boolean) {
+    if (isJoining || isSubmittingJoin || joinSubmissionLockRef.current) {
+      return;
+    }
+
+    let preflightMicrophoneStream: MediaStream | null = null;
+    let pendingMicrophoneStreamPromise: Promise<MediaStream | null> | null = null;
+    let shouldStartWithMicrophone = startWithMicrophone;
+
+    try {
+      joinSubmissionLockRef.current = true;
+      setIsSubmittingJoin(true);
+      setSetupError(null);
+      chatClientDebug('voice-setup.join.click', {
+        startWithMicrophone,
+        selectedDeviceId: storedAudioDeviceId,
+        isReady,
+        isPreparing,
+      });
+      await stopMicrophoneTest();
+      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const browserFamily = detectMicrophoneBrowserFamily(userAgent);
+      const shouldUseExtendedPromptWait =
+        browserFamily === 'chromium' || browserFamily === 'edge' || browserFamily === 'safari';
+      // Re-query the Permissions API at click time — the cached
+      // `microphonePermissionState` updates only on window focus /
+      // visibilitychange / devicechange, so it can still say "prompt"
+      // even after the user just clicked "Allow" inside the Test mic
+      // step. Stale state here causes Chromium to force the
+      // browser-stability fallback path unnecessarily.
+      const freshPermissionState = await getMicrophonePermissionState({ silent: true }).catch(
+        () => microphonePermissionState
+      );
+      const joinAudioResolution = startWithMicrophone
+        ? await resolveJoinAudioInputDeviceId(storedAudioDeviceId || 'default', {
+            preferBrowserStability: true,
+            userAgent,
+            microphonePermissionState: freshPermissionState,
+            microphoneRequestOptions: {
+              interactive: true,
+              preferredDeviceGroupId: storedAudioDeviceGroupId,
+              preferredDeviceLabel: storedAudioDeviceLabel,
+              timeoutMs: JOIN_PREFLIGHT_MICROPHONE_TIMEOUT_MS,
+              userAgent,
+            },
+          })
+        : {
+            audioDeviceId: shouldPreferDefaultMicrophoneForLiveJoin(userAgent)
+              ? 'default'
+              : storedAudioDeviceId || 'default',
+            shouldPersist: false,
+            usedBrowserStabilityFallback: false,
+          };
+
+      if (startWithMicrophone) {
+        if (joinAudioResolution.usedBrowserStabilityFallback) {
+          chatClientDebug('voice-setup.join.browser-fallback', {
+            selectedDeviceId: storedAudioDeviceId,
+            resolvedDeviceId: joinAudioResolution.audioDeviceId,
+          });
+          setSetupError(t('chat.voice.browserStabilityFallback'));
+        }
+        if (
+          joinAudioResolution.shouldPersist &&
+          joinAudioResolution.audioDeviceId !== storedAudioDeviceId
+        ) {
+          storeAudioDeviceId(joinAudioResolution.audioDeviceId);
+          setSetupError(t('chat.voice.switchedToDefault'));
+        }
+      }
+      chatClientDebug('voice-setup.join.resolved', {
+        startWithMicrophone,
+        selectedDeviceId: storedAudioDeviceId,
+        resolvedDeviceId: joinAudioResolution.audioDeviceId,
+        shouldPersist: joinAudioResolution.shouldPersist,
+        usedBrowserStabilityFallback: joinAudioResolution.usedBrowserStabilityFallback,
+      });
+      if (startWithMicrophone) {
+        const backgroundRequestTimeoutMs = shouldUseExtendedPromptWait
+          ? EXTENDED_CHROMIUM_MICROPHONE_PROMPT_TIMEOUT_MS
+          : JOIN_PENDING_MICROPHONE_REQUEST_TIMEOUT_MS;
+        const pendingMicrophoneJoinMessage = getPendingMicrophoneJoinMessage(
+          userAgent,
+          microphoneMessages
+        );
+        try {
+          chatClientDebug('voice-setup.join.prefetch-mic.start', {
+            selectedDeviceId: storedAudioDeviceId,
+            resolvedDeviceId: joinAudioResolution.audioDeviceId,
+            timeoutMs: backgroundRequestTimeoutMs,
+            blockingTimeoutMs: JOIN_PREFLIGHT_MICROPHONE_TIMEOUT_MS,
+          });
+          const microphonePrefetchPromise = requestRawMicrophoneStream(
+            joinAudioResolution.audioDeviceId,
+            {
+              interactive: true,
+              preferredDeviceGroupId: storedAudioDeviceGroupId,
+              preferredDeviceLabel: storedAudioDeviceLabel,
+              timeoutMs: backgroundRequestTimeoutMs,
+              userAgent,
+            }
+          );
+          const preflightOutcome = await Promise.race([
+            microphonePrefetchPromise
+              .then((stream) => ({
+                status: 'success' as const,
+                stream,
+              }))
+              .catch((error) => ({
+                status: 'error' as const,
+                error,
+              })),
+            new Promise<{ status: 'pending' }>((resolve) => {
+              window.setTimeout(() => {
+                resolve({ status: 'pending' });
+              }, JOIN_PREFLIGHT_MICROPHONE_TIMEOUT_MS);
+            }),
+          ]);
+
+          if (preflightOutcome.status === 'success') {
+            preflightMicrophoneStream = preflightOutcome.stream;
+            chatClientDebug('voice-setup.join.prefetch-mic.success', {
+              selectedDeviceId: storedAudioDeviceId,
+              resolvedDeviceId: joinAudioResolution.audioDeviceId,
+            });
+          } else if (preflightOutcome.status === 'pending') {
+            pendingMicrophoneStreamPromise = microphonePrefetchPromise;
+            shouldStartWithMicrophone = false;
+            chatClientDebug('voice-setup.join.prefetch-mic.pending', {
+              selectedDeviceId: storedAudioDeviceId,
+              resolvedDeviceId: joinAudioResolution.audioDeviceId,
+              blockingTimeoutMs: JOIN_PREFLIGHT_MICROPHONE_TIMEOUT_MS,
+              requestTimeoutMs: backgroundRequestTimeoutMs,
+            });
+            chatClientDebug('voice-setup.join.prefetch-mic.fallback-muted', {
+              selectedDeviceId: storedAudioDeviceId,
+              resolvedDeviceId: joinAudioResolution.audioDeviceId,
+              reason: 'background-request-pending',
+            });
+            setSetupError(pendingMicrophoneJoinMessage);
+          } else {
+            throw preflightOutcome.error;
+          }
+        } catch (error) {
+          stopMediaStream(preflightMicrophoneStream);
+          preflightMicrophoneStream = null;
+          shouldStartWithMicrophone = false;
+          chatClientError('voice-setup.join.prefetch-mic.error', {
+            selectedDeviceId: storedAudioDeviceId,
+            resolvedDeviceId: joinAudioResolution.audioDeviceId,
+            timeoutMs: backgroundRequestTimeoutMs,
+            error: error instanceof Error ? error : new Error('Microphone preflight failed'),
+          });
+          chatClientDebug('voice-setup.join.prefetch-mic.fallback-muted', {
+            selectedDeviceId: storedAudioDeviceId,
+            resolvedDeviceId: joinAudioResolution.audioDeviceId,
+          });
+          setSetupError(
+            t('chat.voice.joinedMutedFallback', {
+              error: formatMicrophoneError(error, { messages: microphoneMessages, userAgent }),
+            })
+          );
+        }
+      }
+      const sessionAudioDeviceId = shouldStartWithMicrophone
+        ? joinAudioResolution.audioDeviceId
+        : joinAudioResolution.shouldPersist
+          ? joinAudioResolution.audioDeviceId
+          : storedAudioDeviceId || joinAudioResolution.audioDeviceId;
+      await onJoin({
+        audioDeviceId: sessionAudioDeviceId,
+        startWithMicrophone: shouldStartWithMicrophone,
+        preflightMicrophoneStream,
+        pendingMicrophoneStreamPromise,
+      });
+      preflightMicrophoneStream = null;
+      pendingMicrophoneStreamPromise = null;
+    } catch (error) {
+      stopMediaStream(preflightMicrophoneStream);
+      void pendingMicrophoneStreamPromise
+        ?.then((stream) => {
+          stopMediaStream(stream);
+        })
+        .catch(() => {});
+      chatClientError('voice-setup.join.error', {
+        startWithMicrophone,
+        selectedDeviceId: storedAudioDeviceId,
+        error: error instanceof Error ? error : new Error('Join setup failed'),
+      });
+      setSetupError(
+        formatMicrophoneError(error, {
+          messages: microphoneMessages,
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+        })
+      );
+    } finally {
+      setIsSubmittingJoin(false);
+      joinSubmissionLockRef.current = false;
+    }
+  }
+
+  return (
+    <div className={cn('bg-background flex h-full min-h-0 flex-col', className)}>
+      <div className="border-border flex items-center justify-between border-b px-4 py-3">
+        <div>
+          <div className="text-sm font-semibold">{t('chat.voice.joinVoiceRoom')}</div>
+          <div className="text-muted-foreground text-xs">{t('chat.voice.joinSetupSubtitle')}</div>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={onClose}
+          aria-label={t('chat.voice.closeSetupPanel')}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <audio ref={monitorAudioRef} hidden />
+
+        <div className="surface-inset space-y-4 rounded-md px-3 py-3">
+          <div className="space-y-2">
+            <div className="text-muted-foreground text-[11px] font-medium uppercase tracking-[0.14em]">
+              {t('chat.voice.inputDevice')}
+            </div>
+            <div className="truncate text-sm font-medium">{selectedMicrophoneLabel}</div>
+          </div>
+
+          <select
+            className="border-border bg-background focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 text-sm outline-none focus-visible:ring-2"
+            value={storedAudioDeviceId || 'default'}
+            onChange={(event) => {
+              void handleSelectMicrophone(event.target.value);
+            }}
+            disabled={isJoining || isSubmittingJoin}
+          >
+            <option value="default">{t('chat.voice.systemDefaultMic')}</option>
+            {microphoneDevices.map((device, index) => (
+              <option key={device.deviceId} value={device.deviceId}>
+                {formatMicrophoneDeviceOptionLabel(device, index, (n) =>
+                  t('chat.voice.microphoneN', { index: n })
+                )}
+              </option>
+            ))}
+          </select>
+
+          <div className="border-border bg-background text-muted-foreground flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs">
+            <div>
+              <span className="text-foreground font-medium">{t('chat.voice.permission')}</span>{' '}
+              {microphonePermissionLabel}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {microphonePermissionState !== 'granted' ? (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 rounded-md px-2 text-xs"
+                  onClick={() => void handleRequestMicrophoneAccess()}
+                  disabled={
+                    isSubmittingJoin ||
+                    isPreparing ||
+                    isPreparingMicrophoneTest ||
+                    isUnlockingMicrophoneAccess
+                  }
+                >
+                  {isUnlockingMicrophoneAccess ? (
+                    <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Mic className="me-1.5 h-3.5 w-3.5" />
+                  )}
+                  {t('chat.voice.unlockMicrophones')}
+                </Button>
+              ) : null}
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 rounded-md px-2 text-xs"
+                onClick={() => void refreshMicrophoneEnvironment()}
+                disabled={isSubmittingJoin || isPreparing || isRefreshingMicrophoneEnvironment}
+              >
+                {isRefreshingMicrophoneEnvironment ? (
+                  <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <RefreshCw className="me-1.5 h-3.5 w-3.5" />
+                )}
+                {t('chat.voice.refreshDevices')}
+              </Button>
+            </div>
+          </div>
+
+          <div className="border-border bg-muted/30 text-muted-foreground rounded-md border px-3 py-2 text-xs">
+            {microphonePermissionHelp}
+            {microphoneDevices.length === 0 ? ` ${t('chat.voice.noMicsVisible')}` : ''}
+            {microphonePermissionState === 'granted' && !deviceLabelsVisible
+              ? ` ${t('chat.voice.refreshAfterSettings')}`
+              : ''}
+            {storedAudioDeviceId !== 'default' && microphonePermissionState !== 'granted'
+              ? ` ${t('chat.voice.exactSelectionReliable')}`
+              : ''}
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="rounded-md"
+              onClick={() => void handleToggleMicrophoneTest()}
+              disabled={
+                isJoining ||
+                isSubmittingJoin ||
+                isPreparing ||
+                isPreparingMicrophoneTest ||
+                isRefreshingMicrophoneEnvironment
+              }
+            >
+              {isPreparingMicrophoneTest ? (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              ) : (
+                <TestTube2 className="me-2 h-4 w-4" />
+              )}
+              {isTestingMicrophone
+                ? t('chat.voice.stopTest')
+                : isPreparingMicrophoneTest
+                  ? t('chat.voice.testing')
+                  : t('chat.voice.testMic')}
+            </Button>
+            <Button
+              size="sm"
+              variant={isSelfMonitorEnabled ? 'default' : 'outline'}
+              className="rounded-md"
+              onClick={() => setIsSelfMonitorEnabled((current) => !current)}
+              disabled={
+                isSubmittingJoin ||
+                isPreparing ||
+                isPreparingMicrophoneTest ||
+                (!isTestingMicrophone && !isSelfMonitorEnabled)
+              }
+            >
+              <Volume2 className="me-2 h-4 w-4" />
+              {isSelfMonitorEnabled ? t('chat.voice.stopMonitor') : t('chat.voice.hearMyself')}
+            </Button>
+          </div>
+
+          <div className="border-border bg-background space-y-2 rounded-md border px-3 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-medium">
+                {isTestingMicrophone
+                  ? isSelfMonitorEnabled
+                    ? t('chat.voice.testingAndMonitoring')
+                    : t('chat.voice.testingLocally')
+                  : t('chat.voice.micLevel')}
+              </div>
+              <div className="text-muted-foreground text-xs font-medium tabular-nums">
+                {Math.round(microphoneTestLevel * 100)}%
+              </div>
+            </div>
+            <div className="bg-muted h-2 overflow-hidden rounded-full">
+              <div
+                className="bg-primary/70 h-full transition-[width] duration-100"
+                style={{ width: `${Math.round(microphoneTestLevel * 100)}%` }}
+              />
+            </div>
+          </div>
+
+          {setupError ? (
+            <div className="border-destructive/30 bg-destructive/5 text-destructive rounded-md border px-3 py-2 text-xs">
+              {setupError}
+            </div>
+          ) : null}
+
+          {isPreparing ? (
+            <div className="border-border text-muted-foreground rounded-md border px-3 py-2 text-xs">
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                {t('chat.voice.preparingRoom')}
+              </div>
+            </div>
+          ) : null}
+
+          {!isPreparing && !isReady ? (
+            <div className="border-border text-muted-foreground rounded-md border px-3 py-2 text-xs">
+              {t('chat.voice.roomGettingReady')}
+            </div>
+          ) : null}
+
+          <div className="border-border bg-background text-muted-foreground rounded-md border px-3 py-2 text-xs">
+            {shouldPreferDefaultMicrophoneForLiveJoin(
+              typeof navigator !== 'undefined' ? navigator.userAgent : ''
+            )
+              ? microphonePermissionState === 'granted'
+                ? t('chat.voice.joinHintGranted')
+                : t('chat.voice.joinHintNotGranted')
+              : t('chat.voice.joinHintFirefox')}
+          </div>
+
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-md"
+              onClick={onClose}
+              disabled={isJoining || isSubmittingJoin}
+            >
+              {t('chat.cancel')}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="rounded-md"
+              onClick={() => void handleJoin(false)}
+              disabled={isJoining || isSubmittingJoin || isPreparing || !isReady}
+            >
+              {isJoining || isSubmittingJoin || isPreparing ? (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {t('chat.voice.joinMuted')}
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              className="rounded-md"
+              onClick={() => void handleJoin(true)}
+              disabled={isJoining || isSubmittingJoin || isPreparing || !isReady}
+            >
+              {isJoining || isSubmittingJoin || isPreparing ? (
+                <Loader2 className="me-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Mic className="me-2 h-4 w-4" />
+              )}
+              {t('chat.voice.joinWithMic')}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ManagedLiveKitRoomProvider({
+  children,
+  onDisconnected,
+  onError,
+  onMediaDeviceFailure,
+  session,
+}: {
+  children: ReactNode;
+  onDisconnected: () => void;
+  onError: (error: Error) => void;
+  onMediaDeviceFailure: (error?: Error) => void;
+  session: LivekitSession;
+}) {
+  const t = useTranslations('workspaceTools');
+  const [room] = useState(() => createVoiceRoom());
+  const latestOnDisconnectedRef = useRef(onDisconnected);
+  const latestOnErrorRef = useRef(onError);
+  const latestOnMediaDeviceFailureRef = useRef(onMediaDeviceFailure);
+  const hasTriggeredDisconnectRef = useRef(false);
+
+  useEffect(() => {
+    latestOnDisconnectedRef.current = onDisconnected;
+    latestOnErrorRef.current = onError;
+    latestOnMediaDeviceFailureRef.current = onMediaDeviceFailure;
+  }, [onDisconnected, onError, onMediaDeviceFailure]);
+
+  useEffect(() => {
+    hasTriggeredDisconnectRef.current = false;
+  }, [session.roomName]);
+
+  useEffect(() => {
+    let disposed = false;
+
+    const handleDisconnected = () => {
+      if (disposed || hasTriggeredDisconnectRef.current) {
+        return;
+      }
+      hasTriggeredDisconnectRef.current = true;
+      latestOnDisconnectedRef.current();
+    };
+
+    const handleMediaDevicesError = (error: Error) => {
+      if (disposed) {
+        return;
+      }
+      latestOnMediaDeviceFailureRef.current(error);
+    };
+
+    room.on(RoomEvent.Disconnected, handleDisconnected);
+    room.on(RoomEvent.MediaDevicesError, handleMediaDevicesError);
+
+    void (async () => {
+      try {
+        await room.connect(session.url, session.token, {
+          autoSubscribe: true,
+          maxRetries: 0,
+          peerConnectionTimeout: 30_000,
+          websocketTimeout: 30_000,
+        });
+
+        if (disposed) {
+          return;
+        }
+
+        if (session.audioDeviceId && session.audioDeviceId !== 'default') {
+          await room.switchActiveDevice('audioinput', session.audioDeviceId, true);
+        }
+
+        if (session.startWithMicrophone) {
+          await room.localParticipant.setMicrophoneEnabled(true, DEFAULT_MIC_CAPTURE_OPTIONS);
+        }
+      } catch (error) {
+        if (disposed) {
+          return;
+        }
+        latestOnErrorRef.current(
+          error instanceof Error ? error : new Error(t('chat.voice.connectFailed'))
+        );
+      }
+    })();
+
+    return () => {
+      disposed = true;
+      room.off(RoomEvent.Disconnected, handleDisconnected);
+      room.off(RoomEvent.MediaDevicesError, handleMediaDevicesError);
+      void room.disconnect();
+    };
+  }, [
+    room,
+    session.audioDeviceId,
+    session.roomName,
+    session.startWithMicrophone,
+    session.token,
+    session.url,
+    t,
+  ]);
+
+  return <RoomContext.Provider value={room}>{children}</RoomContext.Provider>;
+}
+
+function InlineVoiceRoom({
+  canManageCalls,
+  isVisible,
+  onPrepareDisconnect,
+}: {
+  canManageCalls: boolean;
+  isVisible: boolean;
+  onPrepareDisconnect: (mode: 'leave' | 'end') => void;
+}) {
+  const t = useTranslations('workspaceTools');
+  const microphoneMessages = useMicrophoneMessageCatalog();
+  const room = useRoomContext();
+  const connectionState = useConnectionState();
+  const { canPlayAudio, startAudio } = useAudioPlayback(room);
+  const participants = useParticipants({
+    updateOnlyOn: [
+      RoomEvent.ParticipantConnected,
+      RoomEvent.ParticipantDisconnected,
+      RoomEvent.ConnectionStateChanged,
+      RoomEvent.TrackMuted,
+      RoomEvent.TrackUnmuted,
+      RoomEvent.LocalTrackPublished,
+      RoomEvent.LocalTrackUnpublished,
+    ],
+  });
+  const { localParticipant, lastMicrophoneError } = useLocalParticipant();
+  const {
+    storedAudioDeviceGroupId,
+    storedAudioDeviceId,
+    storedAudioDeviceLabel,
+    storeAudioDeviceId,
+    storeAudioDevicePreference,
+  } = useStoredVoicePreferences();
+  const [isLeaving, setIsLeaving] = useState(false);
+  const [isEnding, setIsEnding] = useState(false);
+  const [expandedPanel, setExpandedPanel] = useState<'audio' | 'people' | null>(null);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [isStartingAudioPlayback, setIsStartingAudioPlayback] = useState(false);
+  const {
+    enabled: isMicrophoneEnabled,
+    pending: isMicrophonePending,
+    toggle: toggleMicrophone,
+  } = useTrackToggle({
+    source: Track.Source.Microphone,
+    captureOptions: DEFAULT_MIC_CAPTURE_OPTIONS,
+    onDeviceError: (error) => {
+      setVoiceError(formatMicrophoneError(error, { messages: microphoneMessages }));
+    },
+    room,
+  });
+  const remoteParticipants = useMemo(
+    () => participants.filter((participant) => participant.identity !== localParticipant.identity),
+    [localParticipant.identity, participants]
+  );
+  const liveMicrophoneLevel =
+    isVisible && isMicrophoneEnabled ? Math.min(1, localParticipant.audioLevel * 1.85) : 0;
+
+  useEffect(() => {
+    if (isVisible) {
+      return;
+    }
+
+    setExpandedPanel(null);
+  }, [isVisible]);
+
+  async function handleEnableAudioPlayback() {
+    try {
+      setIsStartingAudioPlayback(true);
+      setVoiceError(null);
+      await startAudio();
+    } catch {
+      setVoiceError(t('chat.voice.speakerStartFailed'));
+    } finally {
+      setIsStartingAudioPlayback(false);
+    }
+  }
+
+  async function handleToggleMicrophone() {
+    if (connectionState !== 'connected') {
+      setVoiceError(t('chat.voice.waitToConnect'));
+      return;
+    }
+
+    try {
+      setVoiceError(null);
+      const targetEnabled = !isMicrophoneEnabled;
+
+      if (targetEnabled && storedAudioDeviceId && storedAudioDeviceId !== 'default') {
+        await room.switchActiveDevice('audioinput', storedAudioDeviceId, true);
+      }
+
+      await toggleMicrophone(targetEnabled);
+    } catch (error) {
+      setVoiceError(formatMicrophoneError(error, { messages: microphoneMessages }));
+    }
+  }
+
+  async function handleLeave() {
+    try {
+      setIsLeaving(true);
+      setVoiceError(null);
+      onPrepareDisconnect('leave');
+      await room.disconnect();
+    } catch {
+      setVoiceError(t('chat.voice.leaveFailed'));
+    } finally {
+      setIsLeaving(false);
+    }
+  }
+
+  async function handleEnd() {
+    try {
+      setIsEnding(true);
+      setVoiceError(null);
+      onPrepareDisconnect('end');
+      await room.disconnect();
+    } catch {
+      setVoiceError(t('chat.voice.endFailed'));
+    } finally {
+      setIsEnding(false);
+    }
+  }
+  const isActivelySpeaking = isMicrophoneEnabled && liveMicrophoneLevel > 0.12;
+  const deferredMicrophoneLevel = useDeferredValue(Math.min(1, liveMicrophoneLevel));
+  const microphoneStatus = isMicrophoneEnabled
+    ? isActivelySpeaking
+      ? t('chat.voice.youAreSpeaking')
+      : t('chat.voice.micIsLive')
+    : t('chat.voice.micMuted');
+  const hasRemoteAudio = remoteParticipants.some((participant) => participant.isMicrophoneEnabled);
+
+  return (
+    <div className="relative flex h-full min-h-0 flex-col">
+      {hasRemoteAudio ? <RoomAudioRenderer /> : null}
+
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span
+              className={cn('status-dot', isActivelySpeaking ? 'status-live' : 'status-warn')}
+              aria-hidden
+            />
+            <div className="text-sm font-medium">{t('chat.voice.voiceRoomLive')}</div>
+            <Badge variant="outline" className="h-6 rounded-md px-2">
+              <Users2 className="me-1.5 h-3.5 w-3.5" />
+              {participants.length}
+            </Badge>
+          </div>
+          <div className="text-muted-foreground pt-1 text-xs">
+            {formatConnectionStateLabel(connectionState, t)} · {microphoneStatus}
+            {!canPlayAudio ? ` · ${t('chat.voice.enableAudioHint')}` : ''}
+          </div>
+        </div>
+
+        {!canPlayAudio && remoteParticipants.length > 0 ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => void handleEnableAudioPlayback()}
+            disabled={isStartingAudioPlayback}
+          >
+            {isStartingAudioPlayback ? (
+              <Loader2 className="me-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Volume2 className="me-2 h-4 w-4" />
+            )}
+            {t('chat.voice.enableAudio')}
+          </Button>
+        ) : null}
+      </div>
+
+      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {participants.map((participant) => (
+          <VoiceParticipantTile
+            key={participant.identity}
+            participant={participant}
+            isCurrentUser={participant.identity === localParticipant.identity}
+          />
+        ))}
+      </div>
+
+      <div className="mt-3 space-y-2">
+        <div className="text-muted-foreground flex items-center justify-between gap-3 text-[11px]">
+          <span className="font-medium uppercase tracking-[0.14em]">
+            {t('chat.voice.microphone')} · {microphoneStatus}
+          </span>
+          <span className="tabular-nums">{Math.round(deferredMicrophoneLevel * 100)}%</span>
+        </div>
+        <div className="bg-muted h-2 overflow-hidden rounded-full">
+          <div
+            className={cn(
+              'h-full transition-[width,background-color] duration-100',
+              isActivelySpeaking ? 'bg-accent-emerald' : 'bg-primary/70'
+            )}
+            style={{ width: `${Math.round(deferredMicrophoneLevel * 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {voiceError || lastMicrophoneError ? (
+        <div className="border-destructive/30 bg-destructive/5 text-destructive mt-3 rounded-md border px-3 py-2 text-xs">
+          {t('chat.voice.audioErrorPrefix')}{' '}
+          {voiceError ||
+            formatMicrophoneError(lastMicrophoneError, { messages: microphoneMessages }) ||
+            t('chat.voice.audioCaptureUnavailable')}
+        </div>
+      ) : null}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className={cn(
+            expandedPanel === 'audio' && 'border-primary/40 bg-primary/10 text-primary'
+          )}
+          onClick={() => setExpandedPanel((current) => (current === 'audio' ? null : 'audio'))}
+        >
+          {t('chat.voice.audioSettings')}
+          <ChevronDown
+            className={cn(
+              'ms-2 h-4 w-4 transition-transform duration-200',
+              expandedPanel === 'audio' && 'rotate-180'
+            )}
+          />
+        </Button>
+      </div>
+
+      {expandedPanel === 'audio' ? (
+        <VoiceAudioSettingsPanel
+          connectionState={connectionState}
+          hasRemoteAudio={remoteParticipants.length > 0}
+          isMicrophoneEnabled={isMicrophoneEnabled}
+          isMicrophonePending={isMicrophonePending}
+          onError={setVoiceError}
+          storedAudioDeviceId={storedAudioDeviceId}
+          storedAudioDeviceGroupId={storedAudioDeviceGroupId}
+          storedAudioDeviceLabel={storedAudioDeviceLabel}
+          storeAudioDevicePreference={storeAudioDevicePreference}
+          storeAudioDeviceId={storeAudioDeviceId}
+        />
+      ) : null}
+
+      {/* Floating control bar */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center">
+        <div className="surface-card pointer-events-auto flex items-center gap-1 rounded-full px-3 py-2 shadow-md">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            aria-label={isMicrophoneEnabled ? t('chat.voice.muteMic') : t('chat.voice.unmuteMic')}
+            className={cn(
+              'h-9 w-9 rounded-full p-0',
+              isMicrophoneEnabled
+                ? 'bg-primary/10 text-primary hover:bg-primary/15'
+                : 'bg-destructive/10 text-destructive hover:bg-destructive/15'
+            )}
+            onClick={() => void handleToggleMicrophone()}
+            disabled={
+              isMicrophonePending || isLeaving || isEnding || connectionState !== 'connected'
+            }
+          >
+            {isMicrophonePending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isMicrophoneEnabled ? (
+              <Mic className="h-4 w-4" />
+            ) : (
+              <MicOff className="h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            aria-label={t('chat.voice.leaveCall')}
+            className="bg-destructive/10 text-destructive hover:bg-destructive/15 h-9 w-9 rounded-full p-0"
+            onClick={() => void handleLeave()}
+            disabled={isLeaving || isEnding}
+          >
+            {isLeaving ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <PhoneOff className="h-4 w-4" />
+            )}
+          </Button>
+          {canManageCalls ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              aria-label={t('chat.voice.endForEveryone')}
+              className="h-9 rounded-full px-3 text-xs"
+              onClick={() => void handleEnd()}
+              disabled={isEnding || isLeaving}
+            >
+              {isEnding ? <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+              {t('chat.voice.end')}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function VoiceParticipantTile({
+  participant,
+  isCurrentUser,
+}: {
+  participant: Participant;
+  isCurrentUser: boolean;
+}) {
+  const t = useTranslations('workspaceTools');
+  const isSpeaking = useIsSpeaking(participant);
+  const displayName = participant.name || participant.identity || t('chat.voice.participant');
+  const micEnabled = participant.isMicrophoneEnabled;
+  const stateLabel = micEnabled
+    ? isCurrentUser
+      ? isSpeaking
+        ? t('chat.voice.sendingAudio')
+        : t('chat.voice.micOn')
+      : isSpeaking
+        ? t('chat.voice.speaking')
+        : t('chat.voice.listening')
+    : t('chat.voice.muted');
+
+  return (
+    <div
+      className={cn(
+        'border-border bg-card relative flex aspect-video items-center justify-center overflow-hidden rounded-lg border transition-colors duration-200',
+        isSpeaking && micEnabled && 'ring-accent-emerald ring-2'
+      )}
+    >
+      <Avatar className="h-12 w-12">
+        <AvatarFallback className="text-sm">{getInitials(displayName)}</AvatarFallback>
+      </Avatar>
+
+      <div className="absolute inset-x-2 bottom-2 flex items-center justify-between gap-2">
+        <div className="bg-background/70 supports-[backdrop-filter]:bg-background/60 flex min-w-0 items-center gap-1.5 rounded-md px-2 py-1 text-xs backdrop-blur">
+          <span className="truncate font-medium">{displayName}</span>
+          {isCurrentUser ? (
+            <span className="text-muted-foreground text-[10px] uppercase tracking-[0.12em]">
+              {t('chat.voice.you')}
+            </span>
+          ) : null}
+        </div>
+
+        <div className="bg-background/70 supports-[backdrop-filter]:bg-background/60 flex items-center gap-1 rounded-md px-1.5 py-1 backdrop-blur">
+          {micEnabled ? (
+            <Mic
+              className={cn(
+                'h-3.5 w-3.5',
+                isSpeaking ? 'text-accent-emerald' : 'text-muted-foreground'
+              )}
+            />
+          ) : (
+            <MicOff className="text-destructive h-3.5 w-3.5" />
+          )}
+        </div>
+      </div>
+
+      <span className="sr-only">{stateLabel}</span>
+    </div>
+  );
+}
+
+function VoiceAudioSettingsPanel({
+  connectionState,
+  hasRemoteAudio,
+  isMicrophoneEnabled,
+  isMicrophonePending,
+  onError,
+  storedAudioDeviceId,
+  storedAudioDeviceGroupId,
+  storedAudioDeviceLabel,
+  storeAudioDevicePreference,
+  storeAudioDeviceId,
+}: {
+  connectionState: string;
+  hasRemoteAudio: boolean;
+  isMicrophoneEnabled: boolean;
+  isMicrophonePending: boolean;
+  onError: (message: string | null) => void;
+  storedAudioDeviceId: string;
+  storedAudioDeviceGroupId: string | null;
+  storedAudioDeviceLabel: string | null;
+  storeAudioDevicePreference: (input: {
+    audioDeviceId: string;
+    audioDeviceLabel?: string | null;
+    audioDeviceGroupId?: string | null;
+  }) => void;
+  storeAudioDeviceId: (deviceId: string) => void;
+}) {
+  const t = useTranslations('workspaceTools');
+  const microphoneMessages = useMicrophoneMessageCatalog();
+  const room = useRoomContext();
+  const [isUnlockingMicrophoneAccess, setIsUnlockingMicrophoneAccess] = useState(false);
+  const {
+    deviceLabelsVisible,
+    isRefreshingMicrophoneEnvironment,
+    microphoneDevices,
+    microphonePermissionHelp,
+    microphonePermissionLabel,
+    microphonePermissionState,
+    refreshMicrophoneEnvironment,
+    selectedMicrophoneLabel,
+  } = useMicrophoneEnvironment({
+    onError,
+    storedAudioDeviceId,
+    storedAudioDeviceGroupId,
+    storedAudioDeviceLabel,
+    storeAudioDevicePreference,
+    storeAudioDeviceId,
+  });
+
+  async function handleSelectMicrophone(deviceId: string) {
+    try {
+      onError(null);
+      await room.switchActiveDevice('audioinput', deviceId, deviceId !== 'default');
+      const selectedDevice = microphoneDevices.find((device) => device.deviceId === deviceId);
+      if (selectedDevice) {
+        storeAudioDevicePreference({
+          audioDeviceId: selectedDevice.deviceId,
+          audioDeviceGroupId: selectedDevice.groupId,
+          audioDeviceLabel: selectedDevice.label,
+        });
+      } else {
+        storeAudioDeviceId(deviceId);
+      }
+      await refreshMicrophoneEnvironment();
+    } catch (error) {
+      onError(formatMicrophoneError(error, { messages: microphoneMessages }));
+    }
+  }
+
+  async function handleRequestMicrophoneAccess() {
+    if (isMicrophonePending || isUnlockingMicrophoneAccess) {
+      return;
+    }
+
+    try {
+      setIsUnlockingMicrophoneAccess(true);
+      onError(null);
+      chatClientDebug('voice-settings.permission.unlock.start', {
+        selectedDeviceId: storedAudioDeviceId,
+        permissionState: microphonePermissionState,
+      });
+      await requestMicrophonePermission();
+      await refreshMicrophoneEnvironment();
+      chatClientDebug('voice-settings.permission.unlock.success', {
+        selectedDeviceId: storedAudioDeviceId,
+      });
+    } catch (error) {
+      chatClientError('voice-settings.permission.unlock.error', {
+        selectedDeviceId: storedAudioDeviceId,
+        error: error instanceof Error ? error : new Error('Failed to unlock microphone access'),
+      });
+      onError(formatMicrophoneError(error, { messages: microphoneMessages }));
+    } finally {
+      setIsUnlockingMicrophoneAccess(false);
+    }
+  }
+
+  return (
+    <div className="surface-inset mt-3 rounded-md px-3 py-3">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="text-muted-foreground text-[11px] font-medium uppercase tracking-[0.14em]">
+            {t('chat.voice.inputDevice')}
+          </div>
+          <div className="truncate text-sm font-medium">{selectedMicrophoneLabel}</div>
+        </div>
+
+        <div className="space-y-2">
+          <select
+            className="border-border bg-background focus-visible:ring-ring flex h-9 w-full rounded-md border px-3 text-sm outline-none focus-visible:ring-2"
+            value={storedAudioDeviceId || 'default'}
+            onChange={(event) => {
+              void handleSelectMicrophone(event.target.value);
+            }}
+            disabled={
+              connectionState !== 'connected' ||
+              isMicrophonePending ||
+              isRefreshingMicrophoneEnvironment
+            }
+          >
+            <option value="default">{t('chat.voice.systemDefaultMic')}</option>
+            {microphoneDevices.map((device, index) => (
+              <option key={device.deviceId} value={device.deviceId}>
+                {formatMicrophoneDeviceOptionLabel(device, index, (n) =>
+                  t('chat.voice.microphoneN', { index: n })
+                )}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="border-border bg-muted/30 text-muted-foreground flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs">
+          <div>
+            <span className="text-foreground font-medium">{t('chat.voice.permission')}</span>{' '}
+            {microphonePermissionLabel}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {microphonePermissionState !== 'granted' ? (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 rounded-md px-2 text-xs"
+                onClick={() => void handleRequestMicrophoneAccess()}
+                disabled={isMicrophonePending || isUnlockingMicrophoneAccess}
+              >
+                {isUnlockingMicrophoneAccess ? (
+                  <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Mic className="me-1.5 h-3.5 w-3.5" />
+                )}
+                {t('chat.voice.unlockMicrophones')}
+              </Button>
+            ) : null}
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 rounded-md px-2 text-xs"
+              onClick={() => void refreshMicrophoneEnvironment()}
+              disabled={isMicrophonePending || isRefreshingMicrophoneEnvironment}
+            >
+              {isRefreshingMicrophoneEnvironment ? (
+                <Loader2 className="me-1.5 h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="me-1.5 h-3.5 w-3.5" />
+              )}
+              {t('chat.voice.refreshDevices')}
+            </Button>
+          </div>
+        </div>
+
+        <div className="border-border bg-background text-muted-foreground rounded-md border px-3 py-2 text-xs">
+          {microphonePermissionHelp}
+          {microphoneDevices.length === 0 ? ` ${t('chat.voice.noMicsVisible')}` : ''}
+          {microphonePermissionState === 'granted' && !deviceLabelsVisible
+            ? ` ${t('chat.voice.labelsNotExposed')}`
+            : ''}
+          {storedAudioDeviceId !== 'default' && microphonePermissionState !== 'granted'
+            ? ` ${t('chat.voice.exactSwitchingReliable')}`
+            : ''}
+        </div>
+
+        <div className="border-border bg-muted/30 text-muted-foreground rounded-md border px-3 py-2 text-xs">
+          {hasRemoteAudio ? t('chat.voice.speakerActivates') : t('chat.voice.noOneElse')}
+          {isMicrophoneEnabled
+            ? ` ${t('chat.voice.liveMicEnabled')}`
+            : ` ${t('chat.voice.liveMicMuted')}`}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const MemoizedChatVoiceDock = memo(ChatVoiceDock);
+MemoizedChatVoiceDock.displayName = 'MemoizedChatVoiceDock';
+
+function getInitials(value: string) {
+  return (
+    value
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('') || 'TN'
+  );
+}
+
+function formatConnectionStateLabel(
+  state: string,
+  t: ReturnType<typeof useTranslations<'workspaceTools'>>
+) {
+  switch (state) {
+    case 'connected':
+      return t('chat.voice.connectionState.connected');
+    case 'connecting':
+      return t('chat.voice.connectionState.connecting');
+    case 'reconnecting':
+      return t('chat.voice.connectionState.reconnecting');
+    case 'disconnected':
+      return t('chat.voice.connectionState.disconnected');
+    default:
+      return t('chat.voice.voiceRoom');
+  }
+}
+
+function formatLivekitRuntimeError(
+  error: Error,
+  t: ReturnType<typeof useTranslations<'workspaceTools'>>
+) {
+  const message = error.message.toLowerCase();
+  // ICE / PeerConnection failure surfaces as a "client initiated" disconnect
+  // from the SDK, so we disambiguate those before falling through to the
+  // user-initiated path that is intentionally silent.
+  if (
+    message.includes('could not establish pc connection') ||
+    message.includes('ice failed') ||
+    message.includes('peerconnection failed') ||
+    message.includes('pc connection failed') ||
+    message.includes('ice connection failed')
+  ) {
+    return t('chat.voice.runtimeError.serverUnreachable');
+  }
+  if (
+    message.includes('client initiated disconnect') ||
+    message.includes('closed peer connection') ||
+    message.includes('abort connection attempt due to user initiated disconnect')
+  ) {
+    return '';
+  }
+  if (message.includes('permission denied') || message.includes('notallowederror')) {
+    return t('chat.voice.runtimeError.permissionDenied');
+  }
+  if (message.includes('could not start audio source') || message.includes('notreadableerror')) {
+    return t('chat.voice.runtimeError.micNotStarted');
+  }
+  if (
+    message.includes('audiocontext encountered an error') ||
+    message.includes('webaudio renderer')
+  ) {
+    return t('chat.voice.runtimeError.audioEngineFailed');
+  }
+  if (message.includes('device not found') || message.includes('notfounderror')) {
+    return t('chat.voice.runtimeError.micNotFound');
+  }
+  return t('chat.voice.audioCaptureUnavailable');
+}

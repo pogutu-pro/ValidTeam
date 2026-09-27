@@ -1,0 +1,1032 @@
+'use client';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import { useToast } from '@/hooks/use-toast';
+
+export type AgentModelConfig = {
+  id: string;
+  organizationId: string;
+  name: string;
+  provider: 'native' | 'openai' | 'anthropic' | 'azure' | 'custom';
+  model: string;
+  description: string | null;
+  settings: {
+    temperature: number | null;
+    maxOutputTokens: number | null;
+    reasoningEffort: 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | null;
+    notes: string | null;
+  };
+  isDefault: boolean;
+  isArchived: boolean;
+  revisionCount: number;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type WorkspaceAgentResponse = {
+  organizationId: string;
+  organizationName: string;
+  workspaceSettings: {
+    enabled: boolean;
+    assistantEnabled: boolean;
+    modelConfigId?: string | null;
+    provider: 'native' | 'openai' | 'anthropic' | 'azure' | 'custom';
+    model: string;
+    executionMode: 'manual' | 'assistive' | 'auto';
+    allowWriteActions: boolean;
+    requireApprovalForWrites: boolean;
+    aiOversight: 'auto' | 'review_required';
+    aiSafetyMode: 'off' | 'warn' | 'strict';
+    dailyRunLimit: number;
+    capabilities: Record<string, boolean>;
+  };
+  selectedModelConfig: AgentModelConfig | null;
+  modelConfigs: AgentModelConfig[];
+  access: {
+    canView: boolean;
+    canManage: boolean;
+    orgRole: string | null;
+    isSuperAdmin: boolean;
+  };
+  providerStatus: {
+    ready: boolean;
+    summary: string;
+    configured: boolean;
+    source: 'workspace' | 'platform' | 'server_env' | null;
+    label: string | null;
+    updatedAt: string | null;
+  };
+  configIssues: Array<{
+    code: string;
+    scope: 'system' | 'workspace' | 'project' | 'provider';
+    severity: 'error' | 'warning' | 'info';
+    title: string;
+    detail: string;
+    resolution: string;
+    blocksRuns: boolean;
+  }>;
+  runtimeSummary: {
+    projectCount: number;
+    enabledProjectCount: number;
+    runningRuns: number;
+    totalRuns: number;
+    lastRunAt: string | null;
+    lastCompletedAt: string | null;
+    lastFailedAt: string | null;
+    lastFailure: string | null;
+  };
+  serviceStatus: Array<{
+    key: string;
+    label: string;
+    state: 'ready' | 'blocked' | 'disabled' | 'preview';
+    detail: string;
+  }>;
+  recentRuns: Array<{
+    id: string;
+    kind: string;
+    status: string;
+    dryRun: boolean;
+    summary: string | null;
+    writeActionsCount: number;
+    createdAt: string;
+    completedAt: string | null;
+    errorCode: string | null;
+    projectId: string | null;
+    projectName: string | null;
+    initiatedBy: string | null;
+  }>;
+  updatedAt: string;
+};
+
+type ProjectAgentsResponse = {
+  project: {
+    id: string;
+    key: string;
+    name: string;
+  };
+  access: {
+    canView: boolean;
+    canManage: boolean;
+    orgRole: string | null;
+    projectRole: string | null;
+    isSuperAdmin: boolean;
+  };
+  workspaceSettings: WorkspaceAgentResponse['workspaceSettings'];
+  selectedModelConfig: AgentModelConfig | null;
+  projectSettings: {
+    enabled: boolean;
+    inheritWorkspaceDefaults: boolean;
+    executionMode: 'manual' | 'assistive' | 'auto';
+    allowWriteActions: boolean;
+    sprintBatchSize: number;
+    sprintLengthDays: number;
+    issueCapacityPerSprint: number;
+    autoAssignToPlannedSprints: boolean;
+    capabilities: Record<string, boolean>;
+  };
+  effectiveSettings: {
+    enabled: boolean;
+    allowWriteActions: boolean;
+    executionMode: 'manual' | 'assistive' | 'auto';
+    provider: 'native' | 'openai' | 'anthropic' | 'azure' | 'custom';
+    model: string;
+    requireApprovalForWrites: boolean;
+    dailyRunLimit: number;
+    sprintBatchSize: number;
+    sprintLengthDays: number;
+    issueCapacityPerSprint: number;
+    autoAssignToPlannedSprints: boolean;
+    capabilities: Record<string, boolean>;
+  };
+  providerStatus: {
+    ready: boolean;
+    summary: string;
+    configured: boolean;
+    source: 'workspace' | 'platform' | 'server_env' | null;
+    label: string | null;
+    updatedAt: string | null;
+  };
+  configIssues: Array<{
+    code: string;
+    scope: 'system' | 'workspace' | 'project' | 'provider';
+    severity: 'error' | 'warning' | 'info';
+    title: string;
+    detail: string;
+    resolution: string;
+    blocksRuns: boolean;
+  }>;
+  runtimeSummary: {
+    runningRuns: number;
+    lastRunAt: string | null;
+    lastCompletedAt: string | null;
+    lastFailedAt: string | null;
+    lastFailure: string | null;
+  };
+  runAvailability: {
+    canRun: boolean;
+    reason: string | null;
+  };
+  serviceStatus: Array<{
+    key: string;
+    label: string;
+    state: 'ready' | 'blocked' | 'disabled' | 'preview';
+    detail: string;
+  }>;
+  lastRunByKind: Record<
+    string,
+    {
+      id: string;
+      kind: string;
+      status: string;
+      dryRun: boolean;
+      summary: string | null;
+      writeActionsCount: number;
+      createdAt: string;
+      completedAt: string | null;
+      mode: string;
+      output: Record<string, unknown>;
+      errorCode: string | null;
+    }
+  >;
+  recentRuns: Array<{
+    id: string;
+    kind: string;
+    status: string;
+    dryRun: boolean;
+    summary: string | null;
+    writeActionsCount: number;
+    createdAt: string;
+    completedAt: string | null;
+    mode: string;
+    output: Record<string, unknown>;
+    errorCode: string | null;
+  }>;
+};
+
+type ProjectAgentRunResponse = {
+  run: ProjectAgentsResponse['recentRuns'][number];
+  output: Record<string, unknown>;
+  dryRun: boolean;
+  forcedDryRun: boolean;
+  errorCode?: string;
+};
+
+type AdminAgentControlResponse = {
+  settings: {
+    globalEnabled: boolean;
+    allowWriteActions: boolean;
+    requireSupervisionForAutoMode: boolean;
+    maxConcurrentRuns: number;
+  };
+  stats: {
+    enabledWorkspaceCount: number;
+    enabledProjectCount: number;
+    recentRunCount: number;
+    runningRuns: number;
+    failedRuns: number;
+    readyWorkspaceCount: number;
+    blockedWorkspaceCount: number;
+  };
+  serviceStatus: Array<{
+    key: string;
+    state: 'ready' | 'blocked' | 'disabled' | 'preview';
+  }>;
+  providerBreakdown: Record<
+    string,
+    {
+      total: number;
+      enabled: number;
+      ready: number;
+      blocked: number;
+    }
+  >;
+  workspaceCoverage: Array<{
+    organizationId: string;
+    organizationName: string;
+    workspaceEnabled: boolean;
+    enabledProjects: number;
+    provider: 'native' | 'openai' | 'anthropic' | 'azure' | 'custom';
+    model: string;
+    selectedModelConfigId: string | null;
+    selectedModelConfigName: string | null;
+    executionMode: 'manual' | 'assistive' | 'auto';
+    providerStatus: {
+      ready: boolean;
+      summary: string;
+      configured: boolean;
+      source: 'workspace' | 'platform' | 'server_env' | null;
+      label: string | null;
+      updatedAt: string | null;
+    };
+    lastRunAt: string | null;
+    lastFailure: string | null;
+  }>;
+  recentRuns: Array<{
+    id: string;
+    kind: string;
+    status: string;
+    dryRun: boolean;
+    summary: string | null;
+    writeActionsCount: number;
+    createdAt: string;
+    organizationId: string | null;
+    organizationName: string | null;
+    projectId: string | null;
+    projectName: string | null;
+    initiatedBy: string | null;
+  }>;
+};
+
+export type AgentSessionProvider =
+  | 'claude'
+  | 'codex'
+  | 'cursor'
+  | 'devin'
+  | 'copilot'
+  | 'openhands'
+  | 'custom';
+
+export type IssueAgentSession = {
+  id: string;
+  issueId: string;
+  provider: AgentSessionProvider;
+  externalId: string | null;
+  state: 'pending' | 'active' | 'awaitingInput' | 'error' | 'complete' | 'stale';
+  payload: Record<string, unknown>;
+  startedAt: string;
+  updatedAt: string;
+  finishedAt: string | null;
+};
+
+type IssueAgentSessionsResponse = {
+  sessions: IssueAgentSession[];
+};
+
+export type LocalAgentRunnerProvider = 'claude' | 'codex';
+
+export type LocalAgentRunnerStatus = {
+  provider: LocalAgentRunnerProvider;
+  enabled: boolean;
+  endpointMode: 'local_cli' | 'webhook';
+  configured: boolean;
+  command: string;
+  cwd: string;
+  model: string | null;
+  timeoutSeconds: number | null;
+  mode: string | null;
+  reasonCode: 'disabled' | 'cwd_missing' | 'command_missing' | null;
+  reasonDetail: string | null;
+  enabledByEnv: boolean;
+  enabledByProvider: boolean;
+};
+
+type AdminLocalAgentRunnersResponse = {
+  organization: {
+    id: string;
+    name: string;
+  };
+  providers: LocalAgentRunnerStatus[];
+};
+
+type AgentStreamLogEvent = {
+  type: 'log';
+  data: {
+    executionId: string;
+    projectId: string;
+    logIndex: number;
+    type: 'stdout' | 'stderr' | 'system';
+    content: string;
+    timestamp: string;
+  };
+};
+
+type AgentStreamStatusEvent = {
+  type: 'status';
+  data: {
+    executionId: string;
+    projectId: string;
+    status: 'running' | 'completed' | 'failed' | 'cancelled';
+    progress?: number;
+    error?: string;
+    timestamp: string;
+  };
+};
+
+type AgentStreamEvent = AgentStreamLogEvent | AgentStreamStatusEvent;
+
+export type AgentLiveRun = {
+  executionId: string;
+  projectId: string;
+  status: 'running' | 'completed' | 'failed' | 'cancelled';
+  progress: number;
+  error: string | null;
+  updatedAt: string;
+  logs: Array<{
+    logIndex: number;
+    type: 'stdout' | 'stderr' | 'system';
+    content: string;
+    timestamp: string;
+  }>;
+};
+
+type AgentApiFallbackKey =
+  | 'fetchWorkspaceAgents'
+  | 'updateWorkspaceAgents'
+  | 'createModelConfig'
+  | 'updateModelConfig'
+  | 'archiveModelConfig'
+  | 'fetchProjectAgents'
+  | 'updateProjectAgents'
+  | 'runProjectAgent'
+  | 'fetchAdminControl'
+  | 'fetchAgentSessions'
+  | 'dispatchAgent'
+  | 'fetchLocalRunners'
+  | 'updateLocalRunner'
+  | 'updateAdminControl';
+
+const AGENT_API_SERVER_ERROR_KEYS = {
+  Unauthorized: 'unauthorized',
+  Forbidden: 'forbidden',
+  'Insufficient permissions': 'insufficientPermissions',
+  'Super admin access required': 'superAdminRequired',
+  'Validation failed': 'validationFailed',
+  'Invalid body': 'invalidBody',
+  'organizationId is required': 'organizationRequired',
+  'Organization not found': 'organizationNotFound',
+  'Issue not found': 'issueNotFound',
+  'No permission to view this issue': 'issueViewDenied',
+  'No permission to dispatch agents on this issue': 'issueDispatchDenied',
+  'Failed to create agent session': 'createAgentSessionFailed',
+  'Managing AI agents requires organization settings permission.': 'manageWorkspaceAgentsDenied',
+  'Managing model configs requires organization settings permission.': 'manageModelConfigsDenied',
+  'Model config not found.': 'modelConfigNotFound',
+  'Failed to update workspace AI agents': 'updateWorkspaceAgentsFailed',
+  'Failed to create AI model config': 'createModelConfigFailed',
+  'Failed to update AI model config': 'updateModelConfigFailed',
+  'Project not found or access denied': 'projectAccessDenied',
+  'Project context could not be loaded': 'projectContextUnavailable',
+  'Project not found': 'projectNotFound',
+  'You do not have permission to manage project agents.': 'manageProjectAgentsDenied',
+  'You do not have permission to run project agents.': 'runProjectAgentsDenied',
+  'Failed to update project AI agents': 'updateProjectAgentsFailed',
+  'Agents are paused globally by the admin team.': 'agentsGloballyPaused',
+  'Workspace AI agents are disabled.': 'workspaceAgentsDisabled',
+  'Project AI agents are disabled for this project.': 'projectAgentsDisabled',
+  'This agent capability is disabled for the project.': 'capabilityDisabled',
+  'Too many agent runs are already in progress. Try again in a moment.': 'tooManyRuns',
+  'Failed to run project agent': 'runProjectAgentFailed',
+  'Failed to update admin agent control': 'updateAdminControlFailed',
+} as const;
+
+async function readJsonPayload(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+function readPayloadError(payload: unknown): string | null {
+  if (!payload || typeof payload !== 'object' || !('error' in payload)) {
+    return null;
+  }
+
+  const error = (payload as { error?: unknown }).error;
+  return typeof error === 'string' ? error : null;
+}
+
+function useAgentApiErrorText() {
+  const t = useTranslations('agentApiErrors');
+
+  return (payload: unknown, fallbackKey: AgentApiFallbackKey) => {
+    const rawError = readPayloadError(payload);
+    const serverKey = rawError
+      ? AGENT_API_SERVER_ERROR_KEYS[rawError as keyof typeof AGENT_API_SERVER_ERROR_KEYS]
+      : null;
+
+    if (serverKey) {
+      return t(`server.${serverKey}`);
+    }
+
+    return t(`fallback.${fallbackKey}`);
+  };
+}
+
+function reduceAgentStreamEvent(current: Record<string, AgentLiveRun>, event: AgentStreamEvent) {
+  const next = { ...current };
+  const runId = event.data.executionId;
+  const existing = next[runId] ?? {
+    executionId: runId,
+    projectId: event.data.projectId,
+    status: 'running' as const,
+    progress: 0,
+    error: null,
+    updatedAt: event.data.timestamp,
+    logs: [],
+  };
+
+  if (event.type === 'log') {
+    const nextLogs = [...existing.logs, event.data]
+      .sort((left, right) => left.logIndex - right.logIndex)
+      .filter(
+        (log, index, logs) => logs.findIndex((item) => item.logIndex === log.logIndex) === index
+      )
+      .slice(-40);
+
+    next[runId] = {
+      ...existing,
+      updatedAt: event.data.timestamp,
+      logs: nextLogs,
+    };
+
+    return next;
+  }
+
+  next[runId] = {
+    ...existing,
+    status: event.data.status,
+    progress: event.data.progress ?? existing.progress,
+    error: event.data.error ?? null,
+    updatedAt: event.data.timestamp,
+  };
+
+  return next;
+}
+
+function useAgentStream(params: {
+  url: string | null;
+  enabled: boolean;
+  invalidateKeys: Array<readonly unknown[]>;
+}) {
+  const queryClient = useQueryClient();
+  const [liveRuns, setLiveRuns] = useState<Record<string, AgentLiveRun>>({});
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastEventAt, setLastEventAt] = useState<string | null>(null);
+  const invalidateKeysKey = JSON.stringify(params.invalidateKeys);
+
+  useEffect(() => {
+    if (!params.enabled || !params.url) {
+      setIsConnected(false);
+      setLiveRuns({});
+      return;
+    }
+
+    const source = new EventSource(params.url);
+
+    source.onopen = () => {
+      setIsConnected(true);
+    };
+
+    source.onmessage = (message) => {
+      let event: AgentStreamEvent;
+      try {
+        event = JSON.parse(message.data) as AgentStreamEvent;
+      } catch (err) {
+        console.warn('agent-stream: failed to parse SSE payload', err);
+        return;
+      }
+
+      try {
+        setLastEventAt(event.data.timestamp);
+        setLiveRuns((current) => reduceAgentStreamEvent(current, event));
+
+        if (event.type === 'status') {
+          params.invalidateKeys.forEach((queryKey) => {
+            queryClient.invalidateQueries({ queryKey: [...queryKey] });
+          });
+
+          if (
+            event.data.status === 'completed' ||
+            event.data.status === 'failed' ||
+            event.data.status === 'cancelled'
+          ) {
+            setTimeout(() => {
+              setLiveRuns((current) => {
+                const next = { ...current };
+                delete next[event.data.executionId];
+                return next;
+              });
+            }, 10000);
+          }
+        }
+      } catch {
+        // Ignore malformed SSE payloads.
+      }
+    };
+
+    source.onerror = () => {
+      setIsConnected(false);
+    };
+
+    return () => {
+      source.close();
+      setIsConnected(false);
+    };
+  }, [invalidateKeysKey, params.enabled, params.invalidateKeys, params.url, queryClient]);
+
+  const runs = useMemo(
+    () =>
+      Object.values(liveRuns).sort(
+        (left, right) => new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime()
+      ),
+    [liveRuns]
+  );
+
+  return {
+    isConnected,
+    lastEventAt,
+    liveRuns: runs,
+  };
+}
+
+export function useOrganizationAgentSettings(organizationId: string | null) {
+  const apiErrorText = useAgentApiErrorText();
+
+  return useQuery<WorkspaceAgentResponse>({
+    queryKey: ['organization-ai-agents', organizationId],
+    queryFn: async () => {
+      const response = await fetch(`/api/organizations/${organizationId}/ai-agents`);
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'fetchWorkspaceAgents'));
+      }
+      return payload as WorkspaceAgentResponse;
+    },
+    enabled: !!organizationId,
+  });
+}
+
+export function useUpdateOrganizationAgentSettings(organizationId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: Record<string, unknown>) => {
+      const response = await fetch(`/api/organizations/${organizationId}/ai-agents`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'updateWorkspaceAgents'));
+      }
+      return payload;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organization-ai-agents', organizationId] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === 'project-ai-agents' || query.queryKey[0] === 'admin-agent-control',
+      });
+    },
+  });
+}
+
+export function useCreateOrganizationAgentModelConfig(organizationId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: Record<string, unknown>) => {
+      const response = await fetch(`/api/organizations/${organizationId}/ai-model-configs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'createModelConfig'));
+      }
+      return payload as { config: AgentModelConfig | null };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organization-ai-agents', organizationId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-agent-control'] });
+    },
+  });
+}
+
+export function useUpdateOrganizationAgentModelConfig(organizationId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (params: { configId: string; data: Record<string, unknown> }) => {
+      const response = await fetch(
+        `/api/organizations/${organizationId}/ai-model-configs/${params.configId}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params.data),
+        }
+      );
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'updateModelConfig'));
+      }
+      return payload as { config: AgentModelConfig | null };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organization-ai-agents', organizationId] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === 'project-ai-agents' || query.queryKey[0] === 'admin-agent-control',
+      });
+    },
+  });
+}
+
+export function useArchiveOrganizationAgentModelConfig(organizationId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (configId: string) => {
+      const response = await fetch(
+        `/api/organizations/${organizationId}/ai-model-configs/${configId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'archiveModelConfig'));
+      }
+      return payload as { config: AgentModelConfig | null };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organization-ai-agents', organizationId] });
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === 'project-ai-agents' || query.queryKey[0] === 'admin-agent-control',
+      });
+    },
+  });
+}
+
+export function useProjectAgents(projectId: string | null) {
+  const apiErrorText = useAgentApiErrorText();
+  const queryClient = useQueryClient();
+  const t = useTranslations('settingsConfig');
+  const { toast } = useToast();
+  const activeRunIds = useRef(new Set<string>());
+  const activeProjectId = useRef(projectId);
+
+  const query = useQuery<ProjectAgentsResponse>({
+    queryKey: ['project-ai-agents', projectId],
+    queryFn: async () => {
+      const response = await fetch(`/api/projects/${projectId}/agents`);
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'fetchProjectAgents'));
+      }
+      return payload as ProjectAgentsResponse;
+    },
+    enabled: !!projectId,
+    refetchInterval: (query) => getProjectAgentRefetchInterval(query.state.data),
+  });
+
+  useEffect(() => {
+    if (activeProjectId.current !== projectId) {
+      activeProjectId.current = projectId;
+      activeRunIds.current = new Set();
+    }
+    const terminalRuns = getTerminalProjectAgentRuns(
+      activeRunIds.current,
+      query.data?.recentRuns ?? []
+    );
+    const current = new Set(
+      (query.data?.recentRuns ?? [])
+        .filter((run) => run.status === 'pending' || run.status === 'running')
+        .map((run) => run.id)
+    );
+    const reachedTerminal = [...activeRunIds.current].some((runId) => !current.has(runId));
+    activeRunIds.current = current;
+    if (reachedTerminal) {
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      queryClient.invalidateQueries({ queryKey: ['sprints', projectId] });
+    }
+    for (const run of terminalRuns) {
+      const failed = run.status === 'failed';
+      const title = failed
+        ? t('projectAi.run_failed_title')
+        : run.status === 'cancelled'
+          ? t('agentShared.runStatuses.cancelled')
+          : run.dryRun
+            ? t('projectAi.preview_ready')
+            : t('projectAi.run_completed');
+      toast({ title, variant: failed ? 'destructive' : undefined });
+    }
+  }, [projectId, query.data?.recentRuns, queryClient, t, toast]);
+
+  return query;
+}
+
+export function getTerminalProjectAgentRuns(
+  previousActiveIds: ReadonlySet<string>,
+  runs: ProjectAgentsResponse['recentRuns']
+) {
+  return runs.filter(
+    (run) => previousActiveIds.has(run.id) && run.status !== 'pending' && run.status !== 'running'
+  );
+}
+
+export function getProjectAgentRefetchInterval(data: ProjectAgentsResponse | undefined) {
+  return data?.recentRuns.some((run) => run.status === 'pending' || run.status === 'running')
+    ? 2_000
+    : false;
+}
+
+export function getProjectAgentControlAction(status: string): 'cancel' | 'resume' | null {
+  if (status === 'pending' || status === 'running') return 'cancel';
+  if (status === 'failed' || status === 'cancelled') return 'resume';
+  return null;
+}
+
+export function useUpdateProjectAgents(projectId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: Record<string, unknown>) => {
+      const response = await fetch(`/api/projects/${projectId}/agents`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'updateProjectAgents'));
+      }
+      return payload;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project-ai-agents', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+    },
+  });
+}
+
+export function useRunProjectAgent(projectId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: { kind: string; dryRun?: boolean; idempotencyKey: string }) => {
+      const { idempotencyKey, ...body } = data;
+      const response = await fetch(`/api/projects/${projectId}/agents/run`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify(body),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'runProjectAgent'));
+      }
+      return payload as ProjectAgentRunResponse;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['project-ai-agents', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      queryClient.invalidateQueries({ queryKey: ['sprints', projectId] });
+    },
+  });
+}
+
+export function createProjectAgentRunIntent(data: { kind: string; dryRun?: boolean }) {
+  return { ...data, idempotencyKey: crypto.randomUUID() };
+}
+
+export function useControlProjectAgentRun(projectId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: { runId: string; action: 'resume' | 'cancel' }) => {
+      const response = await fetch(`/api/projects/${projectId}/agents/runs/${data.runId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: data.action }),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) throw new Error(apiErrorText(payload, 'runProjectAgent'));
+      return payload as { run: ProjectAgentsResponse['recentRuns'][number] };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['project-ai-agents', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+      queryClient.invalidateQueries({ queryKey: ['sprints', projectId] });
+    },
+  });
+}
+
+export function useAdminAgentControl() {
+  const apiErrorText = useAgentApiErrorText();
+
+  return useQuery<AdminAgentControlResponse>({
+    queryKey: ['admin-agent-control'],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/agent-control');
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'fetchAdminControl'));
+      }
+      return payload as AdminAgentControlResponse;
+    },
+  });
+}
+
+export function useIssueAgentSessions(issueId: string | null, enabled = true) {
+  const apiErrorText = useAgentApiErrorText();
+
+  return useQuery<IssueAgentSessionsResponse>({
+    queryKey: ['issue-agent-sessions', issueId],
+    queryFn: async () => {
+      const response = await fetch(`/api/issues/${issueId}/agent-sessions`);
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'fetchAgentSessions'));
+      }
+      return payload as IssueAgentSessionsResponse;
+    },
+    enabled: enabled && !!issueId,
+    refetchInterval: (query) => {
+      const sessions = query.state.data?.sessions ?? [];
+      return sessions.some((session) => session.state === 'pending' || session.state === 'active')
+        ? 5000
+        : false;
+    },
+  });
+}
+
+export function useDispatchIssueAgent(issueId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: { provider: AgentSessionProvider; promptOverride?: string }) => {
+      const response = await fetch(`/api/issues/${issueId}/dispatch-agent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: data.provider,
+          prompt_override: data.promptOverride || undefined,
+        }),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'dispatchAgent'));
+      }
+      return payload as {
+        sessionId: string;
+        provider: AgentSessionProvider;
+        state: string;
+        runner?: 'local_cli';
+        callbackUrl?: string;
+      };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['issue-agent-sessions', issueId] });
+      queryClient.invalidateQueries({ queryKey: ['issue', issueId] });
+      queryClient.invalidateQueries({ queryKey: ['issues'] });
+    },
+  });
+}
+
+export function useAdminLocalAgentRunners(organizationId: string | null) {
+  const apiErrorText = useAgentApiErrorText();
+
+  return useQuery<AdminLocalAgentRunnersResponse>({
+    queryKey: ['admin-local-agent-runners', organizationId],
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/admin/agent-control/local-runners?organizationId=${organizationId}`
+      );
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'fetchLocalRunners'));
+      }
+      return payload as AdminLocalAgentRunnersResponse;
+    },
+    enabled: !!organizationId,
+  });
+}
+
+export function useUpdateAdminLocalAgentRunner(organizationId: string) {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: { provider: LocalAgentRunnerProvider; enabled: boolean }) => {
+      const response = await fetch('/api/admin/agent-control/local-runners', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ organizationId, ...data }),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'updateLocalRunner'));
+      }
+      return payload as AdminLocalAgentRunnersResponse;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-local-agent-runners', organizationId] });
+      queryClient.invalidateQueries({ queryKey: ['admin-agent-control'] });
+    },
+  });
+}
+
+export function useUpdateAdminAgentControl() {
+  const queryClient = useQueryClient();
+  const apiErrorText = useAgentApiErrorText();
+
+  return useMutation({
+    mutationFn: async (data: Record<string, unknown>) => {
+      const response = await fetch('/api/admin/agent-control', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(apiErrorText(payload, 'updateAdminControl'));
+      }
+      return payload;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-agent-control'] });
+    },
+  });
+}
+
+const ADMIN_AGENT_STREAM_INVALIDATE_KEYS: Array<readonly unknown[]> = [['admin-agent-control']];
+
+export function useProjectAgentStream(projectId: string | null, enabled = true) {
+  const invalidateKeys = useMemo(
+    () => (projectId ? [['project-ai-agents', projectId], ['issues'], ['sprints', projectId]] : []),
+    [projectId]
+  );
+
+  return useAgentStream({
+    url: projectId ? `/api/projects/${projectId}/agents/stream` : null,
+    enabled: enabled && !!projectId,
+    invalidateKeys,
+  });
+}
+
+export function useAdminAgentStream(enabled = true) {
+  return useAgentStream({
+    url: enabled ? '/api/admin/agent-control/stream' : null,
+    enabled,
+    invalidateKeys: ADMIN_AGENT_STREAM_INVALIDATE_KEYS,
+  });
+}

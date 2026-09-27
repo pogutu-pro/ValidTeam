@@ -1,0 +1,358 @@
+'use client';
+import { KanbanColumn } from './kanban-column';
+import { KanbanCard } from './kanban-card';
+import { AddColumnDialog } from './add-column-dialog';
+import { DEFAULT_BOARD_FILTERS, type BoardFilters } from './board-filters';
+import { useIssues, useUpdateIssue } from '@/lib/hooks/use-issues';
+import { useWorkflowStatuses } from '@/lib/hooks/use-workflow-statuses';
+import { IssueDetailModal } from '@/components/issues/issue-detail-modal';
+import { Plus, Kanban as LayoutKanban } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { SkeletonKanbanColumn } from '@/components/ui/skeleton';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  TouchSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  pointerWithin,
+  rectIntersection,
+  closestCenter,
+  CollisionDetection,
+  MeasuringStrategy,
+} from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { useState, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+
+interface KanbanBoardProps {
+  projectId: string;
+  sprintId?: string;
+  filters?: BoardFilters;
+  ariaLabel?: string;
+}
+
+export function KanbanBoard({ projectId, sprintId, filters, ariaLabel }: KanbanBoardProps) {
+  const t = useTranslations('kanban');
+  const { data: issues, isLoading: issuesLoading, error } = useIssues({ projectId, sprintId });
+  const { data: workflowStatuses = [], isLoading: statusesLoading } =
+    useWorkflowStatuses(projectId);
+  const updateIssue = useUpdateIssue();
+  const queryClient = useQueryClient();
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
+  const [addColumnOpen, setAddColumnOpen] = useState(false);
+  const activeFilters = filters ?? DEFAULT_BOARD_FILTERS;
+
+  const filteredIssues = useMemo(() => {
+    if (!issues) return [];
+
+    return issues.filter((issue) => {
+      if (activeFilters.search) {
+        const searchLower = activeFilters.search.toLowerCase();
+        const matchesSearch =
+          issue.title.toLowerCase().includes(searchLower) ||
+          issue.key.toLowerCase().includes(searchLower) ||
+          issue.description?.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
+
+      if (activeFilters.priority.length > 0) {
+        if (!activeFilters.priority.includes(issue.priority)) return false;
+      }
+
+      if (activeFilters.assignee.length > 0) {
+        if (!issue.assigneeId || !activeFilters.assignee.includes(issue.assigneeId)) return false;
+      }
+
+      if (activeFilters.labels.length > 0) {
+        const issueLabels = ((issue.labels ?? []) as Array<string | { id: string }>).map((l) =>
+          typeof l === 'string' ? l : l.id
+        );
+        if (!activeFilters.labels.some((id) => issueLabels.includes(id))) return false;
+      }
+
+      return true;
+    });
+  }, [activeFilters, issues]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const collisionDetection: CollisionDetection = (args) => {
+    const pointerIntersections = pointerWithin(args);
+    if (pointerIntersections.length > 0) return pointerIntersections;
+    const rect = rectIntersection(args);
+    if (rect.length > 0) return rect;
+    return closestCenter(args);
+  };
+
+  const announcements = {
+    onDragStart() {
+      return t('dnd.pickedUp');
+    },
+    onDragOver({
+      over,
+    }: {
+      active: { id: string | number };
+      over: { id: string | number } | null;
+    }) {
+      if (over) return t('dnd.overTarget');
+      return t('dnd.notOverTarget');
+    },
+    onDragEnd({ over }: { active: { id: string | number }; over: { id: string | number } | null }) {
+      if (over) return t('dnd.moved');
+      return t('dnd.dropCancelled');
+    },
+    onDragCancel() {
+      return t('dnd.dragCancelled');
+    },
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    if (!over) return;
+
+    const activeData = active.data.current as
+      | { type?: string; statusId?: string; issueId?: string }
+      | undefined;
+    const overData = over.data.current as { type?: string; statusId?: string } | undefined;
+
+    if (activeData?.type !== 'card') return;
+
+    const targetStatusId =
+      overData?.type === 'column' || overData?.type === 'card' ? overData.statusId : undefined;
+
+    const issueId = activeData.issueId;
+    if (!issueId || !targetStatusId) return;
+    if (activeData.statusId === targetStatusId) return;
+
+    updateIssue.mutate({ issueId, data: { statusId: targetStatusId } });
+  };
+
+  const activeIssue = filteredIssues?.find((i) => i.id === activeId);
+
+  // Orphan-status issues (no statusId, or a stale/unknown one — e.g. a pending
+  // optimistic create whose status couldn't be guessed) must surface somewhere
+  // rather than silently vanish. Route them into the first column.
+  const knownStatusIds = useMemo(
+    () => new Set(workflowStatuses.map((s) => s.id)),
+    [workflowStatuses]
+  );
+  const firstStatusId = workflowStatuses[0]?.id;
+
+  const isLoading = issuesLoading || statusesLoading;
+
+  if (isLoading) {
+    const columnCount = workflowStatuses.length > 0 ? workflowStatuses.length : 4;
+    return (
+      <div
+        className="custom-scrollbar flex h-full overflow-x-auto overflow-y-hidden px-3 py-3 sm:px-4 sm:py-4"
+        role={ariaLabel ? 'region' : undefined}
+        aria-label={ariaLabel}
+        tabIndex={ariaLabel ? 0 : undefined}
+      >
+        <div className="flex h-full gap-2.5">
+          {Array.from({ length: columnCount }).map((_, idx) => (
+            <SkeletonKanbanColumn key={idx} title={workflowStatuses[idx]?.name ?? ''} cards={3} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center px-4" role="alert">
+        <div className="border-destructive/20 bg-destructive/5 w-full max-w-sm rounded-md border px-4 py-5 text-center">
+          <p className="text-destructive text-sm">{t('loadFailed')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (workflowStatuses.length === 0) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
+        <LayoutKanban className="text-muted-foreground/40 h-8 w-8" />
+        <p className="text-muted-foreground text-sm">{t('noColumns')}</p>
+        <Button variant="outline" size="sm" onClick={() => setAddColumnOpen(true)}>
+          <Plus className="me-1.5 h-3.5 w-3.5" />
+          {t('addColumn')}
+        </Button>
+        <AddColumnDialog
+          open={addColumnOpen}
+          onOpenChange={setAddColumnOpen}
+          projectId={projectId}
+          onSuccess={() =>
+            queryClient.invalidateQueries({ queryKey: ['workflow-statuses', projectId] })
+          }
+        />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div
+        className="bg-background flex h-full min-w-0 flex-col"
+        data-dragging-active={activeId ? 'true' : undefined}
+      >
+        <DndContext
+          sensors={sensors}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          collisionDetection={collisionDetection}
+          accessibility={{ announcements }}
+          measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
+        >
+          <div
+            className="custom-scrollbar focus-visible:ring-ring flex flex-1 items-stretch gap-2.5 overflow-x-auto px-3 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inset sm:px-4 sm:py-4"
+            role={ariaLabel ? 'region' : undefined}
+            aria-label={ariaLabel}
+            tabIndex={ariaLabel ? 0 : undefined}
+          >
+            {workflowStatuses.map((status) => {
+              const columnIssues = filteredIssues.filter((issue) => {
+                if (issue.statusId === status.id) return true;
+                // Orphans land in the first column instead of disappearing.
+                return (
+                  status.id === firstStatusId &&
+                  (!issue.statusId || !knownStatusIds.has(issue.statusId))
+                );
+              });
+              return (
+                <KanbanColumn
+                  key={status.id}
+                  column={{
+                    id: status.id,
+                    name: status.name,
+                    color: status.color,
+                    category: status.category,
+                  }}
+                  issueCount={columnIssues.length}
+                  projectId={projectId}
+                  statusId={status.id}
+                  issueIds={columnIssues.map((i) => i.id)}
+                >
+                  {columnIssues.map((issue) => (
+                    <KanbanCard
+                      key={issue.id}
+                      draggableId={issue.id}
+                      statusId={status.id}
+                      issueId={issue.id}
+                      issue={{
+                        id: issue.id,
+                        key: issue.key,
+                        title: issue.title,
+                        priority: issue.priority as 'low' | 'medium' | 'high' | 'critical',
+                        type: issue.type as 'task' | 'bug' | 'story' | 'epic',
+                        assignee: issue.assignee
+                          ? {
+                              name: issue.assignee.name || issue.assignee.email,
+                              avatar:
+                                issue.assignee.name
+                                  ?.split(' ')
+                                  .map((n) => n[0])
+                                  .join('')
+                                  .toUpperCase() ||
+                                issue.assignee.email?.[0]?.toUpperCase() ||
+                                '?',
+                            }
+                          : undefined,
+                        labels: issue.labels ?? [],
+                        dueDate: issue.dueDate,
+                        optimistic: issue.optimistic,
+                      }}
+                      onClick={() => setSelectedIssueId(issue.id)}
+                    />
+                  ))}
+                </KanbanColumn>
+              );
+            })}
+
+            <div className="w-[calc(100vw-1.5rem)] max-w-72 flex-shrink-0 self-start sm:w-72">
+              <Button
+                variant="ghost"
+                className="border-border text-muted-foreground ease-snap hover:border-primary/40 hover:bg-primary/5 hover:text-primary h-10 w-full rounded-md border border-dashed text-sm transition-[color,background-color,border-color,box-shadow,opacity,transform] duration-150"
+                onClick={() => setAddColumnOpen(true)}
+              >
+                <Plus className="me-1.5 h-4 w-4" />
+                {t('addColumn')}
+              </Button>
+            </div>
+
+            {/* Trailing gutter so the last column isn't sheared at the viewport edge when scrolled */}
+            <div className="w-4 shrink-0" aria-hidden="true" />
+          </div>
+
+          <DragOverlay
+            dropAnimation={{
+              duration: 200,
+              easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            {activeIssue ? (
+              <div className="w-72 shadow-sm">
+                <KanbanCard
+                  issue={{
+                    id: activeIssue.id,
+                    key: activeIssue.key,
+                    title: activeIssue.title,
+                    priority: activeIssue.priority as 'low' | 'medium' | 'high' | 'critical',
+                    type: activeIssue.type as 'task' | 'bug' | 'story' | 'epic',
+                    assignee: activeIssue.assignee
+                      ? {
+                          name: activeIssue.assignee.name || activeIssue.assignee.email,
+                          avatar:
+                            activeIssue.assignee.name
+                              ?.split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                              .toUpperCase() ||
+                            activeIssue.assignee.email?.[0]?.toUpperCase() ||
+                            '?',
+                        }
+                      : undefined,
+                    labels: activeIssue.labels ?? [],
+                    dueDate: activeIssue.dueDate,
+                  }}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+      </div>
+
+      {selectedIssueId ? (
+        <IssueDetailModal
+          issueId={selectedIssueId}
+          open={!!selectedIssueId}
+          onOpenChange={(open) => !open && setSelectedIssueId(null)}
+        />
+      ) : null}
+
+      <AddColumnDialog
+        open={addColumnOpen}
+        onOpenChange={setAddColumnOpen}
+        projectId={projectId}
+        onSuccess={() =>
+          queryClient.invalidateQueries({ queryKey: ['workflow-statuses', projectId] })
+        }
+      />
+    </>
+  );
+}

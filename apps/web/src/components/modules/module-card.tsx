@@ -1,0 +1,141 @@
+'use client';
+
+import { CalendarClock, Users, ListChecks } from 'lucide-react';
+import { useFormatter, useTranslations } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import type { ProjectModule, ModuleStatus } from '@/lib/modules/use-modules';
+
+interface ModuleCardProps {
+  module: ProjectModule;
+}
+
+interface StatusPalette {
+  labelKey: string;
+  badge: string;
+}
+
+const STATUS_PALETTE: Record<ModuleStatus, StatusPalette> = {
+  backlog: {
+    labelKey: 'status_backlog',
+    badge: 'bg-muted text-muted-foreground border-border',
+  },
+  planned: {
+    labelKey: 'status_planned',
+    badge: 'bg-accent-blue/10 text-accent-blue border-accent-blue/20',
+  },
+  in_progress: {
+    labelKey: 'status_in_progress',
+    badge: 'bg-accent-amber/10 text-accent-amber border-accent-amber/20',
+  },
+  paused: {
+    labelKey: 'status_paused',
+    badge: 'bg-muted text-muted-foreground border-border',
+  },
+  completed: {
+    labelKey: 'status_completed',
+    badge: 'bg-accent-emerald/10 text-accent-emerald border-accent-emerald/20',
+  },
+  cancelled: {
+    labelKey: 'status_cancelled',
+    badge: 'bg-accent-rose/10 text-accent-rose border-accent-rose/20',
+  },
+};
+
+export function getModuleStatusPalette(status: ModuleStatus): StatusPalette {
+  return STATUS_PALETTE[status];
+}
+
+type ModuleFormatter = ReturnType<typeof useFormatter>;
+
+function formatTargetDate(
+  iso: string | null | undefined,
+  formatter: ModuleFormatter
+): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return formatter.dateTime(d, { month: 'short', day: 'numeric' });
+}
+
+function initials(name?: string): string {
+  if (!name) return '?';
+  const parts = name.trim().split(/\s+/).slice(0, 2);
+  return parts.map((p) => p.charAt(0).toUpperCase()).join('') || '?';
+}
+
+export function ModuleCard({ module }: ModuleCardProps) {
+  const t = useTranslations('planning');
+  const formatter = useFormatter();
+  const palette = STATUS_PALETTE[module.status];
+  const total = module.totalIssues ?? 0;
+  const completed = module.completedIssues ?? 0;
+  const progress = total > 0 ? Math.min(100, Math.round((completed / total) * 100)) : 0;
+  const targetLabel = formatTargetDate(module.targetDate, formatter);
+
+  return (
+    <article
+      className={cn(
+        'border-border/60 bg-card w-full rounded-lg border p-4 text-left',
+        'ease-snap transition-colors duration-150'
+      )}
+    >
+      {/* Top row: name + lead avatar */}
+      <div className="flex items-center gap-2.5">
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold">{module.name}</span>
+        <span
+          className={cn(
+            'inline-flex h-6 w-6 items-center justify-center rounded-full',
+            'bg-muted text-muted-foreground shrink-0 text-[10px] font-medium'
+          )}
+          title={module.leadName ?? t('unassigned')}
+          aria-label={module.leadName ? t('lead_aria', { name: module.leadName }) : t('unassigned')}
+        >
+          {initials(module.leadName)}
+        </span>
+      </div>
+
+      {/* Description (1 line, muted) */}
+      {module.description ? (
+        <p className="text-muted-foreground mt-2 truncate text-xs">{module.description}</p>
+      ) : (
+        <p className="text-muted-foreground/60 mt-2 truncate text-xs italic">
+          {t('no_description')}
+        </p>
+      )}
+
+      {/* Progress bar */}
+      <div className="mt-3 flex items-center gap-3">
+        <div className="bg-primary/10 h-1.5 flex-1 overflow-hidden rounded-sm">
+          <div
+            className="bg-primary ease-snap h-full rounded-sm transition-[width] duration-150"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <span className="text-muted-foreground shrink-0 text-[11px] tabular-nums">
+          <ListChecks className="-mt-0.5 mr-0.5 inline h-3 w-3" />
+          {completed}/{total}
+        </span>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-2">
+          {targetLabel && (
+            <span className="bg-muted text-muted-foreground inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[11px]">
+              <CalendarClock className="h-3 w-3" />
+              {targetLabel}
+            </span>
+          )}
+          <span className="text-muted-foreground inline-flex items-center gap-1 text-[11px]">
+            <Users className="h-3 w-3" />
+            {module.memberIds.length}
+          </span>
+        </div>
+        <Badge variant="outline" className={palette.badge}>
+          {t(palette.labelKey)}
+        </Badge>
+      </div>
+    </article>
+  );
+}

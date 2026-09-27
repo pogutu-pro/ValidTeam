@@ -1,0 +1,44 @@
+services:
+  web:
+    build:
+      args:
+        NEXT_PUBLIC_COLLAB_ENABLED: ${NEXT_PUBLIC_COLLAB_ENABLED:-true}
+        NEXT_PUBLIC_HOCUSPOCUS_URL: ${NEXT_PUBLIC_HOCUSPOCUS_URL:-ws://127.0.0.1:${HOCUSPOCUS_PORT:-1234}}
+    environment:
+      NEXT_PUBLIC_COLLAB_ENABLED: ${NEXT_PUBLIC_COLLAB_ENABLED:-true}
+      NEXT_PUBLIC_HOCUSPOCUS_URL: ${NEXT_PUBLIC_HOCUSPOCUS_URL:-ws://127.0.0.1:${HOCUSPOCUS_PORT:-1234}}
+      HOCUSPOCUS_INTERNAL_URL: http://hocuspocus:1234/healthz
+    # Do not gate web startup on Hocuspocus: the web entrypoint owns database
+    # migrations, including collab_documents. Hocuspocus restarts after that
+    # migration lands and then becomes healthy.
+
+  hocuspocus:
+    build:
+      context: .
+      dockerfile: services/hocuspocus/Dockerfile
+    container_name: tasknebula-hocuspocus
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET must be set (generate with `openssl rand -base64 32`)}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/${POSTGRES_DB:-tasknebula}
+      REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set}@redis:6379
+      HOCUSPOCUS_PORT: 1234
+      NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - '127.0.0.1:${HOCUSPOCUS_PORT:-1234}:1234'
+    healthcheck:
+      test: ['CMD', 'node', 'src/healthcheck.mjs']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
