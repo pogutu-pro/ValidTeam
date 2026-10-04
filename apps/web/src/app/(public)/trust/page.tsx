@@ -24,7 +24,7 @@ import { TRUST_CENTER, recentIncidents } from '@/config/trust-center';
 import { SUB_PROCESSORS } from '@/config/sub-processors';
 import type { ComplianceBadge, PublicIncident } from '@/config/trust-center';
 
-const PUBLISHED_DOCUMENT_ROUTES: ReadonlySet<string> = new Set();
+const PUBLISHED_DOCUMENT_ROUTES: ReadonlySet<string> = new Set(['/legal/privacy', '/legal/terms']);
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('publicPages');

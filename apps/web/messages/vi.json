@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Pháp lý",
+    "legalLastReviewed": "Xem lại lần cuối {date}",
+    "legalOnThisPage": "Trên trang này",
+    "legalPrivacyTitle": "Chính sách quyền riêng tư",
+    "legalTermsTitle": "Điều khoản dịch vụ",
+    "legalPrivacyMetaDescription": "Cách ValidTeam thu thập, sử dụng và chia sẻ thông tin cá nhân của bạn.",
+    "legalTermsMetaDescription": "Các điều khoản chi phối việc bạn sử dụng ValidTeam.",
+    "legalPrivacyContact": "Câu hỏi về quyền riêng tư? Email {email}.",
+    "legalTermsContact": "Câu hỏi về điều khoản? Email {email}."
   },
   "settingsClients": {
     "common": {

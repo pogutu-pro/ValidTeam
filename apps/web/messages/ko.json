@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "법적 고지",
+    "legalLastReviewed": "최종 검토 {date}",
+    "legalOnThisPage": "이 페이지에서",
+    "legalPrivacyTitle": "개인정보 처리방침",
+    "legalTermsTitle": "서비스 약관",
+    "legalPrivacyMetaDescription": "ValidTeam이 개인정보를 수집, 이용, 공유하는 방식입니다.",
+    "legalTermsMetaDescription": "ValidTeam 이용을 규칙하는 약관입니다.",
+    "legalPrivacyContact": "개인정보 문의: {email}",
+    "legalTermsContact": "약관 문의: {email}"
   },
   "settingsClients": {
     "common": {

@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "ข้อกฎหมาย",
+    "legalLastReviewed": "ตรวจทานล่าสุด {date}",
+    "legalOnThisPage": "ในหน้านี้",
+    "legalPrivacyTitle": "นโยบายความเป็นส่วนตัว",
+    "legalTermsTitle": "ข้อกำหนดการให้บริการ",
+    "legalPrivacyMetaDescription": "วิธีที่ ValidTeam เก็บ ใช้ และเปิดเผยข้อมูลส่วนบุคคลของคุณ",
+    "legalTermsMetaDescription": "ข้อกำหนดที่ควบคุมการใช้งาน ValidTeam ของคุณ",
+    "legalPrivacyContact": "คำถามด้านความเป็นส่วนตัว? อีเมลถึง {email}",
+    "legalTermsContact": "คำถามเกี่ยวกับข้อกำหนด? อีเมลถึง {email}"
   },
   "settingsClients": {
     "common": {

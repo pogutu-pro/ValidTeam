@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Yasal",
+    "legalLastReviewed": "Son inceleme {date}",
+    "legalOnThisPage": "Bu sayfada",
+    "legalPrivacyTitle": "Gizlilik Politikası",
+    "legalTermsTitle": "Hizmet Şartları",
+    "legalPrivacyMetaDescription": "ValidTeam kişisel verilerinizi nasıl toplar, kullanır ve paylaşır.",
+    "legalTermsMetaDescription": "ValidTeam kullanımınızı düzenleyen koşullar.",
+    "legalPrivacyContact": "Gizlilik soruları? {email} adresine yazın.",
+    "legalTermsContact": "Bu koşullarla ilgili sorular? {email} adresine yazın."
   },
   "settingsClients": {
     "common": {

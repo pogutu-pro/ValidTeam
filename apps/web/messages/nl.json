@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Juridisch",
+    "legalLastReviewed": "Laatst bekeken {date}",
+    "legalOnThisPage": "Op deze pagina",
+    "legalPrivacyTitle": "Privacyverklaring",
+    "legalTermsTitle": "Servicevoorwaarden",
+    "legalPrivacyMetaDescription": "Hoe ValidTeam uw persoonsgegevens verzamelt, gebruikt en deelt.",
+    "legalTermsMetaDescription": "De voorwaarden die uw gebruik van ValidTeam regelen.",
+    "legalPrivacyContact": "Vragen over privacy? Mail naar {email}.",
+    "legalTermsContact": "Vragen over deze voorwaarden? Mail naar {email}."
   },
   "settingsClients": {
     "common": {

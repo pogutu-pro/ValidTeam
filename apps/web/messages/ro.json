@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Juridic",
+    "legalLastReviewed": "Ultima revizuire {date}",
+    "legalOnThisPage": "Pe această pagină",
+    "legalPrivacyTitle": "Politica de confidențialitate",
+    "legalTermsTitle": "Termeni de serviciu",
+    "legalPrivacyMetaDescription": "Cule ValidTeam colectează, utilizează și partajează datele tale personale.",
+    "legalTermsMetaDescription": "Termenii care guvernează utilizarea ValidTeam de către tine.",
+    "legalPrivacyContact": "Întrebări despre confidențialitate? Scrie la {email}.",
+    "legalTermsContact": "Întrebări despre acești termeni? Scrie la {email}."
   },
   "settingsClients": {
     "common": {

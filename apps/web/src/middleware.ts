@@ -22,6 +22,7 @@ const UN_LOCALIZED_PREFIXES = [
   '/ai-model-cards',
   '/intake',
   '/trust',
+  '/legal',
 ];
 
 const PUBLIC_AUTH_ROUTES = [

@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Právní",
+    "legalLastReviewed": "Poslední revize {date}",
+    "legalOnThisPage": "Na této stránce",
+    "legalPrivacyTitle": "Zásady ochrany osobních údajů",
+    "legalTermsTitle": "Podmínky služby",
+    "legalPrivacyMetaDescription": "Jak ValidTeam sbírá, používá a sdílí vaše osobní údaje.",
+    "legalTermsMetaDescription": "Podmínky upravující vaše používání ValidTeam.",
+    "legalPrivacyContact": "Otázky k ochraně údajů? Napište na {email}.",
+    "legalTermsContact": "Otázky k těmto podmínkám? Napište na {email}."
   },
   "settingsClients": {
     "common": {

@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "法律信息",
+    "legalLastReviewed": "最后审阅 {date}",
+    "legalOnThisPage": "本页内容",
+    "legalPrivacyTitle": "隐私政策",
+    "legalTermsTitle": "服务条款",
+    "legalPrivacyMetaDescription": "ValidTeam 如何收集、使用和共享您的个人信息。",
+    "legalTermsMetaDescription": "规范您使用 ValidTeam 的条款。",
+    "legalPrivacyContact": "隐私问题请联系 {email}。",
+    "legalTermsContact": "条款问题请联系 {email}。"
   },
   "settingsClients": {
     "common": {

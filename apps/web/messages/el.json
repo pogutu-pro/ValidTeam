@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Νομικά",
+    "legalLastReviewed": "Τελευταία αναθεώρηση {date}",
+    "legalOnThisPage": "Σε αυτή τη σελίδα",
+    "legalPrivacyTitle": "Πολιτική απορρήτου",
+    "legalTermsTitle": "Όροι χρήσης",
+    "legalPrivacyMetaDescription": "Πώς η ValidTeam συλλέγει, χρησιμοποιεί και κοινοποιεί τα προσωπικά σας δεδομένα.",
+    "legalTermsMetaDescription": "Οι όροι που διέπουν τη χρήση της ValidTeam από εσάς.",
+    "legalPrivacyContact": "Ερωτήσεις για την ιδιωτικότητα; Email {email}.",
+    "legalTermsContact": "Ερωτήσεις για τους όρους; Email {email}."
   },
   "settingsClients": {
     "common": {

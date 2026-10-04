@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Jogi",
+    "legalLastReviewed": "Utoljára ellenőrizve {date}",
+    "legalOnThisPage": "Ezen az oldalon",
+    "legalPrivacyTitle": "Adatvédelmi szabályok",
+    "legalTermsTitle": "Felhasználási feltételek",
+    "legalPrivacyMetaDescription": "Hogyan gyűjti, használja és osztja meg a ValidTeam a személyes adataidat.",
+    "legalTermsMetaDescription": "A ValidTeam használatát szabályozó feltételek.",
+    "legalPrivacyContact": "Adatvédelmi kérdés? Írj a {email} címre.",
+    "legalTermsContact": "Kérdés a feltételekről? Írj a {email} címre."
   },
   "settingsClients": {
     "common": {

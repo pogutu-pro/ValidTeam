@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Juridisk",
+    "legalLastReviewed": "Sidst gennemgået {date}",
+    "legalOnThisPage": "På denne side",
+    "legalPrivacyTitle": "Privatlivspolitik",
+    "legalTermsTitle": "Servicevilkår",
+    "legalPrivacyMetaDescription": "Hvordan ValidTeam indsamler, bruger og deler dine personoplysninger.",
+    "legalTermsMetaDescription": "Vilkårene der regulerer din brug af ValidTeam.",
+    "legalPrivacyContact": "Spørgsmål om privatliv? Skriv til {email}.",
+    "legalTermsContact": "Spørgsmål om vilkårene? Skriv til {email}."
   },
   "settingsClients": {
     "common": {

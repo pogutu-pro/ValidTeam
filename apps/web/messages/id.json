@@ -5808,7 +5808,16 @@
         "status": "Service status",
         "openapiSpec": "OpenAPI spec"
       }
-    }
+    },
+    "legalEyebrow": "Legal",
+    "legalLastReviewed": "Terakhir ditinjau {date}",
+    "legalOnThisPage": "Di halaman ini",
+    "legalPrivacyTitle": "Kebijakan Privasi",
+    "legalTermsTitle": "Ketentuan Layanan",
+    "legalPrivacyMetaDescription": "Cara ValidTeam mengumpulkan, menggunakan, dan membagikan informasi pribadi Anda.",
+    "legalTermsMetaDescription": "Ketentuan yang mengatur penggunaan ValidTeam oleh Anda.",
+    "legalPrivacyContact": "Pertanyaan privasi? Email ke {email}.",
+    "legalTermsContact": "Pertanyaan soal ketentuan? Email ke {email}."
   },
   "settingsClients": {
     "common": {
