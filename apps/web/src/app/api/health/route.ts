@@ -55,7 +55,7 @@ interface HealthStatus {
 }
 
 const REDIS_PING_TIMEOUT_MS = 1500;
-const COLLABORATION_TIMEOUT_MS = 1500;
+const COLLABORATION_TIMEOUT_MS = 5000;
 
 async function pingRedis(): Promise<{ state: CheckState; detail?: string }> {
   if (!isRedisConfigured()) {
