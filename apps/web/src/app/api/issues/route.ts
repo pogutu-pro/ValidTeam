@@ -14,7 +14,7 @@ import {
 import { createId } from '@paralleldrive/cuid2';
 import { eq, and, desc, sql, inArray, or } from 'drizzle-orm';
 import { publishEvent } from '@/lib/realtime/events';
-import { notifyIssueEvent } from '@/lib/notifications/send-notification';
+import { notifyIssueCreated, notifyIssueEvent } from '@/lib/notifications/send-notification';
 import { runAutomations } from '@/lib/automation/evaluator';
 import { withValidation } from '@/lib/api-validation';
 import { syncIssueLabelsBestEffort } from '@/lib/labels/sync';
@@ -550,6 +550,17 @@ export const POST = withValidation({ body: createIssueSchema })(async (
           console.error('assignee notification failed', err);
         }
       }
+
+      notifyIssueCreated({
+        actorUserId,
+        organizationId: createdIssue.organizationId,
+        issueId: createdIssue.id,
+        projectId: createdIssue.projectId,
+        issueKey: createdIssue.key,
+        issueTitle: createdIssue.title,
+        projectName: project.name || projectKey,
+        assigneeId: createdIssue.assigneeId,
+      });
 
       try {
         await runAutomations({

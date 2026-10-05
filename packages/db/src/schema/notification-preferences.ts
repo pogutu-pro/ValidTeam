@@ -54,19 +54,18 @@ export const notificationPreferences = pgTable('notification_preferences', {
   enableEmail: boolean('enable_email').notNull().default(true),
   digestFrequency: digestFrequencyEnum('digest_frequency').notNull().default('none'),
 
-  // Event-specific email settings — direct personal events and sprint
-  // lifecycle milestones are on by default; noisy activity and project
-  // lifecycle emails remain opt-in.
+  // Event-specific email settings — every event is on by default so users
+  // actively receive mail; each can be switched off in notification settings.
   emailOnAssigned: boolean('email_on_assigned').notNull().default(true),
   emailOnMentioned: boolean('email_on_mentioned').notNull().default(true),
-  emailOnCommented: boolean('email_on_commented').notNull().default(false),
-  emailOnStatusChanged: boolean('email_on_status_changed').notNull().default(false),
-  emailOnIssueCreated: boolean('email_on_issue_created').notNull().default(false),
+  emailOnCommented: boolean('email_on_commented').notNull().default(true),
+  emailOnStatusChanged: boolean('email_on_status_changed').notNull().default(true),
+  emailOnIssueCreated: boolean('email_on_issue_created').notNull().default(true),
   emailOnSprintStarted: boolean('email_on_sprint_started').notNull().default(true),
   emailOnSprintCompleted: boolean('email_on_sprint_completed').notNull().default(true),
-  // Project lifecycle events — opt-in (quiet by default)
-  emailOnProjectCreated: boolean('email_on_project_created').notNull().default(false),
-  emailOnProjectArchived: boolean('email_on_project_archived').notNull().default(false),
+  // Project lifecycle events
+  emailOnProjectCreated: boolean('email_on_project_created').notNull().default(true),
+  emailOnProjectArchived: boolean('email_on_project_archived').notNull().default(true),
 
   // Event-specific settings (in-app)
   inAppOnAssigned: boolean('in_app_on_assigned').notNull().default(true),

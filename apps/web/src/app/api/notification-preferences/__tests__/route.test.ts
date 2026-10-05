@@ -145,7 +145,7 @@ describe('/api/notification-preferences route', () => {
       });
     });
 
-    it('returns quiet-by-default preferences when no prefs row exists', async () => {
+    it('returns email-on-by-default preferences when no prefs row exists', async () => {
       authMock.mockResolvedValue({ user: { id: 'user-1' } });
       dbSelectMock.mockReturnValueOnce(selectReturning([]));
 
@@ -160,7 +160,7 @@ describe('/api/notification-preferences route', () => {
       expect(body.preferences).toMatchObject({
         userId: 'user-1',
         organizationId: 'org-1',
-        emailOnCommented: false,
+        emailOnCommented: true,
         emailOnMentioned: true,
         emailOnAssigned: true,
         inAppOnAssigned: true,

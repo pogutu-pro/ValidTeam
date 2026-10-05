@@ -18,6 +18,8 @@ export interface SendEmailParams {
   subject: string;
   html: string;
   text?: string;
+  /** Extra MIME headers, e.g. `List-Unsubscribe` on notification mail. */
+  headers?: Record<string, string>;
 }
 
 export interface SendEmailResult {
@@ -99,6 +101,7 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
       subject: params.subject,
       html: params.html,
       text: params.text,
+      ...(params.headers ? { headers: params.headers } : {}),
     });
 
     // QUAL-21: under exactOptionalPropertyTypes, `messageId?: string` cannot

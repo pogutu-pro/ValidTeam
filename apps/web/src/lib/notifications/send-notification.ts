@@ -1,5 +1,13 @@
-import { db, notifications, notificationPreferences, organizations, users } from '@validteam/db';
-import { and, eq } from 'drizzle-orm';
+import {
+  db,
+  notifications,
+  notificationPreferences,
+  organizationMembers,
+  organizations,
+  projectMembers,
+  users,
+} from '@validteam/db';
+import { and, eq, inArray, ne } from 'drizzle-orm';
 
 import { sendNotificationEmail } from '@/lib/notifications/email-notification';
 
@@ -182,4 +190,95 @@ export async function notifyIssueEventNow(params: IssueNotificationParams): Prom
       ...params.extra,
     },
   });
+}
+
+/**
+ * Resolve which of `candidateUserIds` may be notified for an issue: active
+ * members of the organization (and, when `projectId` is given, of that
+ * project). Candidate ids can originate from client input (e.g. comment
+ * mentions), so this prevents mailing users outside the workspace.
+ */
+async function filterNotifiableUsers(
+  candidateUserIds: string[],
+  organizationId: string,
+  projectId?: string
+): Promise<string[]> {
+  if (candidateUserIds.length === 0) return [];
+
+  const orgRows = await db
+    .select({ userId: organizationMembers.userId })
+    .from(organizationMembers)
+    .where(
+      and(
+        eq(organizationMembers.organizationId, organizationId),
+        eq(organizationMembers.status, 'active'),
+        inArray(organizationMembers.userId, candidateUserIds)
+      )
+    );
+  const inOrg = new Set(orgRows.map((r) => r.userId));
+  if (!projectId) return [...inOrg];
+
+  const projectRows = await db
+    .select({ userId: projectMembers.userId })
+    .from(projectMembers)
+    .where(
+      and(eq(projectMembers.projectId, projectId), inArray(projectMembers.userId, [...inOrg]))
+    );
+  return projectRows.map((r) => r.userId);
+}
+
+type IssueFanoutBase = Omit<IssueNotificationParams, 'eventType' | 'recipientUserId'>;
+
+/**
+ * `issue_created` — tell project members (except the actor and anyone who is
+ * already getting an `issue_assigned` for this issue) that a new issue exists.
+ * Fire-and-forget; never throws.
+ */
+export function notifyIssueCreated(base: IssueFanoutBase & { assigneeId?: string | null }): void {
+  void (async () => {
+    const members = await db
+      .select({ userId: projectMembers.userId })
+      .from(projectMembers)
+      .where(
+        and(
+          eq(projectMembers.projectId, base.projectId),
+          ne(projectMembers.userId, base.actorUserId)
+        )
+      );
+    const recipients = (
+      await filterNotifiableUsers(
+        members.map((m) => m.userId).filter((id) => id !== base.assigneeId),
+        base.organizationId,
+        base.projectId
+      )
+    ).filter((id) => id !== base.actorUserId);
+
+    const { assigneeId: _assigneeId, ...rest } = base;
+    await Promise.all(
+      recipients.map((recipientUserId) =>
+        notifyIssueEventNow({ ...rest, eventType: 'issue_created', recipientUserId })
+      )
+    );
+  })().catch((err) => console.error('issue_created notification error:', err));
+}
+
+/**
+ * `issue_mentioned` — notify users @mentioned in a comment. Returns the ids
+ * that were notified so callers can skip a redundant `issue_commented` mail.
+ */
+export async function notifyIssueMentions(
+  base: IssueFanoutBase & { mentionedUserIds: string[] }
+): Promise<string[]> {
+  const { mentionedUserIds, ...rest } = base;
+  const candidates = [...new Set(mentionedUserIds)].filter((id) => id !== base.actorUserId);
+  const recipients = await filterNotifiableUsers(candidates, base.organizationId, base.projectId);
+
+  await Promise.all(
+    recipients.map((recipientUserId) =>
+      notifyIssueEventNow({ ...rest, eventType: 'issue_mentioned', recipientUserId }).catch((err) =>
+        console.error('issue_mentioned notification error:', err)
+      )
+    )
+  );
+  return recipients;
 }

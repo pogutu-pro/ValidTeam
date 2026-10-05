@@ -632,12 +632,16 @@ export const PATCH = withValidation({
       updateData.assigneeId && updateData.assigneeId !== currentIssue.assigneeId
         ? updateData.assigneeId
         : null;
-    const statusEmailRecipient =
-      updateData.statusId &&
-      updateData.statusId !== currentIssue.statusId &&
-      currentIssue.assigneeId
-        ? currentIssue.assigneeId
-        : null;
+    const statusEmailRecipients =
+      updateData.statusId && updateData.statusId !== currentIssue.statusId
+        ? [
+            ...new Set(
+              [currentIssue.assigneeId, currentIssue.reporterId].filter((id): id is string =>
+                Boolean(id)
+              )
+            ),
+          ]
+        : [];
 
     after(async () => {
       if (Object.keys(changesSnapshot).length > 0) {
@@ -687,11 +691,11 @@ export const PATCH = withValidation({
         }
       }
 
-      if (statusEmailRecipient) {
+      for (const recipientUserId of statusEmailRecipients) {
         try {
           await notifyIssueEvent({
             eventType: 'issue_status_changed',
-            recipientUserId: statusEmailRecipient,
+            recipientUserId,
             actorUserId,
             organizationId: currentIssue.organizationId,
             issueId,

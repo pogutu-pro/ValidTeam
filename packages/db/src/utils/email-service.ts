@@ -440,18 +440,17 @@ async function shouldSendEmail(
         )
       );
 
-    // Quiet-by-default policy: critical direct events and sprint lifecycle
-    // milestones are on; noisy activity and project lifecycle emails are opt-in.
+    // Default policy: every event email is on; users can opt out per event.
     const DEFAULT_EVENT_POLICY: Record<string, boolean> = {
       issue_assigned: true,
       issue_mentioned: true,
-      issue_commented: false,
-      issue_status_changed: false,
-      issue_created: false,
+      issue_commented: true,
+      issue_status_changed: true,
+      issue_created: true,
       sprint_started: true,
       sprint_completed: true,
-      project_created: false,
-      project_archived: false,
+      project_created: true,
+      project_archived: true,
       daily_digest: false,
       weekly_digest: false,
     };

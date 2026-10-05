@@ -190,7 +190,7 @@ describe('email-service', () => {
   });
 
   describe('shouldSendEmail policy (no prefs row)', () => {
-    it('sends issue_assigned (quiet default: true)', async () => {
+    it('sends issue_assigned (default: true)', async () => {
       mockDbWithPrefs(null);
       const { sendEmail } = await loadService();
       const result = await sendEmail({
@@ -204,7 +204,7 @@ describe('email-service', () => {
       expect(sendMailMock).toHaveBeenCalledTimes(1);
     });
 
-    it('skips issue_commented (quiet default: false — regression)', async () => {
+    it('sends issue_commented (default: true)', async () => {
       mockDbWithPrefs(null);
       const { sendEmail } = await loadService();
       const result = await sendEmail({
@@ -214,11 +214,11 @@ describe('email-service', () => {
         organizationId: 'org-1',
         userId: 'user-1',
       });
-      expect(result.messageId).toBe('skipped-by-preferences');
-      expect(sendMailMock).not.toHaveBeenCalled();
+      expect(result.messageId).not.toBe('skipped-by-preferences');
+      expect(sendMailMock).toHaveBeenCalledTimes(1);
     });
 
-    it('sends issue_mentioned (quiet default: true)', async () => {
+    it('sends issue_mentioned (default: true)', async () => {
       mockDbWithPrefs(null);
       const { sendEmail } = await loadService();
       const result = await sendEmail({

@@ -17,13 +17,13 @@ const EMAIL_TEMPLATE_TYPES = new Set<string>(emailTemplateTypeEnum?.enumValues ?
 const DEFAULT_EMAIL_POLICY: Record<string, boolean> = {
   issue_assigned: true,
   issue_mentioned: true,
-  issue_commented: false,
-  issue_status_changed: false,
-  issue_created: false,
+  issue_commented: true,
+  issue_status_changed: true,
+  issue_created: true,
   sprint_started: true,
   sprint_completed: true,
-  project_created: false,
-  project_archived: false,
+  project_created: true,
+  project_archived: true,
   daily_digest: false,
   weekly_digest: false,
 };
@@ -177,6 +177,11 @@ export async function sendNotificationEmail(params: {
       subject: rendered.subject,
       html: rendered.html,
       text: rendered.text,
+      // Mailbox providers favour bulk-ish notification mail that carries an
+      // unsubscribe link; it points at the notification settings page.
+      ...(params.variables.unsubscribeUrl
+        ? { headers: { 'List-Unsubscribe': `<${params.variables.unsubscribeUrl}>` } }
+        : {}),
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

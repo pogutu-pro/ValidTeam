@@ -8,7 +8,7 @@ import {
   getIssueById,
 } from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
-import { notifyIssueEvent } from '@/lib/notifications/send-notification';
+import { notifyIssueEvent, notifyIssueMentions } from '@/lib/notifications/send-notification';
 import { publishEvent } from '@/lib/realtime/events';
 import { withValidation } from '@/lib/api-validation';
 import { canCommentOnIssue, canReadIssue } from '@/lib/auth/access-control';
@@ -190,7 +190,26 @@ export const POST = withValidation({
 
       const projectName = issue.key?.split('-')[0] || '';
 
-      if (issue.assigneeId) {
+      // Mentioned users get `issue_mentioned`; skip the generic comment mail
+      // for them so nobody receives two emails for one comment.
+      let mentionedIds: string[] = [];
+      try {
+        mentionedIds = await notifyIssueMentions({
+          actorUserId,
+          organizationId: issue.organizationId,
+          issueId,
+          projectId: issue.projectId,
+          issueKey: issue.key,
+          issueTitle: issue.title,
+          projectName,
+          extra: { commentBody: commentSnippet },
+          mentionedUserIds: commentInput.mentions,
+        });
+      } catch (err) {
+        console.error('comment notify (mentions) failed', err);
+      }
+
+      if (issue.assigneeId && !mentionedIds.includes(issue.assigneeId)) {
         try {
           await notifyIssueEvent({
             eventType: 'issue_commented',
@@ -209,7 +228,11 @@ export const POST = withValidation({
         }
       }
 
-      if (issue.reporterId && issue.reporterId !== issue.assigneeId) {
+      if (
+        issue.reporterId &&
+        issue.reporterId !== issue.assigneeId &&
+        !mentionedIds.includes(issue.reporterId)
+      ) {
         try {
           await notifyIssueEvent({
             eventType: 'issue_commented',

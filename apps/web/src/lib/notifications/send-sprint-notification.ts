@@ -6,12 +6,13 @@ import {
   projectMembers,
   notifications,
   notificationPreferences,
-  sendSprintNotificationEmail,
   eq,
   and,
   inArray,
   ne,
 } from '@validteam/db';
+
+import { sendNotificationEmail } from '@/lib/notifications/email-notification';
 
 /**
  * Sprint lifecycle notification dispatcher.
@@ -178,19 +179,51 @@ async function _notifySprint(params: {
     }
   }
 
-  // 6. Send emails. Errors are swallowed inside sendSprintNotificationEmail.
+  // 6. Send emails through the shared sender (honours Admin → System → SMTP
+  //    as well as env, and each recipient's notification preferences).
   if (emailRecipients.length > 0) {
-    try {
-      await sendSprintNotificationEmail({
-        sprint,
-        project,
-        eventType,
-        recipients: emailRecipients,
-        actorName: actor?.name || 'A teammate',
-        stats,
-      });
-    } catch (err) {
-      console.error('Failed to send sprint emails:', err);
-    }
+    const baseUrl = (
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.APP_URL ||
+      'http://localhost:3000'
+    ).replace(/\/+$/, '');
+    const [org] = await db
+      .select({ name: organizations.name })
+      .from(organizations)
+      .where(eq(organizations.id, project.organizationId))
+      .limit(1);
+    const fmtDate = (d: Date | string): string => {
+      const date = typeof d === 'string' ? new Date(d) : d;
+      return Number.isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10);
+    };
+    const templateType = eventType === 'sprint.started' ? 'sprint_started' : 'sprint_completed';
+
+    await Promise.all(
+      emailRecipients.map((recipient) =>
+        sendNotificationEmail({
+          to: recipient.email,
+          userId: recipient.userId,
+          organizationId: project.organizationId,
+          templateType,
+          variables: {
+            recipientName: recipient.name || recipient.email.split('@')[0] || recipient.email,
+            sprintName: sprint.name,
+            sprintGoal: sprint.goal || '',
+            sprintStartDate: fmtDate(sprint.startDate),
+            sprintEndDate: fmtDate(sprint.endDate),
+            projectName: project.name,
+            projectKey: project.key,
+            actorName: actor?.name || 'A teammate',
+            issueCount: String(stats?.issueCount ?? 0),
+            completedCount: String(stats?.completedCount ?? 0),
+            carriedOverCount: String(stats?.carriedOverCount ?? 0),
+            issueUrl: `${baseUrl}/projects/${project.key}/sprints/${sprint.id}`,
+            organizationName: org?.name || 'Your organization',
+            appUrl: baseUrl,
+            unsubscribeUrl: `${baseUrl}/settings/notifications`,
+          },
+        }).catch((err) => console.error('Failed to send sprint email:', err))
+      )
+    );
   }
 }
