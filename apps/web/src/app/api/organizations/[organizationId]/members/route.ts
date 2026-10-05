@@ -152,7 +152,20 @@ export async function POST(
     const canReceiveSignInInvite =
       user?.status === 'active' && typeof user.password === 'string' && user.password.length > 0;
 
-    if (registrationPolicy.mode === 'admin_created_only' && !canReceiveSignInInvite) {
+    // `admin_created_only` closes public signup, but must not lock admins out
+    // of the normal invite flow. Super admins and org owners/admins are the
+    // approval path for external members, so they may always invite.
+    const inviterRole = await getUserRole(organizationId);
+    const canInviteDespitePolicy =
+      inviterRole?.isSuperAdmin === true ||
+      inviterRole?.role === 'owner' ||
+      inviterRole?.role === 'admin';
+
+    if (
+      registrationPolicy.mode === 'admin_created_only' &&
+      !canReceiveSignInInvite &&
+      !canInviteDespitePolicy
+    ) {
       return NextResponse.json(
         {
           error: ADMIN_CREATED_INVITES_DISABLED,

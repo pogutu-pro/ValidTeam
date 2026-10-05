@@ -132,6 +132,8 @@ type TestMember = {
 function installMembersListFetch(overrides?: {
   members?: TestMember[];
   registrationMode?: 'allow_registration' | 'invite_only' | 'admin_created_only';
+  userRole?: string | null;
+  isSuperAdmin?: boolean;
   invitePostHandler?: (body: string) => { ok: boolean; status?: number; payload: unknown };
   assignProjectsPostHandler?: (body: string) => { ok: boolean; status?: number; payload: unknown };
 }) {
@@ -164,8 +166,8 @@ function installMembersListFetch(overrides?: {
         status: 200,
         json: async () => ({
           members: overrides?.members ?? [],
-          userRole: 'owner',
-          isSuperAdmin: false,
+          userRole: overrides?.userRole === undefined ? 'owner' : overrides.userRole,
+          isSuperAdmin: overrides?.isSuperAdmin ?? false,
           registrationMode: overrides?.registrationMode ?? 'allow_registration',
         }),
       };
@@ -532,13 +534,80 @@ describe('MembersPageClient — invite with project assignment', () => {
   });
 
   it('warns when admin-created accounts only blocks new invite signups', async () => {
-    installMembersListFetch({ registrationMode: 'admin_created_only' });
+    // A non-privileged role that still holds member:invite (e.g. a custom
+    // permission grant) sees the restriction notice.
+    useOrganizationPermissionsMock.mockReturnValue({
+      permissions: ['member:view', 'member:invite'],
+      isSuperAdmin: false,
+      role: 'member',
+      isLoading: false,
+      has: (permission: string) => ['member:view', 'member:invite'].includes(permission),
+      hasAny: () => true,
+      hasAll: () => true,
+    });
+    installMembersListFetch({ registrationMode: 'admin_created_only', userRole: 'member' });
 
     renderWithClient(<MembersPageClient />);
 
     expect(
       await screen.findByText(/new external members must be created by a super admin/i)
     ).toBeInTheDocument();
+  });
+
+  it('hides the restriction notice for a super admin', async () => {
+    useOrganizationPermissionsMock.mockReturnValue({
+      permissions: ['member:view'],
+      isSuperAdmin: true,
+      role: 'member',
+      isLoading: false,
+      has: () => true,
+      hasAny: () => true,
+      hasAll: () => true,
+    });
+    installMembersListFetch({
+      registrationMode: 'admin_created_only',
+      userRole: 'member',
+      isSuperAdmin: true,
+    });
+
+    renderWithClient(<MembersPageClient />);
+
+    await screen.findByRole('button', { name: /invite/i });
+    expect(
+      screen.queryByText(/new external members must be created by a super admin/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides the restriction notice for an org owner', async () => {
+    installMembersListFetch({ registrationMode: 'admin_created_only' });
+
+    renderWithClient(<MembersPageClient />);
+
+    await screen.findByRole('button', { name: /invite/i });
+    expect(
+      screen.queryByText(/new external members must be created by a super admin/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides the restriction notice for an org admin', async () => {
+    useOrganizationPermissionsMock.mockReturnValue({
+      permissions: ['member:invite', 'member:manage', 'member:remove', 'project:manage'],
+      isSuperAdmin: false,
+      role: 'admin',
+      isLoading: false,
+      has: (permission: string) =>
+        ['member:invite', 'member:manage', 'member:remove', 'project:manage'].includes(permission),
+      hasAny: () => true,
+      hasAll: () => true,
+    });
+    installMembersListFetch({ registrationMode: 'admin_created_only', userRole: 'admin' });
+
+    renderWithClient(<MembersPageClient />);
+
+    await screen.findByRole('button', { name: /invite/i });
+    expect(
+      screen.queryByText(/new external members must be created by a super admin/i)
+    ).not.toBeInTheDocument();
   });
 
   it('hides project assignment when project:manage is missing', async () => {

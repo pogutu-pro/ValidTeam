@@ -459,6 +459,66 @@ describe('POST /api/organizations/[organizationId]/members — invite with proje
     expect(sendEmailMock).not.toHaveBeenCalled();
   });
 
+  it('allows a super admin to invite under admin-created only', async () => {
+    getRegistrationPolicyMock.mockResolvedValue({ mode: 'admin_created_only' });
+    getUserRoleMock.mockResolvedValue({ role: 'member', isSuperAdmin: true });
+    queueInviteSelects({});
+    queueInserts();
+
+    const response = await POST(
+      buildRequest({ email: 'new@example.com', role: 'member' }),
+      routeParams
+    );
+
+    expect(response.status).toBe(200);
+    expect(dbInsertMock).toHaveBeenCalled();
+    expect(sendEmailMock).toHaveBeenCalled();
+  });
+
+  it('allows an org admin to invite under admin-created only', async () => {
+    getRegistrationPolicyMock.mockResolvedValue({ mode: 'admin_created_only' });
+    getUserRoleMock.mockResolvedValue({ role: 'admin', isSuperAdmin: false });
+    queueInviteSelects({});
+    queueInserts();
+
+    const response = await POST(
+      buildRequest({ email: 'new@example.com', role: 'member' }),
+      routeParams
+    );
+
+    expect(response.status).toBe(200);
+    expect(sendEmailMock).toHaveBeenCalled();
+  });
+
+  it('allows an org owner to invite under admin-created only', async () => {
+    getRegistrationPolicyMock.mockResolvedValue({ mode: 'admin_created_only' });
+    getUserRoleMock.mockResolvedValue({ role: 'owner', isSuperAdmin: false });
+    queueInviteSelects({});
+    queueInserts();
+
+    const response = await POST(
+      buildRequest({ email: 'new@example.com', role: 'member' }),
+      routeParams
+    );
+
+    expect(response.status).toBe(200);
+    expect(sendEmailMock).toHaveBeenCalled();
+  });
+
+  it('still blocks a plain member from inviting under admin-created only', async () => {
+    getRegistrationPolicyMock.mockResolvedValue({ mode: 'admin_created_only' });
+    getUserRoleMock.mockResolvedValue({ role: 'member', isSuperAdmin: false });
+    queueInviteSelects({});
+
+    const response = await POST(
+      buildRequest({ email: 'new@example.com', role: 'member' }),
+      routeParams
+    );
+
+    expect(response.status).toBe(409);
+    expect(sendEmailMock).not.toHaveBeenCalled();
+  });
+
   it('uses APP_URL ahead of a stale NEXT_PUBLIC_APP_URL for invitation emails', async () => {
     const previousAppUrl = process.env.APP_URL;
     const previousPublicAppUrl = process.env.NEXT_PUBLIC_APP_URL;

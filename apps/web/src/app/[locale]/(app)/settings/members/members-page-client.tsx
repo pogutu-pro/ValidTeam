@@ -192,7 +192,12 @@ export function MembersPageClient() {
   const userRole = data?.userRole || null;
   const isSuperAdmin = data?.isSuperAdmin || false;
   const registrationMode = data?.registrationMode ?? 'allow_registration';
-  const adminCreatedOnlyInvites = registrationMode === 'admin_created_only';
+  // Super admins and org owners/admins are the approval path under
+  // `admin_created_only`, so the restrictive-mode warning only applies to
+  // everyone else who can see the members page.
+  const canInviteDespitePolicy = isSuperAdmin || userRole === 'owner' || userRole === 'admin';
+  const adminCreatedOnlyInvites =
+    registrationMode === 'admin_created_only' && !canInviteDespitePolicy;
 
   const canInvite = !permissionsLoading && hasOrgPermission('member:invite');
   const canManage = !permissionsLoading && hasOrgPermission('member:manage');
