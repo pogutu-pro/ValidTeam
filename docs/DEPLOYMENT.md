@@ -121,6 +121,46 @@ browser arrives through a Cloudflare Tunnel rather than an open port. Copy
 required values. Because `NEXT_PUBLIC_HOCUSPOCUS_URL` is a client build input,
 changing the tunnel hostname means rebuilding and redeploying the web app.
 
+#### Server B host firewall
+
+The Server B stack uses `network_mode: host` on every service. That is what
+lets one `cloudflared` instance front both realtime services on loopback, and
+it is also what LiveKit's documented ICE setup expects — but it means each
+service binds `0.0.0.0` inside the VM. The host firewall is therefore a
+required part of this design, not an optional hardening step.
+
+Only these ports may be reachable from the internet:
+
+| Port        | Protocol | Purpose                      |
+| ----------- | -------- | ---------------------------- |
+| 22          | tcp      | SSH                          |
+| 3478        | udp      | LiveKit TURN                 |
+| 30000-40000 | udp      | LiveKit TURN **relay** range |
+| 50000-50020 | udp      | LiveKit WebRTC media         |
+
+Everything else must stay loopback-only, and specifically **not** reachable:
+`1234` (Hocuspocus), `7880`/`7881` (LiveKit signalling and ICE-TCP), `6379`
+(Redis). Signalling reaches those through the tunnel, and `cloudflared` dials
+outbound, so the host needs no inbound 80/443 at all.
+
+The TURN relay range is easy to miss: LiveKit's startup log reports
+`"turn.relay_range_start": 30000`, and without that range open, TURN fallback
+fails for clients behind restrictive NATs even though direct ICE still works.
+Verify from outside the host, not with `ss` on it.
+
+On a cloud provider, instance firewall rules are not the only gate — the
+provider's own security list or NSG must also admit the UDP ranges above, or
+media will fail no matter what the guest rules say.
+
+To confirm the exposure is what you intend:
+
+```bash
+for p in 1234 7880 7881 6379; do
+  timeout 5 bash -c "echo > /dev/tcp/<host>/$p" 2>/dev/null \
+    && echo "$p REACHABLE — investigate" || echo "$p blocked"
+done
+```
+
 ### Voice
 
 LiveKit/WebRTC needs more than a healthy HTTP container. Configure a
@@ -148,6 +188,35 @@ standup, janitor, embeddings, version-check, and cycle-rollover schedules:
 ```bash
 docker compose --profile cron up -d cron
 ```
+
+#### Scheduling on Vercel
+
+Vercel Cron is **not** used for these endpoints on the Vercel deployment, for
+two independent reasons:
+
+1. Every `/api/cron/*` route exports `POST` only. Vercel Cron can only issue
+   `GET`, so it cannot reach them at all.
+2. Even with `GET` handlers added, the per-minute reconcilers are rejected at
+   deploy time on the Hobby plan ("Hobby accounts are limited to daily cron
+   jobs"), and Hobby timing precision is ±59 minutes.
+
+Run the `cron` sidecar from any host that can reach the public web origin — the
+Server B collaboration stack already carries one:
+
+```bash
+docker compose -f docker-compose.serverb-collab.yml \
+  --env-file .env --profile cron up -d cron
+```
+
+It defaults `CRON_WEB_BASE_URL` to `https://www.rumiamanage.com` and sends
+`CRON_SECRET` as the `x-cron-secret` header, which `requireCronAuth` accepts
+alongside `Authorization: Bearer` and `?secret=`. All seven endpoints answer
+`401` without it, so a misconfigured secret is loud rather than silent.
+
+Any other POST-capable scheduler works too (systemd timer, GitHub Actions
+`schedule`, Kubernetes CronJob) — preserve the per-minute cadence for
+`agent-runs` and `agent-approval-effects`, since nothing reconciles those
+queues on a serverless deployment.
 
 ## Source deployment
 

@@ -1,13 +1,24 @@
-# ValidTeam collaboration service for an isolated host.
+# ValidTeam realtime services for an isolated host: collaboration, voice,
+# scheduled jobs, and the tunnel that fronts them.
 #
-# Shape this targets: arm64 (aarch64), cgroup v2, Docker, and no inbound
-# public ports — reachable from elsewhere only over a private tunnel. That
-# rules out the usual "publish a port and put a hostname in front of it"
-# approach, because the browser is what needs to reach Hocuspocus.
+# Shape this targets: arm64 (aarch64), cgroup v2, Docker, and a single public
+# IP that must NOT be the public entry point. That rules out "publish a port
+# and put a hostname in front of it", because the browser is what needs to
+# reach Hocuspocus and LiveKit.
 #
-# So the topology is: browser -> Cloudflare Tunnel -> cloudflared (here) ->
-# hocuspocus over the private Compose network. `expose`, not `ports`: this
-# host opens nothing, and the tunnel is the only public surface.
+# Topology: browser -> Cloudflare Tunnel -> cloudflared (here) -> hocuspocus /
+# livekit over loopback. cloudflared dials outbound, so this host needs no
+# inbound 80/443 at all.
+#
+# Every service below uses host networking, which is what lets one cloudflared
+# instance reach both 127.0.0.1:1234 and 127.0.0.1:7880, and it is also the
+# documented LiveKit recommendation for correct ICE behaviour in Docker.
+#
+# Host networking does mean these ports listen on 0.0.0.0 inside the VM, so
+# the host firewall is a required part of this design — see docs/DEPLOYMENT.md,
+# "Server B host firewall". Only SSH, the LiveKit UDP media range and the TURN
+# port may be reachable from the internet; 1234, 6379, 7880 and 7881 must stay
+# loopback-only.
 #
 # The web app runs elsewhere (Vercel) against the same Neon database. That is
 # the hard coupling — see docs/DEPLOYMENT.md, "Collaboration on a separate
@@ -19,8 +30,19 @@
 #   CLOUDFLARE_TUNNEL_TOKEN  token for the tunnel in the Cloudflare dashboard
 #
 # Optional:
-#   REDIS_URL                leave unset for a single instance; set it to run
-#                            multiple Hocuspocus nodes with pub/sub fan-out
+#   REDIS_URL                leave unset for a single Hocuspocus instance; set
+#                            it to run multiple Hocuspocus nodes with pub/sub
+#                            fan-out. LiveKit always uses the loopback Redis
+#                            below and ignores this value.
+#   CRON_SECRET              the same value the web app gates /api/cron/* with
+#   CRON_WEB_BASE_URL        public web origin; defaults to
+#                            https://www.rumiamanage.com
+#   LIVEKIT_API_KEY          required only for the `voice` profile
+#   LIVEKIT_API_SECRET       required only for the `voice` profile
+#   LIVEKIT_NODE_IP          this host's public IP; advertised to WebRTC as the
+#                            ICE candidate. Set it, or auto-detection may pick
+#                            a private address and voice will only connect on
+#                            one machine.
 
 services:
   hocuspocus:
@@ -29,6 +51,7 @@ services:
       dockerfile: services/hocuspocus/Dockerfile
     container_name: validteam-hocuspocus
     restart: unless-stopped
+    network_mode: host
     environment:
       AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET must be set and must match the web app}
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL must be set to the web app's database}
@@ -36,10 +59,93 @@ services:
       HOCUSPOCUS_PORT: '1234'
       # Empty string is falsy, which puts the server in single-node mode.
       REDIS_URL: ${REDIS_URL:-}
-    expose:
-      - '1234'
     healthcheck:
       test: ['CMD', 'node', 'src/healthcheck.mjs']
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  # Loopback-only Redis. LiveKit's generated config always points at
+  # 127.0.0.1:6379, so it must live on the host network — but it must never be
+  # reachable from outside, hence the explicit bind and no default port
+  # publishing. Persistence is off: this is coordination state, not data.
+  redis:
+    image: redis:7-alpine
+    container_name: validteam-redis
+    restart: unless-stopped
+    profiles: ['voice']
+    network_mode: host
+    command:
+      - redis-server
+      - --bind
+      - 127.0.0.1
+      - --protected-mode
+      - 'yes'
+      - --save
+      - ''
+      - --appendonly
+      - 'no'
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-h', '127.0.0.1', 'ping']
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  livekit:
+    image: livekit/livekit-server:v1.10.1
+    container_name: validteam-livekit
+    restart: unless-stopped
+    profiles: ['voice']
+    # Host networking is required here, not cosmetic: WebRTC media is UDP, and
+    # the published-port path in a bridge network breaks ICE candidates on
+    # most hosts. Only the UDP range and 3478/udp may be opened publicly.
+    network_mode: host
+    depends_on:
+      redis:
+        condition: service_healthy
+    # Guards run at container start rather than at `docker compose config`
+    # time. A `:?` interpolation here would be evaluated for every service on
+    # every invocation, so an unset voice variable would stop hocuspocus and
+    # cloudflared from starting at all.
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        : "$${LIVEKIT_NODE_IP:?LIVEKIT_NODE_IP must be set to this host's public IP}"
+        exec /bin/sh /etc/livekit/start-livekit.sh
+    environment:
+      LIVEKIT_NODE_IP: ${LIVEKIT_NODE_IP:-}
+      LIVEKIT_PORT: ${LIVEKIT_PORT:-7880}
+      LIVEKIT_TCP_PORT: ${LIVEKIT_TCP_PORT:-7881}
+      LIVEKIT_TURN_UDP_PORT: ${LIVEKIT_TURN_UDP_PORT:-3478}
+      LIVEKIT_RTC_START_PORT: ${LIVEKIT_RTC_START_PORT:-50000}
+      LIVEKIT_RTC_END_PORT: ${LIVEKIT_RTC_END_PORT:-50020}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:-}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:-}
+      LIVEKIT_WEBHOOK_URL: ${LIVEKIT_WEBHOOK_URL:-https://www.rumiamanage.com/api/chat/livekit/webhook}
+      # Optional Prometheus exporter. Default 0 = disabled; set to e.g. 6789
+      # to expose http://<host>:6789/metrics. See docs/OBSERVABILITY.md.
+      LIVEKIT_PROMETHEUS_PORT: ${LIVEKIT_PROMETHEUS_PORT:-0}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    volumes:
+      - ./docker/livekit/start-livekit.sh:/etc/livekit/start-livekit.sh:ro
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'wget -qO- "http://localhost:$${LIVEKIT_PORT:-7880}/" | grep -q OK || exit 1']
       interval: 30s
       timeout: 5s
       start_period: 20s
@@ -54,12 +160,61 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: validteam-cloudflared
     restart: unless-stopped
+    # Host networking so one tunnel can front both realtime services on
+    # loopback: hocuspocus on 1234 and livekit on 7880.
+    network_mode: host
     command: tunnel --no-autoupdate run
     environment:
       TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?CLOUDFLARE_TUNNEL_TOKEN must be set}
     depends_on:
       hocuspocus:
         condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  # Scheduled product jobs for the Vercel-hosted web app.
+  #
+  # The web app has no long-running process, so nothing reconciles agent work
+  # on its own — this sidecar is what keeps the queues draining.
+  #
+  # Why not Vercel Cron: every /api/cron/* route exports POST only, and Vercel
+  # Cron can only issue GET. The per-minute reconcilers are additionally
+  # rejected at deploy time on the Hobby plan. See docs/DEPLOYMENT.md,
+  # "Scheduling on Vercel".
+  #
+  # Schedules mirror the `cron` profile in the root docker-compose.yml, plus
+  # agent-approval-effects (the in-web reconciler that Compose relies on does
+  # not exist on a serverless deployment).
+  #
+  # Only makes outbound HTTPS calls, so it stays on the default bridge network
+  # and needs no host networking.
+  cron:
+    image: alpine:3.20
+    container_name: validteam-cron
+    restart: unless-stopped
+    # Opt-in, so a missing CRON_SECRET cannot stop the rest of the stack
+    # booting:
+    #   docker compose -f docker-compose.serverb-collab.yml \
+    #     --env-file .env --profile cron up -d cron
+    profiles: ['cron']
+    environment:
+      CRON_SECRET: ${CRON_SECRET:?CRON_SECRET must be set and must match the web app}
+      WEB_BASE_URL: ${CRON_WEB_BASE_URL:-https://www.rumiamanage.com}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        if [ -z "$${CRON_SECRET:-}" ]; then
+          echo "CRON_SECRET must be set to enable the cron sidecar" >&2
+          exit 1
+        fi
+        apk add --no-cache curl > /dev/null && \
+        printf '* * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/agent-runs" -o /dev/null\n* * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/agent-approval-effects" -o /dev/null\n0 8 * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/standup" -o /dev/null\n0 * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/janitor" -o /dev/null\n30 * * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/embeddings" -o /dev/null\n17 */6 * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/version-check" -o /dev/null\n0 2 * * * curl -fsS -X POST -H "x-cron-secret: $$CRON_SECRET" "$$WEB_BASE_URL/api/cron/cycle-rollover" -o /dev/null\n' > /etc/crontabs/root && \
+        crond -f -l 8
     logging:
       driver: json-file
       options:
