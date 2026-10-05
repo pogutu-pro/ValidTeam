@@ -17,7 +17,7 @@
  * exercise them without going through the full samlify parse path.
  */
 
-import type { SsoConfig } from '@tasknebula/db';
+import type { SsoConfig } from '@validteam/db';
 
 // Capture the validator that registerValidator() installs into samlify so
 // we can call it directly. The mock records the validate function the

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getIssueActivities } from '@tasknebula/db';
+import { getIssueActivities } from '@validteam/db';
 import { auth } from '@/auth';
 import { canReadIssue, isActiveOrganizationMember } from '@/lib/auth/access-control';
 

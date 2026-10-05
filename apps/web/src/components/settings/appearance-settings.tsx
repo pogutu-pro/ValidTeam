@@ -33,7 +33,7 @@ const PENDING_COLOR_MODE_STORAGE_KEY = 'validteam-color-mode-pending-sync';
 /** Pre-next-themes key. */
 const LEGACY_COLOR_MODE_STORAGE_KEY = 'theme';
 /** Pre-rebrand key. Read once so an upgrade keeps the user's colour mode. */
-const PRE_REBRAND_COLOR_MODE_STORAGE_KEY = 'tasknebula-color-mode';
+const PRE_REBRAND_COLOR_MODE_STORAGE_KEY = 'validteam-color-mode';
 
 function isColorMode(value: unknown): value is ColorMode {
   return value === 'light' || value === 'dark' || value === 'system';

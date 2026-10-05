@@ -1,6 +1,6 @@
-# `@tasknebula/mcp-server`
+# `@validteam/mcp-server`
 
-Model Context Protocol server for TaskNebula, implemented in this monorepo.
+Model Context Protocol server for ValidTeam, implemented in this monorepo.
 
 ## Current status
 
@@ -8,8 +8,8 @@ Model Context Protocol server for TaskNebula, implemented in this monorepo.
 - Eleven issue/project-oriented tools plus resources and prompts. A pull-request
   link tool is intentionally not advertised until the web API has a matching
   persisted remote-link contract.
-- Not published to npm; `npx @tasknebula/mcp-server` does not work yet.
-- Source-built stdio calls support TaskNebula `sk_live_*` API keys across the
+- Not published to npm; `npx @validteam/mcp-server` does not work yet.
+- Source-built stdio calls support ValidTeam `sk_live_*` API keys across the
   current 11-tool REST surface. Keys remain bound to their organization and
   creator's current active membership and route permissions.
 - HTTP OAuth 2.1/PKCE and resumable Streamable HTTP are incomplete.
@@ -25,37 +25,37 @@ install smoke gates in `docs/ROADMAP_2026.md` are closed.
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm --filter @tasknebula/mcp-server build
-pnpm --filter @tasknebula/mcp-server test
-pnpm --filter @tasknebula/mcp-server type-check
-pnpm --filter @tasknebula/mcp-server lint
+pnpm --filter @validteam/mcp-server build
+pnpm --filter @validteam/mcp-server test
+pnpm --filter @validteam/mcp-server type-check
+pnpm --filter @validteam/mcp-server lint
 ```
 
 Run the built stdio entry point:
 
 ```bash
-TASKNEBULA_API_URL=http://localhost:3000 \
-TASKNEBULA_API_KEY=sk_live_replace_me \
-node packages/mcp-server/bin/tasknebula-mcp.mjs
+VALIDTEAM_API_URL=http://localhost:3000 \
+VALIDTEAM_API_KEY=sk_live_replace_me \
+node packages/mcp-server/bin/validteam-mcp.mjs
 ```
 
 The key format shown is syntactically representative only. Create the real key
-in TaskNebula for the target organization; it is displayed once and should stay
+in ValidTeam for the target organization; it is displayed once and should stay
 in the MCP client's private environment.
 
 For an MCP client during local development, point `command` to `node` and
 `args` to the absolute path of
-`packages/mcp-server/bin/tasknebula-mcp.mjs` in your checkout. Keep the URL and
+`packages/mcp-server/bin/validteam-mcp.mjs` in your checkout. Keep the URL and
 key in the client's private environment/configuration, never in this repo.
 
 ## Package layout
 
 ```text
-bin/tasknebula-mcp.mjs   stdio executable
+bin/validteam-mcp.mjs   stdio executable
 src/server.ts            shared MCP registration
 src/stdio.ts             local stdio transport
 src/http.ts              HTTP transport scaffolding
-src/client.ts            TaskNebula REST client
+src/client.ts            ValidTeam REST client
 src/auth.ts              API-key / OAuth scaffolding
 src/tools/                tool definitions
 src/resources.ts          resources and templates
@@ -69,7 +69,7 @@ comments, transitions, parent-linked subtasks, search, projects, assigned work,
 and workload. Treat the web REST schema as authoritative and verify it before a
 tool is expanded or published.
 
-Agent-origin metadata can be supplied through `TASKNEBULA_AGENT_ACTOR`; it does
+Agent-origin metadata can be supplied through `VALIDTEAM_AGENT_ACTOR`; it does
 not replace server-side authorization, approval, tenancy, audit, or idempotency.
 
 ## Publication definition of done

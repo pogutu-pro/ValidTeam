@@ -453,7 +453,7 @@ function isHomeSectionPath(pathname: string | null | undefined): boolean {
 const SIDEBAR_NAV_LINK_CLASS =
   'row-interactive text-muted-foreground ease-snap hover:bg-accent/70 hover:text-foreground data-[active=true]:bg-primary/[0.07] data-[active=true]:text-foreground min-h-8 w-full min-w-0 rounded-md px-2.5 text-[13px] font-medium transition-[color,background-color,box-shadow,opacity] duration-150';
 const SIDEBAR_NAV_LABEL_CLASS = 'min-w-0 flex-1 truncate';
-const CONTEXT_SIDEBAR_STORAGE_KEY = 'tasknebula.context-sidebar-collapsed';
+const CONTEXT_SIDEBAR_STORAGE_KEY = 'validteam.context-sidebar-collapsed';
 
 export function AppSidebar({
   hasWorkspaceAccess = true,

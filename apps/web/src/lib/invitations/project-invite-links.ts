@@ -15,7 +15,7 @@ import {
   sql,
   users,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { getProjectMemberPermissionValues } from '@/lib/projects/member-permissions';
 import { buildAppUrl } from '@/lib/url/app-url';
 

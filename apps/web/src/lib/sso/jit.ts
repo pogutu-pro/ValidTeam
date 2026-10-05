@@ -2,7 +2,7 @@
  * Just-in-time SAML user provisioning.
  *
  * After a SAML response is verified and attributes resolved, this module
- * ensures we have a TaskNebula user + organization membership for the
+ * ensures we have a ValidTeam user + organization membership for the
  * incoming subject. It is also reused by SCIM `POST /Users`.
  */
 import {
@@ -14,7 +14,7 @@ import {
   eq,
   and,
   ne,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 export type JitProvisionErrorCode = 'workspace_unavailable' | 'user_inactive' | 'provision_failed';
 

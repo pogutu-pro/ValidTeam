@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, eq, organizations } from '@tasknebula/db';
+import { db, eq, organizations } from '@validteam/db';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';
 import { userHasWorkspaceAccess } from '@/lib/auth/workspace-access';
 import { getSystemAgentControlSettingsFromDb } from '@/lib/agents/system';

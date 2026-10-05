@@ -23,11 +23,10 @@ export const useOrganization = create<OrganizationState>()(
             state.currentOrganizationId === organizationId ? state.currentTeamId : null,
         })),
       setCurrentTeam: (teamId) => set({ currentTeamId: teamId }),
-      clearContext: () =>
-        set({ currentOrganizationId: null, currentTeamId: null }),
+      clearContext: () => set({ currentOrganizationId: null, currentTeamId: null }),
     }),
     {
-      name: 'tasknebula-organization-context',
+      name: 'validteam-organization-context',
       storage: createJSONStorage(() => {
         // Check if we're in the browser
         if (typeof window !== 'undefined') {

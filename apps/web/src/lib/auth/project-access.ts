@@ -12,7 +12,7 @@ import {
   ne,
   type GranularPermissions,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 type ProjectRecord = NonNullable<Awaited<ReturnType<typeof resolveProjectByIdOrKey>>>;
 

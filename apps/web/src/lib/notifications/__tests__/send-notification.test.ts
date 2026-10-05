@@ -21,7 +21,7 @@ function mockReplaceVariables(template: string, variables: Record<string, string
   );
 }
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   BUILTIN_TEMPLATES: {
     issue_assigned: {
       subject: '{{issueKey}} assigned to you',
@@ -88,7 +88,7 @@ const BASE_PARAMS = {
 describe('notifyIssueEventNow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    process.env.NEXT_PUBLIC_APP_URL = 'https://app.tasknebula.test';
+    process.env.NEXT_PUBLIC_APP_URL = 'https://app.validteam.test';
     insertValuesMock.mockResolvedValue([]);
     dbInsertMock.mockReturnValue({ values: (...args: unknown[]) => insertValuesMock(...args) });
     sendEmailMock.mockResolvedValue({ sent: true, messageId: 'mail-1' });
@@ -126,7 +126,7 @@ describe('notifyIssueEventNow', () => {
       expect.objectContaining({
         to: 'grace@example.com',
         subject: 'TN-42 assigned to you',
-        html: expect.stringContaining('https://app.tasknebula.test/issues/issue-1'),
+        html: expect.stringContaining('https://app.validteam.test/issues/issue-1'),
       })
     );
   });

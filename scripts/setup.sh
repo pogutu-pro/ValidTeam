@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TaskNebula local development setup.
+# ValidTeam local development setup.
 
 set -euo pipefail
 
@@ -100,8 +100,8 @@ livekit_api_key="$(env_value .env LIVEKIT_API_KEY)"
 livekit_api_secret="$(env_value .env LIVEKIT_API_SECRET)"
 cron_secret="$(env_value .env CRON_SECRET)"
 if [[ -z "$auth_secret" || -z "$postgres_password" || "$postgres_password" == 'postgres' || \
-  -z "$redis_password" || -z "$livekit_api_key" || "$livekit_api_key" == 'tasknebula-dev' || \
-  -z "$livekit_api_secret" || "$livekit_api_secret" == 'tasknebula-livekit-secret-local-2026' || \
+  -z "$redis_password" || -z "$livekit_api_key" || "$livekit_api_key" == 'validteam-dev' || \
+  -z "$livekit_api_secret" || "$livekit_api_secret" == 'validteam-livekit-secret-local-2026' || \
   -z "$cron_secret" ]]; then
   command -v openssl >/dev/null 2>&1 ||
     die 'openssl is required to generate local service credentials.'
@@ -125,13 +125,13 @@ if [[ -z "$postgres_password" || "$postgres_password" == 'postgres' ]]; then
   ok 'Generated POSTGRES_PASSWORD in .env'
 fi
 
-if [[ -z "$livekit_api_key" || "$livekit_api_key" == 'tasknebula-dev' ]]; then
+if [[ -z "$livekit_api_key" || "$livekit_api_key" == 'validteam-dev' ]]; then
   livekit_api_key="$(openssl rand -hex 16)"
   set_env_value .env LIVEKIT_API_KEY "$livekit_api_key"
   ok 'Generated LIVEKIT_API_KEY in .env'
 fi
 
-if [[ -z "$livekit_api_secret" || "$livekit_api_secret" == 'tasknebula-livekit-secret-local-2026' ]]; then
+if [[ -z "$livekit_api_secret" || "$livekit_api_secret" == 'validteam-livekit-secret-local-2026' ]]; then
   livekit_api_secret="$(openssl rand -hex 32)"
   set_env_value .env LIVEKIT_API_SECRET "$livekit_api_secret"
   ok 'Generated LIVEKIT_API_SECRET in .env'
@@ -150,12 +150,12 @@ if [[ -z "$web_secret" || "$web_secret" == 'your-secret-key-here' ]]; then
 fi
 
 web_database_url="$(env_value apps/web/.env.local DATABASE_URL)"
-if [[ -z "$web_database_url" || "$web_database_url" == 'postgresql://postgres:postgres@localhost:5432/tasknebula' ]]; then
+if [[ -z "$web_database_url" || "$web_database_url" == 'postgresql://postgres:postgres@localhost:5432/validteam' ]]; then
   postgres_user="$(env_value .env POSTGRES_USER)"
   postgres_database="$(env_value .env POSTGRES_DB)"
   postgres_port="$(env_value .env DB_PORT)"
   postgres_user="${postgres_user:-postgres}"
-  postgres_database="${postgres_database:-tasknebula}"
+  postgres_database="${postgres_database:-validteam}"
   postgres_port="${postgres_port:-5432}"
   encoded_postgres_user="$(node -e 'process.stdout.write(encodeURIComponent(process.argv[1]))' "$postgres_user")"
   encoded_postgres_password="$(node -e 'process.stdout.write(encodeURIComponent(process.argv[1]))' "$postgres_password")"
@@ -192,5 +192,5 @@ if [[ "$reply" =~ ^[Yy]$ ]]; then
 fi
 
 printf '\nSetup complete. Start the web app with:\n'
-printf '  pnpm --filter @tasknebula/web dev\n\n'
+printf '  pnpm --filter @validteam/web dev\n\n'
 printf 'Optional collaboration setup: services/hocuspocus/README.md\n'

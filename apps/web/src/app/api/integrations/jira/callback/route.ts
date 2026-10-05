@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, integrationConnections } from '@tasknebula/db';
+import { db, integrationConnections } from '@validteam/db';
 import {
   JIRA_PROVIDER,
   JIRA_SCOPES,

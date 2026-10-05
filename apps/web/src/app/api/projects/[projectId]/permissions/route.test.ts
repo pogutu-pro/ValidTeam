@@ -33,7 +33,7 @@ jest.mock('@/lib/auth/project-access', () => ({
     resolveProjectCapabilityAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: jest.fn(),
   },

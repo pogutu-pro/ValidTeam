@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, userAppearanceSettings, eq } from '@tasknebula/db';
+import { db, userAppearanceSettings, eq } from '@validteam/db';
 import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';

@@ -17,7 +17,7 @@
  *
  * Plus a small handler test that wires verifySlackSignature into a Web API
  * Request and checks the route would reject a bad signature without touching
- * the database. We mock @tasknebula/db so the test never opens a connection.
+ * the database. We mock @validteam/db so the test never opens a connection.
  */
 
 import crypto from 'crypto';
@@ -27,7 +27,7 @@ import crypto from 'crypto';
 // so a no-op mock is enough for the signature path.
 // ---------------------------------------------------------------------------
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const noopChain: Record<string, jest.Mock> = {};
   noopChain.where = jest.fn(() => noopChain);
   noopChain.limit = jest.fn(async () => []);
@@ -95,10 +95,7 @@ import {
 } from '../integrations/slack';
 
 function signBody(body: string, ts: number, secret: string): string {
-  return `v0=${crypto
-    .createHmac('sha256', secret)
-    .update(`v0:${ts}:${body}`)
-    .digest('hex')}`;
+  return `v0=${crypto.createHmac('sha256', secret).update(`v0:${ts}:${body}`).digest('hex')}`;
 }
 
 // ---------------------------------------------------------------------------

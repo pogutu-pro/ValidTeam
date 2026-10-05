@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, projectVersions, issueFixVersions, issues } from '@tasknebula/db';
+import { db, projectVersions, issueFixVersions, issues } from '@validteam/db';
 import { auth } from '@/auth';
 import { eq, and, asc, desc, sql, inArray } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, and, eq } from '@tasknebula/db';
-import { integrationConnections } from '@tasknebula/db/src/schema/integration-connections';
+import { db, and, eq } from '@validteam/db';
+import { integrationConnections } from '@validteam/db/src/schema/integration-connections';
 import { hasPermission } from '@/lib/auth/permissions';
 
 export const dynamic = 'force-dynamic';

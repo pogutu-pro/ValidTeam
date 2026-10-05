@@ -1,4 +1,4 @@
-import { createMcpHttpHandler } from '@tasknebula/mcp-server/http';
+import { createMcpHttpHandler } from '@validteam/mcp-server/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

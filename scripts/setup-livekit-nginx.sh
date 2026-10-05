@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# TaskNebula Community — one-shot LiveKit TLS terminator setup.
+# ValidTeam Community — one-shot LiveKit TLS terminator setup.
 #
 # Stands up nginx on a dedicated subdomain (defaults to livekit.<main>),
 # requests a Let's Encrypt cert, reloads nginx, writes
@@ -7,12 +7,12 @@
 # the Next.js bundle picks up the new URL.
 #
 # Usage (run as root on the host that terminates TLS for the main site):
-#   sudo bash scripts/setup-livekit-nginx.sh tasknebula.example.com \
+#   sudo bash scripts/setup-livekit-nginx.sh validteam.example.com \
 #     you@example.com
 #
 # Args:
-#   $1  main domain the TaskNebula app is already served from
-#       (e.g. tasknebula.example.com). The LiveKit subdomain is derived
+#   $1  main domain the ValidTeam app is already served from
+#       (e.g. validteam.example.com). The LiveKit subdomain is derived
 #       as `livekit.<main>` unless $3 is passed.
 #   $2  email certbot registers with.
 #   $3  optional override for the LiveKit subdomain FQDN.
@@ -24,7 +24,7 @@ CERT_EMAIL="${2:?usage: $0 <main-domain> <certbot-email> [livekit-fqdn]}"
 LIVEKIT_HOST="${3:-livekit.${MAIN_DOMAIN}}"
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-TEMPLATE="${REPO_ROOT}/nginx/tasknebula-livekit.conf"
+TEMPLATE="${REPO_ROOT}/nginx/validteam-livekit.conf"
 SITES_AVAILABLE="/etc/nginx/sites-available/${LIVEKIT_HOST}"
 SITES_ENABLED="/etc/nginx/sites-enabled/${LIVEKIT_HOST}"
 ENV_FILE="${REPO_ROOT}/.env"

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, importJobs, eq } from '@tasknebula/db';
+import { db, importJobs, eq } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 
 export const dynamic = 'force-dynamic';

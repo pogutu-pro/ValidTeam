@@ -8,7 +8,7 @@ alwaysApply: true
 
 # i18n is MANDATORY — zero hardcoded user-facing strings
 
-TaskNebula contains **30 locale catalogs** with device/browser auto-detection.
+ValidTeam contains **30 locale catalogs** with device/browser auto-detection.
 Catalog/ICU parity is automated while linguistic review of legacy copy
 continues. Every contribution must add real translations for new copy and keep
 all catalogs in parity. This applies to all assistants and tools (Claude,
@@ -38,7 +38,7 @@ Cursor, Codex, Copilot, etc.).
    `apps/web/messages/*.json` (30 locales). Keep full key parity — a missing
    key in any locale is a bug.
 3. Preserve ICU placeholders verbatim (`{count}`, `{name}`, plural/select, `#`).
-   Never translate placeholder names or brand/tech terms (TaskNebula, GitHub,
+   Never translate placeholder names or brand/tech terms (ValidTeam, GitHub,
    Docker, Jira, Linear, MCP, API, AI, …).
 4. Verify with `pnpm i18n:check` (parser fixtures, key/ICU parity, and catalogs).
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { db, savedFilters } from '@tasknebula/db';
+import { db, savedFilters } from '@validteam/db';
 import { and, desc, eq, or } from 'drizzle-orm';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 

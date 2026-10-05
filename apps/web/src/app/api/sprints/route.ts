@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, sprints, issues, projects } from '@tasknebula/db';
+import { db, sprints, issues, projects } from '@validteam/db';
 import { eq, desc, count, inArray } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { publishEvent } from '@/lib/realtime/events';

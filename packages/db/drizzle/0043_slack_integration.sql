@@ -3,7 +3,7 @@
 -- The OAuth connection for Slack lives in `integration_connections` (provider
 -- = 'slack'). These two tables complement it:
 --
---   * slack_channel_routes — maps a Slack channel to a TaskNebula project,
+--   * slack_channel_routes — maps a Slack channel to a ValidTeam project,
 --     used by the "create issue from message" action, slash commands without
 --     an explicit project, and the emoji-triage reaction handler.
 --   * slack_message_links  — bidirectional mapping between a Slack message /

@@ -1,5 +1,5 @@
 # ============================================================================
-# TaskNebula — Comprehensive .gitignore
+# ValidTeam — Comprehensive .gitignore
 # Covers: secrets/credentials, env, build, logs, caches, IDE/AI, DBs, certs,
 # archives, OS junk, deployment overrides, IaC state, profiling, media, etc.
 # Keep this list alphabetically grouped within sections where practical.
@@ -217,7 +217,7 @@ docker-compose.personal.yml
 docker-compose.private.yml
 .dockerignore.local
 
-# Nginx user-customized vhosts (keep nginx/tasknebula.conf as template)
+# Nginx user-customized vhosts (keep nginx/validteam.conf as template)
 nginx/sites-available/
 nginx/sites-enabled/
 nginx/conf.d/
@@ -549,7 +549,7 @@ Cargo.lock.bak
 # *.pdf
 
 # ============================================================================
-# PROJECT-SPECIFIC (TaskNebula)
+# PROJECT-SPECIFIC (ValidTeam)
 # ============================================================================
 # Uploads directory contents (keep placeholder)
 apps/web/uploads/*
@@ -622,6 +622,6 @@ artifacts/
 # Local scratch/diagnostic scripts — never commit
 apps/web/_*.mjs
 
-# TaskNebula Mobile is an intentionally local-only workspace. Keep the root
+# ValidTeam Mobile is an intentionally local-only workspace. Keep the root
 # directory on operator machines, but never track or publish any of its files.
 /mobile/

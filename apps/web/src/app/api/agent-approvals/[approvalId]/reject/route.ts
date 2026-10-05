@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { and, eq, gt, isNull, or } from 'drizzle-orm';
-import { agentApprovalRequests, createAuditLog, db } from '@tasknebula/db';
+import { agentApprovalRequests, createAuditLog, db } from '@validteam/db';
 import { auth } from '@/auth';
 import { canManageAgentApprovals } from '@/lib/agent-policy/approval-permissions';
 

@@ -3,7 +3,7 @@ import {
   automationRules,
   hasPermission as roleHasPermission,
   type Permission,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import {
   canManageProject,

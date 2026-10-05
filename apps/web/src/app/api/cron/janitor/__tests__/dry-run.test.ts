@@ -13,13 +13,13 @@
  *     "dry-run unless a system user is configured".
  *   - `dryRun: true` is honoured regardless of systemUserId.
  *
- * `@tasknebula/db`, `requireCronAuth`, and `runJanitorForOrg` are all
+ * `@validteam/db`, `requireCronAuth`, and `runJanitorForOrg` are all
  * mocked so the route can be required without booting Postgres.
  */
 
 // --------------------------- mocks ---------------------------------------
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const organizations = { __name: 'organizations' };
   const sql = (strings: TemplateStringsArray, ..._values: unknown[]) => strings.join('?');
   const db = {

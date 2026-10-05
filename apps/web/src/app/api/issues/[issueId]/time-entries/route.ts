@@ -15,7 +15,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { db, desc, eq, timeEntries } from '@tasknebula/db';
+import { db, desc, eq, timeEntries } from '@validteam/db';
 import { assertIssueAccess, recomputeActualHours } from '@/lib/time-tracking/server';
 
 const ManualEntry = z

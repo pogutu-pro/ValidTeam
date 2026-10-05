@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { conversationRooms, db, projectChannels, roomReadStates } from '@tasknebula/db';
+import { conversationRooms, db, projectChannels, roomReadStates } from '@validteam/db';
 import { count } from 'drizzle-orm';
 import { isSuperAdmin } from '@/lib/auth/permissions';
 import { countResolvedActiveCalls } from '@/lib/chat/server';

@@ -11,7 +11,7 @@ jest.mock('@/lib/hooks/use-version-poll', () => ({
 
 import { VersionUpdateBanner } from '../version-update-banner';
 
-const DISMISS_STORAGE_KEY = 'tasknebula-update-banner-dismissed';
+const DISMISS_STORAGE_KEY = 'validteam-update-banner-dismissed';
 
 function info(overrides: Partial<VersionInfo> = {}): VersionInfo {
   return {
@@ -24,7 +24,7 @@ function info(overrides: Partial<VersionInfo> = {}): VersionInfo {
     notes: null,
     checkedAt: null,
     image: {
-      repository: 'neuraparse/tasknebula',
+      repository: 'neuraparse/validteam',
       latestTag: null,
       latestTagUrl: null,
       latestPushedAt: null,
@@ -92,7 +92,7 @@ describe('VersionUpdateBanner', () => {
     expect(await screen.findByText('Docker image v0.5.0 is available')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Docker Hub published neuraparse/tasknebula:v0.5.0. You are running v0.4.0; open Admin > Updates to pull and restart.'
+        'Docker Hub published neuraparse/validteam:v0.5.0. You are running v0.4.0; open Admin > Updates to pull and restart.'
       )
     ).toBeInTheDocument();
   });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, notificationPreferences } from '@tasknebula/db';
+import { db, notificationPreferences } from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasPermission } from '@/lib/auth/permissions';
@@ -47,7 +47,7 @@ const updatePreferencesSchema = z.object({
 
 /**
  * GET /api/notification-preferences?organizationId=xxx
- * 
+ *
  * Get notification preferences for current user in an organization
  */
 export async function GET(request: NextRequest) {
@@ -60,10 +60,7 @@ export async function GET(request: NextRequest) {
   const organizationId = searchParams.get('organizationId');
 
   if (!organizationId) {
-    return NextResponse.json(
-      { error: 'organizationId is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'organizationId is required' }, { status: 400 });
   }
 
   try {
@@ -130,7 +127,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/notification-preferences
- * 
+ *
  * Create or update notification preferences
  */
 export async function POST(request: NextRequest) {

@@ -1,4 +1,4 @@
-# TaskNebula — Claude Code Project Guide
+# ValidTeam — Claude Code Project Guide
 
 AI-native, real-time, keyboard-first project management platform (Jira/Linear alternative).
 Monorepo managed with **pnpm + Turborepo**. Node **>=22**, pnpm **>=9**, TypeScript **5.7** (strict).
@@ -17,7 +17,7 @@ Monorepo managed with **pnpm + Turborepo**. Node **>=22**, pnpm **>=9**, TypeScr
 | `packages/db`         | Drizzle ORM schema, migrations, seed — Postgres + pgvector              |
 | `packages/types`      | Shared TypeScript domain types                                          |
 | `packages/config`     | Shared ESLint / TS / Tailwind configs                                   |
-| `packages/mcp-server` | `@tasknebula/mcp-server` — MCP server exposing TaskNebula tools         |
+| `packages/mcp-server` | `@validteam/mcp-server` — MCP server exposing ValidTeam tools           |
 | `services/hocuspocus` | Standalone Yjs realtime collab server (WebSocket + Postgres + Redis)    |
 
 ## Commands
@@ -25,7 +25,7 @@ Monorepo managed with **pnpm + Turborepo**. Node **>=22**, pnpm **>=9**, TypeScr
 Run from repo root unless noted. Build/lint/type-check/test fan out across workspaces via Turbo.
 
 ```bash
-pnpm --filter @tasknebula/web dev  # default local web development
+pnpm --filter @validteam/web dev  # default local web development
 pnpm dev              # all workspaces; requires the Hocuspocus env contract
 pnpm build            # build all (runs openapi:gen first)
 pnpm lint             # ESLint across monorepo
@@ -49,7 +49,7 @@ pnpm openapi:gen      # regenerate public/openapi.json
 ```
 
 > `openapi:gen` does **not** exist as a root script — from the repo root use
-> `pnpm --filter @tasknebula/web openapi:gen`.
+> `pnpm --filter @validteam/web openapi:gen`.
 
 **Before committing**, run focused checks for the changed surface. Before a
 push, run the complete gate documented in `README.md` (Claude
@@ -83,7 +83,7 @@ lint-staged (ESLint + Prettier).
 
 ## Git, branches & PRs
 
-- Remote is **SSH**: `git@github.com:neuraparse/taskNebula.git`. Default branch: `main`.
+- Remote is **SSH**: `git@github.com:neuraparse/validTeam.git`. Default branch: `main`.
 - **Push work directly to `main`** (`git push origin main`) — this repo's owner prefers no branch/PR ceremony for normal work. Commits are authored as **Neura Parse `<hello@neuraparse.com>`**.
 - **Publication requires explicit user authorization.** Never push commits or
   tags, create a GitHub release, or publish Docker images (including moving
@@ -98,14 +98,14 @@ lint-staged (ESLint + Prettier).
 ## Releases & Docker images
 
 - **Versioning**: SemVer, single source of truth is the root `package.json` `version` (check it — do not trust hardcoded versions in docs). Changelog follows _Keep a Changelog_ in `CHANGELOG.md` (`[Unreleased]` → new version section).
-- **Image**: published to **Docker Hub** as `neuraparse/tasknebula` (the machine's `docker login` is the `neuraparse` account). Platform `linux/amd64`, runtime port `3000`, health at `GET /api/health`. The web image is a Next.js **standalone** build (`Dockerfile`, entrypoint runs migrations).
+- **Image**: published to **Docker Hub** as `neuraparse/validteam` (the machine's `docker login` is the `neuraparse` account). Platform `linux/amd64`, runtime port `3000`, health at `GET /api/health`. The web image is a Next.js **standalone** build (`Dockerfile`, entrypoint runs migrations).
 - **Build & push** a release:
   ```bash
-  docker compose build web                                   # or: docker build -t neuraparse/tasknebula:<v> --build-arg NEXT_PUBLIC_APP_URL=https://app.example.com .
-  docker tag neuraparse/tasknebula:latest neuraparse/tasknebula:<v>
-  docker push neuraparse/tasknebula:<v> && docker push neuraparse/tasknebula:latest
+  docker compose build web                                   # or: docker build -t neuraparse/validteam:<v> --build-arg NEXT_PUBLIC_APP_URL=https://app.example.com .
+  docker tag neuraparse/validteam:latest neuraparse/validteam:<v>
+  docker push neuraparse/validteam:<v> && docker push neuraparse/validteam:latest
   ```
-- **Version bump touches**: `package.json`, `apps/web/package.json`, `docker-compose.desktop.yml`, README version references, then regenerate `apps/web/public/openapi.json` via `pnpm --filter @tasknebula/web openapi:gen`. `docker-compose.yml` web service defaults to `:latest` and is overridable with `TASKNEBULA_IMAGE`.
+- **Version bump touches**: `package.json`, `apps/web/package.json`, `docker-compose.desktop.yml`, README version references, then regenerate `apps/web/public/openapi.json` via `pnpm --filter @validteam/web openapi:gen`. `docker-compose.yml` web service defaults to `:latest` and is overridable with `VALIDTEAM_IMAGE`.
 - Full step-by-step runbook: **`docs/RELEASE.md`**. To cut a release with Claude, use the `/release` command; to push work safely, use `/ship`.
 
 ## Current state & gotchas

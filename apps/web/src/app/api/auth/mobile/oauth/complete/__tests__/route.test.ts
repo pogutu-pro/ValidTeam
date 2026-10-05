@@ -43,7 +43,7 @@ describe('/api/auth/mobile/oauth/complete', () => {
     const url = new URL(location);
     const token = url.searchParams.get('token') ?? '';
 
-    expect(url.protocol).toBe('tasknebula:');
+    expect(url.protocol).toBe('validteam:');
     expect(url.hostname).toBe('auth');
     expect(url.pathname).toBe('/oauth');
     expect(url.searchParams.get('status')).toBe('authenticated');
@@ -67,7 +67,7 @@ describe('/api/auth/mobile/oauth/complete', () => {
     );
 
     expect(response.headers.get('location')).toBe(
-      'tasknebula://auth/oauth?status=error&server=https%3A%2F%2Ftasks.example.com&provider=google&reason=unauthorized'
+      'validteam://auth/oauth?status=error&server=https%3A%2F%2Ftasks.example.com&provider=google&reason=unauthorized'
     );
   });
 });

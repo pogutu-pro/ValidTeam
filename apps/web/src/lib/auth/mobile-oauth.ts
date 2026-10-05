@@ -133,7 +133,7 @@ export function mobileOAuthRedirect(
 ): NextResponse {
   const origin = appOrigin(request);
   const callbackUrl = normalizeMobileAuthCallbackUrl(params.callbackUrl, origin);
-  const url = new URL('tasknebula://auth/oauth');
+  const url = new URL('validteam://auth/oauth');
   url.searchParams.set('status', params.status);
   url.searchParams.set('server', origin);
   if (params.provider) url.searchParams.set('provider', params.provider);

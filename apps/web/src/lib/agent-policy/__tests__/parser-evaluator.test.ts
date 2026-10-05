@@ -13,8 +13,8 @@ describe('AGENTOWNERS parser', () => {
   it('parses allow, deny, and require-approval rules', () => {
     const parsed = parseAgentPolicy(`
 # comment
-agent:tasknebula-ai issues:create allow
-agent:tasknebula-ai issues:close require-approval @maintainers
+agent:validteam-ai issues:create allow
+agent:validteam-ai issues:close require-approval @maintainers
 agent:* boards:create-card deny
 `);
 
@@ -22,7 +22,7 @@ agent:* boards:create-card deny
     expect(parsed.rules).toHaveLength(3);
     expect(parsed.rules[1]).toEqual(
       expect.objectContaining({
-        actor: 'tasknebula-ai',
+        actor: 'validteam-ai',
         resource: 'issues',
         action: 'close',
         effect: 'require_approval',
@@ -32,7 +32,7 @@ agent:* boards:create-card deny
   });
 
   it('reports invalid syntax with line numbers', () => {
-    const parsed = parseAgentPolicy('agent:tasknebula-ai issues:create maybe');
+    const parsed = parseAgentPolicy('agent:validteam-ai issues:create maybe');
     expect(parsed.errors).toHaveLength(1);
     expect(parsed.errors[0]).toEqual(
       expect.objectContaining({
@@ -49,18 +49,18 @@ describe('AGENTOWNERS evaluator', () => {
       {
         workspaceId: 'org-1',
         actorType: 'agent',
-        actor: 'tasknebula-ai',
+        actor: 'validteam-ai',
         resource: 'boards',
         action: 'create-card',
       },
       doc(`
-agent:tasknebula-ai boards:create-card allow
+agent:validteam-ai boards:create-card allow
 agent:* boards:create-card deny
 `)
     );
 
     expect(result.decision).toBe('allow');
-    expect(result.matchedRule?.raw).toBe('agent:tasknebula-ai boards:create-card allow');
+    expect(result.matchedRule?.raw).toBe('agent:validteam-ai boards:create-card allow');
   });
 
   it('uses deny over allow when specificity is equal', () => {
@@ -68,13 +68,13 @@ agent:* boards:create-card deny
       {
         workspaceId: 'org-1',
         actorType: 'agent',
-        actor: 'tasknebula-ai',
+        actor: 'validteam-ai',
         resource: 'issues',
         action: 'close',
       },
       doc(`
-agent:tasknebula-ai issues:close allow
-agent:tasknebula-ai issues:close deny
+agent:validteam-ai issues:close allow
+agent:validteam-ai issues:close deny
 `)
     );
 
@@ -133,7 +133,7 @@ agent:tasknebula-ai issues:close deny
       {
         workspaceId: 'org-1',
         actorType: 'agent',
-        actor: 'tasknebula-ai',
+        actor: 'validteam-ai',
         resource: 'issues',
         action: 'close',
       },

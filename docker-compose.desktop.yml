@@ -1,4 +1,4 @@
-# TaskNebula Docker Desktop stack.
+# ValidTeam Docker Desktop stack.
 #
 # This file is meant for quick local evaluation on a Mac, Windows, or Linux
 # machine that already has Docker Desktop installed. It uses only published
@@ -7,7 +7,7 @@
 # The secrets below are local-only defaults. Do not expose this stack to the
 # internet; use docker-compose.yml plus a generated .env for production.
 
-name: tasknebula
+name: validteam
 
 services:
   postgres:
@@ -18,13 +18,13 @@ services:
       - -c
       - shared_preload_libraries=pg_stat_statements
     environment:
-      POSTGRES_USER: tasknebula
-      POSTGRES_PASSWORD: tasknebula-desktop-postgres
-      POSTGRES_DB: tasknebula
+      POSTGRES_USER: validteam
+      POSTGRES_PASSWORD: validteam-desktop-postgres
+      POSTGRES_DB: validteam
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U tasknebula -d tasknebula']
+      test: ['CMD-SHELL', 'pg_isready -U validteam -d validteam']
       interval: 10s
       timeout: 5s
       retries: 10
@@ -37,19 +37,19 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass tasknebula-desktop-redis
+    command: redis-server --appendonly yes --requirepass validteam-desktop-redis
     volumes:
       - redis_data:/data
     healthcheck:
       test:
-        ['CMD-SHELL', 'redis-cli --no-auth-warning -a tasknebula-desktop-redis ping | grep -q PONG']
+        ['CMD-SHELL', 'redis-cli --no-auth-warning -a validteam-desktop-redis ping | grep -q PONG']
       interval: 10s
       timeout: 5s
       retries: 10
     logging: *default-logging
 
   web:
-    image: ${TASKNEBULA_IMAGE:-neuraparse/tasknebula:0.17.3}
+    image: ${VALIDTEAM_IMAGE:-neuraparse/validteam:0.17.3}
     restart: unless-stopped
     depends_on:
       postgres:
@@ -57,20 +57,20 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://tasknebula:tasknebula-desktop-postgres@postgres:5432/tasknebula
-      AUTH_SECRET: tasknebula-desktop-local-only-secret-2026-change-before-production
+      DATABASE_URL: postgresql://validteam:validteam-desktop-postgres@postgres:5432/validteam
+      AUTH_SECRET: validteam-desktop-local-only-secret-2026-change-before-production
       AUTH_URL: http://localhost:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
-      NEXT_PUBLIC_APP_NAME: TaskNebula
-      REDIS_URL: redis://:tasknebula-desktop-redis@redis:6379
-      CRON_SECRET: tasknebula-desktop-local-only-cron-secret-change-before-production
+      NEXT_PUBLIC_APP_NAME: ValidTeam
+      REDIS_URL: redis://:validteam-desktop-redis@redis:6379
+      CRON_SECRET: validteam-desktop-local-only-cron-secret-change-before-production
       SKIP_SEED: 'true'
       SEED_DEMO_DATA: 'false'
       NODE_ENV: production
-      TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET: ${TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET:-}
-      TASKNEBULA_SELF_UPDATE_ENABLED: ${TASKNEBULA_SELF_UPDATE_ENABLED:-false}
-      TASKNEBULA_SELF_UPDATE_WEBHOOK_URL: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_URL:-}
-      TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET:-}
+      VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET: ${VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET:-}
+      VALIDTEAM_SELF_UPDATE_ENABLED: ${VALIDTEAM_SELF_UPDATE_ENABLED:-false}
+      VALIDTEAM_SELF_UPDATE_WEBHOOK_URL: ${VALIDTEAM_SELF_UPDATE_WEBHOOK_URL:-}
+      VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET: ${VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET:-}
     ports:
       - '127.0.0.1:${PORT:-3000}:3000'
     volumes:
@@ -97,7 +97,7 @@ services:
       web:
         condition: service_healthy
     environment:
-      CRON_SECRET: tasknebula-desktop-local-only-cron-secret-change-before-production
+      CRON_SECRET: validteam-desktop-local-only-cron-secret-change-before-production
       WEB_BASE_URL: http://web:3000
     entrypoint: ['/bin/sh', '-c']
     command:

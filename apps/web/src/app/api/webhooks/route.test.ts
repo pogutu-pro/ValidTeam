@@ -38,7 +38,7 @@ jest.mock('drizzle-orm', () => ({
   isNull: (...args: unknown[]) => ({ isNull: args }),
   ne: (...args: unknown[]) => ({ ne: args }),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const webhookTable = { name: 'webhooks' };
   const auditTable = { name: 'audit_logs' };
   const organizationTable = { name: 'organizations' };

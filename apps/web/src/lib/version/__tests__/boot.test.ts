@@ -10,7 +10,7 @@ const dbSelectMock = jest.fn();
 const dbInsertMock = jest.fn();
 const dbUpdateMock = jest.fn();
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),
@@ -37,7 +37,7 @@ jest.mock('../preferences', () => ({
 import {
   systemSettings as systemSettingsTable,
   notifications as notificationsTable,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { handleBootVersionChange } from '../boot';
 
 type CapturedInsert = { table: unknown; rows: unknown };
@@ -77,7 +77,7 @@ function mockUpdateReturning(rows: Array<{ id: string }>) {
 beforeEach(() => {
   jest.clearAllMocks();
   inserts = [];
-  process.env.TASKNEBULA_VERSION = '9.9.9';
+  process.env.VALIDTEAM_VERSION = '9.9.9';
 
   // Insert chain that records (table, rows) and supports both
   // `await .values(...)` and `await .values(...).onConflictDoNothing(...)`.
@@ -94,7 +94,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  delete process.env.TASKNEBULA_VERSION;
+  delete process.env.VALIDTEAM_VERSION;
 });
 
 describe('handleBootVersionChange', () => {
@@ -117,7 +117,7 @@ describe('handleBootVersionChange', () => {
       expect(row.title).toBe('ValidTeam updated to v9.9.9');
       expect(row.message).toContain('previously v9.9.8');
       expect(row.message).toContain('/admin?tab=updates');
-      expect(row.message).toContain('https://github.com/neuraparse/taskNebula/releases/tag/v9.9.9');
+      expect(row.message).toContain('https://github.com/neuraparse/validTeam/releases/tag/v9.9.9');
     }
     // No baseline re-seed when the update already changed the row.
     expect(inserts.filter((i) => i.table === systemSettingsTable)).toHaveLength(0);

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { IntakeFieldDefinition, IntakeFieldType } from '@tasknebula/db';
+import type { IntakeFieldDefinition, IntakeFieldType } from '@validteam/db';
 
 const FIELD_TYPES: readonly IntakeFieldType[] = [
   'text',
@@ -40,7 +40,7 @@ export const intakeFieldsArraySchema = z
       }
       return true;
     },
-    { message: 'Field names must be unique within a form' },
+    { message: 'Field names must be unique within a form' }
   );
 
 export interface FieldValidationIssue {
@@ -64,10 +64,8 @@ export interface FieldValidationIssue {
  */
 export function validateSubmission(
   fields: IntakeFieldDefinition[],
-  payload: unknown,
-):
-  | { ok: true; value: Record<string, unknown> }
-  | { ok: false; issues: FieldValidationIssue[] } {
+  payload: unknown
+): { ok: true; value: Record<string, unknown> } | { ok: false; issues: FieldValidationIssue[] } {
   const issues: FieldValidationIssue[] = [];
   const value: Record<string, unknown> = {};
 
@@ -80,9 +78,7 @@ export function validateSubmission(
   for (const field of fields) {
     const raw = input[field.name];
     const isEmpty =
-      raw === undefined ||
-      raw === null ||
-      (typeof raw === 'string' && raw.trim() === '');
+      raw === undefined || raw === null || (typeof raw === 'string' && raw.trim() === '');
 
     if (field.required && isEmpty) {
       issues.push({ field: field.name, message: 'This field is required' });
@@ -164,7 +160,7 @@ export function validateSubmission(
 export function deriveIssueTitle(
   fields: IntakeFieldDefinition[],
   payload: Record<string, unknown>,
-  fallbackTitle: string,
+  fallbackTitle: string
 ): string {
   for (const field of fields) {
     if (field.type !== 'text' && field.type !== 'textarea') continue;
@@ -184,7 +180,7 @@ export function deriveIssueTitle(
 export function buildIssueDescription(
   fields: IntakeFieldDefinition[],
   payload: Record<string, unknown>,
-  meta: { formTitle: string; submittedByEmail?: string | null },
+  meta: { formTitle: string; submittedByEmail?: string | null }
 ): string {
   const lines: string[] = [];
   lines.push(`Submitted via intake form: **${meta.formTitle}**`);

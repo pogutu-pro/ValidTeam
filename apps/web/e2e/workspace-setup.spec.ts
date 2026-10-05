@@ -24,9 +24,9 @@ test.describe('first-run workspace setup', () => {
     }
 
     // Fresh DB path: complete the wizard.
-    await expect(page.getByRole('heading', { name: /welcome to tasknebula/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /welcome to validteam/i })).toBeVisible();
 
-    const adminEmail = `e2e-setup+${Date.now()}@tasknebula.test`;
+    const adminEmail = `e2e-setup+${Date.now()}@validteam.test`;
 
     await page.getByLabel(/full name/i).fill('First Admin');
     await page.getByLabel(/email address/i).fill(adminEmail);
@@ -36,7 +36,7 @@ test.describe('first-run workspace setup', () => {
 
     await page.getByRole('button', { name: /continue/i }).click();
     await expect(
-      page.getByRole('heading', { name: /choose how tasknebula should start/i })
+      page.getByRole('heading', { name: /choose how validteam should start/i })
     ).toBeVisible();
     await page.getByRole('button', { name: /create admin account/i }).click();
 

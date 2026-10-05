@@ -8,12 +8,12 @@ while older code is migrated.
 
 ## Current configuration
 
-| Workspace                | `exactOptionalPropertyTypes` | Contract                                                  |
-| ------------------------ | ---------------------------- | --------------------------------------------------------- |
-| `@tasknebula/types`      | on                           | Beachhead; new shared types satisfy exact optional shapes |
-| `@tasknebula/web`        | temporarily off              | Migrate affected files without adding `any`/suppression   |
-| `@tasknebula/db`         | temporarily off              | Resolve Drizzle insert/update optional-vs-null shapes     |
-| `@tasknebula/mcp-server` | temporarily off              | Migrate MCP SDK payload/build shapes                      |
+| Workspace               | `exactOptionalPropertyTypes` | Contract                                                  |
+| ----------------------- | ---------------------------- | --------------------------------------------------------- |
+| `@validteam/types`      | on                           | Beachhead; new shared types satisfy exact optional shapes |
+| `@validteam/web`        | temporarily off              | Migrate affected files without adding `any`/suppression   |
+| `@validteam/db`         | temporarily off              | Resolve Drizzle insert/update optional-vs-null shapes     |
+| `@validteam/mcp-server` | temporarily off              | Migrate MCP SDK payload/build shapes                      |
 
 The opt-outs live in each workspace `tsconfig.json` with a QUAL-21 comment.
 Do not copy an opt-out to another package or turn the base flag off.

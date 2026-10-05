@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, documentPageRevisions, eq, users } from '@tasknebula/db';
+import { db, documentPageRevisions, eq, users } from '@validteam/db';
 import { resolveDocumentPageAccess } from '@/lib/docs/server';
 
 export async function GET(

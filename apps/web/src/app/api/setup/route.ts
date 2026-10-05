@@ -11,7 +11,7 @@ import {
   workflowTransitions,
   ROLE_DEFAULT_PERMISSIONS,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { sql } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { createId } from '@paralleldrive/cuid2';
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const setupResult = await db.transaction(async (tx) => {
-      await tx.execute(sql`select pg_advisory_xact_lock(hashtext('tasknebula.initial_setup'))`);
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtext('validteam.initial_setup'))`);
 
       const [result] = await tx.select({ count: sql<number>`count(*)` }).from(users);
       if (Number(result?.count ?? 0) > 0) {

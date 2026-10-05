@@ -17,7 +17,7 @@ import { users } from './users';
  * encrypted assertions — leave NULL to use plain (non-signed) requests.
  *
  * `attribute_map` lets each workspace declare which SAML attributes map to
- * which TaskNebula user fields. Default keys: { email, first_name, last_name,
+ * which ValidTeam user fields. Default keys: { email, first_name, last_name,
  * groups }.
  */
 export const ssoConfigs = pgTable(

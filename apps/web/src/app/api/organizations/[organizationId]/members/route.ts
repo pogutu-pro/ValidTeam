@@ -10,7 +10,7 @@ import {
   projects,
   projectMembers,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { createHash, randomBytes } from 'crypto';

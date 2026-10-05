@@ -17,7 +17,7 @@
  *     (from BUILTIN_TEMPLATES in packages/db/src/utils/email-service.ts)
  */
 import { NextRequest, NextResponse } from 'next/server';
-import { BUILTIN_TEMPLATES, replaceVariables } from '@tasknebula/db';
+import { BUILTIN_TEMPLATES, replaceVariables } from '@validteam/db';
 import { isSuperAdmin } from '@/lib/auth/permissions';
 import { renderVerifyEmailMessage } from '@/lib/auth/email-verification';
 import { renderInvitationMessage, renderPasswordResetMessage } from '@/lib/email/templates';
@@ -32,15 +32,15 @@ const SAMPLE_VARS: Record<string, string> = {
   recipientName: 'Grace Hopper',
   userName: 'grace',
   organizationName: 'ValidTeam Demo',
-  appUrl: 'https://tasknebula.example.com',
-  unsubscribeUrl: 'https://tasknebula.example.com/settings/notifications',
+  appUrl: 'https://validteam.example.com',
+  unsubscribeUrl: 'https://validteam.example.com/settings/notifications',
   // Issue context
   issueKey: 'DEMO-142',
   issueTitle: 'Flaky login redirect on Safari iOS',
-  issueUrl: 'https://tasknebula.example.com/issues/DEMO-142',
+  issueUrl: 'https://validteam.example.com/issues/DEMO-142',
   projectName: 'Demo Web',
   projectKey: 'DEMO',
-  projectUrl: 'https://tasknebula.example.com/projects/DEMO',
+  projectUrl: 'https://validteam.example.com/projects/DEMO',
   projectDescription: 'Customer-facing marketing site and sign-up flow.',
   priority: 'High',
   newStatus: 'In Review',
@@ -76,13 +76,13 @@ function renderBespoke(key: string): string | null {
     case 'verify_email': {
       const { html } = renderVerifyEmailMessage({
         displayName: 'Grace Hopper',
-        verifyUrl: 'https://tasknebula.example.com/auth/verify-email?token=preview-sample-token',
+        verifyUrl: 'https://validteam.example.com/auth/verify-email?token=preview-sample-token',
       });
       return html;
     }
     case 'password_reset': {
       const { html } = renderPasswordResetMessage({
-        resetUrl: 'https://tasknebula.example.com/auth/reset-password?token=preview-sample-token',
+        resetUrl: 'https://validteam.example.com/auth/reset-password?token=preview-sample-token',
         ip: '203.0.113.42',
         requestedAt: 'Wed, 23 Apr 2025 14:30:00 GMT',
       });
@@ -95,7 +95,7 @@ function renderBespoke(key: string): string | null {
         orgName: 'ValidTeam Demo',
         role: 'member',
         addedProjectNames: ['Demo Web', 'Platform API'],
-        signupUrl: 'https://tasknebula.example.com/auth/signup?email=grace%40example.com',
+        signupUrl: 'https://validteam.example.com/auth/signup?email=grace%40example.com',
       });
       return html;
     }

@@ -19,7 +19,7 @@ import { useAiFeature } from '@/lib/hooks/use-ai-feature';
 import { useOrganizationPermissions } from '@/lib/hooks/use-permissions';
 import { PageFrame } from '@/components/ui/page-frame';
 import { PageHeader } from '@/components/ui/page-header';
-import type { Permission } from '@tasknebula/db';
+import type { Permission } from '@validteam/db';
 
 type NavItem = {
   value:

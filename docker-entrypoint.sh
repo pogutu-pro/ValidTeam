@@ -2,7 +2,7 @@
 set -e
 
 echo "========================================="
-echo "  TaskNebula - Starting..."
+echo "  ValidTeam - Starting..."
 echo "========================================="
 
 PARSED_DB_HOST="$(node -e "try { const u = new URL(process.env.DATABASE_URL || ''); console.log(u.hostname || 'postgres') } catch { console.log('postgres') }")"

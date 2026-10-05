@@ -47,7 +47,7 @@ jest.mock('@/lib/auth/project-access', () => ({
     resolveProjectCapabilityAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const table = (name: string) =>
     new Proxy({ __name: name } as Record<string, string>, {
       get(target, property: string) {

@@ -7,7 +7,7 @@
  * `standups` table with an upsert keyed on (user, org, date).
  */
 
-import { db, standups, users, eq, sql } from '@tasknebula/db';
+import { db, standups, users, eq, sql } from '@validteam/db';
 
 import { buildStandupDigest, StandupEvent } from './standup';
 import { collectStandupEvents } from './standup-events';

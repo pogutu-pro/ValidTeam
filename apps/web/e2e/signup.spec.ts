@@ -16,7 +16,7 @@ test.describe('signup', () => {
     await expect(page.getByRole('heading', { name: /create your account/i })).toBeVisible();
 
     await page.getByLabel(/full name/i).fill('Too Short');
-    await page.getByLabel(/email address/i).fill(`shortpw+${Date.now()}@tasknebula.test`);
+    await page.getByLabel(/email address/i).fill(`shortpw+${Date.now()}@validteam.test`);
     await page.getByLabel(/^password$/i).fill('short');
     await page.getByRole('button', { name: /create account/i }).click();
 
@@ -24,7 +24,7 @@ test.describe('signup', () => {
   });
 
   test('creates a new account and continues to email verification', async ({ page }) => {
-    const email = `e2e-signup+${Date.now()}@tasknebula.test`;
+    const email = `e2e-signup+${Date.now()}@validteam.test`;
 
     await page.goto('/auth/signup');
     await expect(page.getByRole('heading', { name: /create your account/i })).toBeVisible();
@@ -40,7 +40,7 @@ test.describe('signup', () => {
   });
 
   test('accepts a project invite during signup and opens the project', async ({ page }) => {
-    const email = `e2e-project-invite+${Date.now()}@tasknebula.test`;
+    const email = `e2e-project-invite+${Date.now()}@validteam.test`;
 
     await page.goto(`/join/project/${E2E_PROJECT_INVITE_TOKEN}`);
     await expect(page).toHaveURL(

@@ -3,14 +3,14 @@
  *
  * Creates (idempotently):
  *   - 1 organization: "E2E Workspace" (slug: e2e-workspace)
- *   - 1 admin user:    e2e-admin@tasknebula.test / E2eAdmin!2026
+ *   - 1 admin user:    e2e-admin@validteam.test / E2eAdmin!2026
  *   - 1 project:       "E2E Project"  (key: E2E)
  *   - default workflow with statuses Backlog / In Progress / Done
  *   - 5 issues with stable keys E2E-1..E2E-5
  *   - 1 reusable project invitation for signup/join browser coverage
  *
  * Run standalone:
- *   pnpm --filter @tasknebula/web exec tsx e2e/fixtures/seed.ts
+ *   pnpm --filter @validteam/web exec tsx e2e/fixtures/seed.ts
  *
  * Used by `auth.setup.ts` (via `ensureSeed`) so the suite is self-contained
  * regardless of whether the demo seed has been applied.
@@ -22,7 +22,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { and, eq } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
-// Import the schema directly to avoid pulling in `@tasknebula/db/client`,
+// Import the schema directly to avoid pulling in `@validteam/db/client`,
 // which would instantiate a postgres connection at module load time.
 import * as schema from '../../../../packages/db/src/schema';
 
@@ -32,12 +32,12 @@ function getDatabaseConnectionString(): string | undefined {
   const password = process.env.POSTGRES_PASSWORD || 'postgres';
   const host = process.env.POSTGRES_HOST || 'localhost';
   const port = process.env.DB_PORT || process.env.POSTGRES_PORT || '5432';
-  const database = process.env.POSTGRES_DB || 'tasknebula';
+  const database = process.env.POSTGRES_DB || 'validteam';
   return `postgresql://${user}:${password}@${host}:${port}/${database}`;
 }
 
 export const E2E_ADMIN = {
-  email: 'e2e-admin@tasknebula.test',
+  email: 'e2e-admin@validteam.test',
   name: 'E2E Admin',
   password: 'E2eAdmin!2026',
 } as const;
@@ -516,7 +516,7 @@ export async function ensureSeed(): Promise<SeededIds> {
         fileName: publicAttachmentFileName,
         fileSize: 42,
         mimeType: 'text/plain',
-        filePath: '/tmp/tasknebula-e2e-public-attachment.txt',
+        filePath: '/tmp/validteam-e2e-public-attachment.txt',
         uploadedById: userId,
       });
     }

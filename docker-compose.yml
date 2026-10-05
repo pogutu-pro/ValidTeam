@@ -3,7 +3,7 @@ services:
     build:
       context: ./docker/postgres
       dockerfile: Dockerfile
-    container_name: tasknebula-postgres
+    container_name: validteam-postgres
     restart: unless-stopped
     # Load pg_stat_statements at server start so the extension created in
     # init.sql can actually record statements. See docs/OBSERVABILITY.md.
@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set (generate with `openssl rand -hex 32`)}
-      POSTGRES_DB: ${POSTGRES_DB:-tasknebula}
+      POSTGRES_DB: ${POSTGRES_DB:-validteam}
     ports:
       # Bind to localhost only to prevent external network access to the database.
       - '127.0.0.1:${DB_PORT:-5432}:5432'
@@ -27,10 +27,7 @@ services:
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql
     healthcheck:
       test:
-        [
-          'CMD-SHELL',
-          'pg_isready -U "$${POSTGRES_USER:-postgres}" -d "$${POSTGRES_DB:-tasknebula}"',
-        ]
+        ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER:-postgres}" -d "$${POSTGRES_DB:-validteam}"']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -42,7 +39,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: tasknebula-redis
+    container_name: validteam-redis
     restart: unless-stopped
     command:
       - /bin/sh
@@ -68,7 +65,7 @@ services:
 
   livekit:
     image: livekit/livekit-server:v1.10.1
-    container_name: tasknebula-livekit
+    container_name: validteam-livekit
     profiles: ['voice']
     restart: unless-stopped
     network_mode: host
@@ -104,10 +101,10 @@ services:
 
   web:
     # Pull the published image by default (instant start). Override via
-    # TASKNEBULA_IMAGE=... or run `docker compose build web` to rebuild from
+    # VALIDTEAM_IMAGE=... or run `docker compose build web` to rebuild from
     # source — the `build:` stanza below is the fallback when the image is
     # not available locally or on the registry.
-    image: ${TASKNEBULA_IMAGE:-neuraparse/tasknebula:latest}
+    image: ${VALIDTEAM_IMAGE:-neuraparse/validteam:latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -115,7 +112,7 @@ services:
         NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
         NEXT_PUBLIC_COLLAB_ENABLED: ${NEXT_PUBLIC_COLLAB_ENABLED:-false}
         NEXT_PUBLIC_HOCUSPOCUS_URL: ${NEXT_PUBLIC_HOCUSPOCUS_URL:-}
-    container_name: tasknebula-web
+    container_name: validteam-web
     restart: unless-stopped
     depends_on:
       postgres:
@@ -123,12 +120,12 @@ services:
       redis:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/${POSTGRES_DB:-tasknebula}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}@postgres:5432/${POSTGRES_DB:-validteam}
       AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET must be set (generate with `openssl rand -base64 32`)}
       AUTH_URL: ${APP_URL:-http://localhost:3000}
       AUTH_DEBUG: ${AUTH_DEBUG:-false}
       NEXT_PUBLIC_APP_URL: ${APP_URL:-http://localhost:3000}
-      NEXT_PUBLIC_APP_NAME: ${APP_NAME:-TaskNebula}
+      NEXT_PUBLIC_APP_NAME: ${APP_NAME:-ValidTeam}
       NEXT_PUBLIC_COLLAB_ENABLED: ${NEXT_PUBLIC_COLLAB_ENABLED:-false}
       NEXT_PUBLIC_HOCUSPOCUS_URL: ${NEXT_PUBLIC_HOCUSPOCUS_URL:-}
       REDIS_URL: redis://:${REDIS_PASSWORD:?REDIS_PASSWORD must be set}@redis:6379
@@ -164,24 +161,24 @@ services:
       # Optional beta: dispatch issues directly to Claude Code or Codex CLI
       # installed inside this container/custom image. Admin → Agent control
       # still controls which workspaces may use the local handoff.
-      TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED: ${TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED:-false}
-      TASKNEBULA_LOCAL_AGENT_CWD: ${TASKNEBULA_LOCAL_AGENT_CWD:-}
-      TASKNEBULA_REPO_ROOT: ${TASKNEBULA_REPO_ROOT:-}
-      TASKNEBULA_LOCAL_CODEX_ENABLED: ${TASKNEBULA_LOCAL_CODEX_ENABLED:-false}
-      TASKNEBULA_LOCAL_CODEX_COMMAND: ${TASKNEBULA_LOCAL_CODEX_COMMAND:-codex}
-      TASKNEBULA_LOCAL_CODEX_CWD: ${TASKNEBULA_LOCAL_CODEX_CWD:-}
-      TASKNEBULA_LOCAL_CODEX_MODEL: ${TASKNEBULA_LOCAL_CODEX_MODEL:-}
-      TASKNEBULA_LOCAL_CODEX_SANDBOX: ${TASKNEBULA_LOCAL_CODEX_SANDBOX:-workspace-write}
-      TASKNEBULA_LOCAL_CODEX_TIMEOUT_SECONDS: ${TASKNEBULA_LOCAL_CODEX_TIMEOUT_SECONDS:-3600}
-      TASKNEBULA_LOCAL_CODEX_ARGS_JSON: ${TASKNEBULA_LOCAL_CODEX_ARGS_JSON:-}
-      TASKNEBULA_LOCAL_CLAUDE_ENABLED: ${TASKNEBULA_LOCAL_CLAUDE_ENABLED:-false}
-      TASKNEBULA_LOCAL_CLAUDE_COMMAND: ${TASKNEBULA_LOCAL_CLAUDE_COMMAND:-claude}
-      TASKNEBULA_LOCAL_CLAUDE_CWD: ${TASKNEBULA_LOCAL_CLAUDE_CWD:-}
-      TASKNEBULA_LOCAL_CLAUDE_MODEL: ${TASKNEBULA_LOCAL_CLAUDE_MODEL:-}
-      TASKNEBULA_LOCAL_CLAUDE_PERMISSION_MODE: ${TASKNEBULA_LOCAL_CLAUDE_PERMISSION_MODE:-auto}
-      TASKNEBULA_LOCAL_CLAUDE_MAX_TURNS: ${TASKNEBULA_LOCAL_CLAUDE_MAX_TURNS:-20}
-      TASKNEBULA_LOCAL_CLAUDE_TIMEOUT_SECONDS: ${TASKNEBULA_LOCAL_CLAUDE_TIMEOUT_SECONDS:-3600}
-      TASKNEBULA_LOCAL_CLAUDE_ARGS_JSON: ${TASKNEBULA_LOCAL_CLAUDE_ARGS_JSON:-}
+      VALIDTEAM_LOCAL_AGENT_RUNNER_ENABLED: ${VALIDTEAM_LOCAL_AGENT_RUNNER_ENABLED:-false}
+      VALIDTEAM_LOCAL_AGENT_CWD: ${VALIDTEAM_LOCAL_AGENT_CWD:-}
+      VALIDTEAM_REPO_ROOT: ${VALIDTEAM_REPO_ROOT:-}
+      VALIDTEAM_LOCAL_CODEX_ENABLED: ${VALIDTEAM_LOCAL_CODEX_ENABLED:-false}
+      VALIDTEAM_LOCAL_CODEX_COMMAND: ${VALIDTEAM_LOCAL_CODEX_COMMAND:-codex}
+      VALIDTEAM_LOCAL_CODEX_CWD: ${VALIDTEAM_LOCAL_CODEX_CWD:-}
+      VALIDTEAM_LOCAL_CODEX_MODEL: ${VALIDTEAM_LOCAL_CODEX_MODEL:-}
+      VALIDTEAM_LOCAL_CODEX_SANDBOX: ${VALIDTEAM_LOCAL_CODEX_SANDBOX:-workspace-write}
+      VALIDTEAM_LOCAL_CODEX_TIMEOUT_SECONDS: ${VALIDTEAM_LOCAL_CODEX_TIMEOUT_SECONDS:-3600}
+      VALIDTEAM_LOCAL_CODEX_ARGS_JSON: ${VALIDTEAM_LOCAL_CODEX_ARGS_JSON:-}
+      VALIDTEAM_LOCAL_CLAUDE_ENABLED: ${VALIDTEAM_LOCAL_CLAUDE_ENABLED:-false}
+      VALIDTEAM_LOCAL_CLAUDE_COMMAND: ${VALIDTEAM_LOCAL_CLAUDE_COMMAND:-claude}
+      VALIDTEAM_LOCAL_CLAUDE_CWD: ${VALIDTEAM_LOCAL_CLAUDE_CWD:-}
+      VALIDTEAM_LOCAL_CLAUDE_MODEL: ${VALIDTEAM_LOCAL_CLAUDE_MODEL:-}
+      VALIDTEAM_LOCAL_CLAUDE_PERMISSION_MODE: ${VALIDTEAM_LOCAL_CLAUDE_PERMISSION_MODE:-auto}
+      VALIDTEAM_LOCAL_CLAUDE_MAX_TURNS: ${VALIDTEAM_LOCAL_CLAUDE_MAX_TURNS:-20}
+      VALIDTEAM_LOCAL_CLAUDE_TIMEOUT_SECONDS: ${VALIDTEAM_LOCAL_CLAUDE_TIMEOUT_SECONDS:-3600}
+      VALIDTEAM_LOCAL_CLAUDE_ARGS_JSON: ${VALIDTEAM_LOCAL_CLAUDE_ARGS_JSON:-}
       # Cron endpoints (POST /api/cron/{standup,janitor}) are guarded by a
       # shared secret. Set CRON_SECRET to enable them. The optional
       # JANITOR_SYSTEM_USER_ID is the user id used as the author for janitor
@@ -193,16 +190,16 @@ services:
       METRICS_TOKEN: ${METRICS_TOKEN:-}
       # Optional Docker Hub inbound webhook for immediate image-update
       # detection. Pair with /api/cron/version-check as the polling fallback.
-      TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET: ${TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET:-}
+      VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET: ${VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET:-}
       # Optional self-update handoff. Disabled by default: the web container
       # never receives Docker socket access and only sends a signed request to
       # an operator-managed updater endpoint when explicitly configured.
-      TASKNEBULA_SELF_UPDATE_ENABLED: ${TASKNEBULA_SELF_UPDATE_ENABLED:-false}
-      TASKNEBULA_SELF_UPDATE_WEBHOOK_URL: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_URL:-}
-      TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET: ${TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET:-}
-      TASKNEBULA_SELF_UPDATE_REQUIRE_BACKUP: ${TASKNEBULA_SELF_UPDATE_REQUIRE_BACKUP:-true}
-      TASKNEBULA_SELF_UPDATE_ALLOW_INSECURE_HTTP: ${TASKNEBULA_SELF_UPDATE_ALLOW_INSECURE_HTTP:-false}
-      TASKNEBULA_UPDATE_BACKUP_DIR: ${TASKNEBULA_UPDATE_BACKUP_DIR:-/app/backups}
+      VALIDTEAM_SELF_UPDATE_ENABLED: ${VALIDTEAM_SELF_UPDATE_ENABLED:-false}
+      VALIDTEAM_SELF_UPDATE_WEBHOOK_URL: ${VALIDTEAM_SELF_UPDATE_WEBHOOK_URL:-}
+      VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET: ${VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET:-}
+      VALIDTEAM_SELF_UPDATE_REQUIRE_BACKUP: ${VALIDTEAM_SELF_UPDATE_REQUIRE_BACKUP:-true}
+      VALIDTEAM_SELF_UPDATE_ALLOW_INSECURE_HTTP: ${VALIDTEAM_SELF_UPDATE_ALLOW_INSECURE_HTTP:-false}
+      VALIDTEAM_UPDATE_BACKUP_DIR: ${VALIDTEAM_UPDATE_BACKUP_DIR:-/app/backups}
     ports:
       - '127.0.0.1:${PORT:-3000}:3000'
     volumes:
@@ -228,7 +225,7 @@ services:
   # runs. Keep this in the base lifecycle so restarts do not strand work.
   approval-reconciler:
     image: alpine:3.20
-    container_name: tasknebula-approval-reconciler
+    container_name: validteam-approval-reconciler
     restart: unless-stopped
     depends_on:
       web:
@@ -259,7 +256,7 @@ services:
   # whole footprint is < 5 MB.
   cron:
     image: alpine:3.20
-    container_name: tasknebula-cron
+    container_name: validteam-cron
     profiles: ['cron']
     restart: unless-stopped
     depends_on:

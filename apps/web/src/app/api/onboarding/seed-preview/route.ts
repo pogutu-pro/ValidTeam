@@ -13,7 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, hasPermission as roleHasPermission, users } from '@tasknebula/db';
+import { db, hasPermission as roleHasPermission, users } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import {
   generateWorkspaceSeed,

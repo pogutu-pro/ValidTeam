@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY services/hocuspocus/package.json services/hocuspocus/package.json
 
-RUN pnpm install --frozen-lockfile --filter @tasknebula/hocuspocus --prod --ignore-scripts
+RUN pnpm install --frozen-lockfile --filter @validteam/hocuspocus --prod --ignore-scripts
 
 COPY services/hocuspocus/src services/hocuspocus/src
 

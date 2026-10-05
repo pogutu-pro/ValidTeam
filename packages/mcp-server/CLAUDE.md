@@ -1,13 +1,13 @@
-# packages/mcp-server — @tasknebula/mcp-server
+# packages/mcp-server — @validteam/mcp-server
 
-Model Context Protocol server exposing TaskNebula to Claude/Cursor/etc. over the web app's REST API.
+Model Context Protocol server exposing ValidTeam to Claude/Cursor/etc. over the web app's REST API.
 Root guide: `/CLAUDE.md`. Transports: stdio (`src/stdio.ts`) and HTTP (`src/http.ts`).
 
 ## Commands (run in packages/mcp-server)
 
 ```bash
 pnpm build        # tsc -p tsconfig.build.json
-pnpm start        # node ./bin/tasknebula-mcp.mjs (stdio)
+pnpm start        # node ./bin/validteam-mcp.mjs (stdio)
 pnpm test         # Jest
 pnpm type-check && pnpm lint
 ```
@@ -18,11 +18,11 @@ pnpm type-check && pnpm lint
 add-comment, transition-status, search-issues, list-projects, list-my-assigned,
 get-my-workload. Plus resources (`src/resources.ts`) and prompts (`src/prompts.ts`), registered in
 `src/server.ts`. REST calls go through `src/client.ts`; auth resolution in `src/auth.ts`
-(`TASKNEBULA_API_URL` + `TASKNEBULA_API_KEY` env).
+(`VALIDTEAM_API_URL` + `VALIDTEAM_API_KEY` env).
 
 ## Current limitations (verified August 2026)
 
-- The current 11-tool REST surface accepts TaskNebula `sk_live_*` keys. The server hashes the
+- The current 11-tool REST surface accepts ValidTeam `sk_live_*` keys. The server hashes the
   presented key, requires an active/unexpired/unrevoked record, active creator and active
   organization membership, then applies the route's existing project/issue permissions inside the
   key's immutable organization boundary.

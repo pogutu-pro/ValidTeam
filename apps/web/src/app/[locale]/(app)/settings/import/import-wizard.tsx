@@ -24,7 +24,7 @@ import {
  * Polling cadence is intentionally simple (no exponential backoff) —
  * imports are short-lived enough that a fixed interval is fine. When
  * a real queue + websocket push lands, swap polling for the realtime
- * channel TaskNebula already runs.
+ * channel ValidTeam already runs.
  */
 
 type SourceKey = 'csv' | 'linear' | 'jira' | 'plane' | 'github';

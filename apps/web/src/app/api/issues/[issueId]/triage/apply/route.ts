@@ -33,7 +33,7 @@ import {
   issueTriageSuggestions,
   issues,
   organizations,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, isNull } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { publishEvent } from '@/lib/realtime/events';
@@ -178,7 +178,7 @@ export async function POST(
         workspaceId: currentIssue.organizationId,
         projectId: currentIssue.projectId,
         requestedBy: userId,
-        actor: 'tasknebula-ai',
+        actor: 'validteam-ai',
         resource: 'issues',
         action: policyAction,
         targetType: 'issue',

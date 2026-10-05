@@ -64,7 +64,7 @@ jest.mock('@/lib/agents/config', () => ({
   }),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
   },

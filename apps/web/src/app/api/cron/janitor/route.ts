@@ -20,7 +20,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, organizations, sql } from '@tasknebula/db';
+import { db, organizations, sql } from '@validteam/db';
 import { requireCronAuth } from '@/lib/agents/cron-auth';
 import { runJanitorForOrg } from '@/lib/agents/janitor-runner';
 

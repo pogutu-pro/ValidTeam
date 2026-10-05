@@ -1,4 +1,4 @@
-import { db, eq, hasPermission as roleHasPermission, users } from '@tasknebula/db';
+import { db, eq, hasPermission as roleHasPermission, users } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 
 /**

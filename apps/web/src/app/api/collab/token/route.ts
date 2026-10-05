@@ -41,8 +41,8 @@ export async function POST() {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt(now)
     .setExpirationTime(now + 60 * 5)
-    .setIssuer('tasknebula-web')
-    .setAudience('tasknebula-collab')
+    .setIssuer('validteam-web')
+    .setAudience('validteam-collab')
     .sign(key);
 
   return NextResponse.json({

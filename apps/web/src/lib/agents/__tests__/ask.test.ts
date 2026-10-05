@@ -2,10 +2,10 @@
  * @jest-environment node
  */
 
-// Mock the @tasknebula/db package so we don't need a live Postgres for
+// Mock the @validteam/db package so we don't need a live Postgres for
 // these unit tests. The tests focus on prompt construction, the Claude SSE
 // parser, and the public event contract of runAsk().
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     execute: jest.fn().mockResolvedValue([]),
   },
@@ -14,7 +14,7 @@ jest.mock('@tasknebula/db', () => ({
 
 import { runAsk, AskError, __internal } from '../ask';
 import type { AskEvent } from '../ask';
-import { db } from '@tasknebula/db';
+import { db } from '@validteam/db';
 
 async function collect(events: AsyncGenerator<AskEvent>): Promise<AskEvent[]> {
   const out: AskEvent[] = [];

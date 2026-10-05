@@ -33,7 +33,7 @@ jest.mock('livekit-server-sdk', () => ({
     toJwt = toJwtMock;
   },
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   systemAuditLogs: { id: 'system_audit_logs.id' },
   db: {
     insert: () => ({

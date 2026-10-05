@@ -17,7 +17,7 @@ jest.mock('@/lib/audit/sink-dispatcher', () => ({
   deliverToSink: (...args: unknown[]) => deliverToSinkMock(...args),
   persistSinkOutcome: (...args: unknown[]) => persistSinkOutcomeMock(...args),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const tx = {
     insert: () => ({
       values: async (row: Record<string, unknown>) => {

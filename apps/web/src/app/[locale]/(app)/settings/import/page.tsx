@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
-import { db, projects } from '@tasknebula/db';
+import { db, projects } from '@validteam/db';
 import { asc, eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { getPermittedOrganizationIds } from '@/lib/auth/permissions';

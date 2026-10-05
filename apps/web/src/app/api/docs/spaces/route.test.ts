@@ -8,7 +8,7 @@ const getProjectDocumentPermissionsMock = jest.fn();
 const resolveProjectIdMock = jest.fn();
 
 jest.mock('@/auth', () => ({ auth: (...args: unknown[]) => authMock(...args) }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {},
   documentSpaces: {},
   projects: { id: 'projects.id', organizationId: 'projects.organizationId' },

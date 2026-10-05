@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, and, eq, integrationConnections } from '@tasknebula/db';
+import { db, and, eq, integrationConnections } from '@validteam/db';
 import { hasPermission } from '@/lib/auth/permissions';
 
 export const dynamic = 'force-dynamic';

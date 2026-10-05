@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db, users, systemAuditLogs, schema } from '@tasknebula/db';
+import { db, users, systemAuditLogs, schema } from '@validteam/db';
 import { and, count, eq, ne, sql } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
@@ -103,7 +103,7 @@ export async function PATCH(
       // cannot both observe the other administrator and leave the installation
       // without an active recovery account.
       await tx.execute(
-        sql`select pg_advisory_xact_lock(hashtext('tasknebula.admin-user-governance'))`
+        sql`select pg_advisory_xact_lock(hashtext('validteam.admin-user-governance'))`
       );
 
       const [currentUser] = await tx.select().from(users).where(eq(users.id, userId)).limit(1);
@@ -230,7 +230,7 @@ export async function DELETE(
 
     const transactionResult = await db.transaction(async (tx) => {
       await tx.execute(
-        sql`select pg_advisory_xact_lock(hashtext('tasknebula.admin-user-governance'))`
+        sql`select pg_advisory_xact_lock(hashtext('validteam.admin-user-governance'))`
       );
 
       const [currentUser] = await tx

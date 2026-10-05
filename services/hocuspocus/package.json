@@ -1,9 +1,9 @@
 {
-  "name": "@tasknebula/hocuspocus",
+  "name": "@validteam/hocuspocus",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Hocuspocus collaboration server for TaskNebula (Tiptap + Yjs).",
+  "description": "Hocuspocus collaboration server for ValidTeam (Tiptap + Yjs).",
   "main": "src/server.mjs",
   "scripts": {
     "check": "node --check src/server.mjs && node --check src/healthcheck.mjs && node --check src/persistence.mjs",

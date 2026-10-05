@@ -11,9 +11,9 @@
  * of `runAutomations`.
  *
  * Headers emitted:
- *   - X-TaskNebula-Event:     the event name (e.g. issue.created)
- *   - X-TaskNebula-Signature: sha256=<hmac> over the raw JSON body
- *   - X-TaskNebula-Delivery:  unique id of the delivery row (for idempotency)
+ *   - X-ValidTeam-Event:     the event name (e.g. issue.created)
+ *   - X-ValidTeam-Signature: sha256=<hmac> over the raw JSON body
+ *   - X-ValidTeam-Delivery:  unique id of the delivery row (for idempotency)
  *   - X-Webhook-Signature:    legacy alias of the signature (without prefix)
  *   - X-Webhook-ID:           webhook id, useful for receiver-side debugging
  */
@@ -29,7 +29,7 @@ import {
   or,
   isNull,
   sql,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { postPublicEndpoint } from '@/lib/agents/provider-endpoint';
 import { webhookEndpointPolicy } from '@/lib/webhooks/url-policy';
 
@@ -170,9 +170,9 @@ export async function deliverWebhookRequest(params: {
           maxResponseBytes: 1000,
           headers: {
             'Content-Type': 'application/json',
-            'X-TaskNebula-Event': params.event,
-            'X-TaskNebula-Signature': `sha256=${params.signature}`,
-            'X-TaskNebula-Delivery': params.deliveryId,
+            'X-ValidTeam-Event': params.event,
+            'X-ValidTeam-Signature': `sha256=${params.signature}`,
+            'X-ValidTeam-Delivery': params.deliveryId,
             'X-Webhook-Signature': params.signature,
             'X-Webhook-ID': params.webhookId,
           },

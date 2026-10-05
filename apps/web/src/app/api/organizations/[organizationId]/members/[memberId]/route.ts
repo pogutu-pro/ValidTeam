@@ -10,7 +10,7 @@ import {
   projects,
   teamMembers,
   teams,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and, inArray, ne, sql } from 'drizzle-orm';
 import { hasPermission } from '@/lib/auth/permissions';
 import { createId } from '@paralleldrive/cuid2';

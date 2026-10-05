@@ -1,7 +1,7 @@
 /**
  * Shared email-safe layout primitives.
  *
- * All email HTML in TaskNebula should compose through these helpers so the
+ * All email HTML in ValidTeam should compose through these helpers so the
  * visual language stays consistent (IBM Modern / Carbon-inspired typography,
  * spacing, meta tables, CTA buttons, info cards).
  *
@@ -80,14 +80,14 @@ export function renderShell(args: RenderShellArgs): string {
     : '';
 
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="x-apple-disable-message-reformatting"/><title>TaskNebula</title></head>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="x-apple-disable-message-reformatting"/><title>ValidTeam</title></head>
 <body data-email-style="ibm-modern" style="margin:0;padding:0;background-color:${EMAIL_COLORS.page};font-family:${EMAIL_FONT};color:${EMAIL_COLORS.heading};-webkit-font-smoothing:antialiased;">
 ${preheaderHtml}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${EMAIL_COLORS.page};"><tr><td align="center" style="padding:40px 16px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;">
 <tr><td style="padding:0 4px 20px 4px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-<td align="left" style="font-family:${EMAIL_FONT};color:${EMAIL_COLORS.heading};font-weight:600;font-size:18px;letter-spacing:0;">TaskNebula</td>
+<td align="left" style="font-family:${EMAIL_FONT};color:${EMAIL_COLORS.heading};font-weight:600;font-size:18px;letter-spacing:0;">ValidTeam</td>
 <td align="right" width="120"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="right"><tr><td height="4" width="96" style="height:4px;width:96px;line-height:4px;font-size:0;background-color:${EMAIL_COLORS.brand};">&nbsp;</td></tr></table></td>
 </tr></table>
 </td></tr>
@@ -101,7 +101,7 @@ ${cta}
 <tr><td style="padding:24px 4px 0 4px;font-family:${EMAIL_FONT};font-size:12px;color:${EMAIL_COLORS.muted};" align="center">
 <a href="{{unsubscribeUrl}}" style="color:${EMAIL_COLORS.muted};text-decoration:none;">Manage notifications</a>
 &nbsp;&middot;&nbsp;
-<a href="{{appUrl}}" style="color:${EMAIL_COLORS.muted};text-decoration:none;">Open TaskNebula</a>
+<a href="{{appUrl}}" style="color:${EMAIL_COLORS.muted};text-decoration:none;">Open ValidTeam</a>
 &nbsp;&middot;&nbsp;
 <a href="{{appUrl}}/help" style="color:${EMAIL_COLORS.muted};text-decoration:none;">Help</a>
 </td></tr>

@@ -15,8 +15,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/auth';
-import { db, and, auditLogs, eq, ne, sql } from '@tasknebula/db';
-import { integrationConnections } from '@tasknebula/db/src/schema/integration-connections';
+import { db, and, auditLogs, eq, ne, sql } from '@validteam/db';
+import { integrationConnections } from '@validteam/db/src/schema/integration-connections';
 import { encryptToken } from '@/lib/integrations/token-crypto';
 import { hasPermission } from '@/lib/auth/permissions';
 import { SLACK_PROVIDER, SLACK_STATE_COOKIE, exchangeSlackCode } from '@/lib/integrations/slack';

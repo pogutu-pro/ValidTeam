@@ -30,7 +30,7 @@ function jsonReq(body: unknown, headers: Record<string, string> = {}): Request {
 
 describe('createMcpHttpHandler', () => {
   const handler = createMcpHttpHandler({
-    env: { TASKNEBULA_API_URL: 'https://api.test' } as NodeJS.ProcessEnv,
+    env: { VALIDTEAM_API_URL: 'https://api.test' } as NodeJS.ProcessEnv,
   });
 
   it('serves discovery JSON on GET', async () => {
@@ -67,7 +67,7 @@ describe('createMcpHttpHandler', () => {
   it('responds to initialize', async () => {
     const res = await handler(jsonReq({ jsonrpc: '2.0', id: 1, method: 'initialize' }));
     const body = await res.json();
-    expect(body.result.serverInfo.name).toBe('@tasknebula/mcp-server');
+    expect(body.result.serverInfo.name).toBe('@validteam/mcp-server');
     expect(body.result.protocolVersion).toBe(LATEST_PROTOCOL_VERSION);
   });
 
@@ -107,7 +107,7 @@ describe('createMcpHttpHandler', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('forwards a TaskNebula API key through a real tool call', async () => {
+  it('forwards a ValidTeam API key through a real tool call', async () => {
     let capturedUrl = '';
     let capturedInit: RequestInit | undefined;
     globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit) => {

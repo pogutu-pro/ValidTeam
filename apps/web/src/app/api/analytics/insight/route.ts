@@ -13,7 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq, gte, sql } from 'drizzle-orm';
-import { db, issues, sprints, workflowStatuses, organizations } from '@tasknebula/db';
+import { db, issues, sprints, workflowStatuses, organizations } from '@validteam/db';
 import { auth } from '@/auth';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 import { resolveProjectAccess } from '@/lib/auth/project-access';

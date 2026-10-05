@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2';
 import { z } from 'zod';
-import { agentApprovalEffectOutbox, db } from '@tasknebula/db';
+import { agentApprovalEffectOutbox, db } from '@validteam/db';
 import { and, asc, eq, lt, lte, or, sql } from 'drizzle-orm';
 import { runAutomations } from '@/lib/automation/evaluator';
 import { publishEventAwaitingFanOut } from '@/lib/realtime/events';

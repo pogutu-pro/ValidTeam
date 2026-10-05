@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { and, db, eq, teamMembers, teams, users } from '@tasknebula/db';
+import { and, db, eq, teamMembers, teams, users } from '@validteam/db';
 import { auth } from '@/auth';
 import { hasPermission } from '@/lib/auth/permissions';
 
@@ -28,7 +28,11 @@ async function getTeamspaceMember(teamId: string, memberId: string) {
   return member ?? null;
 }
 
-async function updateLead(teamId: string, previousLeadId: string | null, nextLeadId: string | null) {
+async function updateLead(
+  teamId: string,
+  previousLeadId: string | null,
+  nextLeadId: string | null
+) {
   if (previousLeadId && previousLeadId !== nextLeadId) {
     const [previousLead] = await db
       .select({ id: teamMembers.id })

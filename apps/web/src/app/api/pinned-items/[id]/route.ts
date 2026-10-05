@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, pinnedItems } from '@tasknebula/db';
+import { db, pinnedItems } from '@validteam/db';
 import { and, eq } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -25,12 +25,7 @@ export async function DELETE(
 
     const [deleted] = await db
       .delete(pinnedItems)
-      .where(
-        and(
-          eq(pinnedItems.id, id),
-          eq(pinnedItems.userId, session.user.id)
-        )
-      )
+      .where(and(eq(pinnedItems.id, id), eq(pinnedItems.userId, session.user.id)))
       .returning();
 
     if (!deleted) {
@@ -40,9 +35,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete pinned item error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete pinned item' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete pinned item' }, { status: 500 });
   }
 }

@@ -2,7 +2,7 @@
  * AiBadge — render + tooltip metadata tests.
  *
  * Verifies that AI-output surfaces produce a visible, machine-readable badge
- * (TaskNebula's product provenance policy) and that the tooltip text is composed
+ * (ValidTeam's product provenance policy) and that the tooltip text is composed
  * from the supplied model + feature + timestamp.
  */
 

@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import {
-  and,
-  createAuditLog,
-  db,
-  documentPageRevisions,
-  documentPages,
-  eq,
-} from '@tasknebula/db';
+import { and, createAuditLog, db, documentPageRevisions, documentPages, eq } from '@validteam/db';
 import {
   buildDocumentPageResponse,
   ensureUniqueDocumentSlug,
@@ -35,7 +28,10 @@ export async function POST(
     const { pageId } = await params;
     const access = await resolveDocumentPageAccess(session.user.id, pageId);
     if (!access?.permissions.canEdit) {
-      return NextResponse.json({ error: 'You do not have permission to restore this page' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to restore this page' },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
@@ -46,8 +42,14 @@ export async function POST(
       .from(documentPageRevisions)
       .where(
         data.revisionId
-          ? and(eq(documentPageRevisions.pageId, pageId), eq(documentPageRevisions.id, data.revisionId))
-          : and(eq(documentPageRevisions.pageId, pageId), eq(documentPageRevisions.revision, data.revision || 0))
+          ? and(
+              eq(documentPageRevisions.pageId, pageId),
+              eq(documentPageRevisions.id, data.revisionId)
+            )
+          : and(
+              eq(documentPageRevisions.pageId, pageId),
+              eq(documentPageRevisions.revision, data.revision || 0)
+            )
       )
       .limit(1);
 
@@ -92,7 +94,11 @@ export async function POST(
       createdBy: session.user.id,
     });
 
-    await replaceDocumentLinks(pageId, extractInternalDocumentLinkIds(revision.contentJson), session.user.id);
+    await replaceDocumentLinks(
+      pageId,
+      extractInternalDocumentLinkIds(revision.contentJson),
+      session.user.id
+    );
 
     await createAuditLog({
       userId: session.user.id,
@@ -112,7 +118,10 @@ export async function POST(
     return NextResponse.json(responsePage);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
     }
 
     console.error('Error restoring document revision:', error);

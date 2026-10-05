@@ -1,5 +1,5 @@
 {
-  "name": "TaskNebula Development",
+  "name": "ValidTeam Development",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "postgres",
   "workspaceFolder": "/workspace",
@@ -30,4 +30,3 @@
   "postCreateCommand": "pnpm install",
   "remoteUser": "node"
 }
-

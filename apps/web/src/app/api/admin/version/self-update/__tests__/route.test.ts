@@ -53,7 +53,7 @@ const updateStatus = {
   current: '0.6.9',
   latest: '0.7.0',
   updateAvailable: true,
-  image: { latestTag: '0.7.0', repository: 'neuraparse/tasknebula' },
+  image: { latestTag: '0.7.0', repository: 'neuraparse/validteam' },
 };
 
 const selfUpdateStatus = {
@@ -62,7 +62,7 @@ const selfUpdateStatus = {
   mode: 'external-webhook',
   blockedReason: null,
   targetVersion: '0.7.0',
-  repository: 'neuraparse/tasknebula',
+  repository: 'neuraparse/validteam',
   digest: null,
   webhookConfigured: true,
   manualCommands: 'docker compose pull web',

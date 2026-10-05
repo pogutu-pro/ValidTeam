@@ -13,7 +13,7 @@ import {
   organizationMembers,
   organizations,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { ne } from 'drizzle-orm';
 
 export async function GET() {

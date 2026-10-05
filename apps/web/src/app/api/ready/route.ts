@@ -1,12 +1,12 @@
 /**
  * Readiness Check Endpoint
- * 
+ *
  * Returns whether the application is ready to accept traffic.
  * Used by Kubernetes readiness probes.
  */
 
 import { NextResponse } from 'next/server';
-import { db } from '@tasknebula/db';
+import { db } from '@validteam/db';
 import { sql } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -60,4 +60,3 @@ export async function GET() {
     },
   });
 }
-

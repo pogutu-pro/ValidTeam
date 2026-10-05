@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import {
-  and,
-  createAuditLog,
-  db,
-  documentPageRevisions,
-  documentPages,
-  eq,
-} from '@tasknebula/db';
+import { and, createAuditLog, db, documentPageRevisions, documentPages, eq } from '@validteam/db';
 import {
   ensureUniqueDocumentSlug,
   buildDocumentPageResponse,
@@ -72,7 +65,10 @@ export async function PATCH(
     const access = await resolveDocumentPageAccess(session.user.id, pageId);
 
     if (!access?.permissions.canEdit) {
-      return NextResponse.json({ error: 'You do not have permission to edit this page' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to edit this page' },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
@@ -81,17 +77,26 @@ export async function PATCH(
 
     if (currentPage.currentRevision !== data.expectedRevision) {
       return NextResponse.json(
-        { error: 'This page has changed since you opened it', currentRevision: currentPage.currentRevision },
+        {
+          error: 'This page has changed since you opened it',
+          currentRevision: currentPage.currentRevision,
+        },
         { status: 409 }
       );
     }
 
     const nextTitle = data.title || currentPage.title;
-    const nextContentJson = data.contentJson || (currentPage.contentJson as Record<string, unknown>);
+    const nextContentJson =
+      data.contentJson || (currentPage.contentJson as Record<string, unknown>);
     const nextContentText = extractDocumentText(nextContentJson);
     const nextExcerpt = extractDocumentExcerpt(nextContentJson);
     const nextSlug = data.title
-      ? await ensureUniqueDocumentSlug(currentPage.spaceId, currentPage.parentId || null, data.title, currentPage.id)
+      ? await ensureUniqueDocumentSlug(
+          currentPage.spaceId,
+          currentPage.parentId || null,
+          data.title,
+          currentPage.id
+        )
       : currentPage.slug;
     const nextRevision = currentPage.currentRevision + 1;
 
@@ -118,7 +123,10 @@ export async function PATCH(
 
     if (!updatedPage) {
       return NextResponse.json(
-        { error: 'This page has changed since you opened it', currentRevision: currentPage.currentRevision },
+        {
+          error: 'This page has changed since you opened it',
+          currentRevision: currentPage.currentRevision,
+        },
         { status: 409 }
       );
     }
@@ -134,7 +142,11 @@ export async function PATCH(
       createdBy: session.user.id,
     });
 
-    await replaceDocumentLinks(updatedPage.id, extractInternalDocumentLinkIds(nextContentJson), session.user.id);
+    await replaceDocumentLinks(
+      updatedPage.id,
+      extractInternalDocumentLinkIds(nextContentJson),
+      session.user.id
+    );
 
     await createAuditLog({
       userId: session.user.id,
@@ -154,7 +166,10 @@ export async function PATCH(
     return NextResponse.json(responsePage);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
     }
 
     console.error('Error updating document page:', error);
@@ -176,7 +191,10 @@ export async function DELETE(
     const access = await resolveDocumentPageAccess(session.user.id, pageId);
 
     if (!access?.permissions.canDelete) {
-      return NextResponse.json({ error: 'You do not have permission to archive this page' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to archive this page' },
+        { status: 403 }
+      );
     }
 
     const [page] = await db

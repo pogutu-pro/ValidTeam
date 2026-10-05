@@ -16,7 +16,7 @@ jest.mock('@/auth', () => ({ auth: (...args: unknown[]) => authMock(...args) }))
 jest.mock('@/lib/auth/permissions', () => ({
   hasPermission: (...args: unknown[]) => hasPermissionMock(...args),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const integrationTable = {
     name: 'integration_connections',
     organizationId: 'integration.organizationId',

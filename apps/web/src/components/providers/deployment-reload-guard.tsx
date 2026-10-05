@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 
-const STALE_DEPLOYMENT_RELOAD_KEY = 'tasknebula:stale-deployment-reload-at';
+const STALE_DEPLOYMENT_RELOAD_KEY = 'validteam:stale-deployment-reload-at';
 const RELOAD_THROTTLE_MS = 30_000;
-const TASKNEBULA_CACHE_PREFIX = 'tasknebula-';
+const VALIDTEAM_CACHE_PREFIX = 'validteam-';
 
 const STALE_DEPLOYMENT_PATTERNS = [
   'Failed to find Server Action',
@@ -44,7 +44,7 @@ function getRequestMethod(input: RequestInfo | URL, init?: RequestInit): string 
   return 'GET';
 }
 
-async function clearTaskNebulaRuntimeState() {
+async function clearValidTeamRuntimeState() {
   const tasks: Array<Promise<unknown>> = [];
 
   if ('caches' in window) {
@@ -54,7 +54,7 @@ async function clearTaskNebulaRuntimeState() {
         .then((keys) =>
           Promise.all(
             keys
-              .filter((key) => key.startsWith(TASKNEBULA_CACHE_PREFIX))
+              .filter((key) => key.startsWith(VALIDTEAM_CACHE_PREFIX))
               .map((key) => caches.delete(key))
           )
         )
@@ -87,7 +87,7 @@ function reloadOnceForStaleDeployment() {
     // Session storage can be unavailable in hardened browser modes.
   }
 
-  clearTaskNebulaRuntimeState()
+  clearValidTeamRuntimeState()
     .catch(() => undefined)
     .finally(() => {
       deploymentReloadInternals.reload();

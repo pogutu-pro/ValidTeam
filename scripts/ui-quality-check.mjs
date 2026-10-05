@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * TaskNebula UI quality gate.
+ * ValidTeam UI quality gate.
  *
  * This script intentionally checks only deterministic design invariants.
  * Visual hierarchy, responsive composition, and state behavior still require

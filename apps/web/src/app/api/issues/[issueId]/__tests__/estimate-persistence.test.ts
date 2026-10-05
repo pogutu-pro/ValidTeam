@@ -120,7 +120,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   resolveOrganizationAccess: (...args: unknown[]) => resolveOrganizationAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     transaction: (callback: (tx: unknown) => unknown) => callback({}),

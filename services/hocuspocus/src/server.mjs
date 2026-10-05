@@ -1,5 +1,5 @@
 /**
- * TaskNebula Hocuspocus server.
+ * ValidTeam Hocuspocus server.
  *
  * Standalone Node service that hosts the Yjs documents backing the
  * collaborative issue description (and, eventually, comments + docs). The
@@ -195,8 +195,8 @@ const server = new Hocuspocus({
     let name = null;
     try {
       const { payload } = await jwtVerify(token, verifyKey, {
-        issuer: 'tasknebula-web',
-        audience: 'tasknebula-collab',
+        issuer: 'validteam-web',
+        audience: 'validteam-collab',
       });
       if (!payload.sub) {
         throw new Error('Token missing subject');

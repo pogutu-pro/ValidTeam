@@ -76,7 +76,7 @@ export function MarketingNav() {
             <span className="sm:hidden">{t('aiTransparencyShort')}</span>
           </Link>
           <Link
-            href={ROUTES.signIn}
+            href="/auth/request-access"
             className={`group inline-flex h-[34px] items-center gap-1.5 rounded-md bg-[var(--landing-accent-ruby-solid)] px-3 text-[13px] font-[450] text-white transition-colors duration-150 hover:bg-[var(--landing-accent-ruby-solid-hover)] ${focusRingClass}`}
           >
             {t('requestAccess')}

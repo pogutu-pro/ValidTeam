@@ -11,7 +11,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   listActiveOrganizationMemberships: (...args: unknown[]) =>
     listActiveOrganizationMembershipsMock(...args),
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: { select: (...args: unknown[]) => selectMock(...args) },
   users: {
     id: 'users.id',

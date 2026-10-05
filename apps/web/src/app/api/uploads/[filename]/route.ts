@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, attachments, documentPageAttachments } from '@tasknebula/db';
+import { db, attachments, documentPageAttachments } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { canReadIssue } from '@/lib/auth/access-control';
 import { resolveDocumentPageAccess } from '@/lib/docs/server';

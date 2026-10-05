@@ -7,7 +7,7 @@ import {
 const MAX_WEBHOOK_URL_LENGTH = 2048;
 
 function configuredWebhookHostAllowlist(): string[] {
-  return (process.env.TASKNEBULA_WEBHOOK_HOST_ALLOWLIST ?? '')
+  return (process.env.VALIDTEAM_WEBHOOK_HOST_ALLOWLIST ?? '')
     .split(',')
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
@@ -15,7 +15,7 @@ function configuredWebhookHostAllowlist(): string[] {
 
 export function webhookEndpointPolicy(): PublicEndpointPolicy {
   return {
-    allowInsecureHttp: process.env.TASKNEBULA_WEBHOOK_ALLOW_INSECURE_HTTP === 'true',
+    allowInsecureHttp: process.env.VALIDTEAM_WEBHOOK_ALLOW_INSECURE_HTTP === 'true',
     hostAllowlist: configuredWebhookHostAllowlist(),
   };
 }

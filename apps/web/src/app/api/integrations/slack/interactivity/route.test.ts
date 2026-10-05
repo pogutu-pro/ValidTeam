@@ -14,7 +14,7 @@ jest.mock('@/lib/integrations/slack', () => ({
 }));
 jest.mock('@/lib/integrations/slack-commands', () => ({
   resolveSlackOrg: (...args: unknown[]) => resolveSlackOrgMock(...args),
-  lookupTaskNebulaUserBySlackId: (...args: unknown[]) => lookupUserMock(...args),
+  lookupValidTeamUserBySlackId: (...args: unknown[]) => lookupUserMock(...args),
 }));
 jest.mock('@/lib/integrations/slack-issue-bridge', () => ({
   createIssueFromSlackMessage: (...args: unknown[]) => createIssueMock(...args),
@@ -33,7 +33,7 @@ jest.mock('next-intl/server', () => ({
     return messages[key] ?? key;
   },
 }));
-jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
+jest.mock('@validteam/db/src/schema/integration-connections', () => ({
   integrationConnections: {
     organizationId: 'integration.organizationId',
     provider: 'integration.provider',
@@ -41,7 +41,7 @@ jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
     accessTokenEnc: 'integration.accessTokenEnc',
   },
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   projects: { id: 'projects.id', organizationId: 'projects.organizationId', key: 'projects.key' },
   eq: (...args: unknown[]) => ({ eq: args }),
   and: (...args: unknown[]) => ({ and: args }),

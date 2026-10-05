@@ -30,7 +30,7 @@ jest.mock('@/lib/webhooks/dispatcher', () => ({
 jest.mock('drizzle-orm', () => ({
   eq: (...args: unknown[]) => ({ eq: args }),
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   webhooks: { id: 'webhooks.id' },
   db: {
     select: () => ({

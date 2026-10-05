@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rolloverAllOverdueCycles } from '@/lib/issues/cycle-rollover';
-import { db, users } from '@tasknebula/db';
+import { db, users } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { requireCronAuth } from '@/lib/agents/cron-auth';
 
@@ -19,7 +19,7 @@ import { requireCronAuth } from '@/lib/agents/cron-auth';
  * failures are safe.
  *
  * History rows are credited to the system user whose email matches
- * `CRON_SYSTEM_USER_EMAIL` (defaults to `system@tasknebula.local`). If no
+ * `CRON_SYSTEM_USER_EMAIL` (defaults to `system@validteam.local`). If no
  * such user exists, we still run the rollover but skip the `changed_by`
  * field — the FK is nullable for exactly this case.
  */
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   const guard = requireCronAuth(request);
   if (guard) return guard;
 
-  const systemEmail = process.env.CRON_SYSTEM_USER_EMAIL || 'system@tasknebula.local';
+  const systemEmail = process.env.CRON_SYSTEM_USER_EMAIL || 'system@validteam.local';
   const [systemUser] = await db
     .select({ id: users.id })
     .from(users)

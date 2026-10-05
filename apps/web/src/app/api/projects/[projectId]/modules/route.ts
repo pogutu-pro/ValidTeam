@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { desc, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
-import { db } from '@tasknebula/db';
-import { projectModules } from '@tasknebula/db/src/schema/project-modules';
+import { db } from '@validteam/db';
+import { projectModules } from '@validteam/db/src/schema/project-modules';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 
 const MODULE_STATUSES = [

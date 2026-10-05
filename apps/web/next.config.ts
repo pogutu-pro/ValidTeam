@@ -13,13 +13,13 @@ const nextConfig: NextConfig = {
   // This creates a minimal production build with only necessary files
   output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../..'),
-  transpilePackages: ['@tasknebula/types', '@tasknebula/mcp-server'],
+  transpilePackages: ['@validteam/types', '@validteam/mcp-server'],
   // Keep native/server worker entry points out of the webpack server bundle.
   // Pino's development transport resolves `lib/worker.js` relative to the
   // installed package; bundling it into `.next/server/vendor-chunks` breaks
   // that invariant and leaves data-heavy pages stuck in their loading state.
   serverExternalPackages: [
-    '@tasknebula/db',
+    '@validteam/db',
     'postgres',
     'drizzle-orm',
     'pino',

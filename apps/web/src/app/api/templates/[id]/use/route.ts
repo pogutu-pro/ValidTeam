@@ -15,7 +15,7 @@ import {
   workflows,
   workflowStatuses,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/auth';
 import { sql } from 'drizzle-orm';

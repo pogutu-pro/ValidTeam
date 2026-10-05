@@ -1,5 +1,5 @@
 /**
- * Common Zod helper schemas used across TaskNebula API routes.
+ * Common Zod helper schemas used across ValidTeam API routes.
  *
  * Keep these intentionally small and composable. Route-specific shapes
  * should live alongside the route; only put genuinely reusable primitives

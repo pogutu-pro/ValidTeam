@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Bootstrap for `npx @tasknebula/mcp-server`.
+ * Bootstrap for `npx @validteam/mcp-server`.
  *
  * The published package ships compiled `.js` output under `dist/`. In
  * the workspace we also support running directly from TypeScript via
@@ -26,20 +26,20 @@ async function main() {
       register();
     } catch {
       console.error(
-        '[tasknebula-mcp] dist not built and tsx not installed. ' +
-          'Run `pnpm --filter @tasknebula/mcp-server build` first.',
+        '[validteam-mcp] dist not built and tsx not installed. ' +
+          'Run `pnpm --filter @validteam/mcp-server build` first.'
       );
       process.exit(1);
     }
     mod = await import(pathToFileURL(srcEntry).href);
   } else {
-    console.error('[tasknebula-mcp] No entry point found.');
+    console.error('[validteam-mcp] No entry point found.');
     process.exit(1);
   }
   await mod.runStdio();
 }
 
 main().catch((err) => {
-  console.error('[tasknebula-mcp] fatal:', err);
+  console.error('[validteam-mcp] fatal:', err);
   process.exit(1);
 });

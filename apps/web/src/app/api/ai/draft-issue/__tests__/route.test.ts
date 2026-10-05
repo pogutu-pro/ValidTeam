@@ -34,7 +34,7 @@ jest.mock('@/lib/feature-flags', () => ({
 }));
 
 const createAuditLogMock = jest.fn().mockResolvedValue(undefined);
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const makeSelectChain = () => {
     const chain: any = {
       from: jest.fn().mockReturnThis(),
@@ -132,7 +132,7 @@ function buildRequest(body: unknown) {
 
 function mockDbSelect(...queueOfResults: any[][]) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-  const { db } = require('@tasknebula/db');
+  const { db } = require('@validteam/db');
   for (const rows of queueOfResults) {
     (db.select as jest.Mock).mockImplementationOnce(() => ({
       from: jest.fn().mockReturnThis(),

@@ -1,4 +1,4 @@
-# TaskNebula documentation
+# ValidTeam documentation
 
 This directory contains durable, public documentation. Temporary audits,
 handoffs, generated research dumps, deployment-specific notes, and screenshots

@@ -51,7 +51,7 @@ jest.mock('@/auth', () => ({
   auth: (...args: unknown[]) => authMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     update: (...args: unknown[]) => dbUpdateMock(...args),

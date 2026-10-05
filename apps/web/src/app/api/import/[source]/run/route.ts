@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, importJobs } from '@tasknebula/db';
+import { db, importJobs } from '@validteam/db';
 import { isImportSource, type ImportSource } from '@/lib/importers';
 import { executeImportJob } from '@/lib/importers/runner';
 import { resolveProjectCapabilityAccess } from '@/lib/auth/project-access';

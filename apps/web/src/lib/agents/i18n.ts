@@ -37,7 +37,7 @@ function providerEnvVar(provider: AgentProvider | string) {
 }
 
 function isNativePlaceholderModel(model?: string) {
-  return !model?.trim() || model.startsWith('tasknebula-');
+  return !model?.trim() || model.startsWith('validteam-');
 }
 
 function providerValues(provider: AgentProvider | string) {

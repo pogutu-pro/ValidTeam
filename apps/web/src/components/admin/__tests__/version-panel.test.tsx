@@ -33,7 +33,7 @@ function info(overrides: Partial<VersionInfo> = {}): VersionInfo {
     notes: null,
     checkedAt: null,
     image: {
-      repository: 'neuraparse/tasknebula',
+      repository: 'neuraparse/validteam',
       latestTag: null,
       latestTagUrl: null,
       latestPushedAt: null,
@@ -151,9 +151,9 @@ describe('VersionPanel', () => {
         latest: '0.5.0',
         updateAvailable: true,
         image: {
-          repository: 'neuraparse/tasknebula',
+          repository: 'neuraparse/validteam',
           latestTag: '0.5.0',
-          latestTagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=0.5.0',
+          latestTagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=0.5.0',
           latestPushedAt: '2026-06-20T02:13:49.101Z',
           latestDigest: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
           latestSizeBytes: 123456789,
@@ -166,10 +166,10 @@ describe('VersionPanel', () => {
           mode: 'external-webhook',
           blockedReason: null,
           targetVersion: '0.5.0',
-          repository: 'neuraparse/tasknebula',
+          repository: 'neuraparse/validteam',
           digest: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
           imageRef:
-            'neuraparse/tasknebula@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+            'neuraparse/validteam@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
           backupPreflight,
           webhookConfigured: true,
           manualCommands: 'docker compose pull web',
@@ -200,7 +200,7 @@ describe('VersionPanel', () => {
           mode: 'manual',
           blockedReason: 'disabled',
           targetVersion: '0.5.0',
-          repository: 'neuraparse/tasknebula',
+          repository: 'neuraparse/validteam',
           digest: null,
           imageRef: null,
           backupPreflight,
@@ -223,9 +223,9 @@ describe('VersionPanel', () => {
         latest: '0.5.0',
         updateAvailable: true,
         image: {
-          repository: 'neuraparse/tasknebula',
+          repository: 'neuraparse/validteam',
           latestTag: '0.5.0',
-          latestTagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=0.5.0',
+          latestTagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=0.5.0',
           latestPushedAt: '2026-06-20T02:13:49.101Z',
           latestDigest: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
           latestSizeBytes: 123456789,
@@ -237,12 +237,12 @@ describe('VersionPanel', () => {
     render(<VersionPanel />);
 
     expect(screen.getByText('Docker image')).toBeInTheDocument();
-    expect(screen.getAllByText('neuraparse/tasknebula').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('neuraparse/validteam').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('Image update available')).toBeInTheDocument();
     expect(screen.getByText('117.7 MB')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /View Docker tag/i })).toHaveAttribute(
       'href',
-      'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=0.5.0'
+      'https://hub.docker.com/r/neuraparse/validteam/tags?name=0.5.0'
     );
   });
 
@@ -251,7 +251,7 @@ describe('VersionPanel', () => {
       data: info({
         latest: '0.5.0',
         updateAvailable: true,
-        releaseUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v0.5.0',
+        releaseUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v0.5.0',
       }),
     });
     render(<VersionPanel />);
@@ -259,7 +259,7 @@ describe('VersionPanel', () => {
     const link = screen.getByRole('link', { name: /View release on GitHub/i });
     expect(link).toHaveAttribute(
       'href',
-      'https://github.com/neuraparse/taskNebula/releases/tag/v0.5.0'
+      'https://github.com/neuraparse/validTeam/releases/tag/v0.5.0'
     );
   });
 

@@ -28,7 +28,7 @@ import {
   roomReadStates,
   sql,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import {
   buildLivekitParticipantIdentity,
   buildLivekitRoomName,

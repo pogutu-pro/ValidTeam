@@ -123,8 +123,7 @@ export const viewport: Viewport = {
  */
 async function resolveLocale(): Promise<Locale> {
   const headerStore = await headers();
-  const fromHeader =
-    headerStore.get('x-validteam-locale') ?? headerStore.get('x-tasknebula-locale');
+  const fromHeader = headerStore.get('x-validteam-locale') ?? headerStore.get('x-validteam-locale');
   if (isSupportedLocale(fromHeader)) return fromHeader;
 
   const cookieStore = await cookies();
@@ -166,8 +165,8 @@ export default async function RootLayout({
                   // Migrate pre-rebrand preference keys once, before the theme
                   // providers read them, so an upgrade keeps the user's choices.
                   var keyPairs = [
-                    ['tasknebula-color-mode', 'validteam-color-mode'],
-                    ['tasknebula-theme', 'validteam-theme']
+                    ['validteam-color-mode', 'validteam-color-mode'],
+                    ['validteam-theme', 'validteam-theme']
                   ];
                   for (var i = 0; i < keyPairs.length; i++) {
                     var from = keyPairs[i][0];
@@ -265,7 +264,7 @@ export default async function RootLayout({
                           cacheKeys
                             .filter(
                               (key) =>
-                                key.startsWith('validteam-') || key.startsWith('tasknebula-')
+                                key.startsWith('validteam-') || key.startsWith('validteam-')
                             )
                             .map((key) => caches.delete(key))
                         );

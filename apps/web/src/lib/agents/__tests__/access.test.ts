@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {},
   organizationMembers: {},
   projectMembers: {},

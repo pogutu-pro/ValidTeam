@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { db, intakeForms } from '@tasknebula/db';
+import { db, intakeForms } from '@validteam/db';
 import { eq } from 'drizzle-orm';
-import type { IntakeFieldDefinition } from '@tasknebula/db';
+import type { IntakeFieldDefinition } from '@validteam/db';
 import { PublicIntakeForm } from '@/components/intake/public-intake-form';
 
 export async function generateMetadata({

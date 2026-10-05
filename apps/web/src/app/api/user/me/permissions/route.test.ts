@@ -36,7 +36,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   resolveOrganizationAccess: (...args: unknown[]) => resolveOrganizationAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   and: (...args: unknown[]) => ({ type: 'and', args }),
   eq: (left: unknown, right: unknown) => ({ type: 'eq', left, right }),
   getRolePermissions: (role: string) =>

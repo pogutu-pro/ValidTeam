@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
 import { createId } from '@paralleldrive/cuid2';
-import { db, sql, systemAuditLogs } from '@tasknebula/db';
+import { db, sql, systemAuditLogs } from '@validteam/db';
 import {
   getVersionUpdatePreferences,
   VERSION_UPDATE_PREFERENCES_ADVISORY_LOCK,

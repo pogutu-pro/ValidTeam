@@ -19,7 +19,7 @@ jest.mock('@/lib/integrations/token-crypto', () => ({
   asTokenEnvelope: (...args: unknown[]) => asTokenEnvelopeMock(...args),
   decryptToken: (...args: unknown[]) => decryptTokenMock(...args),
 }));
-jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
+jest.mock('@validteam/db/src/schema/integration-connections', () => ({
   integrationConnections: {
     name: 'integration_connections',
     id: 'integration.id',
@@ -27,7 +27,7 @@ jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
     provider: 'integration.provider',
   },
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const auditTable = { name: 'audit_logs' };
   const tx = {
     execute: async (query: { values?: unknown[] }) => {

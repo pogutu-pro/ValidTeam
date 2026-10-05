@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, sprints } from '@tasknebula/db';
+import { db, sprints } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { rolloverCycle } from '@/lib/issues/cycle-rollover';
 import { publishEvent } from '@/lib/realtime/events';

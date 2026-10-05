@@ -40,14 +40,14 @@ const loggerMock = jest.requireMock('@/lib/logger') as { mockWarn: jest.Mock };
 
 describe('Redis connection logging', () => {
   beforeEach(() => {
-    delete global.__tasknebulaRedis__;
+    delete global.__validteamRedis__;
     jest.clearAllMocks();
     process.env.REDIS_URL = 'redis://redis.test:6379';
   });
 
   afterAll(() => {
     delete process.env.REDIS_URL;
-    delete global.__tasknebulaRedis__;
+    delete global.__validteamRedis__;
   });
 
   it('handles command-client errors through the structured logger', () => {

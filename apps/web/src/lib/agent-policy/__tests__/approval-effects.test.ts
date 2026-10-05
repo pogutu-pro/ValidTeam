@@ -33,7 +33,7 @@ function applySet(values: Record<string, unknown>) {
   }
 }
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const table = new Proxy({ __name: 'agent_approval_effect_outbox' } as Record<string, string>, {
     get(target, property: string) {
       return target[property] ?? `agent_approval_effect_outbox.${property}`;

@@ -24,10 +24,10 @@
  *      JSONL and returns the parsed rows. The storage path is recorded in
  *      `llm_batch_jobs.results_storage_path` for later replay.
  *
- * All persistence goes through `@tasknebula/db`.
+ * All persistence goes through `@validteam/db`.
  */
 
-import { db, eq, llmBatchJobs } from '@tasknebula/db';
+import { db, eq, llmBatchJobs } from '@validteam/db';
 
 export type BatchWorkload =
   | 'embedding_backfill'
@@ -60,7 +60,7 @@ export interface SubmitBatchOptions {
 }
 
 export interface SubmitBatchResult {
-  /** TaskNebula-side `llm_batch_jobs.id`. */
+  /** ValidTeam-side `llm_batch_jobs.id`. */
   id: string;
   /** Upstream OpenAI batch id (e.g. `batch_abc123`). */
   externalBatchId: string;
@@ -119,7 +119,7 @@ async function uploadBatchFile(apiKey: string, jsonl: string): Promise<string> {
   // Blob is available globally in Node 20+ and the Edge runtime.
   const blob = new Blob([jsonl], { type: 'application/jsonl' });
   form.append('purpose', 'batch');
-  form.append('file', blob, 'tasknebula-batch.jsonl');
+  form.append('file', blob, 'validteam-batch.jsonl');
 
   const res = await fetch(`${OPENAI_BASE_URL}/files`, {
     method: 'POST',
@@ -181,7 +181,7 @@ async function createOpenAiBatch(
 
 /**
  * Submit a batch job. Persists a row in `llm_batch_jobs` and returns the
- * TaskNebula id + provider id.
+ * ValidTeam id + provider id.
  */
 export async function submitBatchJob(
   requests: BatchRequestLine[],
@@ -197,16 +197,10 @@ export async function submitBatchJob(
 
   const jsonl = toJsonl(requests);
   const fileId = await uploadBatchFile(apiKey, jsonl);
-  const batch = await createOpenAiBatch(
-    apiKey,
-    fileId,
-    endpoint,
-    completionWindow,
-    {
-      workload: options.workload,
-      ...(options.metadata ?? {}),
-    }
-  );
+  const batch = await createOpenAiBatch(apiKey, fileId, endpoint, completionWindow, {
+    workload: options.workload,
+    ...(options.metadata ?? {}),
+  });
 
   const inserted = await db
     .insert(llmBatchJobs)
@@ -239,14 +233,10 @@ export async function submitBatchJob(
 }
 
 /**
- * Look up the TaskNebula batch row by its internal id.
+ * Look up the ValidTeam batch row by its internal id.
  */
 async function loadBatchRow(batchId: string) {
-  const rows = await db
-    .select()
-    .from(llmBatchJobs)
-    .where(eq(llmBatchJobs.id, batchId))
-    .limit(1);
+  const rows = await db.select().from(llmBatchJobs).where(eq(llmBatchJobs.id, batchId)).limit(1);
   const row = rows[0];
   if (!row) {
     throw new BatchError('not_found', `Batch job ${batchId} not found.`, 404);
@@ -287,10 +277,7 @@ export async function pollBatch(batchId: string, apiKeyOverride?: string): Promi
   const completedRequests = payload.request_counts?.completed ?? row.completedRequests;
   const errorCount = payload.request_counts?.failed ?? row.errorCount;
   const isTerminal =
-    status === 'completed' ||
-    status === 'failed' ||
-    status === 'expired' ||
-    status === 'cancelled';
+    status === 'completed' || status === 'failed' || status === 'expired' || status === 'cancelled';
 
   const update: Record<string, unknown> = {
     status,
@@ -299,9 +286,7 @@ export async function pollBatch(batchId: string, apiKeyOverride?: string): Promi
     errorCount,
   };
   if (isTerminal) {
-    update.completedAt = payload.completed_at
-      ? new Date(payload.completed_at * 1000)
-      : new Date();
+    update.completedAt = payload.completed_at ? new Date(payload.completed_at * 1000) : new Date();
   }
   // Snapshot the output/error file ids onto metadata so fetchBatchResults
   // can pull them without re-polling.
@@ -321,7 +306,7 @@ export async function pollBatch(batchId: string, apiKeyOverride?: string): Promi
     errorCount,
     workload: row.workload,
     resultsStoragePath: row.resultsStoragePath,
-    completedAt: isTerminal ? (update.completedAt as Date | null) ?? null : null,
+    completedAt: isTerminal ? ((update.completedAt as Date | null) ?? null) : null,
   };
 }
 
@@ -355,11 +340,7 @@ export async function fetchBatchResults(
 
   const meta = (row.metadata ?? {}) as { outputFileId?: string };
   if (!meta.outputFileId) {
-    throw new BatchError(
-      'no_output_file',
-      `Batch ${batchId} has no output_file_id recorded.`,
-      502
-    );
+    throw new BatchError('no_output_file', `Batch ${batchId} has no output_file_id recorded.`, 502);
   }
 
   const res = await fetch(`${OPENAI_BASE_URL}/files/${meta.outputFileId}/content`, {

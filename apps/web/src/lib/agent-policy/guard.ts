@@ -3,7 +3,7 @@ import {
   createAuditLog,
   db,
   type AgentApprovalRequest,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { evaluateAgentPolicy } from './evaluator';
 import type {
   AgentApprovalExecutor,

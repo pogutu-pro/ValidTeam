@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { accessSync, constants, existsSync } from 'node:fs';
 import path from 'node:path';
-import { agentSessions, db, eq } from '@tasknebula/db';
+import { agentSessions, db, eq } from '@validteam/db';
 import { emitAgentLog, emitAgentStatus } from '@/lib/websocket/server';
 import { type AgentProviderKind, type AgentSessionRequest } from '@/lib/agents/sessions';
 
@@ -163,15 +163,15 @@ function providerEnvPrefix(provider: LocalRunnerProvider): 'CLAUDE' | 'CODEX' {
 
 function commandFor(provider: LocalRunnerProvider): string {
   const prefix = providerEnvPrefix(provider);
-  return process.env[`TASKNEBULA_LOCAL_${prefix}_COMMAND`] || provider;
+  return process.env[`VALIDTEAM_LOCAL_${prefix}_COMMAND`] || provider;
 }
 
 function cwdFor(provider: LocalRunnerProvider): string {
   const prefix = providerEnvPrefix(provider);
   return path.resolve(
-    process.env[`TASKNEBULA_LOCAL_${prefix}_CWD`] ||
-      process.env.TASKNEBULA_LOCAL_AGENT_CWD ||
-      process.env.TASKNEBULA_REPO_ROOT ||
+    process.env[`VALIDTEAM_LOCAL_${prefix}_CWD`] ||
+      process.env.VALIDTEAM_LOCAL_AGENT_CWD ||
+      process.env.VALIDTEAM_REPO_ROOT ||
       process.cwd()
   );
 }
@@ -218,19 +218,19 @@ export function getLocalAgentRunnerStatus(
   const prefix = providerEnvPrefix(provider);
   const enabledByProvider = enabled && isLocalAgentEndpoint(endpointUrl);
   const enabledByEnv =
-    readBoolean(process.env.TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED) ||
-    readBoolean(process.env[`TASKNEBULA_LOCAL_${prefix}_ENABLED`]);
+    readBoolean(process.env.VALIDTEAM_LOCAL_AGENT_RUNNER_ENABLED) ||
+    readBoolean(process.env[`VALIDTEAM_LOCAL_${prefix}_ENABLED`]);
   const command = commandFor(provider);
   const cwd = cwdFor(provider);
   const timeoutSeconds = clamp(
-    readIntegerEnv(`TASKNEBULA_LOCAL_${prefix}_TIMEOUT_SECONDS`, DEFAULT_TIMEOUT_SECONDS),
+    readIntegerEnv(`VALIDTEAM_LOCAL_${prefix}_TIMEOUT_SECONDS`, DEFAULT_TIMEOUT_SECONDS),
     MIN_TIMEOUT_SECONDS,
     MAX_TIMEOUT_SECONDS
   );
   const mode =
     provider === 'codex'
-      ? process.env.TASKNEBULA_LOCAL_CODEX_SANDBOX || 'workspace-write'
-      : process.env.TASKNEBULA_LOCAL_CLAUDE_PERMISSION_MODE || 'auto';
+      ? process.env.VALIDTEAM_LOCAL_CODEX_SANDBOX || 'workspace-write'
+      : process.env.VALIDTEAM_LOCAL_CLAUDE_PERMISSION_MODE || 'auto';
 
   let reasonCode: LocalAgentRunnerStatus['reasonCode'] = null;
   let reasonDetail: string | null = null;
@@ -251,7 +251,7 @@ export function getLocalAgentRunnerStatus(
     enabledByEnv,
     command,
     cwd,
-    model: process.env[`TASKNEBULA_LOCAL_${prefix}_MODEL`] || null,
+    model: process.env[`VALIDTEAM_LOCAL_${prefix}_MODEL`] || null,
     timeoutSeconds,
     mode,
     reasonCode,
@@ -279,7 +279,7 @@ export function resolveLocalAgentRunner(
     timeoutMs: timeoutSeconds * 1000,
     maxTurns:
       provider === 'claude'
-        ? clamp(readIntegerEnv('TASKNEBULA_LOCAL_CLAUDE_MAX_TURNS', 20), 1, 100)
+        ? clamp(readIntegerEnv('VALIDTEAM_LOCAL_CLAUDE_MAX_TURNS', 20), 1, 100)
         : null,
     codexSandbox:
       status.mode === 'read-only' || status.mode === 'danger-full-access'
@@ -293,7 +293,7 @@ export function resolveLocalAgentRunner(
       status.mode === 'bypassPermissions'
         ? status.mode
         : 'auto',
-    extraArgs: parseExtraArgs(process.env[`TASKNEBULA_LOCAL_${prefix}_ARGS_JSON`]),
+    extraArgs: parseExtraArgs(process.env[`VALIDTEAM_LOCAL_${prefix}_ARGS_JSON`]),
     source: status.enabledByProvider ? 'provider' : 'env',
   };
 }

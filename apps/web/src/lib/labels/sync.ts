@@ -10,7 +10,7 @@
  * Names resolve to ORG-WIDE labels (`project_id IS NULL`); missing labels are
  * created on the fly with the schema's default color.
  */
-import { db, labels, issueLabels, type Label } from '@tasknebula/db';
+import { db, labels, issueLabels, type Label } from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { and, eq, inArray, isNull, notInArray } from 'drizzle-orm';
 

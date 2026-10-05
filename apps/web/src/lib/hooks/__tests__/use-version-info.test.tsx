@@ -23,7 +23,7 @@ const baseInfo: VersionInfo = {
   notes: null,
   checkedAt: null,
   image: {
-    repository: 'neuraparse/tasknebula',
+    repository: 'neuraparse/validteam',
     latestTag: null,
     latestTagUrl: null,
     latestPushedAt: null,
@@ -64,7 +64,7 @@ describe('use-version-info hooks', () => {
           ...baseInfo,
           latest: '0.4.1',
           updateAvailable: true,
-          releaseUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v0.4.1',
+          releaseUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v0.4.1',
         }),
       });
 
@@ -178,7 +178,7 @@ describe('use-version-info hooks', () => {
         mode: 'external-webhook',
         blockedReason: 'active_job',
         targetVersion: '0.5.0',
-        repository: 'neuraparse/tasknebula',
+        repository: 'neuraparse/validteam',
         digest: null,
         webhookConfigured: true,
         manualCommands: 'docker compose pull web',
@@ -187,7 +187,7 @@ describe('use-version-info hooks', () => {
           status: 'requested',
           currentVersion: '0.4.0',
           targetVersion: '0.5.0',
-          repository: 'neuraparse/tasknebula',
+          repository: 'neuraparse/validteam',
           imageTag: '0.5.0',
           digest: null,
           releaseUrl: null,

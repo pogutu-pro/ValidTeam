@@ -1,4 +1,4 @@
-# TaskNebula roadmap — August 2026 onward
+# ValidTeam roadmap — August 2026 onward
 
 **Verified:** 2026-08-12
 
@@ -9,7 +9,7 @@ This roadmap contains only unfinished work. Current capability lives in
 
 ## Product direction
 
-TaskNebula is a self-hostable, keyboard-first project system and a trustworthy
+ValidTeam is a self-hostable, keyboard-first project system and a trustworthy
 control plane for human and AI contributors. The near-term advantage is not the
 number of agent entry points; it is one enforceable work graph with attributable
 evidence, finite automation, and recoverable effects.

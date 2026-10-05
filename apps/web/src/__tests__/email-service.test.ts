@@ -15,7 +15,7 @@
  * therefore yields `getHours() === 12` regardless of the host timezone.
  */
 
-// Path resolved through the apps/web symlink at node_modules/@tasknebula/db
+// Path resolved through the apps/web symlink at node_modules/@validteam/db
 // → packages/db. We mock the db index (relative path used by email-service)
 // and nodemailer before importing the email-service module.
 const sendMailMock = jest.fn();
@@ -32,13 +32,13 @@ jest.mock('nodemailer', () => ({
   createTransport: (...args: unknown[]) => createTransportMock(...args),
 }));
 
-jest.mock('@tasknebula/db/src/index', () => ({
+jest.mock('@validteam/db/src/index', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
   },
 }));
 
-jest.mock('@tasknebula/db/src/schema', () => ({
+jest.mock('@validteam/db/src/schema', () => ({
   emailTemplateTypeEnum: {
     enumValues: [
       'issue_assigned',
@@ -71,7 +71,7 @@ jest.mock('drizzle-orm', () => ({
   eq: (left: unknown, right: unknown) => ({ type: 'eq', left, right }),
 }));
 
-type EmailServiceModule = typeof import('@tasknebula/db/src/utils/email-service');
+type EmailServiceModule = typeof import('@validteam/db/src/utils/email-service');
 
 /**
  * Sets up db.select() to return pref rows for the first call (prefs lookup)
@@ -89,7 +89,7 @@ const ORIGINAL_ENV = { ...process.env };
 
 async function loadService(): Promise<EmailServiceModule> {
   // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-  return require('@tasknebula/db/src/utils/email-service') as EmailServiceModule;
+  return require('@validteam/db/src/utils/email-service') as EmailServiceModule;
 }
 
 describe('email-service', () => {
@@ -104,12 +104,12 @@ describe('email-service', () => {
       },
       createTransport: (...args: unknown[]) => createTransportMock(...args),
     }));
-    jest.doMock('@tasknebula/db/src/index', () => ({
+    jest.doMock('@validteam/db/src/index', () => ({
       db: {
         select: (...args: unknown[]) => dbSelectMock(...args),
       },
     }));
-    jest.doMock('@tasknebula/db/src/schema', () => ({
+    jest.doMock('@validteam/db/src/schema', () => ({
       emailTemplateTypeEnum: {
         enumValues: [
           'issue_assigned',
@@ -336,7 +336,7 @@ describe('email-service', () => {
         templateType: 'project_created',
         variables: {
           projectName: 'Demo',
-          organizationName: 'TaskNebula',
+          organizationName: 'ValidTeam',
           actorName: 'Alice',
         },
         organizationId: 'org-1',
@@ -468,12 +468,12 @@ describe('email-service', () => {
         actorName: 'Alice',
         issueKey: 'T-99',
         issueTitle: 'Regression found',
-        issueUrl: 'https://tasknebula.test/issues/T-99',
+        issueUrl: 'https://validteam.test/issues/T-99',
         projectName: 'Alpha',
         priority: 'High',
         organizationName: 'Alpha Org',
-        appUrl: 'https://tasknebula.test',
-        unsubscribeUrl: 'https://tasknebula.test/settings/notifications',
+        appUrl: 'https://validteam.test',
+        unsubscribeUrl: 'https://validteam.test/settings/notifications',
       });
 
       expect(html).toContain('data-email-style="ibm-modern"');

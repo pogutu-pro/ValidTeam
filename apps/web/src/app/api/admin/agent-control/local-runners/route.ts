@@ -13,7 +13,7 @@ import {
   organizations,
   sql,
   systemAuditLogs,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { generateAgentSecret, type AgentProviderKind } from '@/lib/agents/sessions';
 import { getLocalAgentRunnerStatus } from '@/lib/agents/local-runner';
 
@@ -129,7 +129,7 @@ export async function PATCH(request: NextRequest) {
 
   const result = await db.transaction(async (tx) => {
     await tx.execute(
-      sql`select pg_advisory_xact_lock(hashtext(${`tasknebula:local-runner:${parsed.organizationId}:${parsed.provider}`}))`
+      sql`select pg_advisory_xact_lock(hashtext(${`validteam:local-runner:${parsed.organizationId}:${parsed.provider}`}))`
     );
     const [organization] = await tx
       .select({ id: organizations.id, name: organizations.name, status: organizations.status })

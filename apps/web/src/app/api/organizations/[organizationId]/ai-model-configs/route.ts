@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { createAuditLog } from '@tasknebula/db';
+import { createAuditLog } from '@validteam/db';
 import { getOrgAgentAccess } from '@/lib/agents/access';
 import { createAgentModelConfig, listAgentModelConfigs } from '@/lib/agents/model-configs';
 import { aiDisabledResponse, isAiFeatureEnabled } from '@/lib/ai/feature-gate';

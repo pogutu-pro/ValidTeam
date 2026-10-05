@@ -52,7 +52,7 @@ describe('blob store', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'tasknebula-storage-test-'));
+    temporaryDirectory = await mkdtemp(path.join(tmpdir(), 'validteam-storage-test-'));
   });
 
   afterEach(async () => {

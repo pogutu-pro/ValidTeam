@@ -7,7 +7,7 @@ jest.mock('@paralleldrive/cuid2', () => ({
   createId: () => 'generated-user-id',
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   accounts: {
     provider: 'accounts.provider',
     providerAccountId: 'accounts.providerAccountId',

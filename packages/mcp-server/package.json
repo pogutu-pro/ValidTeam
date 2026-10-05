@@ -1,5 +1,5 @@
 {
-  "name": "@tasknebula/mcp-server",
+  "name": "@validteam/mcp-server",
   "version": "0.1.0",
   "description": "ValidTeam Model Context Protocol (MCP) server — exposes issues, projects, and workload tools to Claude / Cursor / Claude Code / Claude.ai.",
   "license": "UNLICENSED",
@@ -9,7 +9,7 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "tasknebula",
+    "validteam",
     "claude",
     "cursor",
     "ai-agents",
@@ -33,7 +33,7 @@
     }
   },
   "bin": {
-    "tasknebula-mcp": "./bin/tasknebula-mcp.mjs"
+    "validteam-mcp": "./bin/validteam-mcp.mjs"
   },
   "files": [
     "dist",
@@ -44,7 +44,7 @@
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "start": "node ./bin/tasknebula-mcp.mjs",
+    "start": "node ./bin/validteam-mcp.mjs",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
@@ -52,7 +52,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@tasknebula/config": "workspace:*",
+    "@validteam/config": "workspace:*",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",
     "eslint": "^8.57.1",

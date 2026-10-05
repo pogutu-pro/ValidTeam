@@ -60,7 +60,7 @@ export function AiMcpSection() {
 
 /* ----------------------------------------------------------------------------
    Stylized MCP tool-call vignette — pure DOM, decorative.
-   Shows an external agent calling an MCP tool and TaskNebula responding.
+   Shows an external agent calling an MCP tool and ValidTeam responding.
    ---------------------------------------------------------------------------- */
 
 function ToolCallMock() {

@@ -4,7 +4,7 @@
  * Called once per server boot from `apps/web/instrumentation.ts`. Compares
  * the running version against the `last_boot_version` row in
  * `system_settings`; when an upgrade is detected, every super admin gets an
- * in-app notification ("TaskNebula updated to vX.Y.Z").
+ * in-app notification ("ValidTeam updated to vX.Y.Z").
  *
  * Concurrency / idempotency (multi-replica boots):
  * The gate is a single conditional UPDATE —
@@ -22,7 +22,7 @@
  * un-migrated database must never crash or delay boot.
  */
 
-import { db, systemSettings, notifications, users, eq, and, sql } from '@tasknebula/db';
+import { db, systemSettings, notifications, users, eq, and, sql } from '@validteam/db';
 import { getCurrentVersion, GITHUB_REPO_URL } from './index';
 import { getVersionUpdatePreferences } from './preferences';
 

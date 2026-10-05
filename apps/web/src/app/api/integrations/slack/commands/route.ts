@@ -20,8 +20,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, eq, and } from '@tasknebula/db';
-import { integrationConnections } from '@tasknebula/db/src/schema/integration-connections';
+import { db, eq, and } from '@validteam/db';
+import { integrationConnections } from '@validteam/db/src/schema/integration-connections';
 import { getTranslations } from 'next-intl/server';
 import {
   callSlackApi,

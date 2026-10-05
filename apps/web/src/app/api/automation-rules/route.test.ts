@@ -46,7 +46,7 @@ jest.mock('drizzle-orm', () => ({
   or: (...args: unknown[]) => ({ type: 'or', args }),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   automationRules: {
     actions: 'automationRules.actions',
     conditions: 'automationRules.conditions',

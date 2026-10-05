@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, issueSecurityLevels, issueSecurityLevelMembers } from '@tasknebula/db';
+import { db, issueSecurityLevels, issueSecurityLevelMembers } from '@validteam/db';
 import { eq, max, inArray } from 'drizzle-orm';
 import { authorizeSecuritySchemeAccess } from '../../utils';
 

@@ -3,7 +3,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, systemAuditLogs } from '@tasknebula/db';
+import { db, systemAuditLogs } from '@validteam/db';
 import { resolveLivekitConfig } from '@/lib/admin/system-settings';
 
 async function requireAdmin() {

@@ -38,12 +38,12 @@ function validSignature(secret: string, timestamp: string, body: string, header:
 }
 
 export async function POST(request: NextRequest) {
-  const secret = process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET?.trim();
+  const secret = process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET?.trim();
   if (!secret || Buffer.byteLength(secret, 'utf8') < 32) {
     return NextResponse.json({ error: 'Self-update callback is not configured' }, { status: 503 });
   }
 
-  const timestamp = request.headers.get('x-tasknebula-timestamp') ?? '';
+  const timestamp = request.headers.get('x-validteam-timestamp') ?? '';
   const timestampSeconds = Number(timestamp);
   if (
     !Number.isFinite(timestampSeconds) ||
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.text();
-  if (!validSignature(secret, timestamp, body, request.headers.get('x-tasknebula-signature'))) {
+  if (!validSignature(secret, timestamp, body, request.headers.get('x-validteam-signature'))) {
     return NextResponse.json({ error: 'Invalid callback signature' }, { status: 401 });
   }
 

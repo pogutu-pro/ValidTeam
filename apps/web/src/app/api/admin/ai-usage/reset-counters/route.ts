@@ -25,7 +25,7 @@ import { z } from 'zod';
 import crypto from 'node:crypto';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, organizations, orgTokenBudgets, systemAuditLogs } from '@tasknebula/db';
+import { db, organizations, orgTokenBudgets, systemAuditLogs } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 

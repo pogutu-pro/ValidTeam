@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db } from '@tasknebula/db';
-import { drafts } from '@tasknebula/db/src/schema/drafts';
+import { db } from '@validteam/db';
+import { drafts } from '@validteam/db/src/schema/drafts';
 import { eq, desc } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -39,10 +39,7 @@ export async function GET() {
     return NextResponse.json({ drafts: items });
   } catch (error) {
     console.error('Get drafts error:', error);
-    return NextResponse.json(
-      { error: 'Failed to load drafts' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to load drafts' }, { status: 500 });
   }
 }
 
@@ -79,14 +76,11 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     console.error('Create draft error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create draft' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to create draft' }, { status: 500 });
   }
 }

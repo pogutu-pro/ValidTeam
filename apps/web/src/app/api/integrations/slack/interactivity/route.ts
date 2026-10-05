@@ -2,7 +2,7 @@
  * POST /api/integrations/slack/interactivity
  *
  * Single endpoint for every Slack "interactivity" event — message actions
- * (right-click → "Create TaskNebula issue"), modal submissions, and button
+ * (right-click → "Create ValidTeam issue"), modal submissions, and button
  * clicks. Slack POSTs `payload=<json>` with `application/x-www-form-urlencoded`
  * encoding and signs the raw body with the app's signing secret.
  *
@@ -17,15 +17,15 @@
  */
 
 import { after, NextRequest, NextResponse } from 'next/server';
-import { db, eq, and } from '@tasknebula/db';
-import { integrationConnections } from '@tasknebula/db/src/schema/integration-connections';
+import { db, eq, and } from '@validteam/db';
+import { integrationConnections } from '@validteam/db/src/schema/integration-connections';
 import { getTranslations } from 'next-intl/server';
 import {
   callSlackApi,
   getSlackSigningSecret,
   verifySlackSignature,
 } from '@/lib/integrations/slack';
-import { lookupTaskNebulaUserBySlackId, resolveSlackOrg } from '@/lib/integrations/slack-commands';
+import { lookupValidTeamUserBySlackId, resolveSlackOrg } from '@/lib/integrations/slack-commands';
 import { createIssueFromSlackMessage } from '@/lib/integrations/slack-issue-bridge';
 import { defaultLocale } from '@/lib/i18n/config';
 import { postPublicEndpoint } from '@/lib/agents/provider-endpoint';
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
 }
 
 // ---------------------------------------------------------------------------
-// Message action: "Create TaskNebula issue from this message"
+// Message action: "Create ValidTeam issue from this message"
 // ---------------------------------------------------------------------------
 
 async function handleMessageAction(payload: MessageActionPayload): Promise<NextResponse> {
@@ -308,7 +308,7 @@ async function handleViewSubmission(payload: ViewSubmissionPayload): Promise<Nex
     });
   }
 
-  // Match the Slack profile email to an active TaskNebula workspace member.
+  // Match the Slack profile email to an active ValidTeam workspace member.
   const reporterUserId = await resolveReporter(org.organizationId, payload.user.id, teamId);
   if (!reporterUserId) {
     return NextResponse.json({
@@ -398,7 +398,7 @@ function readInput(
 }
 
 async function resolveProjectByKey(organizationId: string, key: string): Promise<string | null> {
-  const { projects } = await import('@tasknebula/db');
+  const { projects } = await import('@validteam/db');
   const [row] = await db
     .select({ id: projects.id })
     .from(projects)
@@ -412,7 +412,7 @@ async function resolveReporter(
   slackUserId: string,
   slackTeamId: string
 ): Promise<string | null> {
-  return lookupTaskNebulaUserBySlackId(organizationId, slackUserId, slackTeamId);
+  return lookupValidTeamUserBySlackId(organizationId, slackUserId, slackTeamId);
 }
 
 async function postEphemeralViaResponseUrl(responseUrl: string, text: string): Promise<void> {

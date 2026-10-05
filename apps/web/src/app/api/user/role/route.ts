@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, users, eq } from '@tasknebula/db';
+import { db, users, eq } from '@validteam/db';
 import { listActiveOrganizationMemberships } from '@/lib/auth/access-control';
 
 export async function GET(request: NextRequest) {

@@ -52,7 +52,7 @@ jest.mock('@/lib/hooks/use-projects', () => ({
 jest.mock('next-auth/react', () => ({
   useSession: () => ({
     data: {
-      user: { id: 'user-1', name: 'Ada Lovelace', email: 'ada@tasknebula.io' },
+      user: { id: 'user-1', name: 'Ada Lovelace', email: 'ada@validteam.io' },
     },
     status: 'authenticated',
   }),

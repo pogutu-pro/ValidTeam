@@ -1,5 +1,5 @@
 /**
- * Public entry point for `@tasknebula/mcp-server`.
+ * Public entry point for `@validteam/mcp-server`.
  *
  * Importers (Next.js route, tests, future remote-host wrappers) only
  * need to touch this module — the internals are reorganizable without
@@ -9,10 +9,10 @@ export { runStdio } from './stdio.js';
 export { createMcpHttpHandler, createHttpAttachedServer } from './http.js';
 export { createMcpServer, SERVER_NAME, SERVER_VERSION } from './server.js';
 export {
-  TaskNebulaClient,
-  TaskNebulaApiError,
+  ValidTeamClient,
+  ValidTeamApiError,
   clientFromEnv,
-  type TaskNebulaClientOptions,
+  type ValidTeamClientOptions,
 } from './client.js';
 export {
   resolveStdioAuth,

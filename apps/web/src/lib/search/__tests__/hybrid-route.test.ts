@@ -3,7 +3,7 @@
  *
  * Integration tests for POST /api/search/hybrid.
  *
- * We mock @tasknebula/db so the route can run without a real Postgres:
+ * We mock @validteam/db so the route can run without a real Postgres:
  *   - db.execute returns canned BM25 and vector result rows depending on
  *     which CTE the route asked for.
  *   - The auth() helper is stubbed to return a fixed session.
@@ -41,7 +41,7 @@ jest.mock('@/lib/auth/access-control', () => ({
     listActiveOrganizationMembershipsMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const sqlTag = (strings: TemplateStringsArray | string[], ...values: unknown[]) => {
     if (Array.isArray(strings)) {
       const text = (strings as readonly string[]).reduce((acc, part, i) => {

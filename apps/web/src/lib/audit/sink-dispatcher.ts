@@ -16,13 +16,13 @@
  *                 (env-gated: requires AWS_ACCESS_KEY_ID/SECRET in env;
  *                  appends a JSONL object keyed by ISO date.)
  *
- * Replay protection: every outgoing HTTP request carries an `X-TaskNebula-Nonce`
+ * Replay protection: every outgoing HTTP request carries an `X-ValidTeam-Nonce`
  * header (random 16-byte hex) plus a `timestamp` field inside the envelope —
  * receivers can reject requests with stale timestamps or repeated nonces.
  */
 
 import crypto from 'crypto';
-import { db, auditLogSinks, eq, and, sql } from '@tasknebula/db';
+import { db, auditLogSinks, eq, and, sql } from '@validteam/db';
 import { postPublicEndpoint } from '@/lib/agents/provider-endpoint';
 
 // ---------------------------------------------------------------------------
@@ -146,10 +146,10 @@ async function deliverWebhook(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-TaskNebula-Event': `audit.${event.action}`,
-      'X-TaskNebula-Signature': `sha256=${signature}`,
-      'X-TaskNebula-Nonce': nonce,
-      'X-TaskNebula-Sink-Id': sink.id,
+      'X-ValidTeam-Event': `audit.${event.action}`,
+      'X-ValidTeam-Signature': `sha256=${signature}`,
+      'X-ValidTeam-Nonce': nonce,
+      'X-ValidTeam-Sink-Id': sink.id,
     },
     body,
   });
@@ -173,8 +173,8 @@ async function deliverSplunk(
   const epochSeconds = Math.floor(new Date(event.createdAt).getTime() / 1000);
   const body = JSON.stringify({
     time: epochSeconds,
-    sourcetype: 'tasknebula:audit',
-    source: 'tasknebula',
+    sourcetype: 'validteam:audit',
+    source: 'validteam',
     index: config.index,
     event: { ...event, nonce },
   });
@@ -183,7 +183,7 @@ async function deliverSplunk(
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Splunk ${config.token}`,
-      'X-TaskNebula-Nonce': nonce,
+      'X-ValidTeam-Nonce': nonce,
     },
     body,
   });
@@ -207,10 +207,10 @@ async function deliverDatadog(
   const url = `https://http-intake.logs.${site}/api/v2/logs`;
   const body = JSON.stringify([
     {
-      ddsource: 'tasknebula',
-      service: 'tasknebula-audit',
+      ddsource: 'validteam',
+      service: 'validteam-audit',
       ddtags: `workspace:${event.workspaceId},action:${event.action}`,
-      hostname: 'tasknebula',
+      hostname: 'validteam',
       message: JSON.stringify({ ...event, nonce }),
     },
   ]);
@@ -219,7 +219,7 @@ async function deliverDatadog(
     headers: {
       'Content-Type': 'application/json',
       'DD-API-KEY': config.apiKey,
-      'X-TaskNebula-Nonce': nonce,
+      'X-ValidTeam-Nonce': nonce,
     },
     body,
   });
@@ -278,7 +278,7 @@ async function deliverS3(sink: SinkRow, event: AuditLogEvent): Promise<DeliveryA
     };
     const client = new sdkModule.S3Client({ region: config.region });
     const date = event.createdAt.slice(0, 10); // YYYY-MM-DD
-    const prefix = (config.prefix || 'tasknebula-audit').replace(/\/$/, '');
+    const prefix = (config.prefix || 'validteam-audit').replace(/\/$/, '');
     const key = `${prefix}/${event.workspaceId}/${date}/${event.id}.json`;
     await client.send(
       new sdkModule.PutObjectCommand({

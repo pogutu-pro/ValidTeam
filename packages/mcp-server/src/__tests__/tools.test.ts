@@ -5,7 +5,7 @@
  * tool definition itself (schema + handler). The MCP wiring is covered
  * indirectly by `server.test.ts`.
  */
-import { TaskNebulaClient } from '../client';
+import { ValidTeamClient } from '../client';
 import {
   searchIssuesTool,
   getIssueTool,
@@ -24,11 +24,11 @@ import {
 type FetchCall = { url: string; init: RequestInit };
 
 const AGENT_POLICY_ENV_KEYS = [
-  'TASKNEBULA_AGENT_ACTOR',
+  'VALIDTEAM_AGENT_ACTOR',
   'AGENTOWNERS_ACTOR',
-  'TASKNEBULA_AGENT_SOURCE',
+  'VALIDTEAM_AGENT_SOURCE',
   'AGENTOWNERS_SOURCE',
-  'TASKNEBULA_AGENT_POLICY',
+  'VALIDTEAM_AGENT_POLICY',
   'AGENTOWNERS_POLICY',
 ] as const;
 
@@ -59,7 +59,7 @@ afterAll(() => {
 });
 
 function mockClient(response: unknown = { ok: true }): {
-  client: TaskNebulaClient;
+  client: ValidTeamClient;
   calls: FetchCall[];
 } {
   const calls: FetchCall[] = [];
@@ -70,7 +70,7 @@ function mockClient(response: unknown = { ok: true }): {
       headers: { 'Content-Type': 'application/json' },
     });
   }) as unknown as typeof fetch;
-  const client = new TaskNebulaClient({
+  const client = new ValidTeamClient({
     apiUrl: 'https://api.test.local',
     apiKey: 'test-key',
     fetchImpl,
@@ -189,8 +189,8 @@ describe('create_issue', () => {
   });
 
   it('uses the configured AGENTOWNERS actor for write tools', async () => {
-    process.env.TASKNEBULA_AGENT_ACTOR = 'codex';
-    process.env.TASKNEBULA_AGENT_SOURCE = 'codex-cli';
+    process.env.VALIDTEAM_AGENT_ACTOR = 'codex';
+    process.env.VALIDTEAM_AGENT_SOURCE = 'codex-cli';
     const { client, calls } = mockClient({ id: 'i1' });
     const input = createIssueTool.inputSchema.parse({ projectId: 'p1', title: 'New' });
     await createIssueTool.handler(input, { client });
@@ -204,7 +204,7 @@ describe('create_issue', () => {
   });
 
   it('can disable AGENTOWNERS markers when explicitly configured', async () => {
-    process.env.TASKNEBULA_AGENT_POLICY = 'off';
+    process.env.VALIDTEAM_AGENT_POLICY = 'off';
     const { client, calls } = mockClient({ id: 'i1' });
     const input = createIssueTool.inputSchema.parse({ projectId: 'p1', title: 'New' });
     await createIssueTool.handler(input, { client });

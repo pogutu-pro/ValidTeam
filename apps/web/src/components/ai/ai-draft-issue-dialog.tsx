@@ -96,7 +96,7 @@ async function createIssue(projectId: string, draft: IssueDraft): Promise<Create
       labels: draft.labels,
       estimate: draft.estimate ?? undefined,
       agentPolicy: {
-        actor: 'tasknebula-ai',
+        actor: 'validteam-ai',
         source: 'draft-with-ai',
       },
     }),

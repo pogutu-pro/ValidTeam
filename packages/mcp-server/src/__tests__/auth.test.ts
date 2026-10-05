@@ -3,8 +3,8 @@ import { resolveStdioAuth, resolveHttpAuth } from '../auth';
 describe('resolveStdioAuth', () => {
   it('reads env vars', () => {
     const ctx = resolveStdioAuth({
-      TASKNEBULA_API_URL: 'https://x',
-      TASKNEBULA_API_KEY: 'k',
+      VALIDTEAM_API_URL: 'https://x',
+      VALIDTEAM_API_KEY: 'k',
     } as NodeJS.ProcessEnv);
     expect(ctx).toEqual({ apiUrl: 'https://x', apiKey: 'k' });
   });
@@ -17,10 +17,10 @@ describe('resolveStdioAuth', () => {
 });
 
 describe('resolveHttpAuth', () => {
-  it('extracts a TaskNebula bearer key from Headers', () => {
+  it('extracts a ValidTeam bearer key from Headers', () => {
     const headers = new Headers({ Authorization: 'Bearer sk_live_abc123' });
     const ctx = resolveHttpAuth({ headers }, {
-      TASKNEBULA_API_URL: 'https://x',
+      VALIDTEAM_API_URL: 'https://x',
     } as NodeJS.ProcessEnv);
     expect(ctx.accessToken).toBe('sk_live_abc123');
     expect(ctx.apiUrl).toBe('https://x');
@@ -38,7 +38,7 @@ describe('resolveHttpAuth', () => {
   });
 
   it.each(['Bearer opaque-oauth-token', 'Bearer sk_live_'])(
-    'rejects a bearer credential that is not a usable TaskNebula key: %s',
+    'rejects a bearer credential that is not a usable ValidTeam key: %s',
     (authorization) => {
       const headers = new Headers({ Authorization: authorization });
       const ctx = resolveHttpAuth({ headers });

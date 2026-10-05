@@ -1,4 +1,4 @@
-# TaskNebula web — Playwright E2E suite
+# ValidTeam web — Playwright E2E suite
 
 End-to-end tests for the Next.js app in `apps/web`, driven by
 [Playwright](https://playwright.dev). The suite covers signup, first-run
@@ -31,7 +31,7 @@ apps/web/
 ```bash
 # From the repo root:
 pnpm install
-pnpm --filter @tasknebula/web exec playwright install --with-deps
+pnpm --filter @validteam/web exec playwright install --with-deps
 ```
 
 `--with-deps` installs Linux shared libraries needed by Chromium/Firefox/WebKit
@@ -43,26 +43,26 @@ also needs PostgreSQL and Redis:
 
 ```bash
 docker compose up -d --wait postgres redis
-pnpm --filter @tasknebula/db db:migrate
+pnpm --filter @validteam/db db:migrate
 ```
 
 ## Running the suite
 
 ```bash
 # Full headless run (all browsers)
-pnpm --filter @tasknebula/web tests:e2e
+pnpm --filter @validteam/web tests:e2e
 
 # Interactive UI mode — best for authoring & debugging
-pnpm --filter @tasknebula/web tests:e2e:ui
+pnpm --filter @validteam/web tests:e2e:ui
 
 # Single spec, single browser
-pnpm --filter @tasknebula/web exec playwright test e2e/cmd-k-palette.spec.ts --project=chromium
+pnpm --filter @validteam/web exec playwright test e2e/cmd-k-palette.spec.ts --project=chromium
 
 # Public 320/390/desktop × light/dark surface contract
-pnpm --filter @tasknebula/web tests:e2e:public
+pnpm --filter @validteam/web tests:e2e:public
 
 # Opt in to successful mobile audit screenshots (failure artifacts are automatic)
-UI_AUDIT=1 pnpm --filter @tasknebula/web exec playwright test e2e/mobile-layout.spec.ts --project=chromium
+UI_AUDIT=1 pnpm --filter @validteam/web exec playwright test e2e/mobile-layout.spec.ts --project=chromium
 ```
 
 Playwright auto-starts `pnpm dev` on `http://localhost:3000` (and reuses the
@@ -74,7 +74,7 @@ to point at a deployed environment.
 `auth.setup.ts` runs _before_ every authed project and:
 
 1. Calls `ensureSeed()` to insert (idempotently) the `E2E Workspace`
-   organization, an admin user (`e2e-admin@tasknebula.test` /
+   organization, an admin user (`e2e-admin@validteam.test` /
    `E2eAdmin!2026`), a project `E2E`, a workflow with three statuses, and
    five seed issues (`E2E-1`..`E2E-5`).
 2. POSTs credentials to `/api/auth/callback/credentials` with a fresh CSRF
@@ -91,7 +91,7 @@ storage state under the `chromium-public` project.
 - `apps/web/playwright-report/` — HTML report.
 - Traces and screenshots are captured _only on failure_ to keep the working
   directory small. Open the HTML report with
-  `pnpm --filter @tasknebula/web exec playwright show-report`.
+  `pnpm --filter @validteam/web exec playwright show-report`.
 
 ## CI
 

@@ -4,7 +4,7 @@
 
 const selectMock = jest.fn();
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => selectMock(...args),
   },
@@ -80,7 +80,7 @@ describe('storage system settings', () => {
       rows([
         {
           value: {
-            uploadsDir: '/srv/tasknebula/uploads',
+            uploadsDir: '/srv/validteam/uploads',
             s3Bucket: 'partial-bucket',
             s3Region: '',
             s3Endpoint: '',
@@ -95,7 +95,7 @@ describe('storage system settings', () => {
     await expect(resolveStorageConfig()).resolves.toEqual({
       source: 'db',
       mode: 'local',
-      uploadsDir: '/srv/tasknebula/uploads',
+      uploadsDir: '/srv/validteam/uploads',
     });
   });
 

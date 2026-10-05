@@ -64,7 +64,7 @@ function chain(rows: unknown[]) {
   return c;
 }
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   let selectCallIndex = 0;
   let selectQueue: unknown[][] = [];
 
@@ -163,7 +163,7 @@ const workflowStatusFixture = {
 };
 
 function queueHappyPath() {
-  const db = require('@tasknebula/db');
+  const db = require('@validteam/db');
   db.__setSelectQueue([
     [formFixture], // form lookup
     [projectFixture], // project lookup
@@ -191,7 +191,7 @@ describe('POST /api/public/intake/[slug]', () => {
   });
 
   it('rejects 404 when slug is unknown', async () => {
-    const db = require('@tasknebula/db');
+    const db = require('@validteam/db');
     db.__setSelectQueue([[]]); // form lookup empty
     const { POST } = await import('../route');
     const res = await POST(makeRequest({ payload: { summary: 'hi' } }), {
@@ -201,7 +201,7 @@ describe('POST /api/public/intake/[slug]', () => {
   });
 
   it('returns 400 on schema validation failure (missing required field)', async () => {
-    const db = require('@tasknebula/db');
+    const db = require('@validteam/db');
     db.__setSelectQueue([[formFixture]]);
     const { POST } = await import('../route');
     const res = await POST(
@@ -215,7 +215,7 @@ describe('POST /api/public/intake/[slug]', () => {
 
   it('skips captcha when no provider is configured even if form requires it', async () => {
     isCaptchaConfiguredMock.mockReturnValue(false);
-    const db = require('@tasknebula/db');
+    const db = require('@validteam/db');
     db.__setSelectQueue([
       [{ ...formFixture, requiresCaptcha: true }],
       [projectFixture],
@@ -250,7 +250,7 @@ describe('POST /api/public/intake/[slug]', () => {
   });
 
   it('hides public forms while their workspace is suspended', async () => {
-    const db = require('@tasknebula/db');
+    const db = require('@validteam/db');
     db.__setSelectQueue([
       [formFixture],
       [projectFixture],
@@ -270,7 +270,7 @@ describe('POST /api/public/intake/[slug]', () => {
     // The in-memory limiter (used when Redis is null) allows 5 hits per
     // minute keyed by (formId, ipHash). Re-queue the form lookup so the
     // 6th request still finds the form before hitting the limiter.
-    const db = require('@tasknebula/db');
+    const db = require('@validteam/db');
     const buildQueue = () => {
       const q: unknown[][] = [];
       for (let i = 0; i < 5; i += 1) {

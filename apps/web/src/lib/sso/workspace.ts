@@ -3,7 +3,7 @@
  * loaded `sso_configs` row (plus the organization id). Returns null if the
  * slug doesn't exist or SSO is not enabled.
  */
-import { db, organizations, ssoConfigs, and, eq, ne } from '@tasknebula/db';
+import { db, organizations, ssoConfigs, and, eq, ne } from '@validteam/db';
 import { revealSsoPrivateKey } from './private-key';
 
 export type WorkspaceSso = {

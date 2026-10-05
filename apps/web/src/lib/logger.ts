@@ -67,7 +67,7 @@ const baseOptions: LoggerOptions = {
     env: process.env.NODE_ENV || 'development',
     // npm_package_version is injected by node when running via npm/pnpm; in
     // bundled prod we fall back to undefined which Pino drops.
-    service: 'tasknebula-web',
+    service: 'validteam-web',
     version: process.env.npm_package_version,
   },
   timestamp: pino.stdTimeFunctions.isoTime,

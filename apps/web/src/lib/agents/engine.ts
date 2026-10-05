@@ -13,7 +13,7 @@ import {
   sprints,
   systemSettings,
   workflowStatuses,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, gt, isNull, sql } from 'drizzle-orm';
 import { publishEvent } from '@/lib/realtime/events';
 import { emitAgentLog, emitAgentStatus } from '@/lib/websocket/server';

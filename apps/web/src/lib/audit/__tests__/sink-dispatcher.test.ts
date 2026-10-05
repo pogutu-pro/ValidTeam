@@ -11,7 +11,7 @@
  *   3. Partial failure — one sink's network error does NOT prevent delivery
  *      to the others; the dispatcher returns one result per sink.
  *   4. Replay protection — every outgoing request includes a unique
- *      X-TaskNebula-Nonce header. Two consecutive deliveries produce two
+ *      X-ValidTeam-Nonce header. Two consecutive deliveries produce two
  *      different nonces.
  *
  * The DB layer is mocked so we don't need a real Postgres. We capture
@@ -63,7 +63,7 @@ const state: {
   selectWorkspaceId: null,
 };
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const auditLogSinksTable = {
     __name: 'audit_log_sinks',
     id: 'audit_log_sinks.id',
@@ -233,15 +233,15 @@ describe('dispatchAuditLogToSinks — single sink', () => {
     ];
     expect(url).toBe('https://siem.example/ingest');
     expect(init.method).toBe('POST');
-    expect(init.headers['X-TaskNebula-Sink-Id']).toBe('sink-1');
-    expect(init.headers['X-TaskNebula-Event']).toBe('audit.issue.created');
+    expect(init.headers['X-ValidTeam-Sink-Id']).toBe('sink-1');
+    expect(init.headers['X-ValidTeam-Event']).toBe('audit.issue.created');
     // Signature must match the body that was actually sent.
     const body = init.body as string;
-    expect(init.headers['X-TaskNebula-Signature']).toBe(
+    expect(init.headers['X-ValidTeam-Signature']).toBe(
       `sha256=${signSinkPayload(body, 'super-secret')}`
     );
     // Nonce header is present and non-empty.
-    expect(init.headers['X-TaskNebula-Nonce']).toMatch(/^[a-f0-9]{32}$/);
+    expect(init.headers['X-ValidTeam-Nonce']).toMatch(/^[a-f0-9]{32}$/);
 
     // Success counter bumped on the row.
     expect(state.updates).toEqual(
@@ -428,7 +428,7 @@ describe('dispatchAuditLogToSinks — failure isolation', () => {
 // ---------------------------------------------------------------------------
 
 describe('dispatchAuditLogToSinks — replay protection', () => {
-  it('emits a unique X-TaskNebula-Nonce per delivery', async () => {
+  it('emits a unique X-ValidTeam-Nonce per delivery', async () => {
     resetState('org-4', [
       {
         id: 'sink-1',
@@ -457,12 +457,12 @@ describe('dispatchAuditLogToSinks — replay protection', () => {
       (global.fetch as jest.Mock).mock.calls[0][1] as {
         headers: Record<string, string>;
       }
-    ).headers['X-TaskNebula-Nonce'];
+    ).headers['X-ValidTeam-Nonce'];
     const nonceB = (
       (global.fetch as jest.Mock).mock.calls[1][1] as {
         headers: Record<string, string>;
       }
-    ).headers['X-TaskNebula-Nonce'];
+    ).headers['X-ValidTeam-Nonce'];
     expect(nonceA).toMatch(/^[a-f0-9]{32}$/);
     expect(nonceB).toMatch(/^[a-f0-9]{32}$/);
     expect(nonceA).not.toBe(nonceB);

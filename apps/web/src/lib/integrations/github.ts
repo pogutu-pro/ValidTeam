@@ -83,7 +83,7 @@ export async function buildGithubAuthorizeUrl(params: { state: string }): Promis
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('scope', scope);
   url.searchParams.set('state', params.state);
-  // Force consent so users see what TaskNebula will access.
+  // Force consent so users see what ValidTeam will access.
   url.searchParams.set('allow_signup', 'true');
   return url.toString();
 }

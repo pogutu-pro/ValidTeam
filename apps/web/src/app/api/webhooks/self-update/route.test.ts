@@ -57,23 +57,23 @@ function signedRequest(payload: unknown, signatureOverride?: string) {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      'x-tasknebula-timestamp': timestamp,
-      'x-tasknebula-signature': signatureOverride ?? `sha256=${signature}`,
+      'x-validteam-timestamp': timestamp,
+      'x-validteam-signature': signatureOverride ?? `sha256=${signature}`,
     },
     body,
   });
 }
 
 describe('POST /api/webhooks/self-update', () => {
-  const originalSecret = process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET;
+  const originalSecret = process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET;
 
   beforeAll(() => {
-    process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET = secret;
+    process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET = secret;
   });
 
   afterAll(() => {
-    if (originalSecret === undefined) delete process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET;
-    else process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET = originalSecret;
+    if (originalSecret === undefined) delete process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET;
+    else process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET = originalSecret;
   });
 
   beforeEach(() => {

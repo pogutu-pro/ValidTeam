@@ -10,7 +10,7 @@ import {
   organizationMembers,
   projectMembers,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { hasPermission } from '@/lib/auth/permissions';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';
 

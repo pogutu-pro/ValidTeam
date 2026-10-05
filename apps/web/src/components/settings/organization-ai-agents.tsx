@@ -81,7 +81,7 @@ import {
 
 const EMPTY_SETTINGS: WorkspaceAgentSettings = {
   provider: 'native',
-  model: 'tasknebula-planner-v1',
+  model: 'validteam-planner-v1',
   modelConfigId: null,
   assistantEnabled: false,
   enabled: false,

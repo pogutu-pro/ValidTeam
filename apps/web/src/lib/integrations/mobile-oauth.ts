@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { hasPermission as roleHasPermission, type Permission } from '@tasknebula/db';
+import { hasPermission as roleHasPermission, type Permission } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 
 export type IntegrationOAuthProvider = 'github' | 'gitlab' | 'jira' | 'sentry' | 'slack';
@@ -112,7 +112,7 @@ export function mobileIntegrationRedirect(
     reason?: string;
   }
 ): NextResponse {
-  const url = new URL('tasknebula://integrations/oauth');
+  const url = new URL('validteam://integrations/oauth');
   url.searchParams.set('provider', params.provider);
   url.searchParams.set('status', params.status);
   url.searchParams.set('server', appOrigin(request));

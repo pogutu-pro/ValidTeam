@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { auditLogs, db, scimTokens, eq, desc, sql } from '@tasknebula/db';
+import { auditLogs, db, scimTokens, eq, desc, sql } from '@validteam/db';
 import { hasPermission } from '@/lib/auth/permissions';
 import { digestScimToken, generateScimToken, hashScimToken } from '@/lib/sso/tokens';
 import { SCIM_SCOPES } from '@/lib/scim/scopes';

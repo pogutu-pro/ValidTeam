@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, issueSecuritySchemes, projectSecuritySchemes, projects } from '@tasknebula/db';
+import { db, issueSecuritySchemes, projectSecuritySchemes, projects } from '@validteam/db';
 import { and, eq } from 'drizzle-orm';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';

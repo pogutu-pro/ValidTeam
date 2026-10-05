@@ -255,7 +255,7 @@ function makeTx(orgId: string) {
 
 let currentOrgId = '';
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   // NB: this factory runs before any top-level expressions in this file
   // due to jest hoisting. We close over the in-memory state via the
   // names exported from this module's outer scope (budgets, audit,

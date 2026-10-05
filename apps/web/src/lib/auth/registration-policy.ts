@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
-import { db, eq, systemSettings } from '@tasknebula/db';
+import { db, eq, systemSettings } from '@validteam/db';
 
 type RegistrationPolicyDbClient = Pick<typeof db, 'select' | 'insert'>;
 

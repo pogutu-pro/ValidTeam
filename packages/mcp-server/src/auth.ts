@@ -1,5 +1,5 @@
 /**
- * Authentication helpers for the TaskNebula MCP server.
+ * Authentication helpers for the ValidTeam MCP server.
  *
  * MCP authorization guidance recommends OAuth 2.1 with PKCE for remote
  * HTTP servers and lets stdio servers rely on out-of-band
@@ -8,8 +8,8 @@
  *   - `resolveStdioAuth`: pulls the API key from env for local Cursor /
  *     Claude Desktop / Claude Code usage.
  *
- *   - `resolveHttpAuth`: accepts a TaskNebula `sk_live_*` Bearer key from an
- *     incoming HTTP request and forwards it to the TaskNebula API. The MCP
+ *   - `resolveHttpAuth`: accepts a ValidTeam `sk_live_*` Bearer key from an
+ *     incoming HTTP request and forwards it to the ValidTeam API. The MCP
  *     scaffold does not validate the secret itself; each REST route validates
  *     it through the organization-bound API actor resolver. OAuth token
  *     verification remains a follow-up (see TODO below).
@@ -21,7 +21,7 @@
  * having to refactor the transport or the tool registry.
  */
 
-import type { TaskNebulaClientOptions } from './client.js';
+import type { ValidTeamClientOptions } from './client.js';
 
 export interface StdioAuthContext {
   apiUrl: string;
@@ -38,15 +38,15 @@ export interface HttpAuthContext {
 }
 
 export function resolveStdioAuth(env: NodeJS.ProcessEnv = process.env): StdioAuthContext {
-  const apiUrl = env.TASKNEBULA_API_URL ?? 'http://localhost:3000';
-  const apiKey = env.TASKNEBULA_API_KEY;
+  const apiUrl = env.VALIDTEAM_API_URL ?? 'http://localhost:3000';
+  const apiKey = env.VALIDTEAM_API_KEY;
   if (!apiKey) {
     // We don't throw — tools will surface a clear error on first call.
-    // This keeps `npx @tasknebula/mcp-server` usable for `tools/list`
+    // This keeps `npx @validteam/mcp-server` usable for `tools/list`
     // even before the user pastes their key.
     // eslint-disable-next-line no-console
     console.error(
-      '[tasknebula-mcp] WARNING: TASKNEBULA_API_KEY is not set. ' +
+      '[validteam-mcp] WARNING: VALIDTEAM_API_KEY is not set. ' +
         'Tools that hit the API will fail until you set it.'
     );
   }
@@ -54,7 +54,7 @@ export function resolveStdioAuth(env: NodeJS.ProcessEnv = process.env): StdioAut
 }
 
 /**
- * Extract a syntactically valid TaskNebula API key from the `Authorization`
+ * Extract a syntactically valid ValidTeam API key from the `Authorization`
  * header. This is deliberately not an OAuth-token parser: accepting arbitrary
  * Bearer values would let unverified credentials reach capability-only MCP
  * methods such as `tools/list`.
@@ -70,7 +70,7 @@ export function resolveHttpAuth(
   request: { headers: Headers | Record<string, string | string[] | undefined> },
   env: NodeJS.ProcessEnv = process.env
 ): HttpAuthContext {
-  const apiUrl = env.TASKNEBULA_API_URL ?? 'http://localhost:3000';
+  const apiUrl = env.VALIDTEAM_API_URL ?? 'http://localhost:3000';
   const headerValue = getHeader(request.headers, 'authorization');
   if (!headerValue) {
     return { apiUrl };
@@ -91,11 +91,11 @@ export function resolveHttpAuth(
   };
 }
 
-export function clientOptionsFromStdio(ctx: StdioAuthContext): TaskNebulaClientOptions {
+export function clientOptionsFromStdio(ctx: StdioAuthContext): ValidTeamClientOptions {
   return { apiUrl: ctx.apiUrl, apiKey: ctx.apiKey };
 }
 
-export function clientOptionsFromHttp(ctx: HttpAuthContext): TaskNebulaClientOptions {
+export function clientOptionsFromHttp(ctx: HttpAuthContext): ValidTeamClientOptions {
   return { apiUrl: ctx.apiUrl, accessToken: ctx.accessToken };
 }
 

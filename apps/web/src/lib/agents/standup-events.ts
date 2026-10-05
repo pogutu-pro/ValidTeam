@@ -1,7 +1,7 @@
 /**
  * Standup event collector.
  *
- * Bridges TaskNebula's DB (issues, comments, activities) into the
+ * Bridges ValidTeam's DB (issues, comments, activities) into the
  * provider-agnostic `StandupEvent[]` shape consumed by `buildStandupDigest`.
  * Kept separate from `standup.ts` so the agent itself stays free of DB
  * imports and trivial to unit-test.
@@ -18,7 +18,7 @@ import {
   gte,
   inArray,
   desc,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 
 import type { StandupEvent } from './standup';

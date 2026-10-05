@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { createAuditLog, db, eq, organizations } from '@tasknebula/db';
+import { createAuditLog, db, eq, organizations } from '@validteam/db';
 import { hasPermission } from '@/lib/auth/permissions';
 import { normalizeWorkspaceCommunicationsSettings } from '@/lib/chat/config';
 import { resolveLivekitStatus } from '@/lib/chat/livekit';

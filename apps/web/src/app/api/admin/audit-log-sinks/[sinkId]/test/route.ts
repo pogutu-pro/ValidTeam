@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { hasPermission } from '@/lib/auth/permissions';
-import { auditLogSinks, db, eq, systemAuditLogs } from '@tasknebula/db';
+import { auditLogSinks, db, eq, systemAuditLogs } from '@validteam/db';
 import { deliverToSink, persistSinkOutcome } from '@/lib/audit/sink-dispatcher';
 import type { SinkType } from '@/lib/audit/sink-dispatcher';
 import { createId } from '@paralleldrive/cuid2';

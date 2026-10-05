@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { and, eq } from 'drizzle-orm';
 import { auth } from '@/auth';
-import { db, savedFilters } from '@tasknebula/db';
+import { db, savedFilters } from '@validteam/db';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 
 type ViewScope = 'personal' | 'project' | 'teamspace';

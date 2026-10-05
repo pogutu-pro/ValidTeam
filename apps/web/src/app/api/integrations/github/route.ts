@@ -10,7 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, and, eq, integrationConnections } from '@tasknebula/db';
+import { db, and, eq, integrationConnections } from '@validteam/db';
 import { asTokenEnvelope, decryptToken } from '@/lib/integrations/token-crypto';
 import { revokeGithubGrant } from '@/lib/integrations/github';
 import { hasPermission } from '@/lib/auth/permissions';

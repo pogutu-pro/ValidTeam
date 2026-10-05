@@ -7,7 +7,7 @@ import type {
 } from './types';
 
 export const DEFAULT_KNOWN_AI_ACTORS = [
-  'tasknebula-ai',
+  'validteam-ai',
   'claude-code',
   'codex',
   'gemini',

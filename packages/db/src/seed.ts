@@ -41,7 +41,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Super Admin / Owner
   {
     id: createId(),
-    email: 'admin@tasknebula.io',
+    email: 'admin@validteam.io',
     name: 'Admin User',
     image: 'https://avatar.vercel.sh/admin',
     password: '',
@@ -54,7 +54,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Product Owner
   {
     id: createId(),
-    email: 'po@tasknebula.io',
+    email: 'po@validteam.io',
     name: 'Emma Wilson',
     image: 'https://avatar.vercel.sh/emma',
     password: '',
@@ -66,7 +66,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Scrum Master
   {
     id: createId(),
-    email: 'sm@tasknebula.io',
+    email: 'sm@validteam.io',
     name: 'Michael Brown',
     image: 'https://avatar.vercel.sh/michael',
     password: '',
@@ -78,7 +78,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Tech Lead
   {
     id: createId(),
-    email: 'lead@tasknebula.io',
+    email: 'lead@validteam.io',
     name: 'David Kim',
     image: 'https://avatar.vercel.sh/david',
     password: '',
@@ -90,7 +90,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Developer 1
   {
     id: createId(),
-    email: 'dev1@tasknebula.io',
+    email: 'dev1@validteam.io',
     name: 'Sarah Chen',
     image: 'https://avatar.vercel.sh/sarah',
     password: '',
@@ -102,7 +102,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Developer 2
   {
     id: createId(),
-    email: 'dev2@tasknebula.io',
+    email: 'dev2@validteam.io',
     name: 'Alex Johnson',
     image: 'https://avatar.vercel.sh/alex',
     password: '',
@@ -114,7 +114,7 @@ const createDemoUsers = (): DemoUser[] => [
   // QA Engineer
   {
     id: createId(),
-    email: 'qa@tasknebula.io',
+    email: 'qa@validteam.io',
     name: 'Lisa Park',
     image: 'https://avatar.vercel.sh/lisa',
     password: '',
@@ -126,7 +126,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Designer
   {
     id: createId(),
-    email: 'design@tasknebula.io',
+    email: 'design@validteam.io',
     name: 'James Miller',
     image: 'https://avatar.vercel.sh/james',
     password: '',
@@ -138,7 +138,7 @@ const createDemoUsers = (): DemoUser[] => [
   // Viewer / Stakeholder
   {
     id: createId(),
-    email: 'viewer@tasknebula.io',
+    email: 'viewer@validteam.io',
     name: 'Robert Taylor',
     image: 'https://avatar.vercel.sh/robert',
     password: '',
@@ -280,9 +280,9 @@ async function seed() {
     // Create organization
     const org = {
       id: createId(),
-      name: 'TaskNebula Demo',
-      slug: 'tasknebula-demo',
-      domain: 'tasknebula.io',
+      name: 'ValidTeam Demo',
+      slug: 'validteam-demo',
+      domain: 'validteam.io',
       settings: {},
       plan: 'growth' as const,
       status: 'active' as const,
@@ -390,7 +390,7 @@ async function seed() {
         teamId: productTeam.id,
         key: 'DEMO',
         name: 'Demo Project',
-        description: 'Main demo project showcasing TaskNebula features',
+        description: 'Main demo project showcasing ValidTeam features',
         leadId: techLead.id,
         status: 'active' as const,
         settings: {},
@@ -514,8 +514,8 @@ async function seed() {
 
     // Create issues
     console.log('Creating issues...');
-    const dev1 = seedData.users.find((u) => u.email === 'dev1@tasknebula.io')!;
-    const dev2 = seedData.users.find((u) => u.email === 'dev2@tasknebula.io')!;
+    const dev1 = seedData.users.find((u) => u.email === 'dev1@validteam.io')!;
+    const dev2 = seedData.users.find((u) => u.email === 'dev2@validteam.io')!;
     const qa = seedData.users.find((u) => u.projectRole === 'qa_engineer')!;
     const designer = seedData.users.find((u) => u.projectRole === 'designer')!;
 
@@ -762,13 +762,13 @@ async function seed() {
         slug: 'team-onboarding',
         icon: 'book-open',
         contentJson: createDocContent('Team Onboarding', [
-          'Welcome to TaskNebula. Start here for local setup, daily rituals, and communication norms.',
+          'Welcome to ValidTeam. Start here for local setup, daily rituals, and communication norms.',
           'Review the project docs space for active engineering specs tied to current delivery work.',
         ]),
         contentText:
-          'Welcome to TaskNebula. Start here for local setup, daily rituals, and communication norms. Review the project docs space for active engineering specs tied to current delivery work.',
+          'Welcome to ValidTeam. Start here for local setup, daily rituals, and communication norms. Review the project docs space for active engineering specs tied to current delivery work.',
         excerpt:
-          'Welcome to TaskNebula. Start here for local setup, daily rituals, and communication norms.',
+          'Welcome to ValidTeam. Start here for local setup, daily rituals, and communication norms.',
         currentRevision: 1,
         position: 0,
         isArchived: false,

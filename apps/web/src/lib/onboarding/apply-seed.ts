@@ -21,7 +21,7 @@ import {
   ROLE_DEFAULT_PERMISSIONS,
   hasPermission as roleHasPermission,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, eq } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { workspaceSeedSchema, type WorkspaceSeed } from './bootstrapper';

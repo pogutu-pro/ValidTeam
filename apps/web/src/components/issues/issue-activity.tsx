@@ -39,7 +39,7 @@ type MaybeAgentRecord = {
 function isAgentActor(actor: MaybeAgentActor): boolean {
   if (!actor) return false;
   if (actor.kind === 'agent') return true;
-  if (actor.email && actor.email.toLowerCase().endsWith('@agent.tasknebula')) return true;
+  if (actor.email && actor.email.toLowerCase().endsWith('@agent.validteam')) return true;
   if (actor.name && actor.name.toLowerCase().includes('cursor')) return true;
   return false;
 }
@@ -318,7 +318,7 @@ export function IssueActivity({ issueId }: { issueId: string }) {
                               // Best-effort: dispatch a window event so any AI sidecar
                               // listener can toggle. No-op if no listener.
                               if (typeof window !== 'undefined') {
-                                window.dispatchEvent(new CustomEvent('tasknebula:open-ai-sidecar'));
+                                window.dispatchEvent(new CustomEvent('validteam:open-ai-sidecar'));
                               }
                             }}
                             className="text-foreground font-medium hover:underline"

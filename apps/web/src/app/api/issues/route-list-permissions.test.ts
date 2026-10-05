@@ -57,7 +57,7 @@ jest.mock('drizzle-orm', () => ({
   }),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const table = (name: string) =>
     new Proxy(
       { __name: name },

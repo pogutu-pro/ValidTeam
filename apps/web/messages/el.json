@@ -457,7 +457,7 @@
     "viewDockerTag": "Προβολή Docker tag",
     "published": "Δημοσιεύτηκε {date}",
     "lastChecked": "Τελευταίος έλεγχος {time}",
-    "checksDisabledHint": "Οι έλεγχοι ενημερώσεων είναι απενεργοποιημένοι μέσω της μεταβλητής περιβάλλοντος TASKNEBULA_DISABLE_UPDATE_CHECK. Αφαιρέστε την για να βλέπετε εδώ νέες κυκλοφορίες.",
+    "checksDisabledHint": "Οι έλεγχοι ενημερώσεων είναι απενεργοποιημένοι μέσω της μεταβλητής περιβάλλοντος VALIDTEAM_DISABLE_UPDATE_CHECK. Αφαιρέστε την για να βλέπετε εδώ νέες κυκλοφορίες.",
     "notCheckedHint": "Δεν υπάρχουν ακόμη πληροφορίες κυκλοφορίας. Εκτελέστε έναν έλεγχο για σύγκριση με την πιο πρόσφατη δημοσιευμένη κυκλοφορία.",
     "releaseNotes": "Σημειώσεις κυκλοφορίας",
     "viewRelease": "Προβολή κυκλοφορίας στο GitHub",
@@ -495,9 +495,9 @@
       "jobTitle": "Last update request: {version}",
       "jobUpdated": "Last updated {time}",
       "blocked": {
-        "disabled": "Self-update is disabled. Set TASKNEBULA_SELF_UPDATE_ENABLED=true and configure the updater webhook to enable it.",
-        "missing_webhook": "Self-update is enabled, but TASKNEBULA_SELF_UPDATE_WEBHOOK_URL is missing or invalid.",
-        "missing_secret": "Self-update is enabled, but TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET is missing.",
+        "disabled": "Self-update is disabled. Set VALIDTEAM_SELF_UPDATE_ENABLED=true and configure the updater webhook to enable it.",
+        "missing_webhook": "Self-update is enabled, but VALIDTEAM_SELF_UPDATE_WEBHOOK_URL is missing or invalid.",
+        "missing_secret": "Self-update is enabled, but VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET is missing.",
         "checks_disabled": "Update checks are disabled, so the app cannot safely choose a target Docker image.",
         "no_update": "No newer Docker image is available.",
         "missing_docker_image": "Docker Hub did not return a semver image tag to install.",
@@ -505,7 +505,7 @@
         "active_job": "Another update request is already active. Wait for it to finish before starting a new one.",
         "missing_digest": "Docker Hub did not return an immutable image digest. Wait for tag metadata to settle, then check again.",
         "backup_unavailable": "Backup preflight is not ready, so the app will not dispatch an update request.",
-        "weak_secret": "TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET must contain at least 32 bytes of unpredictable secret material."
+        "weak_secret": "VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET must contain at least 32 bytes of unpredictable secret material."
       },
       "jobStatus": {
         "queued": "Queued",
@@ -3788,7 +3788,7 @@
           "codex": "Codex CLI"
         },
         "reason": {
-          "disabled": "Local CLI dispatch is off. Turn on this provider here, or set TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED=true as a server-wide default.",
+          "disabled": "Local CLI dispatch is off. Turn on this provider here, or set VALIDTEAM_LOCAL_AGENT_RUNNER_ENABLED=true as a server-wide default.",
           "cwd_missing": "Working directory does not exist: {value}",
           "command_missing": "Command is not available on PATH: {value}"
         }
@@ -7154,5 +7154,16 @@
     "modalOpenFailed": "The new-issue modal could not be opened. Try again.",
     "modalDescriptionStandaloneLabel": "Description",
     "modalStandaloneProjectLabel": "Project key (required, e.g. TN)"
+  },
+  "requestAccessPage": {
+    "title": "Request access",
+    "intro": "ValidTeam is currently internal-only.",
+    "name": "Name",
+    "email": "Email",
+    "reason": "Why do you need access?",
+    "submit": "Send request",
+    "sent": "Request sent. I will review it personally.",
+    "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
+    "spamNotice": "This only sends me a note. No account is created until I approve."
   }
 }

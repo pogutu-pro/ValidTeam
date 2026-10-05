@@ -28,7 +28,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { agentProviders, agentSessions, and, db, eq, getIssueById } from '@tasknebula/db';
+import { agentProviders, agentSessions, and, db, eq, getIssueById } from '@validteam/db';
 import { auth } from '@/auth';
 import {
   AGENT_PROVIDERS,
@@ -277,10 +277,10 @@ export async function POST(
       signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
-        'X-TaskNebula-Event': 'agent.session.dispatch',
-        'X-TaskNebula-Signature': `sha256=${signature}`,
-        'X-TaskNebula-Delivery': deliveryId,
-        'X-TaskNebula-Session-Id': created.id,
+        'X-ValidTeam-Event': 'agent.session.dispatch',
+        'X-ValidTeam-Signature': `sha256=${signature}`,
+        'X-ValidTeam-Delivery': deliveryId,
+        'X-ValidTeam-Session-Id': created.id,
       },
       body,
     });

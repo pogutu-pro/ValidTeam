@@ -21,7 +21,7 @@ const previewBuiltinKeys = [
   'weekly_digest',
 ] as const;
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   BUILTIN_TEMPLATES: Object.fromEntries(
     [
       'issue_assigned',

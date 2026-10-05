@@ -20,26 +20,22 @@
  */
 import { sql } from 'drizzle-orm';
 
-import { db } from '@tasknebula/db';
+import { db } from '@validteam/db';
 
 /**
  * The set of executor shapes we accept — either the root drizzle client
- * exported from `@tasknebula/db` or the transaction handle yielded inside
+ * exported from `@validteam/db` or the transaction handle yielded inside
  * `db.transaction(...)`. Both expose `.transaction(...)` and `.execute(...)`
  * with the same signatures.
  */
-export type VectorQueryClient =
-  | typeof db
-  | Parameters<Parameters<typeof db.transaction>[0]>[0];
+export type VectorQueryClient = typeof db | Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /**
  * The transaction handle passed into the callback. We re-export it so call
  * sites can type their inner functions without re-deriving the conditional
  * type above.
  */
-export type VectorTransactionClient = Parameters<
-  Parameters<typeof db.transaction>[0]
->[0];
+export type VectorTransactionClient = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 /** Smallest sane `ef_search`. pgvector accepts 1..1000 but <10 is useless. */
 const MIN_EF_SEARCH = 10;
@@ -86,7 +82,7 @@ function clampEfSearch(value: number): number {
 export async function withEfSearch<T>(
   client: VectorQueryClient,
   value: number | undefined,
-  fn: (tx: VectorTransactionClient) => Promise<T>,
+  fn: (tx: VectorTransactionClient) => Promise<T>
 ): Promise<T> {
   const efSearch = clampEfSearch(value ?? getDefaultEfSearch());
 

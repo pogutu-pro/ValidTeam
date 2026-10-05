@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, notifications, users } from '@tasknebula/db';
+import { db, notifications, users } from '@validteam/db';
 import { eq, and, desc } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -39,10 +39,7 @@ export async function GET(request: NextRequest) {
       .leftJoin(users, eq(notifications.actorId, users.id))
       .where(
         unreadOnly
-          ? and(
-              eq(notifications.userId, session.user.id),
-              eq(notifications.isRead, false)
-            )
+          ? and(eq(notifications.userId, session.user.id), eq(notifications.isRead, false))
           : eq(notifications.userId, session.user.id)
       )
       .orderBy(desc(notifications.createdAt))
@@ -53,10 +50,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ notifications: notificationsData });
   } catch (error) {
     console.error('Failed to fetch notifications:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch notifications' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch notifications' }, { status: 500 });
   }
 }
 
@@ -75,20 +69,11 @@ export async function PATCH(request: NextRequest) {
         readAt: new Date(),
         updatedAt: new Date(),
       })
-      .where(
-        and(
-          eq(notifications.userId, session.user.id),
-          eq(notifications.isRead, false)
-        )
-      );
+      .where(and(eq(notifications.userId, session.user.id), eq(notifications.isRead, false)));
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to mark notifications as read:', error);
-    return NextResponse.json(
-      { error: 'Failed to mark notifications as read' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to mark notifications as read' }, { status: 500 });
   }
 }
-

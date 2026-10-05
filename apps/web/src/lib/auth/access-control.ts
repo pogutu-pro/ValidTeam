@@ -9,7 +9,7 @@ import {
   ROLE_DEFAULT_PERMISSIONS,
   hasPermission as roleHasPermission,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, asc, eq, ne } from 'drizzle-orm';
 
 /** Resolve a nullable per-member override without letting explicit denials fall through. */

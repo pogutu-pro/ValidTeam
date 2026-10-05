@@ -19,7 +19,7 @@ jest.mock('@/lib/integrations/slack', () => ({
 }));
 jest.mock('@/lib/integrations/slack-commands', () => ({
   resolveSlackOrg: (...args: unknown[]) => resolveSlackOrgMock(...args),
-  lookupTaskNebulaUserBySlackId: (...args: unknown[]) => lookupUserMock(...args),
+  lookupValidTeamUserBySlackId: (...args: unknown[]) => lookupUserMock(...args),
 }));
 jest.mock('@/lib/integrations/slack-issue-bridge', () => ({
   createIssueFromSlackMessage: (...args: unknown[]) => createIssueMock(...args),
@@ -31,7 +31,7 @@ jest.mock('next-intl/server', () => ({
     return key;
   },
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const slackChannelRoutes = {
     projectId: 'routes.projectId',
     emojiTrigger: 'routes.emojiTrigger',

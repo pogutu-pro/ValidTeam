@@ -13,7 +13,7 @@
  *
  * Mocks mirror the strategy used in
  * apps/web/src/app/api/projects/route.test.ts and sprints/route.test.ts:
- * `next/server`, `@/auth`, `@tasknebula/db`, and `drizzle-orm` are stubbed
+ * `next/server`, `@/auth`, `@validteam/db`, and `drizzle-orm` are stubbed
  * so we never touch a real database. The `db.select(...).from(...).where(...).limit(1)`
  * chain returned by the route is satisfied via a `limitBuilder` helper that
  * yields the rows we want for each call in order.
@@ -91,7 +91,7 @@ jest.mock('@paralleldrive/cuid2', () => ({
   createId: () => 'generated-id',
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),

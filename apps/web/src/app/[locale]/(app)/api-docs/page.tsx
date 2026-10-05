@@ -1,5 +1,5 @@
 /**
- * Swagger UI for the TaskNebula HTTP API.
+ * Swagger UI for the ValidTeam HTTP API.
  *
  * Auth-gated to workspace admins:
  *   - super admins (`users.isSuperAdmin = true`), or
@@ -12,7 +12,7 @@
 import { redirect } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
-import { db, users } from '@tasknebula/db';
+import { db, users } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { ApiDocsClient } from './api-docs-client';
 import { PageHeader } from '@/components/ui/page-header';

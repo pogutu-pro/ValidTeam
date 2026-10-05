@@ -346,9 +346,9 @@ function manualUpdateCommands(info: VersionInfo) {
     ? `${repository}@${info.image.latestDigest}`
     : `${repository}:${tag}`;
   return [
-    `BACKUP_DIR=/var/backups/tasknebula ./scripts/tasknebula-backup.sh`,
-    `TASKNEBULA_IMAGE=${imageRef} docker compose pull web`,
-    `TASKNEBULA_IMAGE=${imageRef} docker compose up -d web`,
+    `BACKUP_DIR=/var/backups/validteam ./scripts/validteam-backup.sh`,
+    `VALIDTEAM_IMAGE=${imageRef} docker compose pull web`,
+    `VALIDTEAM_IMAGE=${imageRef} docker compose up -d web`,
     'docker compose ps web',
   ].join('\n');
 }

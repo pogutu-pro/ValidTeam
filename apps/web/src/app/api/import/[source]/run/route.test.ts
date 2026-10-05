@@ -60,7 +60,7 @@ jest.mock('@/lib/auth/project-access', () => ({
     resolveProjectCapabilityAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   and: (...args: unknown[]) => ({ type: 'and', args }),
   eq: (left: unknown, right: unknown) => ({ type: 'eq', left, right }),
   hasPermission: (...args: unknown[]) => roleHasPermissionMock(...args),

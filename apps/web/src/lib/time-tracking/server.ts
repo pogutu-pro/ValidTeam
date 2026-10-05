@@ -11,7 +11,7 @@
  */
 
 import { and, eq, isNotNull, sql } from 'drizzle-orm';
-import { db, issues, timeEntries } from '@tasknebula/db';
+import { db, issues, timeEntries } from '@validteam/db';
 import { canReadIssue } from '@/lib/auth/access-control';
 
 export type IssueAccessIssue = {

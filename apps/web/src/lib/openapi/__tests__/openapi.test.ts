@@ -102,7 +102,7 @@ describe('OpenAPI registry', () => {
   });
 
   it('documents API keys only on routes that resolve API actors', () => {
-    expect((built.components as any).securitySchemes.taskNebulaApiKey).toMatchObject({
+    expect((built.components as any).securitySchemes.validTeamApiKey).toMatchObject({
       type: 'apiKey',
       in: 'header',
       name: 'X-API-Key',
@@ -121,7 +121,7 @@ describe('OpenAPI registry', () => {
     for (const [path, method] of apiKeyRoutes) {
       expect((built.paths as any)[path][method].security).toEqual([
         { cookieAuth: [] },
-        { taskNebulaApiKey: [] },
+        { validTeamApiKey: [] },
       ]);
     }
 

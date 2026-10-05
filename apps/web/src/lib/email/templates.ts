@@ -18,7 +18,7 @@ import {
   chip,
   textFooter,
   EMAIL_COLORS,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 /**
  * Render the password-reset message (subject/html/text).
@@ -163,7 +163,7 @@ export function renderInvitationMessage(args: {
     textFooter();
 
   return {
-    subject: `You've been invited to ${orgName} on TaskNebula`,
+    subject: `You've been invited to ${orgName} on ValidTeam`,
     html,
     text,
   };

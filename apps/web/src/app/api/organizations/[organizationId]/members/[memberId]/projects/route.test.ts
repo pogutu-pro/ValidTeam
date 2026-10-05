@@ -71,7 +71,7 @@ jest.mock('drizzle-orm', () => ({
   inArray: (col: unknown, values: unknown) => ({ type: 'inArray', col, values }),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, labels, issueLabels, projects } from '@tasknebula/db';
+import { db, labels, issueLabels, projects } from '@validteam/db';
 import { and, asc, count, eq, ilike, isNull, or, type SQL } from 'drizzle-orm';
 import { z } from 'zod';
 import { createId } from '@paralleldrive/cuid2';

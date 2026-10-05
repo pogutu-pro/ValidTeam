@@ -94,7 +94,8 @@ function cleanClipboardHtml(rawHtml: string) {
 }
 
 function removeComments(root: HTMLElement) {
-  const commentFilter = root.ownerDocument.defaultView?.NodeFilter.SHOW_COMMENT ?? NodeFilter.SHOW_COMMENT;
+  const commentFilter =
+    root.ownerDocument.defaultView?.NodeFilter.SHOW_COMMENT ?? NodeFilter.SHOW_COMMENT;
   const walker = root.ownerDocument.createTreeWalker(root, commentFilter);
   const comments: Comment[] = [];
 
@@ -138,7 +139,15 @@ function normalizeElement(element: HTMLElement) {
     return;
   }
 
-  if (tagName === 'div' || tagName === 'section' || tagName === 'article' || tagName === 'main' || tagName === 'header' || tagName === 'footer' || tagName === 'aside') {
+  if (
+    tagName === 'div' ||
+    tagName === 'section' ||
+    tagName === 'article' ||
+    tagName === 'main' ||
+    tagName === 'header' ||
+    tagName === 'footer' ||
+    tagName === 'aside'
+  ) {
     if (hasOnlyInlineChildren(element)) {
       normalizeElement(replaceTag(element, 'p'));
     } else {
@@ -187,7 +196,10 @@ function applyInlineStyleSemantics(element: HTMLElement) {
     wrappers.push('sub');
   }
 
-  if (/font-family:[^;]*(monospace|courier|menlo|consolas|monaco)/.test(style) && element.tagName.toLowerCase() !== 'pre') {
+  if (
+    /font-family:[^;]*(monospace|courier|menlo|consolas|monaco)/.test(style) &&
+    element.tagName.toLowerCase() !== 'pre'
+  ) {
     wrappers.push('code');
   }
 
@@ -235,7 +247,13 @@ function sanitizeElementAttributes(element: HTMLElement) {
       return;
     }
 
-    if (name === 'alt' || name === 'title' || name === 'rowspan' || name === 'colspan' || name === 'start') {
+    if (
+      name === 'alt' ||
+      name === 'title' ||
+      name === 'rowspan' ||
+      name === 'colspan' ||
+      name === 'start'
+    ) {
       return;
     }
 
@@ -355,14 +373,16 @@ function wrapInlineRuns(root: HTMLElement) {
 }
 
 function removeEmptyNodes(root: HTMLElement) {
-  Array.from(root.querySelectorAll('p, span, strong, em, u, s, sub, sup, code, mark')).forEach((node) => {
-    const element = node as HTMLElement;
-    const hasMedia = element.querySelector('img, br, hr');
+  Array.from(root.querySelectorAll('p, span, strong, em, u, s, sub, sup, code, mark')).forEach(
+    (node) => {
+      const element = node as HTMLElement;
+      const hasMedia = element.querySelector('img, br, hr');
 
-    if (!element.textContent?.trim() && !hasMedia) {
-      element.remove();
+      if (!element.textContent?.trim() && !hasMedia) {
+        element.remove();
+      }
     }
-  });
+  );
 }
 
 function isSafeUrl(value: string, allowedProtocols: string[], allowRelative = false) {
@@ -372,7 +392,12 @@ function isSafeUrl(value: string, allowedProtocols: string[], allowRelative = fa
     return false;
   }
 
-  if (allowRelative && (normalizedValue.startsWith('/') || normalizedValue.startsWith('./') || normalizedValue.startsWith('../'))) {
+  if (
+    allowRelative &&
+    (normalizedValue.startsWith('/') ||
+      normalizedValue.startsWith('./') ||
+      normalizedValue.startsWith('../'))
+  ) {
     return true;
   }
 
@@ -381,7 +406,7 @@ function isSafeUrl(value: string, allowedProtocols: string[], allowRelative = fa
   }
 
   try {
-    const parsed = new URL(normalizedValue, 'https://tasknebula.local');
+    const parsed = new URL(normalizedValue, 'https://validteam.local');
     return allowedProtocols.includes(parsed.protocol);
   } catch {
     return false;

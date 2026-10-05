@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
-import { db, intakeForms, projects } from '@tasknebula/db';
+import { db, intakeForms, projects } from '@validteam/db';
 import { desc, inArray } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { IntakeFormsList } from '@/components/intake/intake-forms-list';

@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq, gte, sql } from 'drizzle-orm';
-import { db, issues, workflowStatuses } from '@tasknebula/db';
+import { db, issues, workflowStatuses } from '@validteam/db';
 import { auth } from '@/auth';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 

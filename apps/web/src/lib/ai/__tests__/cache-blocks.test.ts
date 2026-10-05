@@ -124,11 +124,11 @@ describe('asTextBlock', () => {
 describe('buildCachedSystemPrompt', () => {
   it('puts instructions first and marks the tail for caching', () => {
     const out = buildCachedSystemPrompt({
-      instructions: 'You are TaskNebula.',
+      instructions: 'You are ValidTeam.',
       toolSchemaBlock: '{"schema":1}',
     });
     expect(out).toHaveLength(2);
-    expect(out[0].text).toContain('TaskNebula');
+    expect(out[0].text).toContain('ValidTeam');
     expect(out[0].cache_control).toBeUndefined();
     expect(out[1].cache_control).toEqual({ type: 'ephemeral' });
   });

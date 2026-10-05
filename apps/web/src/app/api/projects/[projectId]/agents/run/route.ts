@@ -1,7 +1,7 @@
 import { after, NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { db, eq, organizations, projects } from '@tasknebula/db';
+import { db, eq, organizations, projects } from '@validteam/db';
 import { getProjectAgentAccess } from '@/lib/agents/access';
 import {
   AGENT_RUN_KINDS,

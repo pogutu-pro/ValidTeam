@@ -1,7 +1,7 @@
 /**
  * Import job runner.
  *
- * No external queue is wired in TaskNebula yet (no BullMQ / pg-boss), so
+ * No external queue is wired in ValidTeam yet (no BullMQ / pg-boss), so
  * this module ships a simple in-process runner that:
  *   1. Reads the `import_jobs` row.
  *   2. Re-parses the source using the adapter + stored payload / config.
@@ -29,10 +29,10 @@ import {
   eq,
   and,
   asc,
-} from '@tasknebula/db';
-import type { ImportJobError } from '@tasknebula/db';
+} from '@validteam/db';
+import type { ImportJobError } from '@validteam/db';
 import { getImporter } from './index';
-import type { ImportMapping, NormalizedRecord, TaskNebulaIssue } from './types';
+import type { ImportMapping, NormalizedRecord, ValidTeamIssue } from './types';
 
 type StoredMapping = ImportMapping & {
   /** Project to import into. Required for the runner. */
@@ -44,7 +44,7 @@ type StoredMapping = ImportMapping & {
 };
 
 /**
- * Apply a single normalized record to TaskNebula's `issues` table.
+ * Apply a single normalized record to ValidTeam's `issues` table.
  *
  * This is intentionally narrower than the full create-issue flow: we
  * bypass workflows / notifications / activity logs to keep imports
@@ -55,7 +55,7 @@ async function insertIssueRow(args: {
   workspaceId: string;
   projectId: string;
   reporterId: string;
-  issue: TaskNebulaIssue;
+  issue: ValidTeamIssue;
 }): Promise<void> {
   const { workspaceId, projectId, reporterId, issue } = args;
 

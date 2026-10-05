@@ -19,7 +19,7 @@ import {
   inArray,
   ne,
   sql,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { SCIM_SCHEMAS, type ScimGroupRecord } from './types';
 import { getBaseUrl } from '../sso/saml';

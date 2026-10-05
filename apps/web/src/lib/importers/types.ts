@@ -8,7 +8,7 @@
  *      converts them into the `NormalizedRecord` shape (same shape for
  *      every adapter — the lowest common denominator).
  *   2. `mapRecord(rec, mapping)` projects a single normalized record onto
- *      TaskNebula's issue shape, honoring user-chosen column / field
+ *      ValidTeam's issue shape, honoring user-chosen column / field
  *      overrides supplied via `mapping`.
  *   3. The runner inserts mapped records into the `issues` table and
  *      updates the `import_jobs` row with progress / errors.
@@ -23,12 +23,12 @@ export type NormalizedRecord = {
   key: string;
   title: string;
   description: string | null;
-  /** Free-form source status string; mapped to a TaskNebula workflow status downstream. */
+  /** Free-form source status string; mapped to a ValidTeam workflow status downstream. */
   status: string | null;
   /** Source priority string ('high', '1', 'P0'…); normalized by `mapRecord`. */
   priority: string | null;
   labels: string[];
-  /** Email is the bridge field for matching to TaskNebula users. */
+  /** Email is the bridge field for matching to ValidTeam users. */
   assigneeEmail: string | null;
   /** Source key of the parent issue / epic if any (resolved by the runner). */
   parentKey: string | null;
@@ -48,7 +48,7 @@ export type NormalizedComment = {
  * organization / project / reporter / workflow-status ids based on the
  * job's workspace + the resolved mapping.
  */
-export type TaskNebulaIssue = {
+export type ValidTeamIssue = {
   sourceKey: string;
   title: string;
   description: string | null;
@@ -74,7 +74,7 @@ export type ImportMapping = {
   /** CSV column → NormalizedRecord field. */
   columns?: Partial<Record<keyof NormalizedRecord, string>>;
   /** Optional default issue type when the source doesn't tell us one. */
-  defaultType?: TaskNebulaIssue['type'];
+  defaultType?: ValidTeamIssue['type'];
   /** Adapter-specific config (api keys, repo, site, etc). */
   config?: Record<string, unknown>;
 };
@@ -94,8 +94,8 @@ export interface Importer<TInput = unknown> {
    */
   parseSource(input: TInput): Promise<NormalizedRecord[]>;
 
-  /** Project a single normalized record onto TaskNebula's issue shape. */
-  mapRecord(rec: NormalizedRecord, mapping: ImportMapping): TaskNebulaIssue;
+  /** Project a single normalized record onto ValidTeam's issue shape. */
+  mapRecord(rec: NormalizedRecord, mapping: ImportMapping): ValidTeamIssue;
 }
 
 /**
@@ -103,18 +103,10 @@ export interface Importer<TInput = unknown> {
  * Recognized: 'critical' | 'high' | 'medium' | 'low' | 'none'.
  * Numeric priorities ('1'..'5', 'P0'..'P4') are normalized too.
  */
-export function normalizePriority(
-  value: string | null | undefined
-): TaskNebulaIssue['priority'] {
+export function normalizePriority(value: string | null | undefined): ValidTeamIssue['priority'] {
   if (!value) return 'medium';
   const v = String(value).trim().toLowerCase();
-  if (
-    v === 'critical' ||
-    v === 'urgent' ||
-    v === '1' ||
-    v === 'p0' ||
-    v === 'p1'
-  ) {
+  if (v === 'critical' || v === 'urgent' || v === '1' || v === 'p0' || v === 'p1') {
     return 'critical';
   }
   if (v === 'high' || v === '2' || v === 'p2') return 'high';
@@ -128,12 +120,12 @@ export function normalizePriority(
 
 /**
  * Map a free-form type / kind string onto our enum. Defaults to 'task'
- * because that's the broadest TaskNebula issue type.
+ * because that's the broadest ValidTeam issue type.
  */
 export function normalizeType(
   value: string | null | undefined,
-  fallback: TaskNebulaIssue['type'] = 'task'
-): TaskNebulaIssue['type'] {
+  fallback: ValidTeamIssue['type'] = 'task'
+): ValidTeamIssue['type'] {
   if (!value) return fallback;
   const v = String(value).trim().toLowerCase();
   if (v === 'bug' || v === 'defect') return 'bug';

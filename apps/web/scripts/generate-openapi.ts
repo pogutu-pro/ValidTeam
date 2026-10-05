@@ -7,7 +7,7 @@
  * to disk.
  *
  * Run with:
- *   pnpm --filter @tasknebula/web openapi:gen
+ *   pnpm --filter @validteam/web openapi:gen
  *
  * CI invokes the script and then `jest openapi` — the snapshot test fails
  * if the on-disk file disagrees with the freshly generated one.

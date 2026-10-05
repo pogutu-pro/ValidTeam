@@ -56,17 +56,14 @@ jest.mock('@/auth', () => ({
   auth: (...args: unknown[]) => authMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const op = (type: string, args: unknown[]) => ({ type, args });
   return {
     db: {
       select: (...args: unknown[]) => dbSelectMock(...args),
       update: (...args: unknown[]) => dbUpdateMock(...args),
     },
-    notifications: new Proxy(
-      {},
-      { get: (_t, prop: string) => `notifications.${prop}` }
-    ),
+    notifications: new Proxy({}, { get: (_t, prop: string) => `notifications.${prop}` }),
     users: new Proxy({}, { get: (_t, prop: string) => `users.${prop}` }),
     issues: new Proxy({}, { get: (_t, prop: string) => `issues.${prop}` }),
     projects: new Proxy({}, { get: (_t, prop: string) => `projects.${prop}` }),
@@ -147,8 +144,10 @@ describe('snooze re-emergence', () => {
     const orNodes = findNodes(captured, (n) => n.type === 'or');
     const matchingOr = orNodes.find(
       (orNode) =>
-        findNodes(orNode, (n) => n.type === 'isNull' && n.args[0] === 'notifications.snoozedUntil').length > 0 &&
-        findNodes(orNode, (n) => n.type === 'lte' && n.args[0] === 'notifications.snoozedUntil').length > 0
+        findNodes(orNode, (n) => n.type === 'isNull' && n.args[0] === 'notifications.snoozedUntil')
+          .length > 0 &&
+        findNodes(orNode, (n) => n.type === 'lte' && n.args[0] === 'notifications.snoozedUntil')
+          .length > 0
     );
     expect(matchingOr).toBeDefined();
 
@@ -196,9 +195,7 @@ describe('snooze re-emergence', () => {
 
   it('snooze POST accepts a future timestamp and writes it through', async () => {
     const future = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-    const updatedReturning = [
-      { id: 'n1', snoozedUntil: new Date(future) },
-    ];
+    const updatedReturning = [{ id: 'n1', snoozedUntil: new Date(future) }];
     dbUpdateMock.mockReturnValueOnce({
       set: jest.fn().mockReturnValue({
         where: jest.fn().mockReturnValue({
@@ -252,8 +249,10 @@ describe('snooze re-emergence', () => {
     expect(gtNode).toBeDefined();
 
     // The complementary OR (default mode) must NOT be present here.
-    const orWithIsNull = findNodes(captured, (n) => n.type === 'or').find((orNode) =>
-      findNodes(orNode, (m) => m.type === 'isNull' && m.args[0] === 'notifications.snoozedUntil').length > 0
+    const orWithIsNull = findNodes(captured, (n) => n.type === 'or').find(
+      (orNode) =>
+        findNodes(orNode, (m) => m.type === 'isNull' && m.args[0] === 'notifications.snoozedUntil')
+          .length > 0
     );
     expect(orWithIsNull).toBeUndefined();
   });

@@ -34,10 +34,10 @@ export const TAGS = {
   Agents: 'Agents',
 } as const;
 
-/** Browser sessions and organization-bound TaskNebula API keys are alternatives. */
+/** Browser sessions and organization-bound ValidTeam API keys are alternatives. */
 export const SESSION_OR_API_KEY_SECURITY: Array<Record<string, string[]>> = [
   { cookieAuth: [] },
-  { taskNebulaApiKey: [] },
+  { validTeamApiKey: [] },
 ];
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
@@ -114,7 +114,7 @@ export function buildOpenApiDocument(opts?: { version?: string }): any {
     // already registered — ignore
   }
   try {
-    registry.registerComponent('securitySchemes', 'taskNebulaApiKey', {
+    registry.registerComponent('securitySchemes', 'validTeamApiKey', {
       type: 'apiKey',
       in: 'header',
       name: 'X-API-Key',

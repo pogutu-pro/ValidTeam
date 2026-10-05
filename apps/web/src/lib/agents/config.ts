@@ -38,7 +38,7 @@ export const AGENT_PROVIDERS = ['native', 'openai', 'anthropic', 'azure', 'custo
 export type AgentProvider = (typeof AGENT_PROVIDERS)[number];
 
 export const AGENT_PROVIDER_DEFAULT_MODELS: Record<AgentProvider, string> = {
-  native: 'tasknebula-planner-v1',
+  native: 'validteam-planner-v1',
   openai: 'gpt-4o-mini',
   anthropic: 'claude-sonnet-4-6',
   azure: 'gpt-4o',
@@ -556,7 +556,7 @@ export function getAgentProviderReadiness(
 }
 
 function isNativePlaceholderModel(model?: string) {
-  return !model?.trim() || model.startsWith('tasknebula-');
+  return !model?.trim() || model.startsWith('validteam-');
 }
 
 function getProviderConfigIssue(

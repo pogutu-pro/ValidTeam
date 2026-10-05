@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { db, users, eq, hasPermission as roleHasPermission } from '@tasknebula/db';
+import { db, users, eq, hasPermission as roleHasPermission } from '@validteam/db';
 import { EmailVerificationBannerClient } from './email-verification-banner-client';
 import { listActiveOrganizationMemberships } from '@/lib/auth/access-control';
 

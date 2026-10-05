@@ -5,7 +5,7 @@ const log = childLogger('server/redis');
 
 declare global {
   // eslint-disable-next-line no-var -- required for global augmentation
-  var __tasknebulaRedis__: Redis | undefined;
+  var __validteamRedis__: Redis | undefined;
 }
 
 function getRedisUrl() {
@@ -30,8 +30,8 @@ export function getRedisClient() {
     return null;
   }
 
-  if (!global.__tasknebulaRedis__) {
-    global.__tasknebulaRedis__ = attachRedisErrorLogger(
+  if (!global.__validteamRedis__) {
+    global.__validteamRedis__ = attachRedisErrorLogger(
       new Redis(redisUrl, {
         lazyConnect: true,
         maxRetriesPerRequest: 2,
@@ -41,7 +41,7 @@ export function getRedisClient() {
     );
   }
 
-  return global.__tasknebulaRedis__;
+  return global.__validteamRedis__;
 }
 
 export async function createRedisSubscriber() {

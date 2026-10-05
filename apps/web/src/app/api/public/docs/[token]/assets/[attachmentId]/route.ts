@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { and, db, documentPageAttachments, documentPages, eq } from '@tasknebula/db';
+import { and, db, documentPageAttachments, documentPages, eq } from '@validteam/db';
 import {
   attachmentContentDisposition,
   readStoredFile,

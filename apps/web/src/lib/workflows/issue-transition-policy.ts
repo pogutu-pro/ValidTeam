@@ -12,7 +12,7 @@ import {
   workflowStatuses,
   workflowTransitions,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, eq, inArray } from 'drizzle-orm';
 
 export type WorkflowPolicyRole = 'admin' | 'member' | 'guest';

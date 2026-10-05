@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import { and, db, documentPageAttachments, eq, sql } from '@tasknebula/db';
+import { and, db, documentPageAttachments, eq, sql } from '@validteam/db';
 import { resolveDocumentPageAccess } from '@/lib/docs/server';
 import { resolveStorageConfig, STORAGE_CONFIG_ADVISORY_LOCK } from '@/lib/admin/system-settings';
 import {

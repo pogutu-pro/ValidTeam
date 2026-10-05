@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { and, createAuditLog, db, eq, projectChannels } from '@tasknebula/db';
+import { and, createAuditLog, db, eq, projectChannels } from '@validteam/db';
 import { ChatAccessError, getChannelWithRoom, getProjectChatContext } from '@/lib/chat/server';
 
 const updateChannelSchema = z.object({
@@ -23,7 +23,10 @@ export async function PATCH(
     const { projectId, channelId } = await params;
     const context = await getProjectChatContext(session.user.id, projectId);
     if (!context.permissions.canCreateChannels) {
-      return NextResponse.json({ error: 'You do not have permission to edit channels' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to edit channels' },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
@@ -37,7 +40,9 @@ export async function PATCH(
         updatedAt: new Date(),
         updatedBy: session.user.id,
       })
-      .where(and(eq(projectChannels.id, channelId), eq(projectChannels.projectId, context.project.id)))
+      .where(
+        and(eq(projectChannels.id, channelId), eq(projectChannels.projectId, context.project.id))
+      )
       .returning();
 
     if (!channel) {
@@ -58,7 +63,10 @@ export async function PATCH(
     return NextResponse.json(payload);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
     }
 
     if (error instanceof ChatAccessError) {
@@ -83,7 +91,10 @@ export async function DELETE(
     const { projectId, channelId } = await params;
     const context = await getProjectChatContext(session.user.id, projectId);
     if (!context.permissions.canCreateChannels) {
-      return NextResponse.json({ error: 'You do not have permission to archive channels' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to archive channels' },
+        { status: 403 }
+      );
     }
 
     const [channel] = await db
@@ -93,7 +104,9 @@ export async function DELETE(
         updatedAt: new Date(),
         updatedBy: session.user.id,
       })
-      .where(and(eq(projectChannels.id, channelId), eq(projectChannels.projectId, context.project.id)))
+      .where(
+        and(eq(projectChannels.id, channelId), eq(projectChannels.projectId, context.project.id))
+      )
       .returning();
 
     if (!channel) {

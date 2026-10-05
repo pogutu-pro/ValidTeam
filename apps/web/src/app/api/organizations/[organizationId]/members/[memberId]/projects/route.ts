@@ -8,7 +8,7 @@ import {
   projectMembers,
   auditLogs,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, eq, inArray } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { hasPermission } from '@/lib/auth/permissions';

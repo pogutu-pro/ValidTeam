@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { IntakeFieldDefinition } from '@tasknebula/db';
+import type { IntakeFieldDefinition } from '@validteam/db';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface Props {

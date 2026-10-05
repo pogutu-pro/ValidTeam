@@ -20,8 +20,8 @@ describe('POST /api/chat/livekit/webhook', () => {
     jest.clearAllMocks();
     process.env = {
       ...originalEnv,
-      LIVEKIT_API_KEY: 'tasknebula-dev',
-      LIVEKIT_API_SECRET: 'tasknebula-secret',
+      LIVEKIT_API_KEY: 'validteam-dev',
+      LIVEKIT_API_SECRET: 'validteam-secret',
     };
   });
 
@@ -47,7 +47,10 @@ describe('POST /api/chat/livekit/webhook', () => {
         headers: MockHeaders;
         private readonly bodyValue: string;
 
-        constructor(url: string, init?: { method?: string; headers?: Record<string, string>; body?: string }) {
+        constructor(
+          url: string,
+          init?: { method?: string; headers?: Record<string, string>; body?: string }
+        ) {
           this.url = url;
           this.method = init?.method || 'GET';
           this.headers = new MockHeaders(init?.headers);
@@ -108,7 +111,10 @@ describe('POST /api/chat/livekit/webhook', () => {
     receiveMock.mockResolvedValue({
       event: 'participant_left',
       room: { name: 'tn-web-room-1' },
-      participant: { identity: 'tnp:user-1:session-1', metadata: JSON.stringify({ userId: 'user-1', clientSessionId: 'session-1' }) },
+      participant: {
+        identity: 'tnp:user-1:session-1',
+        metadata: JSON.stringify({ userId: 'user-1', clientSessionId: 'session-1' }),
+      },
     });
     handleLivekitWebhookEventMock.mockResolvedValue({
       handled: true,
@@ -126,7 +132,10 @@ describe('POST /api/chat/livekit/webhook', () => {
 
     const response = await POST(request);
     expect(response.status).toBe(200);
-    expect(receiveMock).toHaveBeenCalledWith(JSON.stringify({ hello: 'world' }), 'Bearer signed-webhook');
+    expect(receiveMock).toHaveBeenCalledWith(
+      JSON.stringify({ hello: 'world' }),
+      'Bearer signed-webhook'
+    );
     expect(handleLivekitWebhookEventMock).toHaveBeenCalledWith({
       event: 'participant_left',
       roomName: 'tn-web-room-1',

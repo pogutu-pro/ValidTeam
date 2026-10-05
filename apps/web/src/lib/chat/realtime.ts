@@ -8,15 +8,15 @@ type ChatRealtimeEvent = {
 
 declare global {
   // eslint-disable-next-line no-var -- required for global augmentation
-  var __tasknebulaChatEmitter__: EventEmitter | undefined;
+  var __validteamChatEmitter__: EventEmitter | undefined;
 }
 
 function getFallbackEmitter() {
-  if (!global.__tasknebulaChatEmitter__) {
-    global.__tasknebulaChatEmitter__ = new EventEmitter();
+  if (!global.__validteamChatEmitter__) {
+    global.__validteamChatEmitter__ = new EventEmitter();
   }
 
-  return global.__tasknebulaChatEmitter__;
+  return global.__validteamChatEmitter__;
 }
 
 export function getRoomChannel(roomId: string) {
@@ -89,15 +89,15 @@ type PresenceEntry = {
 
 declare global {
   // eslint-disable-next-line no-var -- required for global augmentation
-  var __tasknebulaRoomPresence__: Map<string, PresenceEntry> | undefined;
+  var __validteamRoomPresence__: Map<string, PresenceEntry> | undefined;
 }
 
 function getPresenceStore() {
-  if (!global.__tasknebulaRoomPresence__) {
-    global.__tasknebulaRoomPresence__ = new Map<string, PresenceEntry>();
+  if (!global.__validteamRoomPresence__) {
+    global.__validteamRoomPresence__ = new Map<string, PresenceEntry>();
   }
 
-  return global.__tasknebulaRoomPresence__;
+  return global.__validteamRoomPresence__;
 }
 
 function getPresenceKey(roomId: string, userId: string) {

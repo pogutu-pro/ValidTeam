@@ -413,7 +413,7 @@ describe('ChatShell', () => {
         author: {
           id: 'user-1',
           name: 'Admin User',
-          email: 'admin@tasknebula.io',
+          email: 'admin@validteam.io',
           image: null,
         },
         canDelete: true,
@@ -668,7 +668,7 @@ describe('ChatShell', () => {
       () => new Promise(() => undefined)
     );
     window.localStorage.setItem(
-      'tasknebula-chat-voice-settings',
+      'validteam-chat-voice-settings',
       JSON.stringify({
         audioDeviceId: 'mic-usb',
         audioDeviceLabel: 'USB Podcast Mic',
@@ -858,7 +858,7 @@ describe('ChatShell', () => {
         author: {
           id: 'user-2',
           name: 'Dev User',
-          email: 'dev1@tasknebula.io',
+          email: 'dev1@validteam.io',
           image: null,
         },
         canDelete: false,

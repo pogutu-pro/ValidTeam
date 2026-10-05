@@ -72,7 +72,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   canCommentOnIssue: (...args: unknown[]) => canCommentOnIssueMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   getCommentById: (...args: unknown[]) => getCommentByIdMock(...args),
   updateCommentReactions: (...args: unknown[]) => updateCommentReactionsMock(...args),
 }));

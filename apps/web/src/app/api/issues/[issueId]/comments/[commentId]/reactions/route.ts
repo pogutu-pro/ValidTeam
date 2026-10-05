@@ -1,7 +1,7 @@
 import { NextResponse, after } from 'next/server';
 import { z } from 'zod';
-import { getCommentById, updateCommentReactions } from '@tasknebula/db';
-import type { CommentReaction } from '@tasknebula/types';
+import { getCommentById, updateCommentReactions } from '@validteam/db';
+import type { CommentReaction } from '@validteam/types';
 import { auth } from '@/auth';
 import { publishEvent } from '@/lib/realtime/events';
 import { withValidation } from '@/lib/api-validation';

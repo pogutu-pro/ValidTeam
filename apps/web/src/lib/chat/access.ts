@@ -2,7 +2,7 @@ import {
   ROLE_DEFAULT_PERMISSIONS,
   hasPermission as roleHasPermission,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 export type ChatPermissionSet = {
   canBrowseProject: boolean;

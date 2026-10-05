@@ -2,19 +2,19 @@
 
 import { validateWebhookEndpoint, webhookEndpointPolicy } from './url-policy';
 
-const originalHttpPolicy = process.env.TASKNEBULA_WEBHOOK_ALLOW_INSECURE_HTTP;
-const originalAllowlist = process.env.TASKNEBULA_WEBHOOK_HOST_ALLOWLIST;
+const originalHttpPolicy = process.env.VALIDTEAM_WEBHOOK_ALLOW_INSECURE_HTTP;
+const originalAllowlist = process.env.VALIDTEAM_WEBHOOK_HOST_ALLOWLIST;
 
 afterEach(() => {
   if (originalHttpPolicy === undefined) {
-    delete process.env.TASKNEBULA_WEBHOOK_ALLOW_INSECURE_HTTP;
+    delete process.env.VALIDTEAM_WEBHOOK_ALLOW_INSECURE_HTTP;
   } else {
-    process.env.TASKNEBULA_WEBHOOK_ALLOW_INSECURE_HTTP = originalHttpPolicy;
+    process.env.VALIDTEAM_WEBHOOK_ALLOW_INSECURE_HTTP = originalHttpPolicy;
   }
   if (originalAllowlist === undefined) {
-    delete process.env.TASKNEBULA_WEBHOOK_HOST_ALLOWLIST;
+    delete process.env.VALIDTEAM_WEBHOOK_HOST_ALLOWLIST;
   } else {
-    process.env.TASKNEBULA_WEBHOOK_HOST_ALLOWLIST = originalAllowlist;
+    process.env.VALIDTEAM_WEBHOOK_HOST_ALLOWLIST = originalAllowlist;
   }
 });
 
@@ -34,7 +34,7 @@ describe('customer webhook endpoint policy', () => {
   });
 
   it('never opens private destinations when the development HTTP escape hatch is enabled', async () => {
-    process.env.TASKNEBULA_WEBHOOK_ALLOW_INSECURE_HTTP = 'true';
+    process.env.VALIDTEAM_WEBHOOK_ALLOW_INSECURE_HTTP = 'true';
 
     await expect(validateWebhookEndpoint('http://8.8.8.8/hooks')).resolves.toBe(
       'http://8.8.8.8/hooks'
@@ -45,7 +45,7 @@ describe('customer webhook endpoint policy', () => {
   });
 
   it('supports an operator host allowlist as an additional restriction', async () => {
-    process.env.TASKNEBULA_WEBHOOK_HOST_ALLOWLIST = '1.1.1.1, *.hooks.example.com';
+    process.env.VALIDTEAM_WEBHOOK_HOST_ALLOWLIST = '1.1.1.1, *.hooks.example.com';
 
     expect(webhookEndpointPolicy()).toMatchObject({
       hostAllowlist: ['1.1.1.1', '*.hooks.example.com'],

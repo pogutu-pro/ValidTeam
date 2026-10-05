@@ -41,7 +41,7 @@ const dbTransactionMock = jest.fn(
     fn({ execute: txExecuteMock })
 );
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   __esModule: true,
   db: {
     transaction: (...args: unknown[]) => dbTransactionMock(...(args as [never])),
@@ -63,7 +63,7 @@ describe('vector.withEfSearch', () => {
   beforeAll(async () => {
     const [vectorModule, dbModule] = await Promise.all([
       import('@/lib/db/vector'),
-      import('@tasknebula/db'),
+      import('@validteam/db'),
     ]);
     ({ withEfSearch, getDefaultEfSearch, __internal } = vectorModule);
     mockDb = dbModule.db as DbArg;
@@ -122,7 +122,7 @@ describe('vector.withEfSearch', () => {
   });
 
   it('returns the inner block result through the transaction', async () => {
-    const { db } = jest.requireMock('@tasknebula/db') as { db: Parameters<typeof withEfSearch>[0] };
+    const { db } = jest.requireMock('@validteam/db') as { db: Parameters<typeof withEfSearch>[0] };
     const result = await withEfSearch(db, 60, async () => 'hit');
     expect(result).toBe('hit');
   });

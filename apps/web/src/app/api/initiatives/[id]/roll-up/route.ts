@@ -7,7 +7,7 @@ import {
   projects,
   issues,
   workflowStatuses,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, inArray, sql } from 'drizzle-orm';
 import {
   collectInitiativeAndDescendants,

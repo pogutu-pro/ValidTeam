@@ -17,7 +17,7 @@ jest.mock('@/lib/sso/tokens', () => ({
   hashScimToken: async () => 'bcrypt-hash',
   digestScimToken: () => 'sha256-digest',
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const tokenTable = { tableName: 'scim_tokens' };
   const auditTable = { tableName: 'audit_logs' };
   const tx = {

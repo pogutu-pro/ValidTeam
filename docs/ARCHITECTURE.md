@@ -1,10 +1,10 @@
-# TaskNebula architecture
+# ValidTeam architecture
 
 **Verified:** 2026-08-12
 
-TaskNebula is a pnpm/Turborepo modular monolith centered on a Next.js web
+ValidTeam is a pnpm/Turborepo modular monolith centered on a Next.js web
 application and PostgreSQL. Hocuspocus is the separately deployed
-TaskNebula-owned application service; Redis is part of the maintained Compose
+ValidTeam-owned application service; Redis is part of the maintained Compose
 baseline and LiveKit is an optional `voice` profile
 infrastructure capabilities with explicit degraded modes.
 

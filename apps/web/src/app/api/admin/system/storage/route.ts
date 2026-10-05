@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { attachments, db, documentPageAttachments, sql, systemAuditLogs } from '@tasknebula/db';
+import { attachments, db, documentPageAttachments, sql, systemAuditLogs } from '@validteam/db';
 import {
   buildStorageConfig,
   getStorageConfig,

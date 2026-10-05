@@ -9,9 +9,13 @@ import {
   desc,
   eq,
   projectChannels,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
-import { ChatAccessError, ensureDefaultProjectChannels, getProjectChatContext } from '@/lib/chat/server';
+import {
+  ChatAccessError,
+  ensureDefaultProjectChannels,
+  getProjectChatContext,
+} from '@/lib/chat/server';
 
 const createChannelSchema = z.object({
   name: z.string().min(1).max(120),
@@ -19,12 +23,14 @@ const createChannelSchema = z.object({
 });
 
 function slugifyChannel(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80) || 'channel';
+  return (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80) || 'channel'
+  );
 }
 
 export async function GET(
@@ -40,7 +46,10 @@ export async function GET(
     const { projectId } = await params;
     const context = await getProjectChatContext(session.user.id, projectId);
     if (!context.canView) {
-      return NextResponse.json({ error: 'You do not have access to project chat' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have access to project chat' },
+        { status: 403 }
+      );
     }
 
     const channels = await ensureDefaultProjectChannels({
@@ -86,7 +95,10 @@ export async function POST(
     const { projectId } = await params;
     const context = await getProjectChatContext(session.user.id, projectId);
     if (!context.permissions.canCreateChannels) {
-      return NextResponse.json({ error: 'You do not have permission to create channels' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to create channels' },
+        { status: 403 }
+      );
     }
 
     if (!context.effectiveSettings.enabled) {
@@ -103,7 +115,9 @@ export async function POST(
       const [existing] = await db
         .select({ id: projectChannels.id })
         .from(projectChannels)
-        .where(and(eq(projectChannels.projectId, context.project.id), eq(projectChannels.slug, slug)))
+        .where(
+          and(eq(projectChannels.projectId, context.project.id), eq(projectChannels.slug, slug))
+        )
         .limit(1);
 
       if (!existing) {
@@ -170,7 +184,10 @@ export async function POST(
     return NextResponse.json({ channel, room }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
     }
 
     if (error instanceof ChatAccessError) {

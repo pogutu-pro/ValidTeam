@@ -17,7 +17,7 @@ function firstNonEmpty(...values: Array<string | undefined>): string | undefined
 }
 
 function isPolicyDisabled(env: NodeJS.ProcessEnv): boolean {
-  const raw = firstNonEmpty(env.TASKNEBULA_AGENT_POLICY, env.AGENTOWNERS_POLICY);
+  const raw = firstNonEmpty(env.VALIDTEAM_AGENT_POLICY, env.AGENTOWNERS_POLICY);
   return raw ? DISABLED_VALUES.has(raw.toLowerCase()) : false;
 }
 
@@ -28,9 +28,9 @@ export function resolveAgentPolicyMarker(
   if (isPolicyDisabled(env)) return null;
 
   const actor =
-    firstNonEmpty(env.TASKNEBULA_AGENT_ACTOR, env.AGENTOWNERS_ACTOR) ?? DEFAULT_AGENT_ACTOR;
+    firstNonEmpty(env.VALIDTEAM_AGENT_ACTOR, env.AGENTOWNERS_ACTOR) ?? DEFAULT_AGENT_ACTOR;
   const source =
-    firstNonEmpty(env.TASKNEBULA_AGENT_SOURCE, env.AGENTOWNERS_SOURCE) ?? DEFAULT_AGENT_SOURCE;
+    firstNonEmpty(env.VALIDTEAM_AGENT_SOURCE, env.AGENTOWNERS_SOURCE) ?? DEFAULT_AGENT_SOURCE;
 
   return {
     actor,

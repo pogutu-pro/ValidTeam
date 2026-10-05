@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import type { Permission } from '@tasknebula/db';
+import type { Permission } from '@validteam/db';
 import {
   Select,
   SelectContent,

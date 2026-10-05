@@ -60,7 +60,7 @@ jest.mock('bcryptjs', () => ({
   hash: (...args: unknown[]) => bcryptHashMock(...(args as [])),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     query: {
       users: {

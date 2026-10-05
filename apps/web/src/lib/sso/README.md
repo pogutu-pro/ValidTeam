@@ -1,6 +1,6 @@
-# SAML 2.0 SSO + SCIM 2.0 — TaskNebula
+# SAML 2.0 SSO + SCIM 2.0 — ValidTeam
 
-This directory is the server-side core of TaskNebula's enterprise SSO stack.
+This directory is the server-side core of ValidTeam's enterprise SSO stack.
 It exposes:
 
 - `saml.ts` — SP metadata, AuthnRequest builder, response verifier. Wraps

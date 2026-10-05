@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { db, eq, sql, systemAuditLogs, systemSettings } from '@tasknebula/db';
+import { db, eq, sql, systemAuditLogs, systemSettings } from '@validteam/db';
 import { compareSemver, type UpdateStatus } from './index';
 import {
   createSelfUpdateBackup,
@@ -122,7 +122,7 @@ function cleanUrl(value: string | undefined): string | null {
   try {
     const url = new URL(value);
     if (url.protocol === 'https:') return url.toString();
-    if (url.protocol === 'http:' && boolEnv('TASKNEBULA_SELF_UPDATE_ALLOW_INSECURE_HTTP')) {
+    if (url.protocol === 'http:' && boolEnv('VALIDTEAM_SELF_UPDATE_ALLOW_INSECURE_HTTP')) {
       const hostname = url.hostname.toLowerCase();
       const isLocal =
         hostname === 'localhost' ||
@@ -376,9 +376,9 @@ function manualCommands(status: UpdateStatus): string {
     ? `${repository}@${status.image.latestDigest}`
     : `${repository}:${tag}`;
   return [
-    `BACKUP_DIR=/var/backups/tasknebula ./scripts/tasknebula-backup.sh`,
-    `TASKNEBULA_IMAGE=${imageRef} docker compose pull web`,
-    `TASKNEBULA_IMAGE=${imageRef} docker compose up -d web`,
+    `BACKUP_DIR=/var/backups/validteam ./scripts/validteam-backup.sh`,
+    `VALIDTEAM_IMAGE=${imageRef} docker compose pull web`,
+    `VALIDTEAM_IMAGE=${imageRef} docker compose up -d web`,
     'docker compose ps web',
   ].join('\n');
 }
@@ -393,9 +393,9 @@ function baseStatus(
   job: SelfUpdateJob | null,
   backupPreflight: SelfUpdateBackupPreflight
 ): SelfUpdateStatus {
-  const enabled = boolEnv('TASKNEBULA_SELF_UPDATE_ENABLED');
-  const webhookUrl = cleanUrl(process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_URL);
-  const webhookSecret = process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET?.trim() ?? '';
+  const enabled = boolEnv('VALIDTEAM_SELF_UPDATE_ENABLED');
+  const webhookUrl = cleanUrl(process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_URL);
+  const webhookSecret = process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET?.trim() ?? '';
   const targetVersion = status.image.latestTag ?? null;
   const activeJob = isActiveJob(job);
 
@@ -468,7 +468,7 @@ export async function getSelfUpdateStatus(status: UpdateStatus): Promise<SelfUpd
 function buildWebhookPayload(input: { job: SelfUpdateJob; status: UpdateStatus }) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim() || process.env.AUTH_URL?.trim() || null;
   return {
-    event: 'tasknebula.self_update.requested',
+    event: 'validteam.self_update.requested',
     jobId: input.job.id,
     requestedAt: input.job.createdAt,
     currentVersion: input.job.currentVersion,
@@ -506,8 +506,8 @@ function signature(secret: string, timestamp: string, body: string) {
 }
 
 async function sendWebhook(job: SelfUpdateJob, status: UpdateStatus) {
-  const webhookUrl = cleanUrl(process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_URL);
-  const webhookSecret = process.env.TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET?.trim();
+  const webhookUrl = cleanUrl(process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_URL);
+  const webhookSecret = process.env.VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET?.trim();
   if (!webhookUrl || !webhookSecret) {
     throw new SelfUpdateError('Self-update webhook is not configured', 412, 'missing_webhook');
   }
@@ -525,11 +525,11 @@ async function sendWebhook(job: SelfUpdateJob, status: UpdateStatus) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': `tasknebula-self-update/${status.current}`,
-        'X-TaskNebula-Event': 'tasknebula.self_update.requested',
-        'X-TaskNebula-Delivery': job.id,
-        'X-TaskNebula-Timestamp': timestamp,
-        'X-TaskNebula-Signature': `sha256=${signature(webhookSecret, timestamp, body)}`,
+        'User-Agent': `validteam-self-update/${status.current}`,
+        'X-ValidTeam-Event': 'validteam.self_update.requested',
+        'X-ValidTeam-Delivery': job.id,
+        'X-ValidTeam-Timestamp': timestamp,
+        'X-ValidTeam-Signature': `sha256=${signature(webhookSecret, timestamp, body)}`,
       },
       body,
       cache: 'no-store',

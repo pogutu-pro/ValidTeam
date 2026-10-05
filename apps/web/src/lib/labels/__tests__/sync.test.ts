@@ -6,7 +6,7 @@
 
 const dbTransactionMock = jest.fn();
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     transaction: (...args: unknown[]) => dbTransactionMock(...args),
   },

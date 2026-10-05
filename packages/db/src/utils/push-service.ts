@@ -6,7 +6,7 @@ import { eq, and } from 'drizzle-orm';
 // VAPID keys for web push (should be in environment variables)
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || '';
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || '';
-const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:support@tasknebula.io';
+const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:support@validteam.io';
 
 // Configure web-push
 if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
@@ -59,10 +59,7 @@ export async function sendPushNotification(
           keys: subscription.keys as { p256dh: string; auth: string },
         };
 
-        await webpush.sendNotification(
-          pushSubscription,
-          JSON.stringify(payload)
-        );
+        await webpush.sendNotification(pushSubscription, JSON.stringify(payload));
 
         // Update last notification timestamp
         await db
@@ -121,4 +118,3 @@ export function generateVAPIDKeys() {
   console.log('VAPID Private Key:', vapidKeys.privateKey);
   return vapidKeys;
 }
-

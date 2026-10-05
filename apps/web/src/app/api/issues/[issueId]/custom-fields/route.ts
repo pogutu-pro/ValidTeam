@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, customFieldValues, customFields, issues } from '@tasknebula/db';
+import { db, customFieldValues, customFields, issues } from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { publishEvent } from '@/lib/realtime/events';

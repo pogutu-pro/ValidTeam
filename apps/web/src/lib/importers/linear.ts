@@ -5,7 +5,7 @@
  * GraphQL endpoint at https://api.linear.app/graphql with a minimal `issues`
  * query and converts the response to NormalizedRecord.
  *
- * Why a stub: TaskNebula doesn't ship `@linear/sdk` (extra ~200KB and a peer
+ * Why a stub: ValidTeam doesn't ship `@linear/sdk` (extra ~200KB and a peer
  * tree we don't need yet), so we hit GraphQL directly. The minimal query
  * already brings back enough to populate the issue table; enriched data —
  * cycles, projects, sub-issue trees, attachments, reactions — are marked
@@ -20,7 +20,7 @@ import {
   Importer,
   ImportMapping,
   NormalizedRecord,
-  TaskNebulaIssue,
+  ValidTeamIssue,
   normalizePriority,
   normalizeType,
   safeParseDate,
@@ -180,7 +180,7 @@ export const linearImporter: Importer<LinearInput> = {
     );
   },
 
-  mapRecord(rec, mapping: ImportMapping): TaskNebulaIssue {
+  mapRecord(rec, mapping: ImportMapping): ValidTeamIssue {
     return {
       sourceKey: rec.key,
       title: rec.title || '(untitled)',

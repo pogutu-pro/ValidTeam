@@ -26,7 +26,7 @@ import {
   issues,
   users,
   workflowStatuses,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { getTranslations } from 'next-intl/server';
 import { callSlackApi, parseSlackUserMention, type ParsedSlashCommand } from './slack';
@@ -69,7 +69,7 @@ function ephemeral(text: string, blocks?: unknown[]): SlackSlashResponse {
 }
 
 /**
- * Resolve the TaskNebula organization + connection row that owns a Slack
+ * Resolve the ValidTeam organization + connection row that owns a Slack
  * workspace. We look up by the workspace id stored in
  * `integration_connections.external_account_id`. Returns null when no org has
  * the bot installed.
@@ -114,14 +114,14 @@ export async function resolveSlackOrg(teamId: string): Promise<{
     connectionId: row.id,
     botUserId: typeof metadata.botUserId === 'string' ? metadata.botUserId : null,
     // Slack slash payloads do not include the user's locale. Until durable
-    // Slack→TaskNebula identity mapping exists, use the installer's supported
+    // Slack→ValidTeam identity mapping exists, use the installer's supported
     // locale and fall back to the product default.
     locale: isSupportedLocale(row.locale) ? row.locale : defaultLocale,
   };
 }
 
 /**
- * Best-effort mapping from a Slack user id to a TaskNebula user id. Two
+ * Best-effort mapping from a Slack user id to a ValidTeam user id. Two
  * matching strategies, evaluated in order:
  *   1. exact lookup in users.slackUserId (if such a column exists today —
  *      otherwise this no-ops gracefully and we fall through),
@@ -130,7 +130,7 @@ export async function resolveSlackOrg(teamId: string): Promise<{
  *
  * Returns null when no match is found.
  */
-export async function lookupTaskNebulaUserBySlackId(
+export async function lookupValidTeamUserBySlackId(
   organizationId: string,
   slackUserId: string,
   slackTeamId: string
@@ -216,7 +216,7 @@ async function handleListMine(
   ctx: SlackCommandContext,
   t: SlackTranslator
 ): Promise<SlackSlashResponse> {
-  const userId = await lookupTaskNebulaUserBySlackId(organizationId, ctx.slackUserId, ctx.teamId);
+  const userId = await lookupValidTeamUserBySlackId(organizationId, ctx.slackUserId, ctx.teamId);
   if (!userId) {
     return ephemeral(t('userUnmapped'));
   }
@@ -258,7 +258,7 @@ async function handleSearch(
   ctx: SlackCommandContext,
   t: SlackTranslator
 ): Promise<SlackSlashResponse> {
-  const userId = await lookupTaskNebulaUserBySlackId(organizationId, ctx.slackUserId, ctx.teamId);
+  const userId = await lookupValidTeamUserBySlackId(organizationId, ctx.slackUserId, ctx.teamId);
   if (!userId) return ephemeral(t('userUnmapped'));
 
   const q = query.trim();
@@ -344,16 +344,12 @@ async function handleAssign(
     return ephemeral(t('issueNotFound', { issueKey }));
   }
 
-  const newAssigneeId = await lookupTaskNebulaUserBySlackId(
-    organizationId,
-    slackUserId,
-    ctx.teamId
-  );
+  const newAssigneeId = await lookupValidTeamUserBySlackId(organizationId, slackUserId, ctx.teamId);
   if (!newAssigneeId) {
     return ephemeral(t('assigneeUnmapped'));
   }
 
-  const actorUserId = await lookupTaskNebulaUserBySlackId(
+  const actorUserId = await lookupValidTeamUserBySlackId(
     organizationId,
     ctx.slackUserId,
     ctx.teamId
@@ -410,7 +406,7 @@ async function handleStatus(
     return ephemeral(t('issueNotFound', { issueKey }));
   }
 
-  const actorUserId = await lookupTaskNebulaUserBySlackId(
+  const actorUserId = await lookupValidTeamUserBySlackId(
     organizationId,
     ctx.slackUserId,
     ctx.teamId

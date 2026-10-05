@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   agentRuns: {},
   agentRunStepEvents: {},
   auditLogs: {},
@@ -111,7 +111,7 @@ describe('project agent run store invariants', () => {
   });
 
   it('fails open on notification localization errors so terminal persistence can continue', async () => {
-    const { db } = jest.requireMock('@tasknebula/db') as { db: { select: jest.Mock } };
+    const { db } = jest.requireMock('@validteam/db') as { db: { select: jest.Mock } };
     db.select.mockImplementationOnce(() => {
       throw new Error('catalog unavailable');
     });
@@ -124,7 +124,7 @@ describe('project agent run store invariants', () => {
   });
 
   it('uses the canonical agentShared run-message namespace', async () => {
-    const { db } = jest.requireMock('@tasknebula/db') as { db: { select: jest.Mock } };
+    const { db } = jest.requireMock('@validteam/db') as { db: { select: jest.Mock } };
     db.select.mockReturnValueOnce({
       from: () => ({ where: () => ({ limit: async () => [{ locale: 'en' }] }) }),
     });

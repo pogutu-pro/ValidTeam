@@ -1,4 +1,4 @@
-import { db, initiatives } from '@tasknebula/db';
+import { db, initiatives } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 

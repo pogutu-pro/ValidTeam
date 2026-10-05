@@ -40,7 +40,7 @@ import {
   teamMembers,
   users,
   ne,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { AiDraftError } from '@/lib/ai/draft-issue';
 import {
   getOrganizationSettingsForAgentCredentials,

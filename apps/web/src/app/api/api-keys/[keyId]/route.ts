@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, apiKeys } from '@tasknebula/db';
+import { db, apiKeys } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { hasPermission } from '@/lib/auth/permissions';
 

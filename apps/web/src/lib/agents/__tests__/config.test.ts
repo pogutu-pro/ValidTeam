@@ -103,7 +103,7 @@ describe('agent config', () => {
   });
 
   it('reports OpenAI as not ready when the model is still a native placeholder', () => {
-    const readiness = getAgentProviderReadiness('openai', 'tasknebula-planner-v1');
+    const readiness = getAgentProviderReadiness('openai', 'validteam-planner-v1');
 
     expect(readiness.ready).toBe(false);
     expect(readiness.summary).toContain('placeholder');

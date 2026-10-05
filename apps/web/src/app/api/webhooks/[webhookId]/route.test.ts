@@ -35,7 +35,7 @@ jest.mock('@/lib/webhooks/url-policy', () => ({
 jest.mock('drizzle-orm', () => ({
   eq: (...args: unknown[]) => ({ eq: args }),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const webhookTable = { name: 'webhooks', id: 'webhooks.id' };
   const auditTable = { name: 'audit_logs' };
 

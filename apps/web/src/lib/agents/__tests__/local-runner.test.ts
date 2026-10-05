@@ -11,17 +11,17 @@ const ORIGINAL_ENV = { ...process.env };
 describe('local agent runner config', () => {
   beforeEach(() => {
     process.env = { ...ORIGINAL_ENV };
-    delete process.env.TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED;
-    delete process.env.TASKNEBULA_LOCAL_AGENT_CWD;
-    delete process.env.TASKNEBULA_REPO_ROOT;
-    delete process.env.TASKNEBULA_LOCAL_CODEX_ENABLED;
-    delete process.env.TASKNEBULA_LOCAL_CODEX_CWD;
-    delete process.env.TASKNEBULA_LOCAL_CODEX_COMMAND;
-    delete process.env.TASKNEBULA_LOCAL_CODEX_MODEL;
-    delete process.env.TASKNEBULA_LOCAL_CODEX_SANDBOX;
-    delete process.env.TASKNEBULA_LOCAL_CLAUDE_ENABLED;
-    delete process.env.TASKNEBULA_LOCAL_CLAUDE_CWD;
-    delete process.env.TASKNEBULA_LOCAL_CLAUDE_COMMAND;
+    delete process.env.VALIDTEAM_LOCAL_AGENT_RUNNER_ENABLED;
+    delete process.env.VALIDTEAM_LOCAL_AGENT_CWD;
+    delete process.env.VALIDTEAM_REPO_ROOT;
+    delete process.env.VALIDTEAM_LOCAL_CODEX_ENABLED;
+    delete process.env.VALIDTEAM_LOCAL_CODEX_CWD;
+    delete process.env.VALIDTEAM_LOCAL_CODEX_COMMAND;
+    delete process.env.VALIDTEAM_LOCAL_CODEX_MODEL;
+    delete process.env.VALIDTEAM_LOCAL_CODEX_SANDBOX;
+    delete process.env.VALIDTEAM_LOCAL_CLAUDE_ENABLED;
+    delete process.env.VALIDTEAM_LOCAL_CLAUDE_CWD;
+    delete process.env.VALIDTEAM_LOCAL_CLAUDE_COMMAND;
   });
 
   afterAll(() => {
@@ -66,10 +66,10 @@ describe('local agent runner config', () => {
   });
 
   it('resolves a Codex runner from a workspace local endpoint', () => {
-    process.env.TASKNEBULA_LOCAL_CODEX_COMMAND = process.execPath;
-    process.env.TASKNEBULA_LOCAL_CODEX_CWD = process.cwd();
-    process.env.TASKNEBULA_LOCAL_CODEX_MODEL = 'gpt-5.5-codex';
-    process.env.TASKNEBULA_LOCAL_CODEX_SANDBOX = 'read-only';
+    process.env.VALIDTEAM_LOCAL_CODEX_COMMAND = process.execPath;
+    process.env.VALIDTEAM_LOCAL_CODEX_CWD = process.cwd();
+    process.env.VALIDTEAM_LOCAL_CODEX_MODEL = 'gpt-5.5-codex';
+    process.env.VALIDTEAM_LOCAL_CODEX_SANDBOX = 'read-only';
 
     const runner = resolveLocalAgentRunner('codex', 'local://codex', true);
 
@@ -84,15 +84,15 @@ describe('local agent runner config', () => {
   });
 
   it('reports a missing command when the workspace switch is enabled', () => {
-    process.env.TASKNEBULA_LOCAL_CODEX_COMMAND = 'tasknebula-missing-codex-command';
-    process.env.TASKNEBULA_LOCAL_CODEX_CWD = process.cwd();
+    process.env.VALIDTEAM_LOCAL_CODEX_COMMAND = 'validteam-missing-codex-command';
+    process.env.VALIDTEAM_LOCAL_CODEX_CWD = process.cwd();
 
     const status = getLocalAgentRunnerStatus('codex', 'local://codex', true);
 
     expect(status).toMatchObject({
       configured: false,
       reasonCode: 'command_missing',
-      reasonDetail: 'tasknebula-missing-codex-command',
+      reasonDetail: 'validteam-missing-codex-command',
     });
     expect(resolveLocalAgentRunner('codex', 'local://codex', true)).toBeNull();
   });
@@ -102,7 +102,7 @@ describe('local agent runner config', () => {
       sessionId: 'session-1',
       provider: 'codex',
       actorUserId: 'user-1',
-      appBaseUrl: 'https://tasknebula.test',
+      appBaseUrl: 'https://validteam.test',
       promptOverride: 'Keep the patch small and run focused tests.',
       issue: {
         id: 'issue-1',
@@ -113,14 +113,14 @@ describe('local agent runner config', () => {
         labels: ['notifications', 'email'],
         projectId: 'project-1',
         organizationId: 'org-1',
-        url: 'https://tasknebula.test/issues/issue-1',
+        url: 'https://validteam.test/issues/issue-1',
         reporterId: 'user-1',
       },
     });
 
     expect(prompt).toContain('ValidTeam agent handoff');
     expect(prompt).toContain('Issue: TN-42 - Fix assignment notifications');
-    expect(prompt).toContain('Issue URL: https://tasknebula.test/issues/issue-1');
+    expect(prompt).toContain('Issue URL: https://validteam.test/issues/issue-1');
     expect(prompt).toContain('Project ID: project-1');
     expect(prompt).toContain('Organization ID: org-1');
     expect(prompt).toContain('Priority: high');

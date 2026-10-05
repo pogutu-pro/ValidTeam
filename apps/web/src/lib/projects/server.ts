@@ -1,4 +1,4 @@
-import { db, organizationMembers, organizations, projects, users } from '@tasknebula/db';
+import { db, organizationMembers, organizations, projects, users } from '@validteam/db';
 import { and, eq, ne } from 'drizzle-orm';
 
 /**

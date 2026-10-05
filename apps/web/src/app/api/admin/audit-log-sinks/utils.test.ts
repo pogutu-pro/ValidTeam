@@ -56,7 +56,7 @@ describe('audit sink configuration', () => {
     ).toBe(false);
     expect(
       validateSinkConfig('s3', {
-        bucket: 'tasknebula-audit',
+        bucket: 'validteam-audit',
         region: 'eu-central-1',
         prefix: '../private',
       }).success

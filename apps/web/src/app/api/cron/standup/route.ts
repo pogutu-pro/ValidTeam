@@ -16,7 +16,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, organizations, sql } from '@tasknebula/db';
+import { db, organizations, sql } from '@validteam/db';
 import { requireCronAuth } from '@/lib/agents/cron-auth';
 import { listOrgMemberIds, runStandupForUser } from '@/lib/agents/standup-runner';
 
@@ -68,9 +68,7 @@ export async function POST(request: NextRequest) {
   const results: OrgResult[] = [];
   const startedAt = new Date();
   for (const organizationId of orgIds) {
-    const userIds = body.userId
-      ? [body.userId]
-      : await listOrgMemberIds(organizationId);
+    const userIds = body.userId ? [body.userId] : await listOrgMemberIds(organizationId);
     const orgResult: OrgResult = { organizationId, users: [] };
     for (const userId of userIds) {
       try {

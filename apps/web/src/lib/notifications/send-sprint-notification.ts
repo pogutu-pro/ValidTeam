@@ -11,7 +11,7 @@ import {
   and,
   inArray,
   ne,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 /**
  * Sprint lifecycle notification dispatcher.

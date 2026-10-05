@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { db, eq, organizations } from '@tasknebula/db';
+import { db, eq, organizations } from '@validteam/db';
 import type { AgentProvider } from './config';
 
 export type SecretEnvelope = {
@@ -257,7 +257,10 @@ export function removePlatformSecretFromStore(params: {
 }
 
 export function sanitizePlatformSecretStore(store: AgentSecretStore | undefined | null) {
-  const out: Record<CredentialKey, { preview: string; updatedAt: string; updatedBy: string } | null> = {
+  const out: Record<
+    CredentialKey,
+    { preview: string; updatedAt: string; updatedBy: string } | null
+  > = {
     openai: null,
     anthropic: null,
   };

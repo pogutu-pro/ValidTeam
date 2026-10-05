@@ -203,7 +203,7 @@ describe('/admin route', () => {
                   {
                     projectId: 'project-1',
                     projectKey: 'TASK',
-                    projectName: 'TaskNebula',
+                    projectName: 'ValidTeam',
                     organizationId: 'org-1',
                     organizationName: 'Acme',
                     role: 'developer',

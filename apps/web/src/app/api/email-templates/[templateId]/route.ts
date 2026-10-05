@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, emailTemplates } from '@tasknebula/db';
+import { db, emailTemplates } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { hasPermission } from '@/lib/auth/permissions';
@@ -17,7 +17,7 @@ const updateEmailTemplateSchema = z.object({
 
 /**
  * PATCH /api/email-templates/[templateId]
- * 
+ *
  * Update an email template
  */
 export async function PATCH(
@@ -37,21 +37,24 @@ export async function PATCH(
 
     // Look up the template to determine owning organization, then authorize.
     const [existing] = await db
-      .select({ organizationId: emailTemplates.organizationId, isDefault: emailTemplates.isDefault })
+      .select({
+        organizationId: emailTemplates.organizationId,
+        isDefault: emailTemplates.isDefault,
+      })
       .from(emailTemplates)
       .where(eq(emailTemplates.id, templateId))
       .limit(1);
 
     if (!existing) {
-      return NextResponse.json(
-        { error: 'Email template not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Email template not found' }, { status: 404 });
     }
 
     // System default templates (organizationId = null) are not editable via this API.
     if (!existing.organizationId || existing.isDefault) {
-      return NextResponse.json({ error: 'Cannot modify system default templates' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Cannot modify system default templates' },
+        { status: 403 }
+      );
     }
 
     const canManage = await hasPermission(existing.organizationId, 'org:settings');
@@ -69,10 +72,7 @@ export async function PATCH(
       .returning();
 
     if (!updatedTemplate) {
-      return NextResponse.json(
-        { error: 'Email template not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Email template not found' }, { status: 404 });
     }
 
     return NextResponse.json(updatedTemplate);
@@ -85,16 +85,13 @@ export async function PATCH(
     }
 
     console.error('Error updating email template:', error);
-    return NextResponse.json(
-      { error: 'Failed to update email template' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update email template' }, { status: 500 });
   }
 }
 
 /**
  * DELETE /api/email-templates/[templateId]
- * 
+ *
  * Delete an email template
  */
 export async function DELETE(
@@ -111,20 +108,23 @@ export async function DELETE(
   try {
     // Look up the template to determine owning organization, then authorize.
     const [existing] = await db
-      .select({ organizationId: emailTemplates.organizationId, isDefault: emailTemplates.isDefault })
+      .select({
+        organizationId: emailTemplates.organizationId,
+        isDefault: emailTemplates.isDefault,
+      })
       .from(emailTemplates)
       .where(eq(emailTemplates.id, templateId))
       .limit(1);
 
     if (!existing) {
-      return NextResponse.json(
-        { error: 'Email template not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Email template not found' }, { status: 404 });
     }
 
     if (!existing.organizationId || existing.isDefault) {
-      return NextResponse.json({ error: 'Cannot delete system default templates' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Cannot delete system default templates' },
+        { status: 403 }
+      );
     }
 
     const canManage = await hasPermission(existing.organizationId, 'org:settings');
@@ -137,10 +137,6 @@ export async function DELETE(
     return NextResponse.json({ message: 'Email template deleted successfully' });
   } catch (error) {
     console.error('Error deleting email template:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete email template' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete email template' }, { status: 500 });
   }
 }
-

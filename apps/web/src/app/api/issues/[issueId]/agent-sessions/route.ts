@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { agentSessions, db, desc, eq, getIssueById } from '@tasknebula/db';
+import { agentSessions, db, desc, eq, getIssueById } from '@validteam/db';
 import { auth } from '@/auth';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 

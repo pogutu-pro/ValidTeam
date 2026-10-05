@@ -24,7 +24,7 @@ describe('Auth.js session boundary', () => {
   it('returns null and expires stale JWT cookies when durable auth rejects the actor', async () => {
     mockAuth.mockResolvedValue(null);
 
-    const response = await GET(new NextRequest('https://tasknebula.test/api/auth/session'));
+    const response = await GET(new NextRequest('https://validteam.test/api/auth/session'));
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toBeNull();

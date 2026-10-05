@@ -3,7 +3,7 @@ import type { NextAuthConfig, Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
-import { db, users } from '@tasknebula/db';
+import { db, users } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { authConfig } from './auth.config';

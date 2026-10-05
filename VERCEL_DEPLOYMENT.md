@@ -75,7 +75,7 @@ GOOGLE_CLIENT_SECRET=
 
 # Optional features (disable for initial setup)
 NEXT_PUBLIC_COLLAB_ENABLED=false
-TASKNEBULA_WEBHOOK_ALLOW_INSECURE_HTTP=false
+VALIDTEAM_WEBHOOK_ALLOW_INSECURE_HTTP=false
 ```
 
 ## Step 5: Deploy to Vercel

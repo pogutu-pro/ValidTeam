@@ -6,7 +6,7 @@ import {
   issueSecurityLevels,
   issueSecurityLevelMembers,
   projectSecuritySchemes,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, inArray } from 'drizzle-orm';
 import { authorizeSecuritySchemeAccess } from '../utils';
 

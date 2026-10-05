@@ -27,7 +27,7 @@ import {
   eq,
   and,
   sql,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 export const EMBEDDING_MODEL = 'text-embedding-3-small';
 export const EMBEDDING_DIMENSIONS = 1536;
@@ -43,7 +43,10 @@ export interface EmbeddingProvider {
  * OPENAI_API_KEY env var the existing draft-issue feature uses.
  */
 export class OpenAIEmbeddingProvider implements EmbeddingProvider {
-  constructor(private apiKey: string, private model: string = EMBEDDING_MODEL) {}
+  constructor(
+    private apiKey: string,
+    private model: string = EMBEDDING_MODEL
+  ) {}
 
   async embed(text: string): Promise<{ vector: number[]; tokens: number }> {
     const response = await fetch('https://api.openai.com/v1/embeddings', {
@@ -60,9 +63,7 @@ export class OpenAIEmbeddingProvider implements EmbeddingProvider {
 
     if (!response.ok) {
       const detail = await response.text().catch(() => '');
-      throw new Error(
-        `OpenAI embeddings returned ${response.status}: ${detail.slice(0, 200)}`
-      );
+      throw new Error(`OpenAI embeddings returned ${response.status}: ${detail.slice(0, 200)}`);
     }
 
     const payload = (await response.json()) as {
@@ -135,9 +136,7 @@ export interface ProcessJobResult {
  *  3. Compares hash to existing content_embeddings row; if equal, skip.
  *  4. Otherwise call the embedding provider and UPSERT.
  */
-export async function processEmbeddingJob(
-  input: ProcessJobInput
-): Promise<ProcessJobResult> {
+export async function processEmbeddingJob(input: ProcessJobInput): Promise<ProcessJobResult> {
   const provider = input.provider ?? getDefaultEmbeddingProvider();
 
   let text: string;
@@ -165,7 +164,11 @@ export async function processEmbeddingJob(
     projectId = row.projectId;
   } else if (input.contentType === 'comment') {
     const [row] = await db
-      .select({ id: issueComments.id, content: issueComments.content, issueId: issueComments.issueId })
+      .select({
+        id: issueComments.id,
+        content: issueComments.content,
+        issueId: issueComments.issueId,
+      })
       .from(issueComments)
       .where(eq(issueComments.id, input.contentId))
       .limit(1);
@@ -181,7 +184,11 @@ export async function processEmbeddingJob(
   const hash = hashText(text);
 
   const existing = await db
-    .select({ id: contentEmbeddings.id, hash: contentEmbeddings.contentHash, version: contentEmbeddings.version })
+    .select({
+      id: contentEmbeddings.id,
+      hash: contentEmbeddings.contentHash,
+      version: contentEmbeddings.version,
+    })
     .from(contentEmbeddings)
     .where(
       and(
@@ -240,10 +247,12 @@ export async function processEmbeddingJob(
  * We use SKIP LOCKED so multiple workers can drain concurrently without
  * stepping on each other.
  */
-export async function drainEmbeddingQueue(options: {
-  batchSize?: number;
-  provider?: EmbeddingProvider | null;
-} = {}): Promise<{ processed: number; failed: number }> {
+export async function drainEmbeddingQueue(
+  options: {
+    batchSize?: number;
+    provider?: EmbeddingProvider | null;
+  } = {}
+): Promise<{ processed: number; failed: number }> {
   const batchSize = options.batchSize ?? 16;
   const provider = options.provider ?? getDefaultEmbeddingProvider();
 
@@ -268,7 +277,7 @@ export async function drainEmbeddingQueue(options: {
     `);
 
     // postgres-js returns an array-like with `count`; normalize.
-    const rows = Array.isArray(claimed) ? claimed : (claimed as any).rows ?? [];
+    const rows = Array.isArray(claimed) ? claimed : ((claimed as any).rows ?? []);
     if (rows.length === 0) break;
 
     const row = rows[0];
@@ -315,5 +324,9 @@ export async function enqueueEmbeddingJob(input: {
     projectId: input.projectId ?? null,
   });
   // Best-effort notify; ignored when listener is absent.
-  await db.execute(sql`SELECT pg_notify('content_embeddings_jobs', ${input.contentType + ':' + input.contentId});`).catch(() => undefined);
+  await db
+    .execute(
+      sql`SELECT pg_notify('content_embeddings_jobs', ${input.contentType + ':' + input.contentId});`
+    )
+    .catch(() => undefined);
 }

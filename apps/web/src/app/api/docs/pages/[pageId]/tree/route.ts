@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { buildDocumentTree } from '@/lib/docs/tree';
 import { resolveDocumentPageAccess } from '@/lib/docs/server';
-import { db } from '@tasknebula/db';
+import { db } from '@validteam/db';
 
 export async function GET(
   request: NextRequest,
@@ -21,7 +21,8 @@ export async function GET(
     }
 
     const pages = await db.query.documentPages.findMany({
-      where: (table, { and, eq }) => and(eq(table.spaceId, access.space.id), eq(table.isArchived, false)),
+      where: (table, { and, eq }) =>
+        and(eq(table.spaceId, access.space.id), eq(table.isArchived, false)),
       orderBy: (table, { asc }) => [asc(table.position), asc(table.title)],
     });
 

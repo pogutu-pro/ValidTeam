@@ -42,7 +42,7 @@ const dbStub = {
   })),
 };
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: dbStub,
   timeEntries: {},
   issues: {},
@@ -74,9 +74,7 @@ jest.mock('@/lib/time-tracking/server', () => ({
 // Helper to call the route handler with minimal Next plumbing.
 async function callStart() {
   // Re-import inside the test scope so mocks apply.
-  const { POST } = await import(
-    '@/app/api/issues/[issueId]/timer/start/route'
-  );
+  const { POST } = await import('@/app/api/issues/[issueId]/timer/start/route');
   const req = new Request('http://localhost/api/issues/iss_1/timer/start', {
     method: 'POST',
   });

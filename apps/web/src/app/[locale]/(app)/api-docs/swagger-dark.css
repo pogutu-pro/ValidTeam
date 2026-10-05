@@ -2,7 +2,7 @@
  * Scoped dark-theme overrides for swagger-ui-react.
  *
  * swagger-ui ships a light theme (`swagger-ui-react/swagger-ui.css`) that
- * renders bright white panels which clash with TaskNebula's dark surfaces.
+ * renders bright white panels which clash with ValidTeam's dark surfaces.
  * Every rule here is scoped under `.swagger-ui-host` (the wrapper in
  * `api-docs-client.tsx`) so these styles never leak into the rest of the app,
  * and they reuse the app's design tokens (`--card`, `--border`,
@@ -24,7 +24,7 @@
   color: hsl(var(--foreground));
 }
 
-/* The low-contrast grey description under "TaskNebula API". */
+/* The low-contrast grey description under "ValidTeam API". */
 .swagger-ui-host .swagger-ui .info .description,
 .swagger-ui-host .swagger-ui .info .description p,
 .swagger-ui-host .swagger-ui .info .description li,
@@ -52,7 +52,7 @@
 
 /* Operation summaries inherit dark navy text from Swagger's light-only
    stylesheet. Explicit token colors keep paths, descriptions and tags legible
-   on the tinted operation panels in either TaskNebula theme. */
+   on the tinted operation panels in either ValidTeam theme. */
 .swagger-ui-host .swagger-ui .opblock-tag,
 .swagger-ui-host .swagger-ui .opblock-summary-path,
 .swagger-ui-host .swagger-ui .opblock-summary-path a,

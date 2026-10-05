@@ -2,7 +2,7 @@
  * /ai-model-cards — public, unauthenticated AI Model Cards page.
  *
  * Public product-transparency page. Each card describes
- * an AI feature TaskNebula deploys to end-users: purpose, model identity,
+ * an AI feature ValidTeam deploys to end-users: purpose, model identity,
  * data sent, retention, and human-oversight default.
  *
  * Sourced from apps/web/src/config/ai-model-cards.ts so the same content

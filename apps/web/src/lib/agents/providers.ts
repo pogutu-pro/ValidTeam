@@ -312,7 +312,7 @@ export function buildAgentProviderPrompt(
           'Produce a health summary, a short recommendation list, and optional issue highlights.',
         ].join(' '),
         input: createTrackingInput(params.context),
-        schemaName: 'tasknebula_project_tracking',
+        schemaName: 'validteam_project_tracking',
         schema: {
           type: 'object',
           additionalProperties: false,
@@ -352,7 +352,7 @@ export function buildAgentProviderPrompt(
           'Do not downgrade urgent work without a strong reason.',
         ].join(' '),
         input: createBacklogInput(params.context, params.effectiveSettings),
-        schemaName: 'tasknebula_backlog_triage',
+        schemaName: 'validteam_backlog_triage',
         schema: {
           type: 'object',
           additionalProperties: false,
@@ -395,7 +395,7 @@ export function buildAgentProviderPrompt(
           'Every issue key can appear at most once.',
         ].join(' '),
         input: createSprintPlanningInput(params.context, params.effectiveSettings),
-        schemaName: 'tasknebula_sprint_plan',
+        schemaName: 'validteam_sprint_plan',
         schema: {
           type: 'object',
           additionalProperties: false,
@@ -540,7 +540,7 @@ async function generateOpenAiPlan(params: ProviderParams): Promise<AgentProvider
     );
   }
 
-  if (!params.model.trim() || params.model.startsWith('tasknebula-')) {
+  if (!params.model.trim() || params.model.startsWith('validteam-')) {
     throw new AgentExecutionError(
       'OpenAI is selected but the configured model is still a native placeholder. Pick a real OpenAI model such as gpt-5.4.',
       'provider_model_invalid',
@@ -653,7 +653,7 @@ async function generateAnthropicPlan(params: ProviderParams): Promise<AgentProvi
     );
   }
 
-  if (!params.model.trim() || params.model.startsWith('tasknebula-')) {
+  if (!params.model.trim() || params.model.startsWith('validteam-')) {
     throw new AgentExecutionError(
       'Anthropic is selected but the configured model is still a native placeholder. Pick a Claude model such as claude-sonnet-4-6.',
       'provider_model_invalid',

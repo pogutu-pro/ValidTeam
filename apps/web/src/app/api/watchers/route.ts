@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, watchers, users, projects } from '@tasknebula/db';
+import { db, watchers, users, projects } from '@validteam/db';
 import { eq, and, or } from 'drizzle-orm';
 import { z } from 'zod';
 import {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, systemAuditLogs, users } from '@tasknebula/db';
+import { db, systemAuditLogs, users } from '@validteam/db';
 import { and, desc, eq, ilike, or, sql } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -71,9 +71,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ auditLogs: logs });
   } catch (error) {
     console.error('Failed to fetch admin audit logs:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch admin audit logs' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch admin audit logs' }, { status: 500 });
   }
 }

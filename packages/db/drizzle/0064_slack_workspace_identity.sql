@@ -1,6 +1,6 @@
 -- Slack Events API, slash commands, and interactive payloads identify the
 -- installation by team_id alone. A Slack workspace therefore must belong to
--- exactly one TaskNebula organization; otherwise inbound events are
+-- exactly one ValidTeam organization; otherwise inbound events are
 -- ambiguous and could cross tenant boundaries.
 --
 -- Fail loudly when a pre-existing database already contains ambiguous rows.

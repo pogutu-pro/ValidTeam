@@ -7,7 +7,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { auditLogs, db, ssoConfigs, eq, sql } from '@tasknebula/db';
+import { auditLogs, db, ssoConfigs, eq, sql } from '@validteam/db';
 import { z } from 'zod';
 import { hasPermission } from '@/lib/auth/permissions';
 import {

@@ -57,7 +57,7 @@ jest.mock('@paralleldrive/cuid2', () => ({
   createId: () => 'new-id',
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     insert: (...args: unknown[]) => dbInsertMock(...args),
     select: (...args: unknown[]) => dbSelectMock(...args),

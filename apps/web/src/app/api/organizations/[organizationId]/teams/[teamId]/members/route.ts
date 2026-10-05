@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { and, asc, db, eq, organizationMembers, teamMembers, teams, users } from '@tasknebula/db';
+import { and, asc, db, eq, organizationMembers, teamMembers, teams, users } from '@validteam/db';
 import { auth } from '@/auth';
 import { hasPermission } from '@/lib/auth/permissions';
 

@@ -1,9 +1,9 @@
 /**
  * Cache Utility
- * 
+ *
  * Provides a simple caching layer with TTL support.
  * Can be backed by Redis (Upstash) or in-memory cache for development.
- * 
+ *
  * Features:
  * - Get/Set/Delete operations
  * - TTL (Time To Live) support
@@ -19,7 +19,7 @@ const memoryCache = new Map<string, { value: any; expiresAt: number }>();
 const CACHE_CONFIG = {
   enabled: process.env.CACHE_ENABLED !== 'false',
   defaultTTL: 60 * 5, // 5 minutes
-  keyPrefix: 'tasknebula:',
+  keyPrefix: 'validteam:',
 };
 
 /**
@@ -143,23 +143,22 @@ function cleanupExpiredCache(): void {
 export const CacheKeys = {
   // Issues
   issue: (issueId: string) => `issue:${issueId}`,
-  issues: (projectId: string, filters?: string) => 
+  issues: (projectId: string, filters?: string) =>
     `issues:${projectId}${filters ? `:${filters}` : ''}`,
   issueComments: (issueId: string) => `issue:${issueId}:comments`,
-  
+
   // Projects
   project: (projectId: string) => `project:${projectId}`,
   projects: (organizationId: string) => `projects:${organizationId}`,
-  
+
   // Sprints
   sprint: (sprintId: string) => `sprint:${sprintId}`,
   sprints: (projectId: string) => `sprints:${projectId}`,
-  
+
   // Users
   user: (userId: string) => `user:${userId}`,
   organizationMembers: (organizationId: string) => `org:${organizationId}:members`,
-  
+
   // Analytics
   analytics: (projectId: string, type: string) => `analytics:${projectId}:${type}`,
 };
-

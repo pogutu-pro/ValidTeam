@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createId } from '@paralleldrive/cuid2';
-import { auditLogs, db, eq, and, projectInviteLinks } from '@tasknebula/db';
+import { auditLogs, db, eq, and, projectInviteLinks } from '@validteam/db';
 import { auth } from '@/auth';
 import { canManageProjectMembers } from '@/lib/projects/member-access';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';

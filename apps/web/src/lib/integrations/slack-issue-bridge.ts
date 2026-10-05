@@ -3,7 +3,7 @@
  *
  * Two responsibilities:
  *   1. createIssueFromSlackMessage — given an authenticated Slack workspace
- *      and a message payload, create a TaskNebula issue and stash a row in
+ *      and a message payload, create a ValidTeam issue and stash a row in
  *      `slack_message_links` so subsequent updates mirror back into the same
  *      thread. The issue description embeds the Slack message text + author +
  *      a permalink, so context never gets lost.
@@ -33,7 +33,7 @@ import {
   slackChannelRoutes,
   slackMessageLinks,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { ne, sql } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { callSlackApi, postSlackMessage } from './slack';
@@ -71,7 +71,7 @@ export interface CreateFromSlackParams {
   messageText?: string | null;
   /** Slack channel name for the description (best-effort). */
   channelName?: string | null;
-  /** TaskNebula user id that performed the action — used for createdBy/reporter. */
+  /** ValidTeam user id that performed the action — used for createdBy/reporter. */
   reporterUserId: string;
   /** Extra labels to apply (e.g. "slack"). The channel route's label is added automatically. */
   extraLabels?: string[];
@@ -93,7 +93,7 @@ export interface SlackBridgeResult {
 }
 
 /**
- * Create a new TaskNebula issue from a Slack message, post a confirmation
+ * Create a new ValidTeam issue from a Slack message, post a confirmation
  * reply into the message's thread, and persist the bidirectional mapping.
  *
  * Returns `null` when the project cannot be resolved (no projectId arg, no
@@ -418,7 +418,7 @@ export async function createIssueFromSlackMessage(
 // ---------------------------------------------------------------------------
 
 /**
- * Mirror a TaskNebula event (comment, status change) back into the Slack
+ * Mirror a ValidTeam event (comment, status change) back into the Slack
  * thread that originally produced the issue. Returns true when a thread
  * reply was posted (or no link exists — silent no-op), false on failure.
  */

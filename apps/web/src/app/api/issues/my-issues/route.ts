@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, issues, workflowStatuses, projects, watchers } from '@tasknebula/db';
+import { db, issues, workflowStatuses, projects, watchers } from '@validteam/db';
 import { eq, desc, inArray, and, or, isNotNull } from 'drizzle-orm';
 import { resolveApiActor } from '@/lib/auth/api-actor';
 import { canReadProject } from '@/lib/auth/access-control';

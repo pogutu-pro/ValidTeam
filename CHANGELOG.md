@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to TaskNebula will be documented in this file.
+All notable changes to ValidTeam will be documented in this file.
 
 The format is based on [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.
 
 ## [0.17.3] - 2026-09-26
 
-This is the final open-source TaskNebula release. TaskNebula continues as
+This is the final open-source ValidTeam release. ValidTeam continues as
 **N-Task** at [n-n.io](https://n-n.io/products/n-task), developed as an agentic
 product together with the other N-N enterprise applications, with web and
 mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
@@ -188,7 +188,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
   persist through a validated API and idempotent migration instead of resetting
   on reload; common transition enforcement remains a separate rollout.
 - Removed the stale June 2026 third-party comparison matrix and its 30-locale
-  claim payload; marketing now limits itself to TaskNebula capabilities that
+  claim payload; marketing now limits itself to ValidTeam capabilities that
   can be verified from this repository.
 - Reframed AI transparency and oversight copy as documented product policy
   instead of mischaracterizing EU AI Act Article 50 as a blanket model-card or
@@ -387,7 +387,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 - **Update alert controls.** Super admins can turn the global update banner,
   new-version inbox alerts, and post-update inbox alerts on or off directly
   from Admin → Updates.
-- **Full Docker backup helper.** `scripts/tasknebula-backup.sh` writes
+- **Full Docker backup helper.** `scripts/validteam-backup.sh` writes
   Postgres, uploads, manifest, and checksum artifacts for manual update and
   rollback workflows.
 
@@ -492,7 +492,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 - **Immediate Docker Hub update detection.** Self-hosted installs can now point
   Docker Hub webhooks at `/api/webhooks/docker-hub` with
-  `TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET`; versioned image pushes update the
+  `VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET`; versioned image pushes update the
   shared version cache and notify every super-admin in-app without waiting for
   an admin page poll.
 - **Scheduled update-check fallback.** The optional cron sidecar now calls
@@ -525,14 +525,14 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 ### Added
 
-- **AGENTOWNERS enforcement for MCP coding agents.** The TaskNebula MCP server
+- **AGENTOWNERS enforcement for MCP coding agents.** The ValidTeam MCP server
   now attaches server-side AGENTOWNERS markers to issue creation, issue updates,
   assignment, status transitions, comments, and subtask creation so Codex,
   Claude Code, Gemini, Cursor, and other configured agent actors flow through
   the local policy evaluator and approval queue instead of bypassing governance.
 - **MCP AGENTOWNERS configuration docs.** MCP setup examples now show
-  `TASKNEBULA_AGENT_ACTOR` so each client can identify itself consistently, with
-  `mcp-agent` as the unknown-agent fallback and `TASKNEBULA_AGENT_POLICY=off`
+  `VALIDTEAM_AGENT_ACTOR` so each client can identify itself consistently, with
+  `mcp-agent` as the unknown-agent fallback and `VALIDTEAM_AGENT_POLICY=off`
   available for explicit opt-out.
 
 ### Changed
@@ -583,7 +583,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 - **Deploy updates no longer strand cached sessions on stale bundles.** The PWA
   service worker no longer precaches the app shell, skips mutating/API/Next
   internal requests, updates its script without browser-cache indirection, and
-  the client clears TaskNebula caches plus reloads once when it detects stale
+  the client clears ValidTeam caches plus reloads once when it detects stale
   Server Action or chunk-load errors from an older deployment.
 - **Signup no longer performs a redundant router refresh after sign-in.** The
   invite/signup flow now navigates once to the project or verify-request page,
@@ -609,7 +609,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 ### Added
 
 - **Dashboard interface font setting.** Settings → Appearance now includes an
-  Interface font control with TaskNebula classic as the default dashboard and
+  Interface font control with ValidTeam classic as the default dashboard and
   workspace font, while IBM Plex remains available as an optional app-surface
   font. The preference is stored per user through `user_appearance_settings`
   and ships with migration `0057_user_appearance_interface_font`.
@@ -623,7 +623,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 - **Classic app typography restored by default.** The IBM-inspired visual
   language remains on the landing page and as an optional Appearance setting,
   but authenticated dashboard/workspace screens default back to the previous
-  TaskNebula font stack for readability.
+  ValidTeam font stack for readability.
 - **Dashboard and app-shell polish.** The main dashboard, side rail, sidebar,
   header, loading shells, KPI tiles, activity feed, import wizard, audit-log
   streaming, and dashboard widgets were tightened for the current square IBM
@@ -685,7 +685,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 ### Added
 
 - **Docker Hub update alerts for self-hosted super-admins.** The authenticated app shell now mounts the version-update banner for super-admins outside the Admin dashboard too, so Docker Hub/GitHub updates surface while admins are using the product instead of only after opening Admin → Updates. Docker Hub-only updates get Docker-specific banner copy and link back to the Updates panel.
-- **One-time in-app notifications for newly detected upstream updates.** When the existing version check detects a newer GitHub release or `neuraparse/tasknebula` Docker Hub image, TaskNebula records an idempotent `system_settings` marker and inserts a single unread bell notification for each super-admin, avoiding repeated noise for the same version.
+- **One-time in-app notifications for newly detected upstream updates.** When the existing version check detects a newer GitHub release or `neuraparse/validteam` Docker Hub image, ValidTeam records an idempotent `system_settings` marker and inserts a single unread bell notification for each super-admin, avoiding repeated noise for the same version.
 
 ### Changed
 
@@ -712,9 +712,9 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 ### Added
 
-- **AGENTOWNERS governance for AI-driven actions.** Added a local policy parser/evaluator for `AGENTOWNERS`, `.github/AGENTOWNERS`, and `.tasknebula/AGENTOWNERS`, with explicit `allow`, `deny`, and `require-approval` decisions for agent actors and project-management actions. AI issue and board actions now pass through the central policy guard before execution, denied actions return clear explanations, approval-required actions create pending approval requests, and every policy decision is audit-logged. A sample policy ships at `docs/examples/AGENTOWNERS.example`.
+- **AGENTOWNERS governance for AI-driven actions.** Added a local policy parser/evaluator for `AGENTOWNERS`, `.github/AGENTOWNERS`, and `.validteam/AGENTOWNERS`, with explicit `allow`, `deny`, and `require-approval` decisions for agent actors and project-management actions. AI issue and board actions now pass through the central policy guard before execution, denied actions return clear explanations, approval-required actions create pending approval requests, and every policy decision is audit-logged. A sample policy ships at `docs/examples/AGENTOWNERS.example`.
 - **Admin approval queue and governance UI.** Admin AI settings now include policy status, parsed-rule previews, validation errors, default approval behavior, pending AI approval requests, and approve/reject controls that execute the original proposed payload only after approval.
-- **Docker Hub update visibility for admins.** The admin Updates panel now checks the published `neuraparse/tasknebula` Docker Hub image in addition to GitHub releases, showing the latest tag, pushed time, digest, size, and Docker tag link. The check uses Docker Hub tag metadata, keeps the existing six-hour cache/manual refresh behavior, and chooses the most recently pushed semver tag instead of a stale larger semver.
+- **Docker Hub update visibility for admins.** The admin Updates panel now checks the published `neuraparse/validteam` Docker Hub image in addition to GitHub releases, showing the latest tag, pushed time, digest, size, and Docker tag link. The check uses Docker Hub tag metadata, keeps the existing six-hour cache/manual refresh behavior, and chooses the most recently pushed semver tag instead of a stale larger semver.
 
 ### Changed
 
@@ -766,7 +766,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 ### Fixed
 
-- **Language selection now actually translates the whole app.** Because TaskNebula uses a custom middleware (not next-intl's `createMiddleware`), next-intl's `requestLocale` was never populated, so `getMessages()` and server `getTranslations()` silently fell back to English — the authenticated app stayed English even with a non-English locale selected and `<html lang>` set correctly. The middleware now forwards the resolved locale as an `x-tasknebula-locale` request header, and `request.ts` resolves the active locale as route segment → header → cookie → default. Switching language (and device auto-detection) now localizes every surface — dashboard, settings, admin, projects, issues — verified across locales.
+- **Language selection now actually translates the whole app.** Because ValidTeam uses a custom middleware (not next-intl's `createMiddleware`), next-intl's `requestLocale` was never populated, so `getMessages()` and server `getTranslations()` silently fell back to English — the authenticated app stayed English even with a non-English locale selected and `<html lang>` set correctly. The middleware now forwards the resolved locale as an `x-validteam-locale` request header, and `request.ts` resolves the active locale as route segment → header → cookie → default. Switching language (and device auto-detection) now localizes every surface — dashboard, settings, admin, projects, issues — verified across locales.
 
 ## [0.6.1] - 2026-06-13
 
@@ -803,10 +803,10 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 ### Added
 
-- **Landing page redesign + logo refresh.** Reworked hero (AI-native, "for teams _and_ agents" framing), feature grid, comparison, proof/CTA/nav/footer/FAQ/self-host, plus new **workflow-narrative**, **migrate-from-Jira**, and **AI/MCP-server** sections. Refined the TaskNebula logo mark (brand + mono variants) with a synced `public/icon.svg`.
+- **Landing page redesign + logo refresh.** Reworked hero (AI-native, "for teams _and_ agents" framing), feature grid, comparison, proof/CTA/nav/footer/FAQ/self-host, plus new **workflow-narrative**, **migrate-from-Jira**, and **AI/MCP-server** sections. Refined the ValidTeam logo mark (brand + mono variants) with a synced `public/icon.svg`.
 - **Jira/Plane-parity issue-detail fields.** `flagged` (impediment) and `storyPoints` surfaced in the sidebar (real columns), plus `environment` and `startDate` stored in `customFields` (no migration). Header flag indicator and a flag/unflag quick action.
 - **Inline "type-to-create" pickers.** Create a new Sprint, Epic, or Sub-issue directly from the picker input (mirroring the existing label/component/version pattern); sub-issues inherit the parent's project/sprint/epic.
-- **Admin version-update notification.** Super-admin panel + dismissible banner that surfaces new TaskNebula releases, with automatic background polling (6h, matching the server cache) and tests for the panel/banner/route.
+- **Admin version-update notification.** Super-admin panel + dismissible banner that surfaces new ValidTeam releases, with automatic background polling (6h, matching the server cache) and tests for the panel/banner/route.
 - New i18n namespaces (`issueFields`, `sprintPicker`, `epicPicker`, `subtaskCreate`, `issueRelations`, `timeTrio`, `issueQuickActions`, `issueHeaderExtra`) across en/de/es/tr.
 - Refreshed README screenshots (home, board, dashboard, issue detail).
 
@@ -862,7 +862,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 ### Fixed
 
-- **Remote MCP HTTP endpoint is mounted.** `/api/mcp` now delegates to the shared `@tasknebula/mcp-server` HTTP handler instead of returning the temporary 503 stub.
+- **Remote MCP HTTP endpoint is mounted.** `/api/mcp` now delegates to the shared `@validteam/mcp-server` HTTP handler instead of returning the temporary 503 stub.
 - **Auth env aliases are consistent.** Runtime env validation now accepts `AUTH_*` and `NEXTAUTH_*` aliases for secret/base URL resolution, and agent dispatch URL generation no longer imports the strict env module just to build callback links.
 - **First-run setup no longer masks database outages.** `GET /api/setup` returns a 503 database-not-ready state instead of showing the admin setup form when the DB query fails.
 - **Authenticated mobile shell is usable.** The desktop sidebar/header are hidden on small screens, a bottom mobile nav uses real routes, and the app shell now has a keyboard skip link plus a stable `main` target.
@@ -1003,7 +1003,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 ### Added
 
-- Initial public preview of TaskNebula: kanban boards, real-time updates, and keyboard-first navigation.
+- Initial public preview of ValidTeam: kanban boards, real-time updates, and keyboard-first navigation.
 - [See git log] for the full list of pre-0.2.6 changes.
 
 ## [0.1.0] - 2026-01
@@ -1012,42 +1012,42 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 - Internal alpha release. [See git log] for details.
 
-[Unreleased]: https://github.com/neuraparse/tasknebula/compare/v0.14.0...HEAD
-[0.14.0]: https://github.com/neuraparse/tasknebula/compare/v0.13.0...v0.14.0
-[0.13.0]: https://github.com/neuraparse/tasknebula/compare/v0.7.11...v0.13.0
-[0.7.11]: https://github.com/neuraparse/tasknebula/compare/v0.7.10...v0.7.11
-[0.7.10]: https://github.com/neuraparse/tasknebula/compare/v0.7.9...v0.7.10
-[0.7.9]: https://github.com/neuraparse/tasknebula/compare/v0.7.8...v0.7.9
-[0.7.8]: https://github.com/neuraparse/tasknebula/compare/v0.7.7...v0.7.8
-[0.7.7]: https://github.com/neuraparse/tasknebula/compare/v0.7.6...v0.7.7
-[0.7.6]: https://github.com/neuraparse/tasknebula/compare/v0.7.5...v0.7.6
-[0.7.5]: https://github.com/neuraparse/tasknebula/compare/v0.7.4...v0.7.5
-[0.7.4]: https://github.com/neuraparse/tasknebula/compare/v0.7.3...v0.7.4
-[0.7.3]: https://github.com/neuraparse/tasknebula/compare/v0.7.2...v0.7.3
-[0.7.2]: https://github.com/neuraparse/tasknebula/compare/v0.7.1...v0.7.2
-[0.7.1]: https://github.com/neuraparse/tasknebula/compare/v0.7.0...v0.7.1
-[0.7.0]: https://github.com/neuraparse/tasknebula/compare/v0.6.9...v0.7.0
-[0.6.9]: https://github.com/neuraparse/tasknebula/compare/v0.6.8...v0.6.9
-[0.6.8]: https://github.com/neuraparse/tasknebula/compare/v0.6.7...v0.6.8
-[0.6.7]: https://github.com/neuraparse/tasknebula/compare/v0.6.6...v0.6.7
-[0.6.6]: https://github.com/neuraparse/tasknebula/compare/v0.6.5...v0.6.6
-[0.6.5]: https://github.com/neuraparse/tasknebula/compare/v0.6.4...v0.6.5
-[0.6.4]: https://github.com/neuraparse/tasknebula/compare/v0.6.3...v0.6.4
-[0.6.3]: https://github.com/neuraparse/tasknebula/compare/v0.6.2...v0.6.3
-[0.6.2]: https://github.com/neuraparse/tasknebula/compare/v0.6.1...v0.6.2
-[0.6.1]: https://github.com/neuraparse/tasknebula/compare/v0.6.0...v0.6.1
-[0.6.0]: https://github.com/neuraparse/tasknebula/compare/v0.5.1...v0.6.0
-[0.5.1]: https://github.com/neuraparse/tasknebula/compare/v0.5.0...v0.5.1
-[0.5.0]: https://github.com/neuraparse/tasknebula/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/neuraparse/tasknebula/compare/v0.3.4...v0.4.0
-[0.3.4]: https://github.com/neuraparse/tasknebula/compare/v0.3.3...v0.3.4
-[0.3.3]: https://github.com/neuraparse/tasknebula/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/neuraparse/tasknebula/releases/tag/v0.3.2
-[0.3.1]: https://github.com/neuraparse/tasknebula/commit/a2211ec
-[0.3.0]: https://github.com/neuraparse/tasknebula/commit/14e9bab
-[0.2.9]: https://github.com/neuraparse/tasknebula/commit/1b0ef18
-[0.2.8]: https://github.com/neuraparse/tasknebula/commit/38ad445
-[0.2.7]: https://github.com/neuraparse/tasknebula/commit/fc3afe7
-[0.2.6]: https://github.com/neuraparse/tasknebula/releases/tag/v0.2.6
-[0.2.0]: https://github.com/neuraparse/tasknebula/releases/tag/v0.2.0
-[0.1.0]: https://github.com/neuraparse/tasknebula/commit/b07e16c
+[Unreleased]: https://github.com/neuraparse/validteam/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/neuraparse/validteam/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/neuraparse/validteam/compare/v0.7.11...v0.13.0
+[0.7.11]: https://github.com/neuraparse/validteam/compare/v0.7.10...v0.7.11
+[0.7.10]: https://github.com/neuraparse/validteam/compare/v0.7.9...v0.7.10
+[0.7.9]: https://github.com/neuraparse/validteam/compare/v0.7.8...v0.7.9
+[0.7.8]: https://github.com/neuraparse/validteam/compare/v0.7.7...v0.7.8
+[0.7.7]: https://github.com/neuraparse/validteam/compare/v0.7.6...v0.7.7
+[0.7.6]: https://github.com/neuraparse/validteam/compare/v0.7.5...v0.7.6
+[0.7.5]: https://github.com/neuraparse/validteam/compare/v0.7.4...v0.7.5
+[0.7.4]: https://github.com/neuraparse/validteam/compare/v0.7.3...v0.7.4
+[0.7.3]: https://github.com/neuraparse/validteam/compare/v0.7.2...v0.7.3
+[0.7.2]: https://github.com/neuraparse/validteam/compare/v0.7.1...v0.7.2
+[0.7.1]: https://github.com/neuraparse/validteam/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/neuraparse/validteam/compare/v0.6.9...v0.7.0
+[0.6.9]: https://github.com/neuraparse/validteam/compare/v0.6.8...v0.6.9
+[0.6.8]: https://github.com/neuraparse/validteam/compare/v0.6.7...v0.6.8
+[0.6.7]: https://github.com/neuraparse/validteam/compare/v0.6.6...v0.6.7
+[0.6.6]: https://github.com/neuraparse/validteam/compare/v0.6.5...v0.6.6
+[0.6.5]: https://github.com/neuraparse/validteam/compare/v0.6.4...v0.6.5
+[0.6.4]: https://github.com/neuraparse/validteam/compare/v0.6.3...v0.6.4
+[0.6.3]: https://github.com/neuraparse/validteam/compare/v0.6.2...v0.6.3
+[0.6.2]: https://github.com/neuraparse/validteam/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/neuraparse/validteam/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/neuraparse/validteam/compare/v0.5.1...v0.6.0
+[0.5.1]: https://github.com/neuraparse/validteam/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/neuraparse/validteam/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/neuraparse/validteam/compare/v0.3.4...v0.4.0
+[0.3.4]: https://github.com/neuraparse/validteam/compare/v0.3.3...v0.3.4
+[0.3.3]: https://github.com/neuraparse/validteam/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/neuraparse/validteam/releases/tag/v0.3.2
+[0.3.1]: https://github.com/neuraparse/validteam/commit/a2211ec
+[0.3.0]: https://github.com/neuraparse/validteam/commit/14e9bab
+[0.2.9]: https://github.com/neuraparse/validteam/commit/1b0ef18
+[0.2.8]: https://github.com/neuraparse/validteam/commit/38ad445
+[0.2.7]: https://github.com/neuraparse/validteam/commit/fc3afe7
+[0.2.6]: https://github.com/neuraparse/validteam/releases/tag/v0.2.6
+[0.2.0]: https://github.com/neuraparse/validteam/releases/tag/v0.2.0
+[0.1.0]: https://github.com/neuraparse/validteam/commit/b07e16c

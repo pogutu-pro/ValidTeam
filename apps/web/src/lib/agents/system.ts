@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
-import { db, eq, systemSettings } from '@tasknebula/db';
+import { db, eq, systemSettings } from '@validteam/db';
 import {
   DEFAULT_SYSTEM_AGENT_CONTROL_SETTINGS,
   normalizeSystemAgentControlSettings,
@@ -7,7 +7,7 @@ import {
 } from './config';
 
 export const SYSTEM_AGENT_CONTROL_KEY = 'agent_control_center';
-export const SYSTEM_AGENT_CONTROL_ADVISORY_LOCK = 'tasknebula:agent-control-settings:v1';
+export const SYSTEM_AGENT_CONTROL_ADVISORY_LOCK = 'validteam:agent-control-settings:v1';
 
 type AgentControlDbClient = Pick<typeof db, 'select' | 'insert'>;
 

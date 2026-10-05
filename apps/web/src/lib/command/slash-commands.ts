@@ -62,7 +62,7 @@ export interface SlashCommandInvocation {
  */
 function dispatchSlash(event: string, detail: unknown) {
   if (typeof window === 'undefined') return;
-  window.dispatchEvent(new CustomEvent(`tasknebula:slash:${event}`, { detail }));
+  window.dispatchEvent(new CustomEvent(`validteam:slash:${event}`, { detail }));
 }
 
 type SlashTranslator = (key: string) => string;

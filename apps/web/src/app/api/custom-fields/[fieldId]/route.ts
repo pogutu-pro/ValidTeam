@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, customFields } from '@tasknebula/db';
+import { db, customFields } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { canManageProject, isActiveOrganizationMember } from '@/lib/auth/access-control';
 import { hasPermission } from '@/lib/auth/permissions';
-import { projects } from '@tasknebula/db';
+import { projects } from '@validteam/db';
 
 export const dynamic = 'force-dynamic';
 

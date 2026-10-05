@@ -9,7 +9,7 @@ import {
   PERMISSION_KEYS,
   type ProjectRole,
   type PermissionKey,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';
 import { canReadProject } from '@/lib/auth/access-control';

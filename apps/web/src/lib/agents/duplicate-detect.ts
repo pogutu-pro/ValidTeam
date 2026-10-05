@@ -15,7 +15,7 @@
  * built-in cosine *distance* operator returns 0 for identical vectors).
  */
 
-import { db, desc, eq, issues, ne, sql } from '@tasknebula/db';
+import { db, desc, eq, issues, ne, sql } from '@validteam/db';
 
 export interface DuplicateCandidate {
   issueId: string;

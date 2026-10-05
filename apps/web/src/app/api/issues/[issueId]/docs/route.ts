@@ -11,7 +11,7 @@ import {
   getIssueById,
   issueDocumentLinks,
   issues,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import {
   buildDocumentPageResponse,
   createInitialRevision,
@@ -102,26 +102,41 @@ export async function POST(
     const body = await request.json();
     const data = attachDocSchema.parse(body);
     const { isSuperAdmin } = await getUserFlags(session.user.id);
-    const projectPermissions = await getProjectDocumentPermissions(session.user.id, issue.projectId, isSuperAdmin);
+    const projectPermissions = await getProjectDocumentPermissions(
+      session.user.id,
+      issue.projectId,
+      isSuperAdmin
+    );
 
     if (!projectPermissions.canBrowse) {
-      return NextResponse.json({ error: 'You do not have permission to browse docs for this issue' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to browse docs for this issue' },
+        { status: 403 }
+      );
     }
 
     if (data.pageId) {
       const pageAccess = await resolveDocumentPageAccess(session.user.id, data.pageId);
       if (!pageAccess?.permissions.canBrowse || !projectPermissions.canEdit) {
-        return NextResponse.json({ error: 'You do not have permission to attach this document' }, { status: 403 });
+        return NextResponse.json(
+          { error: 'You do not have permission to attach this document' },
+          { status: 403 }
+        );
       }
 
       const [existing] = await db
         .select()
         .from(issueDocumentLinks)
-        .where(and(eq(issueDocumentLinks.issueId, issueId), eq(issueDocumentLinks.pageId, data.pageId)))
+        .where(
+          and(eq(issueDocumentLinks.issueId, issueId), eq(issueDocumentLinks.pageId, data.pageId))
+        )
         .limit(1);
 
       if (existing) {
-        return NextResponse.json({ error: 'Document is already attached to this issue' }, { status: 409 });
+        return NextResponse.json(
+          { error: 'Document is already attached to this issue' },
+          { status: 409 }
+        );
       }
 
       const [link] = await db
@@ -158,7 +173,10 @@ export async function POST(
     }
 
     if (!projectPermissions.canCreate) {
-      return NextResponse.json({ error: 'You do not have permission to create project docs' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to create project docs' },
+        { status: 403 }
+      );
     }
 
     const space = await ensureProjectDocumentSpace(issue.projectId, session.user.id);
@@ -208,7 +226,11 @@ export async function POST(
       changeSummary: `Created from issue ${issue.key}`,
       userId: session.user.id,
     });
-    await replaceDocumentLinks(pageId, extractInternalDocumentLinkIds(contentJson), session.user.id);
+    await replaceDocumentLinks(
+      pageId,
+      extractInternalDocumentLinkIds(contentJson),
+      session.user.id
+    );
 
     const [link] = await db
       .insert(issueDocumentLinks)
@@ -244,7 +266,10 @@ export async function POST(
     return NextResponse.json({ page: responsePage, link }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
     }
 
     console.error('Error attaching doc to issue:', error);
@@ -275,9 +300,16 @@ export async function DELETE(
     }
 
     const { isSuperAdmin } = await getUserFlags(session.user.id);
-    const projectPermissions = await getProjectDocumentPermissions(session.user.id, issue.projectId, isSuperAdmin);
+    const projectPermissions = await getProjectDocumentPermissions(
+      session.user.id,
+      issue.projectId,
+      isSuperAdmin
+    );
     if (!projectPermissions.canEdit) {
-      return NextResponse.json({ error: 'You do not have permission to unlink docs from this issue' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'You do not have permission to unlink docs from this issue' },
+        { status: 403 }
+      );
     }
 
     const [deleted] = await db

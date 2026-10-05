@@ -1,4 +1,4 @@
-import { db, notifications, notificationPreferences, organizations, users } from '@tasknebula/db';
+import { db, notifications, notificationPreferences, organizations, users } from '@validteam/db';
 import { and, eq } from 'drizzle-orm';
 
 import { sendNotificationEmail } from '@/lib/notifications/email-notification';

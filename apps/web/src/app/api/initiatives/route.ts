@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import {
-  db,
-  initiatives,
-  initiativeProjects,
-  projects,
-  MAX_INITIATIVE_DEPTH,
-} from '@tasknebula/db';
+import { db, initiatives, initiativeProjects, projects, MAX_INITIATIVE_DEPTH } from '@validteam/db';
 import { eq, and, inArray, asc } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { buildInitiativeIndex, validateInitiativeDepth } from '@/lib/initiatives/depth';

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, sprints, issues, workflowStatuses } from '@tasknebula/db';
+import { db, sprints, issues, workflowStatuses } from '@validteam/db';
 import { eq, and, sql } from 'drizzle-orm';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 

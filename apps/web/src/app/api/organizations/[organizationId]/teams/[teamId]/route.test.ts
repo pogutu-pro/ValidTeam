@@ -52,7 +52,7 @@ jest.mock('@/lib/auth/permissions', () => ({
   hasPermission: (...args: unknown[]) => hasPermissionMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   and: (...args: unknown[]) => ({ type: 'and', args }),
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),

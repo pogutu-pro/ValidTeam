@@ -99,7 +99,7 @@ jest.mock('drizzle-orm', () => ({
   inArray: (col: unknown, values: unknown) => ({ type: 'inArray', col, values }),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   and: (...args: unknown[]) => ({ type: 'and', args }),
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),

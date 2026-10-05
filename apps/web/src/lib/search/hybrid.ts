@@ -12,7 +12,7 @@
  * is configured we still return BM25 results (graceful degradation).
  */
 
-import { db, sql } from '@tasknebula/db';
+import { db, sql } from '@validteam/db';
 import { reciprocalRankFusion } from './rrf';
 import { getDefaultEmbeddingProvider, vectorToPg, type EmbeddingProvider } from './embeddings';
 

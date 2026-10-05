@@ -58,7 +58,7 @@ export const LOCALE_COOKIE = 'validteam-locale';
  * Pre-rebrand cookie name. Still read so an existing browser session does not
  * silently fall back to English after an upgrade; never written.
  */
-export const LEGACY_LOCALE_COOKIE = 'tasknebula-locale';
+export const LEGACY_LOCALE_COOKIE = 'validteam-locale';
 
 export function isSupportedLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (locales as readonly string[]).includes(value);

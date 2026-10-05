@@ -1,7 +1,7 @@
 /**
  * Virtual agent users seeder for the Linear Agent Protocol integration.
  *
- * Seeds first-class TaskNebula user rows for each provider in
+ * Seeds first-class ValidTeam user rows for each provider in
  * `agent_session_provider`. These rows appear in the assignee picker like
  * humans, but `isAgent=true` flags them as virtual; we never write a password
  * row, and the dispatch endpoint uses `users.agent_provider` to find the
@@ -34,10 +34,10 @@ const DEFAULT_AGENTS: AgentSpec[] = [
 ];
 
 function emailFor(handle: AgentProviderHandle): string {
-  // Use a stable per-handle email under the reserved `agents.tasknebula.local`
+  // Use a stable per-handle email under the reserved `agents.validteam.local`
   // domain so we never collide with a real user. Auth.js never lets these log
   // in because we don't set a password / OAuth account.
-  return `${handle}@agents.tasknebula.local`;
+  return `${handle}@agents.validteam.local`;
 }
 
 /**

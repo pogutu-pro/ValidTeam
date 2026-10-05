@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { createAuditLog, db, eq, organizations, projects, agentRuns } from '@tasknebula/db';
+import { createAuditLog, db, eq, organizations, projects, agentRuns } from '@validteam/db';
 import { getProjectAgentAccess } from '@/lib/agents/access';
 import {
   getAgentProviderReadiness,

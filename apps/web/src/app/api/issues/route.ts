@@ -10,7 +10,7 @@ import {
   workflows,
   sprints,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { eq, and, desc, sql, inArray, or } from 'drizzle-orm';
 import { publishEvent } from '@/lib/realtime/events';

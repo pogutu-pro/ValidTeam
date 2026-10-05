@@ -33,7 +33,7 @@ jest.mock('@/lib/integrations/mobile-oauth', () => ({
   mobileIntegrationRedirect: jest.fn(),
 }));
 jest.mock('@paralleldrive/cuid2', () => ({ createId: () => 'connection_new' }));
-jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
+jest.mock('@validteam/db/src/schema/integration-connections', () => ({
   integrationConnections: {
     name: 'integration_connections',
     id: 'integration_connections.id',
@@ -42,7 +42,7 @@ jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
     organizationId: 'integration_connections.organizationId',
   },
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const auditTable = { name: 'audit_logs' };
   let selectIndex = 0;
   const tx = {

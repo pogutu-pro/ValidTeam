@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db } from '@tasknebula/db';
-import { drafts } from '@tasknebula/db/src/schema/drafts';
+import { db } from '@validteam/db';
+import { drafts } from '@validteam/db/src/schema/drafts';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -24,10 +24,7 @@ const patchDraftSchema = z.object({
  * Partially update a draft owned by the caller. Scoped to userId so a user
  * cannot mutate another user's draft even if they guess the id.
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -64,15 +61,12 @@ export async function PATCH(
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     console.error('Update draft error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update draft' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to update draft' }, { status: 500 });
   }
 }
 
@@ -83,7 +77,7 @@ export async function PATCH(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -105,9 +99,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete draft error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete draft' },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Failed to delete draft' }, { status: 500 });
   }
 }

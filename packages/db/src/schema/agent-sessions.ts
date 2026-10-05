@@ -155,7 +155,7 @@ export const agentProviders = pgTable(
       .$defaultFn(() => createId())
       .primaryKey(),
 
-    // Workspace = TaskNebula organization. Provider config is scoped here so
+    // Workspace = ValidTeam organization. Provider config is scoped here so
     // each org wires up its own Cursor / Devin / Claude tokens.
     workspaceId: text('workspace_id')
       .notNull()

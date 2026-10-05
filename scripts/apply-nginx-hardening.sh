@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# TaskNebula nginx hardening applier — run once with sudo
+# ValidTeam nginx hardening applier — run once with sudo
 # Usage:  sudo bash scripts/apply-nginx-hardening.sh
 
 set -euo pipefail
@@ -11,9 +11,9 @@ if [[ $EUID -ne 0 ]]; then
   exit 1
 fi
 
-install -m 0644 "$REPO_ROOT/nginx/tasknebula-hardening.conf" /etc/nginx/conf.d/tasknebula-hardening.conf
-install -m 0644 "$REPO_ROOT/nginx/tasknebula.conf" /etc/nginx/sites-available/tasknebula
-ln -sfn /etc/nginx/sites-available/tasknebula /etc/nginx/sites-enabled/tasknebula
+install -m 0644 "$REPO_ROOT/nginx/validteam-hardening.conf" /etc/nginx/conf.d/validteam-hardening.conf
+install -m 0644 "$REPO_ROOT/nginx/validteam.conf" /etc/nginx/sites-available/validteam
+ln -sfn /etc/nginx/sites-available/validteam /etc/nginx/sites-enabled/validteam
 
 nginx -t
 nginx -s reload

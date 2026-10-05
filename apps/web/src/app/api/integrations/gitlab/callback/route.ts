@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
-import { db, integrationConnections } from '@tasknebula/db';
+import { db, integrationConnections } from '@validteam/db';
 import { auth } from '@/auth';
 import { encryptToken } from '@/lib/integrations/token-crypto';
 import { hasPermission } from '@/lib/auth/permissions';

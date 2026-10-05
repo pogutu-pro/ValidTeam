@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, projects, sprints, issues } from '@tasknebula/db';
+import { db, projects, sprints, issues } from '@validteam/db';
 import { eq, and, count } from 'drizzle-orm';
 import { publishEvent } from '@/lib/realtime/events';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';

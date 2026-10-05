@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
 import { createId } from '@paralleldrive/cuid2';
-import { and, createAuditLog, db, documentPages, eq } from '@tasknebula/db';
+import { and, createAuditLog, db, documentPages, eq } from '@validteam/db';
 import {
   buildDocumentPageResponse,
   createInitialRevision,

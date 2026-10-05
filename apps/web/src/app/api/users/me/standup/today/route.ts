@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, standups, and, eq, desc } from '@tasknebula/db';
+import { db, standups, and, eq, desc } from '@validteam/db';
 import {
   listActiveOrganizationMemberships,
   resolveOrganizationAccess,

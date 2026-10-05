@@ -25,7 +25,7 @@
 
 import * as v8 from 'v8';
 import { NextResponse } from 'next/server';
-import { db } from '@tasknebula/db';
+import { db } from '@validteam/db';
 import { sql } from 'drizzle-orm';
 import { getRedisClient, isRedisConfigured } from '@/lib/server/redis';
 import { resolveLivekitStatus } from '@/lib/chat/livekit';

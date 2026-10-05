@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { db, organizationMembers, organizations, users } from '@tasknebula/db';
+import { db, organizationMembers, organizations, users } from '@validteam/db';
 import { and, eq, ne } from 'drizzle-orm';
 
 export type WorkspaceAccessContext = {

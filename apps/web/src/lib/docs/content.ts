@@ -45,7 +45,11 @@ export function createDefaultDocumentContent(text?: string) {
   };
 }
 
-export function createIssueSpecDocumentContent(issue: { key: string; title: string; description?: string | null }) {
+export function createIssueSpecDocumentContent(issue: {
+  key: string;
+  title: string;
+  description?: string | null;
+}) {
   const nodes: Array<Record<string, unknown>> = [
     {
       type: 'heading',
@@ -63,7 +67,9 @@ export function createIssueSpecDocumentContent(issue: { key: string; title: stri
     },
     {
       type: 'paragraph',
-      content: [{ type: 'text', text: issue.description?.trim() || 'Add context, goals, and constraints.' }],
+      content: [
+        { type: 'text', text: issue.description?.trim() || 'Add context, goals, and constraints.' },
+      ],
     },
     {
       type: 'heading',
@@ -222,8 +228,8 @@ export function getInternalPageIdFromLinkMark(mark: Record<string, any>) {
       return decodeURIComponent(match[1]);
     }
 
-    if (href.startsWith('tasknebula://doc/')) {
-      return href.replace('tasknebula://doc/', '');
+    if (href.startsWith('validteam://doc/')) {
+      return href.replace('validteam://doc/', '');
     }
   }
 

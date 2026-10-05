@@ -1,12 +1,12 @@
-# TaskNebula Product Design
+# ValidTeam Product Design
 
-This document records product intent and the review loop for TaskNebula's web
+This document records product intent and the review loop for ValidTeam's web
 interface. `DESIGN_SYSTEM.md` remains the token and component contract; this
 file explains how those pieces compose into pages and how the result is proven.
 
 ## Product intent
 
-TaskNebula is a calm, dense workspace for engineers, product teams, and
+ValidTeam is a calm, dense workspace for engineers, product teams, and
 operators who spend hours in the product. It should feel fast, architectural,
 and trustworthy:
 
@@ -25,7 +25,7 @@ restates a heading.
 
 ## Product signature
 
-TaskNebula's distinctive visual language is **work topology**, not outer-space
+ValidTeam's distinctive visual language is **work topology**, not outer-space
 decoration. When a relationship helps someone act, the interface can expose the
 accountable path:
 
@@ -63,14 +63,14 @@ a second competing application. Navigation labels, counts, and controls recede
 until they are active, focused, or needed.
 
 This direction synthesizes current product-management interaction principles;
-it is not a visual copy of another product. TaskNebula keeps IBM Plex,
+it is not a visual copy of another product. ValidTeam keeps IBM Plex,
 square-ish geometry, the single action blue, and its accountable work-topology
 signature. Competitor assets, wording, proprietary icons, brand color systems,
 and one-to-one shell anatomy are never implementation references.
 
 ## Agentic workbench operating model
 
-TaskNebula is not made agentic by placing a chat window beside every page.
+ValidTeam is not made agentic by placing a chat window beside every page.
 Agents participate in the same accountable work graph as people. The interface
 therefore optimizes for supervision, judgment, and handoff:
 
@@ -391,7 +391,7 @@ apply/revert state, cancellation/resume, and audit history. The UI must not
 invent confidence or imply an effect was applied before the durable runtime
 confirms it.
 
-The TaskNebula-specific representation is the evidence path:
+The ValidTeam-specific representation is the evidence path:
 
 ```text
 request -> evidence -> plan -> proposed effect -> review -> apply -> release
@@ -491,10 +491,10 @@ Run from the repository root:
 ```bash
 pnpm ui:check
 pnpm i18n:check
-pnpm --filter @tasknebula/web type-check
-pnpm --filter @tasknebula/web lint
-pnpm --filter @tasknebula/web test
-pnpm --filter @tasknebula/web tests:e2e:public
+pnpm --filter @validteam/web type-check
+pnpm --filter @validteam/web lint
+pnpm --filter @validteam/web test
+pnpm --filter @validteam/web tests:e2e:public
 ```
 
 `pnpm ui:check` enforces deterministic design invariants that are safe to check
@@ -510,7 +510,7 @@ and responsive composition cannot be proven by source scanning alone.
   2026-08-20): define the surface mode before designing, preserve the incumbent
   token/component system, remove unearned complexity, and combine deterministic
   anti-pattern checks with rendered judgment. Its visual world is not a
-  TaskNebula implementation reference.
+  ValidTeam implementation reference.
 
 - Linear,
   [“A calmer interface for a product in motion”](https://linear.app/now/behind-the-latest-design-refresh)

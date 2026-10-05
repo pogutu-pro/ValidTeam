@@ -1,4 +1,5 @@
 // Service Worker for the ValidTeam PWA
+/* global clients */
 const CACHE_NAME = 'validteam-offline-v1';
 const RUNTIME_CACHE = 'validteam-static-v1';
 
@@ -42,7 +43,7 @@ self.addEventListener('activate', (event) => {
         cacheNames
           .filter(
             (name) =>
-              (name.startsWith('validteam-') || name.startsWith('tasknebula-')) &&
+              (name.startsWith('validteam-') || name.startsWith('validteam-')) &&
               name !== CACHE_NAME &&
               name !== RUNTIME_CACHE
           )

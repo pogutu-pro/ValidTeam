@@ -7,7 +7,7 @@ const dbSelectMock = jest.fn();
 const dbInsertMock = jest.fn();
 const dbUpdateMock = jest.fn();
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),
@@ -31,7 +31,7 @@ jest.mock('../preferences', () => ({
   }),
 }));
 
-import { systemSettings as systemSettingsTable } from '@tasknebula/db';
+import { systemSettings as systemSettingsTable } from '@validteam/db';
 import {
   compareSemver,
   checkLatestVersion,
@@ -109,7 +109,7 @@ function githubResponse(overrides: Record<string, unknown> = {}, ok = true) {
     ok,
     json: jest.fn().mockResolvedValue({
       tag_name: 'v9.9.9',
-      html_url: 'https://github.com/neuraparse/taskNebula/releases/tag/v9.9.9',
+      html_url: 'https://github.com/neuraparse/validTeam/releases/tag/v9.9.9',
       published_at: '2026-06-01T00:00:00.000Z',
       body: 'Release notes',
       ...overrides,
@@ -139,7 +139,7 @@ function cachedState(ageMs: number, overrides: Partial<VersionCheckState> = {}):
   return {
     release: {
       latest: '8.8.8',
-      htmlUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v8.8.8',
+      htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v8.8.8',
       publishedAt: '2026-01-01T00:00:00.000Z',
       notes: 'old notes',
     },
@@ -154,8 +154,8 @@ const HOUR_MS = 60 * 60 * 1000;
 beforeEach(() => {
   jest.clearAllMocks();
   global.fetch = fetchMock as unknown as typeof fetch;
-  delete process.env.TASKNEBULA_DISABLE_UPDATE_CHECK;
-  delete process.env.TASKNEBULA_VERSION;
+  delete process.env.VALIDTEAM_DISABLE_UPDATE_CHECK;
+  delete process.env.VALIDTEAM_VERSION;
 });
 
 describe('compareSemver', () => {
@@ -205,20 +205,20 @@ describe('getCurrentVersion', () => {
     expect(getCurrentVersion()).toMatch(/^\d+\.\d+\.\d+/);
   });
 
-  it('prefers a valid TASKNEBULA_VERSION env override (v-prefix stripped)', () => {
-    process.env.TASKNEBULA_VERSION = 'v7.7.7';
+  it('prefers a valid VALIDTEAM_VERSION env override (v-prefix stripped)', () => {
+    process.env.VALIDTEAM_VERSION = 'v7.7.7';
     expect(getCurrentVersion()).toBe('7.7.7');
   });
 
-  it('ignores a malformed TASKNEBULA_VERSION', () => {
-    process.env.TASKNEBULA_VERSION = 'lol; drop table';
+  it('ignores a malformed VALIDTEAM_VERSION', () => {
+    process.env.VALIDTEAM_VERSION = 'lol; drop table';
     expect(getCurrentVersion()).toMatch(/^\d+\.\d+\.\d+/);
   });
 });
 
 describe('checkLatestVersion', () => {
   it('returns null and touches nothing when disabled via env', async () => {
-    process.env.TASKNEBULA_DISABLE_UPDATE_CHECK = 'true';
+    process.env.VALIDTEAM_DISABLE_UPDATE_CHECK = 'true';
     const result = await checkLatestVersion();
     expect(result).toBeNull();
     expect(fetchMock).not.toHaveBeenCalled();
@@ -245,18 +245,18 @@ describe('checkLatestVersion', () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(RELEASES_LATEST_URL);
-    expect((init.headers as Record<string, string>)['User-Agent']).toMatch(/^tasknebula\//);
+    expect((init.headers as Record<string, string>)['User-Agent']).toMatch(/^validteam\//);
     expect(fetchMock.mock.calls[1]?.[0]).toBe(DOCKER_HUB_TAGS_URL);
 
     expect(result?.release?.latest).toBe('9.9.9'); // leading v stripped
     expect(result?.release?.htmlUrl).toBe(
-      'https://github.com/neuraparse/taskNebula/releases/tag/v9.9.9'
+      'https://github.com/neuraparse/validTeam/releases/tag/v9.9.9'
     );
     expect(result?.release?.notes).toBe('Release notes');
     expect(result?.docker).toEqual({
       repository: DOCKER_HUB_REPOSITORY,
       latestTag: '9.9.9',
-      tagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=9.9.9',
+      tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=9.9.9',
       pushedAt: '2026-06-01T00:01:00.000Z',
       digest: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
       sizeBytes: 123456789,
@@ -368,7 +368,7 @@ describe('checkLatestVersion', () => {
 
 describe('getUpdateStatus', () => {
   it('reports checkDisabled with null fields when disabled', async () => {
-    process.env.TASKNEBULA_DISABLE_UPDATE_CHECK = 'true';
+    process.env.VALIDTEAM_DISABLE_UPDATE_CHECK = 'true';
     const status = await getUpdateStatus();
     expect(status).toEqual({
       current: getCurrentVersion(),
@@ -394,11 +394,11 @@ describe('getUpdateStatus', () => {
   });
 
   it('flags updateAvailable only when latest is newer than current', async () => {
-    process.env.TASKNEBULA_VERSION = '9.9.9';
+    process.env.VALIDTEAM_VERSION = '9.9.9';
     const sameVersion = cachedState(1 * HOUR_MS, {
       release: {
         latest: '9.9.9',
-        htmlUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v9.9.9',
+        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v9.9.9',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: 'same notes',
       },
@@ -409,7 +409,7 @@ describe('getUpdateStatus', () => {
     expect(status.updateAvailable).toBe(false);
     expect(status.latest).toBe('9.9.9');
 
-    process.env.TASKNEBULA_VERSION = '9.9.8';
+    process.env.VALIDTEAM_VERSION = '9.9.8';
     status = await getUpdateStatus();
     expect(status.updateAvailable).toBe(true);
     expect(status.current).toBe('9.9.8');
@@ -418,18 +418,18 @@ describe('getUpdateStatus', () => {
   });
 
   it('flags image updates when Docker Hub has a newer semver tag than the running version', async () => {
-    process.env.TASKNEBULA_VERSION = '1.2.3';
+    process.env.VALIDTEAM_VERSION = '1.2.3';
     const cached = cachedState(1 * HOUR_MS, {
       release: {
         latest: '1.2.3',
-        htmlUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v1.2.3',
+        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v1.2.3',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: null,
       },
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-02T00:00:00.000Z',
         digest: 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
         sizeBytes: 987654321,
@@ -454,18 +454,18 @@ describe('getUpdateStatus', () => {
   });
 
   it('notifies super admins once when Docker Hub has a newer image tag', async () => {
-    process.env.TASKNEBULA_VERSION = '1.2.3';
+    process.env.VALIDTEAM_VERSION = '1.2.3';
     const cached = cachedState(1 * HOUR_MS, {
       release: {
         latest: '1.2.3',
-        htmlUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v1.2.3',
+        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v1.2.3',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: null,
       },
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-02T00:00:00.000Z',
         digest: 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
         sizeBytes: 987654321,
@@ -509,7 +509,7 @@ describe('getUpdateStatus', () => {
         type: 'issue_updated',
         actorType: 'system',
         title: 'ValidTeam v1.2.4 is available',
-        message: expect.stringContaining('Docker Hub published neuraparse/tasknebula:1.2.4'),
+        message: expect.stringContaining('Docker Hub published neuraparse/validteam:1.2.4'),
       }),
       expect.objectContaining({
         userId: 'admin-2',
@@ -519,13 +519,13 @@ describe('getUpdateStatus', () => {
   });
 
   it('does not re-notify when the same latest update was already marked', async () => {
-    process.env.TASKNEBULA_VERSION = '1.2.3';
+    process.env.VALIDTEAM_VERSION = '1.2.3';
     const cached = cachedState(1 * HOUR_MS, {
       release: null,
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-02T00:00:00.000Z',
         digest: null,
         sizeBytes: null,
@@ -553,11 +553,11 @@ describe('getUpdateStatus', () => {
   });
 
   it('records Docker Hub semver webhook pushes and notifies super admins', async () => {
-    process.env.TASKNEBULA_VERSION = '1.2.3';
+    process.env.VALIDTEAM_VERSION = '1.2.3';
     const cached = cachedState(1 * HOUR_MS, {
       release: {
         latest: '1.2.3',
-        htmlUrl: 'https://github.com/neuraparse/taskNebula/releases/tag/v1.2.3',
+        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v1.2.3',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: null,
       },
@@ -568,7 +568,7 @@ describe('getUpdateStatus', () => {
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/tasknebula/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-22T16:13:20.000Z',
         digest: null,
         sizeBytes: null,
@@ -606,9 +606,9 @@ describe('getUpdateStatus', () => {
         tag: '1.2.4',
       },
       repository: {
-        repo_name: 'tasknebula',
+        repo_name: 'validteam',
         namespace: 'neuraparse',
-        name: 'tasknebula',
+        name: 'validteam',
       },
     });
 
@@ -637,13 +637,13 @@ describe('getUpdateStatus', () => {
         userId: 'admin-1',
         actorType: 'system',
         title: 'ValidTeam v1.2.4 is available',
-        message: expect.stringContaining('Docker Hub published neuraparse/tasknebula:1.2.4'),
+        message: expect.stringContaining('Docker Hub published neuraparse/validteam:1.2.4'),
       }),
     ]);
   });
 
   it('forces a registry refresh for Docker Hub latest-tag webhooks', async () => {
-    process.env.TASKNEBULA_VERSION = '9.9.9';
+    process.env.VALIDTEAM_VERSION = '9.9.9';
     mockCachedRows([]);
     mockInsertChain();
     fetchMock.mockResolvedValueOnce(githubResponse()).mockResolvedValueOnce(dockerResponse());

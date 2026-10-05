@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, savedFilters } from '@tasknebula/db';
+import { db, savedFilters } from '@validteam/db';
 import { eq, and, or, desc, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -22,7 +22,7 @@ const createSavedFilterSchema = z.object({
 
 /**
  * GET /api/saved-filters?organizationId=xxx&projectId=xxx&includePublic=true
- * 
+ *
  * Get saved filters for current user
  */
 export async function GET(request: NextRequest) {
@@ -56,10 +56,7 @@ export async function GET(request: NextRequest) {
     // Include user's own filters and public filters
     if (includePublic) {
       conditions.push(
-        or(
-          eq(savedFilters.userId, session.user.id),
-          eq(savedFilters.isPublic, true)
-        )
+        or(eq(savedFilters.userId, session.user.id), eq(savedFilters.isPublic, true))
       );
     } else {
       conditions.push(eq(savedFilters.userId, session.user.id));
@@ -74,16 +71,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ filters });
   } catch (error) {
     console.error('Get saved filters error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get saved filters' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get saved filters' }, { status: 500 });
   }
 }
 
 /**
  * POST /api/saved-filters
- * 
+ *
  * Create a new saved filter
  */
 export async function POST(request: NextRequest) {
@@ -125,9 +119,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('Create saved filter error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create saved filter' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create saved filter' }, { status: 500 });
   }
 }

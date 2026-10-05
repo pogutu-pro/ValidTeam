@@ -12,7 +12,7 @@
  * data tool delegates to REST, where the key is validated before access and
  * confined to its immutable organization. OAuth 2.1 is still a follow-up.
  */
-import { TaskNebulaClient } from './client.js';
+import { ValidTeamClient } from './client.js';
 import {
   LATEST_PROTOCOL_VERSION,
   SUPPORTED_PROTOCOL_VERSIONS,
@@ -55,11 +55,11 @@ export function createMcpHttpHandler(opts: HttpHandlerOptions = {}) {
         null,
         -32001,
         'Missing or invalid Authorization header. ' +
-          'Send `Authorization: Bearer sk_live_...` with a TaskNebula API key.',
+          'Send `Authorization: Bearer sk_live_...` with a ValidTeam API key.',
         401
       );
     }
-    const client = new TaskNebulaClient(clientOptionsFromHttp(auth));
+    const client = new ValidTeamClient(clientOptionsFromHttp(auth));
 
     let payload: unknown;
     try {
@@ -78,7 +78,7 @@ export function createMcpHttpHandler(opts: HttpHandlerOptions = {}) {
         case 'initialize':
           return jsonRpcResult(id, {
             protocolVersion: negotiateProtocolVersion(params),
-            serverInfo: { name: '@tasknebula/mcp-server', version: '0.1.0' },
+            serverInfo: { name: '@validteam/mcp-server', version: '0.1.0' },
             capabilities: { tools: {}, resources: {}, prompts: {} },
           });
         case 'tools/list':
@@ -160,14 +160,14 @@ export function createMcpHttpHandler(opts: HttpHandlerOptions = {}) {
  */
 export function createHttpAttachedServer(request: Request, env: NodeJS.ProcessEnv = process.env) {
   const auth = resolveHttpAuth({ headers: request.headers }, env);
-  const client = new TaskNebulaClient(clientOptionsFromHttp(auth));
+  const client = new ValidTeamClient(clientOptionsFromHttp(auth));
   return createMcpServer({ client });
 }
 
 function discoveryResponse(): Response {
   return new Response(
     JSON.stringify({
-      server: { name: '@tasknebula/mcp-server', version: '0.1.0' },
+      server: { name: '@validteam/mcp-server', version: '0.1.0' },
       transport: 'http+jsonrpc',
       protocolVersion: LATEST_PROTOCOL_VERSION,
       // OAuth 2.1 discovery stub — point clients at the Next.js OAuth

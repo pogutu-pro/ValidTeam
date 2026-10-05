@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, organizations, users, projects, issues, issueComments } from '@tasknebula/db';
+import { db, organizations, users, projects, issues, issueComments } from '@validteam/db';
 import { eq, count, sql } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
@@ -115,10 +115,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Failed to fetch system stats:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch system stats' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch system stats' }, { status: 500 });
   }
 }
-

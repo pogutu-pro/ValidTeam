@@ -24,8 +24,8 @@ import {
   bulletList,
   textFooter,
   EMAIL_COLORS,
-} from '@tasknebula/db';
-import { emailVerificationTokens } from '@tasknebula/db/src/schema/email-verification-tokens';
+} from '@validteam/db';
+import { emailVerificationTokens } from '@validteam/db/src/schema/email-verification-tokens';
 import { sendEmail } from '@/lib/email/sender';
 import { buildAppUrl } from '@/lib/url/app-url';
 
@@ -69,7 +69,7 @@ export function renderVerifyEmailMessage(args: { displayName: string; verifyUrl:
       `If the button doesn't work, paste this URL into your browser:<br/><span style="color:${EMAIL_COLORS.body};word-break:break-all;">${verifyUrl}</span>`,
       { muted: true, spacingTop: 20 }
     ),
-    paragraph("If you didn't create a TaskNebula account, you can safely ignore this message.", {
+    paragraph("If you didn't create a ValidTeam account, you can safely ignore this message.", {
       muted: true,
       spacingTop: 12,
     }),
@@ -79,20 +79,20 @@ export function renderVerifyEmailMessage(args: { displayName: string; verifyUrl:
     kicker: 'VERIFY EMAIL',
     heading: 'Confirm your email address',
     subheading: `Hi ${displayName}, one click and you're set.`,
-    preheader: 'Verify your TaskNebula email to access notifications and invites.',
+    preheader: 'Verify your ValidTeam email to access notifications and invites.',
     body: body + fallback,
     ctaLabel: 'Verify email',
     ctaUrl: verifyUrl,
   });
 
   const text =
-    `Verify your TaskNebula email address\n\n` +
+    `Verify your ValidTeam email address\n\n` +
     `Hi ${displayName}, one click and you're set.\n\n` +
     `Confirm the email on your account by visiting:\n${verifyUrl}\n\n` +
     `This link expires in 24 hours. If you didn't create an account, you can ignore this message.` +
     textFooter();
 
-  return { subject: 'Verify your TaskNebula email address', html, text };
+  return { subject: 'Verify your ValidTeam email address', html, text };
 }
 
 export interface IssueResult {

@@ -1,10 +1,10 @@
 /**
- * MCP resource definitions for TaskNebula.
+ * MCP resource definitions for ValidTeam.
  *
  * Resources expose read-only context the model can pull in. We define
  * four URI templates that map cleanly onto our REST API.
  */
-import type { TaskNebulaClient } from './client.js';
+import type { ValidTeamClient } from './client.js';
 
 export interface ResourceTemplateDefinition {
   uriTemplate: string;
@@ -12,13 +12,13 @@ export interface ResourceTemplateDefinition {
   description: string;
   mimeType: string;
   /** Resolve a concrete URI into a JSON payload via the REST API. */
-  read: (uri: string, ctx: { client: TaskNebulaClient }) => Promise<unknown>;
+  read: (uri: string, ctx: { client: ValidTeamClient }) => Promise<unknown>;
 }
 
 export const resourceTemplates: ResourceTemplateDefinition[] = [
   {
-    uriTemplate: 'tasknebula://issue/{id}',
-    name: 'TaskNebula Issue',
+    uriTemplate: 'validteam://issue/{id}',
+    name: 'ValidTeam Issue',
     description: 'A single issue with comments, links, and history.',
     mimeType: 'application/json',
     async read(uri, { client }) {
@@ -27,8 +27,8 @@ export const resourceTemplates: ResourceTemplateDefinition[] = [
     },
   },
   {
-    uriTemplate: 'tasknebula://project/{id}',
-    name: 'TaskNebula Project',
+    uriTemplate: 'validteam://project/{id}',
+    name: 'ValidTeam Project',
     description: 'A project with members, workflow, and recent activity.',
     mimeType: 'application/json',
     async read(uri, { client }) {
@@ -37,7 +37,7 @@ export const resourceTemplates: ResourceTemplateDefinition[] = [
     },
   },
   {
-    uriTemplate: 'tasknebula://user/me',
+    uriTemplate: 'validteam://user/me',
     name: 'Current User',
     description: 'The authenticated user, including organization memberships.',
     mimeType: 'application/json',
@@ -46,7 +46,7 @@ export const resourceTemplates: ResourceTemplateDefinition[] = [
     },
   },
   {
-    uriTemplate: 'tasknebula://cycle/current',
+    uriTemplate: 'validteam://cycle/current',
     name: 'Current Sprint / Cycle',
     description: 'The active sprint/cycle across the user’s default project.',
     mimeType: 'application/json',
@@ -57,7 +57,7 @@ export const resourceTemplates: ResourceTemplateDefinition[] = [
 ];
 
 function parseId(uri: string, kind: string): string {
-  const prefix = `tasknebula://${kind}/`;
+  const prefix = `validteam://${kind}/`;
   if (!uri.startsWith(prefix)) {
     throw new Error(`Expected URI starting with ${prefix}, got ${uri}`);
   }

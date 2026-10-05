@@ -1,4 +1,4 @@
-# TaskNebula Agentic Workbench Redesign
+# ValidTeam Agentic Workbench Redesign
 
 This file is the execution ledger for the full web-interface redesign requested
 on 2026-08-20. It is intentionally route-complete, implementation-oriented,
@@ -6,7 +6,7 @@ and safe for a public repository. It contains no deployment or operator data.
 
 ## Outcome
 
-Rebuild TaskNebula as a calm, keyboard-first **agentic workbench**: a product
+Rebuild ValidTeam as a calm, keyboard-first **agentic workbench**: a product
 where people can see what needs judgment, what an agent is doing, what effect
 is proposed, and what has actually been applied—without turning every screen
 into a chat interface or a wall of cards.
@@ -26,10 +26,10 @@ has been reviewed in the new system and the full local quality gate passes.
       translations across all 30 locale catalogs.
 - [x] Preserve first-class light, dark, reduced-motion, keyboard, touch, and RTL
       behavior.
-- [x] Keep TaskNebula's IBM Plex workbench identity, single action blue,
+- [x] Keep ValidTeam's IBM Plex workbench identity, single action blue,
       square-ish geometry, and accountable work-topology signature.
 - [x] Do not copy proprietary assets, wording, icons, or one-to-one layouts from
-      competitors. Synthesize interaction principles into TaskNebula's own system.
+      competitors. Synthesize interaction principles into ValidTeam's own system.
 - [x] No decorative AI tropes: purple gradients, glowing orbs, glass panels,
       animated thinking stars, ornamental graphs, or confidence scores without
       a real source.
@@ -288,14 +288,14 @@ dark theme, and relevant RTL behavior have been checked.
 - [x] `pnpm ui:check`
 - [x] Impeccable-compatible deterministic anti-slop scan, with findings manually
       verified rather than blindly suppressed.
-- [x] `pnpm --filter @tasknebula/web type-check`
-- [x] `pnpm --filter @tasknebula/web lint`
+- [x] `pnpm --filter @validteam/web type-check`
+- [x] `pnpm --filter @validteam/web lint`
 - [x] Focused unit tests for changed shared primitives, shell, dashboard, and
       domain components.
-- [x] `pnpm --filter @tasknebula/web test`
-- [x] `pnpm --filter @tasknebula/web tests:e2e:public`
+- [x] `pnpm --filter @validteam/web test`
+- [x] `pnpm --filter @validteam/web tests:e2e:public`
 - [x] Authenticated surface suite against a disposable isolated fixture.
-- [x] `pnpm --filter @tasknebula/web build`
+- [x] `pnpm --filter @validteam/web build`
 - [x] `pnpm hygiene:check`
 - [x] `git diff --check`
 
@@ -322,7 +322,7 @@ It is not a substitute for the deeper feature/persistence audit below; fresh
 failures take precedence over this historical green record until rerun.
 
 - Route review: all 56 manifest pages inspected with the isolated E2E workspace;
-  final screenshots remain under `/tmp/tasknebula-route-audit`.
+  final screenshots remain under `/tmp/validteam-route-audit`.
 - Authenticated browser contract: all 43 product surfaces passed in desktop-light
   and 390px mobile-dark; the direction-sensitive subset also passed at 320px RTL.
 - Public browser contract: 88/88 checks passed across light/dark, 390px, 320px,
@@ -465,7 +465,7 @@ converted to completed work.
       to `0.17.0`.
 - [x] Pass the canonical release quality gate after the final source change.
 - [x] Create the local `chore(release): v0.17.0` commit with the canonical author.
-- [x] Publish `neuraparse/tasknebula:0.17.0` and `latest` for `linux/amd64`, then
+- [x] Publish `neuraparse/validteam:0.17.0` and `latest` for `linux/amd64`, then
       verify the registry digest.
 - [x] Keep the hosted environment unchanged; this release authorization covers
       Docker Hub publication, not a live restart or deployment.

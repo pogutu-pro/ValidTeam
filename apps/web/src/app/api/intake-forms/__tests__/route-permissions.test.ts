@@ -30,7 +30,7 @@ jest.mock('drizzle-orm', () => ({
   inArray: jest.fn((column: unknown, values: unknown[]) => ({ column, values })),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const where = jest.fn();
   const orderBy = jest.fn();
   const limit = jest.fn();
@@ -79,7 +79,7 @@ describe('GET /api/intake-forms permissions', () => {
     const accessModule = jest.requireMock('@/lib/auth/access-control') as {
       listActiveOrganizationMemberships: jest.Mock;
     };
-    const dbModule = jest.requireMock('@tasknebula/db') as {
+    const dbModule = jest.requireMock('@validteam/db') as {
       __mockWhere: jest.Mock;
       __mockOrderBy: jest.Mock;
     };
@@ -114,7 +114,7 @@ describe('GET /api/intake-forms permissions', () => {
   });
 
   it('lists forms only after org settings permission passes', async () => {
-    const dbModule = jest.requireMock('@tasknebula/db') as {
+    const dbModule = jest.requireMock('@validteam/db') as {
       __mockWhere: jest.Mock;
       __mockOrderBy: jest.Mock;
     };

@@ -1,4 +1,4 @@
-# TaskNebula deployment
+# ValidTeam deployment
 
 **Verified:** 2026-08-12
 
@@ -44,8 +44,8 @@ database dumps, or live URLs.
 ## Docker Compose
 
 The root Compose stack runs Postgres, Redis, the web image, and a small
-approval-effect reconciler. It pulls `neuraparse/tasknebula:latest` by default;
-set `TASKNEBULA_IMAGE` to an immutable version or local tag for reproducible
+approval-effect reconciler. It pulls `neuraparse/validteam:latest` by default;
+set `VALIDTEAM_IMAGE` to an immutable version or local tag for reproducible
 deployment. The separate `voice` and scheduled-product `cron` profiles are
 opt-in.
 
@@ -224,10 +224,10 @@ For a non-Compose Node deployment:
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm --filter @tasknebula/mcp-server build
+pnpm --filter @validteam/mcp-server build
 pnpm build
 pnpm db:migrate
-pnpm --filter @tasknebula/web start
+pnpm --filter @validteam/web start
 ```
 
 Supply `DATABASE_URL`, auth/app URL, and optional service credentials through

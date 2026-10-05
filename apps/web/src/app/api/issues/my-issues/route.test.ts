@@ -42,7 +42,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   canReadProject: (...args: unknown[]) => canReadProjectMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
   },

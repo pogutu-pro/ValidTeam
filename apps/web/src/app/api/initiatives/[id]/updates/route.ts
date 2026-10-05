@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, initiatives, initiativeUpdates, users } from '@tasknebula/db';
+import { db, initiatives, initiativeUpdates, users } from '@validteam/db';
 import { eq, desc } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';

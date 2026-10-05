@@ -51,7 +51,7 @@ jest.mock('@/lib/auth/permissions', () => ({
   hasPermission: (...args: unknown[]) => hasPermissionMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   and: (...args: unknown[]) => ({ type: 'and', args }),
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
@@ -180,10 +180,13 @@ describe('teamspace member detail route', () => {
       .mockReturnValueOnce(updateWhereBuilder());
 
     const response = await PATCH(
-      new NextRequestCtor('http://localhost:3002/api/organizations/org-1/teams/team-1/members/user-2', {
-        method: 'PATCH',
-        body: JSON.stringify({ role: 'lead' }),
-      }),
+      new NextRequestCtor(
+        'http://localhost:3002/api/organizations/org-1/teams/team-1/members/user-2',
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ role: 'lead' }),
+        }
+      ),
       {
         params: Promise.resolve({ organizationId: 'org-1', teamId: 'team-1', memberId: 'user-2' }),
       }
@@ -204,9 +207,12 @@ describe('teamspace member detail route', () => {
     hasPermissionMock.mockResolvedValue(true);
 
     const response = await DELETE(
-      new NextRequestCtor('http://localhost:3002/api/organizations/org-1/teams/team-1/members/user-1', {
-        method: 'DELETE',
-      }),
+      new NextRequestCtor(
+        'http://localhost:3002/api/organizations/org-1/teams/team-1/members/user-1',
+        {
+          method: 'DELETE',
+        }
+      ),
       {
         params: Promise.resolve({ organizationId: 'org-1', teamId: 'team-1', memberId: 'user-1' }),
       }
@@ -246,9 +252,12 @@ describe('teamspace member detail route', () => {
     dbUpdateMock.mockReturnValueOnce(updateWhereBuilder());
 
     const response = await DELETE(
-      new NextRequestCtor('http://localhost:3002/api/organizations/org-1/teams/team-1/members/user-2', {
-        method: 'DELETE',
-      }),
+      new NextRequestCtor(
+        'http://localhost:3002/api/organizations/org-1/teams/team-1/members/user-2',
+        {
+          method: 'DELETE',
+        }
+      ),
       {
         params: Promise.resolve({ organizationId: 'org-1', teamId: 'team-1', memberId: 'user-2' }),
       }

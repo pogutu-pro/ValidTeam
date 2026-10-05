@@ -51,7 +51,7 @@ type Listener = (event: RealtimeEvent) => void;
 
 /** All realtime events share one channel; the SSE consumer filters by org
  *  membership + originating user before forwarding to a browser. */
-const REALTIME_CHANNEL = 'tasknebula:realtime';
+const REALTIME_CHANNEL = 'validteam:realtime';
 
 /** Identifies this Node process so the Redis bridge can skip events we
  *  published ourselves (already delivered to local subscribers synchronously). */
@@ -150,7 +150,7 @@ async function fanOutToRedis(event: RealtimeEvent): Promise<void> {
 
 declare global {
   // eslint-disable-next-line no-var -- required for global augmentation
-  var __tasknebulaRealtimeBridge__: Promise<void> | undefined;
+  var __validteamRealtimeBridge__: Promise<void> | undefined;
 }
 
 /**
@@ -160,10 +160,10 @@ declare global {
  * reload) and is a no-op when Redis is not configured. Never rejects.
  */
 export function ensureRealtimeBridge(): Promise<void> {
-  if (!global.__tasknebulaRealtimeBridge__) {
-    global.__tasknebulaRealtimeBridge__ = startRealtimeBridge();
+  if (!global.__validteamRealtimeBridge__) {
+    global.__validteamRealtimeBridge__ = startRealtimeBridge();
   }
-  return global.__tasknebulaRealtimeBridge__;
+  return global.__validteamRealtimeBridge__;
 }
 
 async function startRealtimeBridge(): Promise<void> {

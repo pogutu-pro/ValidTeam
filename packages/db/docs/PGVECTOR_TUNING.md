@@ -3,7 +3,7 @@
 This document describes the parameters used by the
 `content_embeddings_embedding_hnsw_idx` index introduced in
 [`0051_pgvector_hnsw_content_embeddings.sql`](../drizzle/0051_pgvector_hnsw_content_embeddings.sql),
-and how to tune them for the TaskNebula semantic search workload.
+and how to tune them for the ValidTeam semantic search workload.
 
 The index is created explicitly by the hand-written migration:
 

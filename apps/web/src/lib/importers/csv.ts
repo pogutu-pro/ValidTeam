@@ -143,23 +143,15 @@ export function parseCsvText(text: string): ParsedCsv {
  * fields. Case-insensitive, also tolerates Jira / Linear export defaults
  * (e.g. 'Summary' → title, 'Issue Type' → type).
  */
-export function suggestColumnMapping(
-  headers: string[]
-): NonNullable<ImportMapping['columns']> {
+export function suggestColumnMapping(headers: string[]): NonNullable<ImportMapping['columns']> {
   const map: NonNullable<ImportMapping['columns']> = {};
   for (const h of headers) {
     const low = h.toLowerCase().trim();
     if (!map.title && (low === 'title' || low === 'summary' || low === 'name')) {
       map.title = h;
-    } else if (
-      !map.description &&
-      (low === 'description' || low === 'body' || low === 'details')
-    ) {
+    } else if (!map.description && (low === 'description' || low === 'body' || low === 'details')) {
       map.description = h;
-    } else if (
-      !map.status &&
-      (low === 'status' || low === 'state' || low === 'workflow status')
-    ) {
+    } else if (!map.status && (low === 'status' || low === 'state' || low === 'workflow status')) {
       map.status = h;
     } else if (!map.priority && low === 'priority') {
       map.priority = h;
@@ -170,10 +162,7 @@ export function suggestColumnMapping(
       map.labels = h;
     } else if (
       !map.assigneeEmail &&
-      (low === 'assignee' ||
-        low === 'assignee email' ||
-        low === 'assigned to' ||
-        low === 'owner')
+      (low === 'assignee' || low === 'assignee email' || low === 'assigned to' || low === 'owner')
     ) {
       map.assigneeEmail = h;
     } else if (
@@ -211,8 +200,7 @@ function splitLabels(raw: string): string[] {
 export const csvImporter: Importer<CsvInput> = {
   name: 'csv',
   label: 'CSV file',
-  description:
-    'Upload a CSV exported from any tool. Map columns to TaskNebula fields and run.',
+  description: 'Upload a CSV exported from any tool. Map columns to ValidTeam fields and run.',
 
   async parseSource(input) {
     const { text, columns } = input;

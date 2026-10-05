@@ -5,7 +5,7 @@ import {
   emailTemplateTypeEnum,
   notificationPreferences,
   replaceVariables,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, eq } from 'drizzle-orm';
 
 import { sendEmail as sendRawEmail, type SendEmailResult } from '@/lib/email/sender';

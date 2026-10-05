@@ -78,7 +78,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   resolveOrganizationAccess: (...args: unknown[]) => resolveOrganizationAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const users = table('users', ['id', 'isSuperAdmin']);
   const organizationMembers = table('organization_members', [
     'userId',

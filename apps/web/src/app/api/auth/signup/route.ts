@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, users, organizationMembers } from '@tasknebula/db';
+import { db, users, organizationMembers } from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { createHash, timingSafeEqual } from 'crypto';

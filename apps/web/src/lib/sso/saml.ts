@@ -11,7 +11,7 @@
  * dedicated production deployment (see README for hardening notes).
  */
 import * as samlify from 'samlify';
-import type { SsoConfig } from '@tasknebula/db';
+import type { SsoConfig } from '@validteam/db';
 
 let validatorRegistered = false;
 

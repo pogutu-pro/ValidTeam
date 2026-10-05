@@ -55,7 +55,7 @@ const DEFAULT_CONFIG_FOR_TYPE: Record<SinkType, string> = {
     2
   ),
   datadog: JSON.stringify({ apiKey: 'YOUR_DATADOG_API_KEY', site: 'datadoghq.com' }, null, 2),
-  s3: JSON.stringify({ bucket: 'tasknebula-audit', region: 'us-east-1', prefix: 'audit' }, null, 2),
+  s3: JSON.stringify({ bucket: 'validteam-audit', region: 'us-east-1', prefix: 'audit' }, null, 2),
 };
 
 const SINK_TYPES: SinkType[] = ['webhook', 'splunk_hec', 'datadog', 's3'];

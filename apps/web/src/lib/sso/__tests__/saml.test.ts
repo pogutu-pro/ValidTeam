@@ -78,7 +78,7 @@ jest.mock('samlify', () => {
 });
 
 import { buildAuthnRequestUrl, getSpMetadataXml, parseLoginResponse, acsUrl } from '../saml';
-import type { SsoConfig } from '@tasknebula/db';
+import type { SsoConfig } from '@validteam/db';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import * as samlifyMockNs from 'samlify';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { type GranularPermissions, type ProjectRole } from '@tasknebula/db';
+import { type GranularPermissions, type ProjectRole } from '@validteam/db';
 import { resolveProjectCapabilityAccess } from '@/lib/auth/project-access';
 
 // Full permissions interface with all granular permissions

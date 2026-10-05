@@ -52,7 +52,7 @@ module.exports = {
               '=',
               '?',
               // Brand / proper nouns / formats that must never be translated.
-              'TaskNebula',
+              'ValidTeam',
               'OpenAI',
               'Anthropic',
               'Redis',

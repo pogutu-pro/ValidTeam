@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, initiatives, initiativeProjects, projects } from '@tasknebula/db';
+import { db, initiatives, initiativeProjects, projects } from '@validteam/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { resolveInitiativeAccess } from '@/lib/initiatives/access';
 import {

@@ -7,14 +7,10 @@
  *   - the minimal RFC-4180 parser (quoted fields, escaped quotes, CRLF)
  *   - heuristic column-mapping suggestions
  *   - parseSource → NormalizedRecord shape
- *   - mapRecord → TaskNebulaIssue shape + priority normalization
+ *   - mapRecord → ValidTeamIssue shape + priority normalization
  */
 
-import {
-  csvImporter,
-  parseCsvText,
-  suggestColumnMapping,
-} from '../importers/csv';
+import { csvImporter, parseCsvText, suggestColumnMapping } from '../importers/csv';
 
 describe('parseCsvText', () => {
   it('parses a simple header + row', () => {
@@ -132,7 +128,7 @@ describe('csvImporter.parseSource', () => {
 });
 
 describe('csvImporter.mapRecord', () => {
-  it('produces a TaskNebulaIssue with normalized priority', () => {
+  it('produces a ValidTeamIssue with normalized priority', () => {
     const rec = {
       key: 'CSV-1',
       title: 'Something',
@@ -225,10 +221,7 @@ describe('normalizePriority via mapRecord', () => {
     ['garbage', 'medium'],
     [null, 'medium'],
   ])('maps %s → %s', (input, expected) => {
-    const issue = csvImporter.mapRecord(
-      { ...baseRec, priority: input as string | null },
-      {}
-    );
+    const issue = csvImporter.mapRecord({ ...baseRec, priority: input as string | null }, {});
     expect(issue.priority).toBe(expected);
   });
 });

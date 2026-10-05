@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
 import { createId } from '@paralleldrive/cuid2';
-import { db, documentSpaces, projects, eq } from '@tasknebula/db';
+import { db, documentSpaces, projects, eq } from '@validteam/db';
 import {
   ensureProjectDocumentSpace,
   getOrgDocumentPermissions,

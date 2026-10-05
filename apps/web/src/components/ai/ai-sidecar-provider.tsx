@@ -257,8 +257,8 @@ function AiSidecarProviderInner({ children }: { children: ReactNode }) {
       void sendMessage(prompt, organizationId);
     };
 
-    window.addEventListener('tasknebula:ask-ai', onAskAi);
-    return () => window.removeEventListener('tasknebula:ask-ai', onAskAi);
+    window.addEventListener('validteam:ask-ai', onAskAi);
+    return () => window.removeEventListener('validteam:ask-ai', onAskAi);
   }, [sendMessage]);
 
   const value = useMemo<SidecarContextValue>(

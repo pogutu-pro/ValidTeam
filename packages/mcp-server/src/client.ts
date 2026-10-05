@@ -1,5 +1,5 @@
 /**
- * Thin REST client around the TaskNebula HTTP API.
+ * Thin REST client around the ValidTeam HTTP API.
  *
  * Every tool delegates to this client so we keep auth, headers, and
  * error normalization in one place. The client is intentionally minimal —
@@ -7,10 +7,10 @@
  * domain logic that already lives in the Next.js API routes.
  */
 
-export interface TaskNebulaClientOptions {
-  /** Base URL of the TaskNebula REST API, e.g. `https://app.tasknebula.io`. */
+export interface ValidTeamClientOptions {
+  /** Base URL of the ValidTeam REST API, e.g. `https://app.validteam.io`. */
   apiUrl: string;
-  /** API key issued from the TaskNebula UI (Settings → API keys). */
+  /** API key issued from the ValidTeam UI (Settings → API keys). */
   apiKey?: string;
   /**
    * Optional OAuth access token (used by the HTTP/Streamable transport once
@@ -24,28 +24,28 @@ export interface TaskNebulaClientOptions {
   fetchImpl?: typeof fetch;
 }
 
-export class TaskNebulaApiError extends Error {
+export class ValidTeamApiError extends Error {
   constructor(
     public readonly status: number,
     public readonly statusText: string,
     public readonly body: unknown,
     message?: string
   ) {
-    super(message ?? `TaskNebula API error ${status} ${statusText}`);
-    this.name = 'TaskNebulaApiError';
+    super(message ?? `ValidTeam API error ${status} ${statusText}`);
+    this.name = 'ValidTeamApiError';
   }
 }
 
-export class TaskNebulaClient {
+export class ValidTeamClient {
   private readonly apiUrl: string;
   private readonly apiKey?: string;
   private readonly accessToken?: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
 
-  constructor(opts: TaskNebulaClientOptions) {
+  constructor(opts: ValidTeamClientOptions) {
     if (!opts.apiUrl) {
-      throw new Error('TASKNEBULA_API_URL is required');
+      throw new Error('VALIDTEAM_API_URL is required');
     }
     this.apiUrl = opts.apiUrl.replace(/\/+$/, '');
     this.apiKey = opts.apiKey;
@@ -58,12 +58,12 @@ export class TaskNebulaClient {
     const h: Record<string, string> = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      'User-Agent': '@tasknebula/mcp-server',
+      'User-Agent': '@validteam/mcp-server',
     };
     if (this.accessToken) {
       h.Authorization = `Bearer ${this.accessToken}`;
     } else if (this.apiKey) {
-      // The REST actor resolver accepts long-lived TaskNebula keys through
+      // The REST actor resolver accepts long-lived ValidTeam keys through
       // either header. Send both for compatibility; they must contain the
       // same key or the server fails closed.
       h['X-API-Key'] = this.apiKey;
@@ -107,7 +107,7 @@ export class TaskNebulaClient {
         }
       }
       if (!res.ok) {
-        throw new TaskNebulaApiError(res.status, res.statusText, parsed);
+        throw new ValidTeamApiError(res.status, res.statusText, parsed);
       }
       return parsed as T;
     } finally {
@@ -136,8 +136,8 @@ export class TaskNebulaClient {
 }
 
 /** Build a client from environment variables (used by the stdio transport). */
-export function clientFromEnv(env: NodeJS.ProcessEnv = process.env): TaskNebulaClient {
-  const apiUrl = env.TASKNEBULA_API_URL ?? 'http://localhost:3000';
-  const apiKey = env.TASKNEBULA_API_KEY;
-  return new TaskNebulaClient({ apiUrl, apiKey });
+export function clientFromEnv(env: NodeJS.ProcessEnv = process.env): ValidTeamClient {
+  const apiUrl = env.VALIDTEAM_API_URL ?? 'http://localhost:3000';
+  const apiKey = env.VALIDTEAM_API_KEY;
+  return new ValidTeamClient({ apiUrl, apiKey });
 }

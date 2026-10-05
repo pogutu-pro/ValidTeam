@@ -9,7 +9,7 @@ const mockInserted: Array<{ table: string; values: Row }> = [];
 const mockUpdated: Array<{ table: string; values: Row }> = [];
 let mockUpdateResult: Row[] = [];
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const table = (name: string) =>
     new Proxy({ __name: name } as Record<string, string>, {
       get(target, property: string) {
@@ -61,7 +61,7 @@ jest.mock('@/lib/workflows/issue-transition-policy', () => ({
   applyPreparedIssueStatusTransition: (...args: unknown[]) => mockApplyTransition(...args),
 }));
 
-import type { AgentApprovalRequest } from '@tasknebula/db';
+import type { AgentApprovalRequest } from '@validteam/db';
 import { executeApprovedAgentAction } from '../executors';
 
 function queryChain(rows: Row[]) {

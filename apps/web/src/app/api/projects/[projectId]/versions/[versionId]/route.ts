@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, projectVersions } from '@tasknebula/db';
+import { db, projectVersions } from '@validteam/db';
 import { auth } from '@/auth';
 import { eq, and, ne } from 'drizzle-orm';
 import { z } from 'zod';

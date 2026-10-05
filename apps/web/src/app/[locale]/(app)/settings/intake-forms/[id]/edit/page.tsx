@@ -1,8 +1,8 @@
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/auth';
-import { db, intakeForms, intakeSubmissions } from '@tasknebula/db';
+import { db, intakeForms, intakeSubmissions } from '@validteam/db';
 import { desc, eq } from 'drizzle-orm';
-import type { IntakeFieldDefinition } from '@tasknebula/db';
+import type { IntakeFieldDefinition } from '@validteam/db';
 import { getTranslations } from 'next-intl/server';
 import { IntakeFormEditor } from '@/components/intake/intake-form-editor';
 import { hasPermission } from '@/lib/auth/permissions';

@@ -2,7 +2,7 @@
 
 /**
  * useAiDisclosure — drives the first-time AI involvement modal mandated by
- * TaskNebula's versioned product-transparency notice.
+ * ValidTeam's versioned product-transparency notice.
  *
  * Logic:
  *   1. The current `DISCLOSURE_VERSION` is loaded from the model-cards config.

@@ -35,7 +35,7 @@ jest.mock('nodemailer', () => ({
     })),
   },
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   users: { id: 'users.id', email: 'users.email' },
   systemAuditLogs: { id: 'system_audit_logs.id' },
   eq: (...args: unknown[]) => args,
@@ -84,7 +84,7 @@ describe('POST /api/admin/system/smtp/test', () => {
       secure: true,
       user: 'mailer',
       password: 'secret',
-      emailFrom: 'TaskNebula <noreply@example.com>',
+      emailFrom: 'ValidTeam <noreply@example.com>',
     });
     sendMailMock.mockResolvedValue({ messageId: 'message_1' });
   });

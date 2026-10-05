@@ -9,15 +9,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import {
-  db,
-  notifications,
-  eq,
-  and,
-  gte,
-  lte,
-  inArray,
-} from '@tasknebula/db';
+import { db, notifications, eq, and, gte, lte, inArray } from '@validteam/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -103,9 +95,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, count: updated.length });
   } catch (error) {
     console.error('Failed to mark all inbox items as read:', error);
-    return NextResponse.json(
-      { error: 'Failed to mark all inbox items as read' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to mark all inbox items as read' }, { status: 500 });
   }
 }

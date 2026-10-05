@@ -1,4 +1,4 @@
-const CLIENT_DEBUG_STORAGE_KEY = 'tasknebula-chat-debug';
+const CLIENT_DEBUG_STORAGE_KEY = 'validteam-chat-debug';
 const MAX_DEBUG_DEPTH = 3;
 
 function shouldDisableForTest() {

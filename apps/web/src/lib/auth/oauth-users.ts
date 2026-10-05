@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
-import { accounts, db, users } from '@tasknebula/db';
+import { accounts, db, users } from '@validteam/db';
 import { and, eq } from 'drizzle-orm';
 import { isLoginOAuthProvider, type LoginOAuthProvider } from '@/lib/auth/login-oauth-providers';
 import { getRegistrationPolicy } from '@/lib/auth/registration-policy';

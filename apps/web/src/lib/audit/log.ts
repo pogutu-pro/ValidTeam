@@ -2,14 +2,14 @@
  * Audit log helper — single entry point that writes to `audit_logs` AND
  * fan-outs to every enabled audit_log_sinks row for the workspace.
  *
- * This wraps the lower-level `createAuditLog` helper from @tasknebula/db so
+ * This wraps the lower-level `createAuditLog` helper from @validteam/db so
  * existing callers can be migrated incrementally. Both calls are
  * fire-and-forget at the sink boundary — failing to deliver to a SIEM must
  * never break the originating user action.
  */
 
-import { createAuditLog as createAuditLogRow } from '@tasknebula/db';
-import type { AuditLogAction } from '@tasknebula/db';
+import { createAuditLog as createAuditLogRow } from '@validteam/db';
+import type { AuditLogAction } from '@validteam/db';
 import { dispatchAuditLogToSinks } from './sink-dispatcher';
 
 export interface RecordAuditLogParams {

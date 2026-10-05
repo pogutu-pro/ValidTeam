@@ -23,7 +23,7 @@ jest.mock('@/lib/storage/blob-store', () => ({
   readStoredFile: (...args: unknown[]) => readStoredFileMock(...args),
   deleteStoredFile: (...args: unknown[]) => deleteStoredFileMock(...args),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const auditTable = { tableName: 'system_audit_logs' };
   const tx = {
     execute: async (query: { values?: unknown[] }) => {

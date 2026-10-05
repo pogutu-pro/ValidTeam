@@ -5,7 +5,7 @@
  * `organization_members.status` (active vs. inactive) for the workspace the
  * IdP is provisioning into.
  */
-import { db, users, organizationMembers, systemAuditLogs, eq, and, ne, sql } from '@tasknebula/db';
+import { db, users, organizationMembers, systemAuditLogs, eq, and, ne, sql } from '@validteam/db';
 import { SCIM_SCHEMAS, type ScimUserRecord } from './types';
 import { getBaseUrl } from '../sso/saml';
 

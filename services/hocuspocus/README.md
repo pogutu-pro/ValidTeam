@@ -1,4 +1,4 @@
-# TaskNebula Hocuspocus server
+# ValidTeam Hocuspocus server
 
 Standalone Node service that backs the collaborative Tiptap + Yjs editor used
 for issue descriptions (and, later, comments and docs). The web app talks to
@@ -50,7 +50,7 @@ set -a
 set +a
 DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DB_PORT}/${POSTGRES_DB}" \
 REDIS_URL="redis://:${REDIS_PASSWORD}@localhost:${REDIS_PORT}" \
-pnpm --filter @tasknebula/hocuspocus dev
+pnpm --filter @validteam/hocuspocus dev
 ```
 
 Then in the web app:
@@ -58,7 +58,7 @@ Then in the web app:
 ```bash
 NEXT_PUBLIC_COLLAB_ENABLED=true \
 NEXT_PUBLIC_HOCUSPOCUS_URL=ws://localhost:1234 \
-pnpm --filter @tasknebula/web dev
+pnpm --filter @validteam/web dev
 ```
 
 ## Docker

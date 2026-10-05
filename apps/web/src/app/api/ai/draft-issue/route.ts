@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
-import { createAuditLog, db, notifications, projects, issues, organizations } from '@tasknebula/db';
+import { createAuditLog, db, notifications, projects, issues, organizations } from '@validteam/db';
 import { auth } from '@/auth';
 import { aiDisabledResponse, isAiFeatureEnabled } from '@/lib/ai/feature-gate';
 import { AiDraftError, draftIssue, type DraftProvider } from '@/lib/ai/draft-issue';

@@ -31,7 +31,7 @@ export const SLACK_STATE_COOKIE = 'tn_slack_state';
 // command, `chat:write` for thread replies and modals, `reactions:read` for
 // emoji-triage, `app_mentions:read` so the bot can react to @mentions in
 // channels, `channels:read` + `users:read` + `users:read.email` for the
-// channel resolver and secure Slack→TaskNebula identity matching.
+// channel resolver and secure Slack→ValidTeam identity matching.
 export const SLACK_DEFAULT_SCOPES =
   'commands,chat:write,reactions:read,app_mentions:read,channels:read,users:read,users:read.email';
 

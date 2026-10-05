@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { type ParsedCriteria } from '@tasknebula/db';
+import { type ParsedCriteria } from '@validteam/db';
 
 interface AdvancedSearchProps {
   onSearch: (query: string, criteria: ParsedCriteria) => void;

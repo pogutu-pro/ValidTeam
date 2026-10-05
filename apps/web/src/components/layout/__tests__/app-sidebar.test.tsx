@@ -439,7 +439,7 @@ describe('AppSidebar', () => {
   });
 
   it('keeps configuration navigation expanded and non-collapsible on settings routes', () => {
-    window.localStorage.setItem('tasknebula.context-sidebar-collapsed', 'true');
+    window.localStorage.setItem('validteam.context-sidebar-collapsed', 'true');
     setPathname('/settings');
 
     render(
@@ -454,7 +454,7 @@ describe('AppSidebar', () => {
   });
 
   it('keeps the context-panel tree mounted when a saved preference collapses it', () => {
-    window.localStorage.setItem('tasknebula.context-sidebar-collapsed', 'true');
+    window.localStorage.setItem('validteam.context-sidebar-collapsed', 'true');
     setPathname('/dashboard');
 
     render(

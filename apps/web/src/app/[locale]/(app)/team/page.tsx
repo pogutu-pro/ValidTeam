@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { auth } from '@/auth';
-import { db, organizationMembers, users as usersTable } from '@tasknebula/db';
+import { db, organizationMembers, users as usersTable } from '@validteam/db';
 import { and, eq, inArray } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { Users } from 'lucide-react';

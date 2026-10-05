@@ -6,7 +6,7 @@ import {
   issueFixVersions,
   issueAffectsVersions,
   createActivity,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and, asc, inArray } from 'drizzle-orm';
 import { z } from 'zod';
 import { publishEvent } from '@/lib/realtime/events';

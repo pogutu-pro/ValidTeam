@@ -9,7 +9,7 @@
 
 import { NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
-import { agentRuns, db } from '@tasknebula/db';
+import { agentRuns, db } from '@validteam/db';
 import { auth } from '@/auth';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';
 
@@ -48,7 +48,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  // The TaskNebula run log row doesn't yet capture the model name in a
+  // The ValidTeam run log row doesn't yet capture the model name in a
   // first-class column — we synthesise from the output payload.
   return NextResponse.json({
     operationId: run.id,

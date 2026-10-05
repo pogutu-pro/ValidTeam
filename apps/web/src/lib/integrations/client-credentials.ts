@@ -10,22 +10,11 @@
  * All routes that initiate an OAuth authorize / token exchange should call
  * `getClientCredentials(provider)` instead of reading env vars directly.
  */
-import { db, eq } from '@tasknebula/db';
-import { integrationClientCredentials } from '@tasknebula/db/src/schema/integration-client-credentials';
-import {
-  asTokenEnvelope,
-  decryptToken,
-  encryptToken,
-  type TokenEnvelope,
-} from './token-crypto';
+import { db, eq } from '@validteam/db';
+import { integrationClientCredentials } from '@validteam/db/src/schema/integration-client-credentials';
+import { asTokenEnvelope, decryptToken, encryptToken, type TokenEnvelope } from './token-crypto';
 
-export type IntegrationProvider =
-  | 'slack'
-  | 'gitlab'
-  | 'jira'
-  | 'github'
-  | 'google'
-  | 'sentry';
+export type IntegrationProvider = 'slack' | 'gitlab' | 'jira' | 'github' | 'google' | 'sentry';
 
 export const INTEGRATION_PROVIDERS: readonly IntegrationProvider[] = [
   'slack',
@@ -89,10 +78,7 @@ const ENV_FALLBACKS: Record<IntegrationProvider, EnvFallback> = {
 };
 
 export function isIntegrationProvider(value: unknown): value is IntegrationProvider {
-  return (
-    typeof value === 'string' &&
-    (INTEGRATION_PROVIDERS as readonly string[]).includes(value)
-  );
+  return typeof value === 'string' && (INTEGRATION_PROVIDERS as readonly string[]).includes(value);
 }
 
 function readEnv(name: string | undefined): string | undefined {
@@ -176,9 +162,7 @@ function preview(value: string): string {
   return `••••${tail}`;
 }
 
-export async function listClientCredentialSummaries(): Promise<
-  ClientCredentialSummary[]
-> {
+export async function listClientCredentialSummaries(): Promise<ClientCredentialSummary[]> {
   const rows = await db.select().from(integrationClientCredentials);
   const rowByProvider = new Map(rows.map((row) => [row.provider, row]));
 

@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm';
-import { db, savedFilters } from '@tasknebula/db';
+import { db, savedFilters } from '@validteam/db';
 
 export async function markSavedFilterUsedForUser(filterId: string, userId: string) {
   const [existing] = await db

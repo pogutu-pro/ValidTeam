@@ -6,7 +6,7 @@ import {
   projectMembers,
   notifications,
   notificationPreferences,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and, inArray, ne } from 'drizzle-orm';
 
 import { sendNotificationEmail } from '@/lib/notifications/email-notification';

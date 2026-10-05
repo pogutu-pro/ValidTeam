@@ -47,7 +47,7 @@ jest.mock('@/auth', () => ({
   auth: (...args: unknown[]) => authMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const op = (type: string, args: unknown[]) => ({ type, args });
   return {
     db: {
@@ -112,7 +112,10 @@ function chain(result: unknown, capture?: (where: unknown) => void) {
   };
 }
 
-function findInTree(tree: unknown, predicate: (node: { type: string; args: unknown[] }) => boolean): boolean {
+function findInTree(
+  tree: unknown,
+  predicate: (node: { type: string; args: unknown[] }) => boolean
+): boolean {
   if (!tree || typeof tree !== 'object') return false;
   const node = tree as { type?: string; args?: unknown[] };
   if (typeof node.type === 'string' && Array.isArray(node.args)) {
@@ -158,9 +161,9 @@ describe('GET /api/inbox filter combinations', () => {
     ).toBe(true);
     // snoozedUntil IS NULL OR snoozedUntil <= now()
     expect(findInTree(captured, (n) => n.type === 'isNull')).toBe(true);
-    expect(findInTree(captured, (n) => n.type === 'lte' && n.args[0] === 'notifications.snoozedUntil')).toBe(
-      true
-    );
+    expect(
+      findInTree(captured, (n) => n.type === 'lte' && n.args[0] === 'notifications.snoozedUntil')
+    ).toBe(true);
   });
 
   it('filters by actor_type when chip is set', async () => {
@@ -208,7 +211,9 @@ describe('GET /api/inbox filter combinations', () => {
   });
 
   it('returns empty payload for a known chip that has no underlying events (reaction)', async () => {
-    const response = await GET(new NextRequestCtor('http://localhost/api/inbox?notification_type=reaction'));
+    const response = await GET(
+      new NextRequestCtor('http://localhost/api/inbox?notification_type=reaction')
+    );
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ items: [], nextCursor: null });
     // We short-circuit before calling the DB.
@@ -243,19 +248,13 @@ describe('GET /api/inbox filter combinations', () => {
     expect(
       findInTree(
         captured,
-        (n) =>
-          n.type === 'eq' &&
-          n.args[0] === 'notifications.isRead' &&
-          n.args[1] === false
+        (n) => n.type === 'eq' && n.args[0] === 'notifications.isRead' && n.args[1] === false
       )
     ).toBe(true);
     expect(
       findInTree(
         captured,
-        (n) =>
-          n.type === 'eq' &&
-          n.args[0] === 'notifications.projectId' &&
-          n.args[1] === 'p1'
+        (n) => n.type === 'eq' && n.args[0] === 'notifications.projectId' && n.args[1] === 'p1'
       )
     ).toBe(true);
     expect(

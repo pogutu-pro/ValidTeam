@@ -366,7 +366,7 @@ export const BUILTIN_TEMPLATES: Record<string, { subject: string; html: string; 
         divider() +
         infoCard({ tone: 'neutral', title: 'ACTIVITY', body: '{{activityList}}' }) +
         bulletList(['{{issuesSummary}}']),
-      ctaLabel: 'Open TaskNebula',
+      ctaLabel: 'Open ValidTeam',
       ctaUrl: '{{appUrl}}',
     }),
     text:
@@ -394,7 +394,7 @@ export const BUILTIN_TEMPLATES: Record<string, { subject: string; html: string; 
         divider() +
         infoCard({ tone: 'neutral', title: 'ACTIVITY', body: '{{activityList}}' }) +
         bulletList(['{{issuesSummary}}']),
-      ctaLabel: 'Open TaskNebula',
+      ctaLabel: 'Open ValidTeam',
       ctaUrl: '{{appUrl}}',
     }),
     text:
@@ -616,7 +616,7 @@ export async function sendEmail(params: EmailParams): Promise<SendEmailResult> {
     const htmlBody = replaceVariables(template?.htmlBody ?? builtin!.html, params.variables);
     const textBody = replaceVariables(template?.textBody ?? builtin!.text, params.variables);
 
-    const from = process.env.EMAIL_FROM || 'TaskNebula <noreply@localhost>';
+    const from = process.env.EMAIL_FROM || 'ValidTeam <noreply@localhost>';
 
     const info = await smtp.sendMail({
       from,

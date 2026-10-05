@@ -10,10 +10,10 @@
  * the test stays a pure function exercise — no Postgres / pgvector needed.
  */
 
-// `estimate-issue.ts` imports from `@tasknebula/db` at the top level. Even
+// `estimate-issue.ts` imports from `@validteam/db` at the top level. Even
 // though our test path uses `_testHooks` (so the real DB code never runs), the
 // `import` must still resolve. We stub the package surface used by the module.
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {},
   issues: {},
   workflowStatuses: {},

@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { and, eq } from 'drizzle-orm';
-import { aiDisclosuresAcknowledged, db } from '@tasknebula/db';
+import { aiDisclosuresAcknowledged, db } from '@validteam/db';
 import { auth } from '@/auth';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';
 

@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ArrowDown, ArrowLeft, ArrowUp, Plus, Trash2 } from 'lucide-react';
-import type { IntakeFieldDefinition, IntakeFieldType } from '@tasknebula/db';
+import type { IntakeFieldDefinition, IntakeFieldType } from '@validteam/db';
 
 interface RecentSubmission {
   id: string;

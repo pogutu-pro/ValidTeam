@@ -9,7 +9,7 @@ import {
   notifications,
   organizations,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, asc, eq, gt, gte, inArray, isNull, lt, or, sql } from 'drizzle-orm';
 import { defaultLocale, isSupportedLocale } from '@/lib/i18n/config';
 import type { GraphCheckpoint, GraphEvent } from './graph-runtime';

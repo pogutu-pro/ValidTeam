@@ -11,7 +11,7 @@ import {
   workflowStatuses,
   projects,
   sprints,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 import { publishEvent } from '@/lib/realtime/events';
 import { notifyIssueEvent } from '@/lib/notifications/send-notification';

@@ -25,7 +25,7 @@ import {
   and,
   gte,
   desc,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { isAiFeatureEnabled } from '@/lib/ai/feature-gate';
 import {
   catchMeUp,

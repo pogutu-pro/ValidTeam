@@ -5,11 +5,11 @@ import { handleDockerHubWebhook } from '@/lib/version';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-const SECRET_HEADER = 'x-tasknebula-docker-hub-secret';
+const SECRET_HEADER = 'x-validteam-docker-hub-secret';
 const MAX_BODY_BYTES = 100_000;
 
 function getWebhookSecret(): string | null {
-  const secret = process.env.TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET;
+  const secret = process.env.VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET;
   return secret && secret.length >= 16 ? secret : null;
 }
 
@@ -17,7 +17,7 @@ function requireWebhookAuth(request: NextRequest): NextResponse | null {
   const secret = getWebhookSecret();
   if (!secret) {
     return NextResponse.json(
-      { error: 'TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET is not configured.' },
+      { error: 'VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET is not configured.' },
       { status: 503 }
     );
   }
@@ -44,14 +44,14 @@ function requireWebhookAuth(request: NextRequest): NextResponse | null {
 /**
  * POST /api/webhooks/docker-hub
  *
- * Docker Hub repository webhook receiver for `neuraparse/tasknebula`. Configure
+ * Docker Hub repository webhook receiver for `neuraparse/validteam`. Configure
  * Docker Hub with a URL like:
  *
- *   https://<host>/api/webhooks/docker-hub?secret=<TASKNEBULA_DOCKER_HUB_WEBHOOK_SECRET>
+ *   https://<host>/api/webhooks/docker-hub?secret=<VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET>
  *
  * Docker Hub's webhook settings only require a destination URL, so query-param
  * auth is supported; callers that can set headers may also use
- * `x-tasknebula-docker-hub-secret` or `Authorization: Bearer ...`.
+ * `x-validteam-docker-hub-secret` or `Authorization: Bearer ...`.
  */
 export async function POST(request: NextRequest) {
   const denied = requireWebhookAuth(request);

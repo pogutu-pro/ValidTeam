@@ -133,7 +133,7 @@ export async function POST(
   });
 
   if (mobileRelay) {
-    const redirectTo = new URL('tasknebula://auth/saml');
+    const redirectTo = new URL('validteam://auth/saml');
     redirectTo.searchParams.set('status', 'authenticated');
     redirectTo.searchParams.set('server', new URL(request.url).origin);
     redirectTo.searchParams.set('workspace', workspace.workspaceSlug);

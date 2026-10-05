@@ -32,7 +32,7 @@ describe('DeploymentReloadGuard', () => {
       value: {
         keys: jest
           .fn()
-          .mockResolvedValue(['tasknebula-v2', 'tasknebula-runtime', 'third-party-cache']),
+          .mockResolvedValue(['validteam-v2', 'validteam-runtime', 'third-party-cache']),
         delete: cacheDeleteMock,
       },
     });
@@ -61,7 +61,7 @@ describe('DeploymentReloadGuard', () => {
     expect(isStaleDeploymentMessage('Internal server error')).toBe(false);
   });
 
-  it('clears TaskNebula caches and reloads once after a stale POST response', async () => {
+  it('clears ValidTeam caches and reloads once after a stale POST response', async () => {
     const originalFetchMock = jest
       .fn()
       .mockResolvedValue(mockTextResponse('Failed to find Server Action "x"'));
@@ -77,8 +77,8 @@ describe('DeploymentReloadGuard', () => {
     await window.fetch('/_actions', { method: 'POST' });
 
     await waitFor(() => expect(reloadMock).toHaveBeenCalledTimes(1));
-    expect(cacheDeleteMock).toHaveBeenCalledWith('tasknebula-v2');
-    expect(cacheDeleteMock).toHaveBeenCalledWith('tasknebula-runtime');
+    expect(cacheDeleteMock).toHaveBeenCalledWith('validteam-v2');
+    expect(cacheDeleteMock).toHaveBeenCalledWith('validteam-runtime');
     expect(cacheDeleteMock).not.toHaveBeenCalledWith('third-party-cache');
     expect(serviceWorkerUpdateMock).toHaveBeenCalledTimes(1);
   });

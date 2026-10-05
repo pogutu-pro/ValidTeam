@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db, users, eq } from '@tasknebula/db';
+import { db, users, eq } from '@validteam/db';
 import { auth } from '@/auth';
 import { checkRateLimit, getClientIp } from '@/lib/auth/rate-limit';
 import { issueEmailVerificationToken } from '@/lib/auth/email-verification';
@@ -10,8 +10,7 @@ const RATE_LIMIT_PER_MIN = 5;
 const UNAUTH_LIMIT = 3;
 const UNAUTH_WINDOW_MS = 10 * 60 * 1000;
 
-const GENERIC_MESSAGE =
-  'If that account exists, a verification email has been sent.';
+const GENERIC_MESSAGE = 'If that account exists, a verification email has been sent.';
 
 const unauthBodySchema = z.object({
   email: z.string().email().max(254),

@@ -2,7 +2,7 @@
 
 **Verified:** 2026-08-12
 
-TaskNebula contains optional observability hooks, not a preconfigured
+ValidTeam contains optional observability hooks, not a preconfigured
 end-to-end stack. OpenTelemetry and Langfuse have guarded runtime adapters;
 Sentry application-error export is only an integration seam until SDK
 initialization is added. This document distinguishes those states explicitly.
@@ -32,7 +32,7 @@ into the SDK.
 
 ```env
 OTEL_EXPORTER_OTLP_ENDPOINT=http://signoz-otel-collector:4318
-OTEL_SERVICE_NAME=tasknebula-web
+OTEL_SERVICE_NAME=validteam-web
 # Optional standard OTel knobs:
 OTEL_EXPORTER_OTLP_HEADERS=x-honeycomb-team=...
 OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
@@ -85,7 +85,7 @@ await traceLlmCall({
 
 Sentry has two distinct integration surfaces:
 
-1. **OAuth + webhook** — for ingesting Sentry issues into TaskNebula
+1. **OAuth + webhook** — for ingesting Sentry issues into ValidTeam
    (commit `1ea6f14`). Configured under Admin → Integrations.
 2. **Application error capture scaffold** — `instrumentation.ts#onRequestError`
    delegates to the installed SDK when a DSN exists, but server/edge/client
@@ -128,7 +128,7 @@ SELECT query, calls, total_exec_time, mean_exec_time
 
   ```bash
   # Set this in your shell/secret manager; do not commit it.
-  export PGHERO_DATABASE_URL='postgres://USER:PASSWORD@host.docker.internal:5432/tasknebula'
+  export PGHERO_DATABASE_URL='postgres://USER:PASSWORD@host.docker.internal:5432/validteam'
   docker run -d --name pghero \
     -e DATABASE_URL="$PGHERO_DATABASE_URL" \
     -p 8080:8080 ankane/pghero

@@ -25,7 +25,7 @@ function makeNotification(overrides: Partial<NotificationDigestInput>): Notifica
     createdAt: new Date('2026-05-14T08:00:00.000Z'),
     actorName: 'Alice',
     projectKey: 'TN',
-    projectName: 'TaskNebula',
+    projectName: 'ValidTeam',
     issueKey: 'TASK-123',
     issueId: 'issue-1',
     ...overrides,
@@ -49,15 +49,21 @@ describe('catchMeUpNative', () => {
     const result = catchMeUpNative({
       since: baseSince,
       notifications: [
-        makeNotification({ id: '1', projectKey: 'TN', projectName: 'TaskNebula' }),
-        makeNotification({ id: '2', projectKey: 'TN', projectName: 'TaskNebula', type: 'comment', title: 'Bob commented' }),
+        makeNotification({ id: '1', projectKey: 'TN', projectName: 'ValidTeam' }),
+        makeNotification({
+          id: '2',
+          projectKey: 'TN',
+          projectName: 'ValidTeam',
+          type: 'comment',
+          title: 'Bob commented',
+        }),
         makeNotification({ id: '3', projectKey: 'SV', projectName: 'Servo', actorName: 'Carol' }),
       ],
       provider: 'native',
       apiKey: null,
     });
 
-    expect(result.summary_markdown).toContain('TaskNebula');
+    expect(result.summary_markdown).toContain('ValidTeam');
     expect(result.summary_markdown).toContain('Servo');
     expect(result.summary_markdown).toContain('3 updates');
     expect(result.summary_markdown).toContain('2 projects');
@@ -87,9 +93,7 @@ describe('catchMeUpNative', () => {
   it('skips read notifications when picking action items', () => {
     const result = catchMeUpNative({
       since: baseSince,
-      notifications: [
-        makeNotification({ id: '1', type: 'mention', isRead: true }),
-      ],
+      notifications: [makeNotification({ id: '1', type: 'mention', isRead: true })],
       provider: 'native',
       apiKey: null,
     });

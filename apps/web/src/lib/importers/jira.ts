@@ -23,7 +23,7 @@ import {
   Importer,
   ImportMapping,
   NormalizedRecord,
-  TaskNebulaIssue,
+  ValidTeamIssue,
   normalizePriority,
   normalizeType,
   safeParseDate,
@@ -165,7 +165,7 @@ export const jiraImporter: Importer<JiraInput> = {
     );
   },
 
-  mapRecord(rec, mapping: ImportMapping): TaskNebulaIssue {
+  mapRecord(rec, mapping: ImportMapping): ValidTeamIssue {
     return {
       sourceKey: rec.key,
       title: rec.title || '(untitled)',

@@ -3,7 +3,7 @@
  *
  * Provides:
  *   - `AgentSessionEventSchema` — Zod schema matching Linear's AgentSessionEvent
- *     wire format, plus a couple of TaskNebula-specific fields.
+ *     wire format, plus a couple of ValidTeam-specific fields.
  *   - `nextSessionState(...)` — pure state machine; rejects invalid transitions
  *     so a misbehaving provider can't drag a session from `complete` back to
  *     `active` without us noticing.
@@ -105,7 +105,7 @@ export function isTerminalState(state: AgentSessionState): boolean {
 
 /**
  * Linear-compatible AgentSessionEvent. We keep the shape close to upstream so a
- * provider can speak both Linear and TaskNebula without forking its emitter.
+ * provider can speak both Linear and ValidTeam without forking its emitter.
  *
  * Required: `state`. Everything else is optional — providers send what they
  * have at each phase of the session.
@@ -148,7 +148,7 @@ export type AgentSessionEvent = z.infer<typeof AgentSessionEventSchema>;
 export interface AgentSessionRequest {
   // Stable session identifier (our `agent_sessions.id`). Echo back in events.
   sessionId: string;
-  // TaskNebula issue snapshot.
+  // ValidTeam issue snapshot.
   issue: {
     id: string;
     key: string;
@@ -182,7 +182,7 @@ export interface AgentSessionRequest {
 /**
  * Sign a serialized payload with HMAC-SHA256. Identical primitive to
  * `signWebhookPayload` so receivers can reuse the same verifier across
- * TaskNebula's outbound webhook flows.
+ * ValidTeam's outbound webhook flows.
  */
 export function signAgentPayload(payload: string, secret: string): string {
   return crypto.createHmac('sha256', secret).update(payload).digest('hex');

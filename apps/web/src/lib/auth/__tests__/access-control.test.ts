@@ -4,7 +4,7 @@
 
 const selectMock = jest.fn();
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: { select: (...args: unknown[]) => selectMock(...args) },
   issues: { id: 'issues.id' },
   users: { id: 'users.id', isSuperAdmin: 'users.isSuperAdmin', status: 'users.status' },

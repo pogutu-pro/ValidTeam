@@ -22,7 +22,7 @@ import {
   ne,
   hasPermission as roleHasPermission,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import {
   createPublicDocumentHref,
   sanitizePublicDocumentContent,

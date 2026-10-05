@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-export const VOICE_PREFERENCES_STORAGE_KEY = 'tasknebula-chat-voice-settings';
+export const VOICE_PREFERENCES_STORAGE_KEY = 'validteam-chat-voice-settings';
 
 export type StoredVoicePreferences = {
   audioDeviceId?: string;
@@ -21,7 +21,9 @@ function areStoredVoicePreferencesEqual(
   );
 }
 
-function sanitizeStoredVoicePreferences(value?: StoredVoicePreferences | null): StoredVoicePreferences {
+function sanitizeStoredVoicePreferences(
+  value?: StoredVoicePreferences | null
+): StoredVoicePreferences {
   const audioDeviceId = value?.audioDeviceId || 'default';
   const audioDeviceLabel = value?.audioDeviceLabel?.trim() || undefined;
   const audioDeviceGroupId = value?.audioDeviceGroupId?.trim() || undefined;

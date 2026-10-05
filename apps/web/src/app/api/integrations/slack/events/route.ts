@@ -19,8 +19,8 @@
  */
 
 import { after, NextRequest, NextResponse } from 'next/server';
-import { db, eq, and } from '@tasknebula/db';
-import { slackChannelRoutes, integrationConnections } from '@tasknebula/db';
+import { db, eq, and } from '@validteam/db';
+import { slackChannelRoutes, integrationConnections } from '@validteam/db';
 import { getTranslations } from 'next-intl/server';
 import {
   callSlackApi,
@@ -28,7 +28,7 @@ import {
   verifySlackSignature,
 } from '@/lib/integrations/slack';
 import { createIssueFromSlackMessage } from '@/lib/integrations/slack-issue-bridge';
-import { lookupTaskNebulaUserBySlackId, resolveSlackOrg } from '@/lib/integrations/slack-commands';
+import { lookupValidTeamUserBySlackId, resolveSlackOrg } from '@/lib/integrations/slack-commands';
 
 export const dynamic = 'force-dynamic';
 
@@ -153,11 +153,7 @@ async function handleReactionAdded(teamId: string, event: ReactionAddedEvent): P
     .limit(1);
   if (!conn) return;
 
-  const reporterUserId = await lookupTaskNebulaUserBySlackId(
-    org.organizationId,
-    event.user,
-    teamId
-  );
+  const reporterUserId = await lookupValidTeamUserBySlackId(org.organizationId, event.user, teamId);
   if (!reporterUserId) return;
 
   const history = await callSlackApi<{

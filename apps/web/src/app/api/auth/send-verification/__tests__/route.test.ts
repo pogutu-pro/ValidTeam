@@ -54,10 +54,7 @@ class MockNextResponse {
     return this.payload;
   }
 
-  static json(
-    payload: unknown,
-    init?: { status?: number; headers?: Record<string, string> }
-  ) {
+  static json(payload: unknown, init?: { status?: number; headers?: Record<string, string> }) {
     return new MockNextResponse(payload, init);
   }
 }
@@ -78,7 +75,7 @@ jest.mock('@/lib/auth/email-verification', () => ({
 // The route calls `db.select({...}).from(users).where(eq(...)).limit(1)`.
 // We mock just enough of the chain to return whatever `selectLimitMock`
 // is configured to return.
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const chain = {
     from: () => chain,
     where: () => chain,
@@ -111,20 +108,19 @@ describe('/api/auth/send-verification route', () => {
     issueTokenMock.mockResolvedValue({ issued: true, emailSent: true });
   });
 
-  function makeRequest(opts: {
-    body?: unknown;
-    ip?: string;
-  } = {}) {
+  function makeRequest(
+    opts: {
+      body?: unknown;
+      ip?: string;
+    } = {}
+  ) {
     const headers: Record<string, string> = {};
     if (opts.ip) headers['x-forwarded-for'] = opts.ip;
-    return new NextRequestCtor(
-      'http://localhost:3002/api/auth/send-verification',
-      {
-        method: 'POST',
-        headers,
-        body: opts.body === undefined ? '' : JSON.stringify(opts.body),
-      }
-    );
+    return new NextRequestCtor('http://localhost:3002/api/auth/send-verification', {
+      method: 'POST',
+      headers,
+      body: opts.body === undefined ? '' : JSON.stringify(opts.body),
+    });
   }
 
   it('authenticated path issues token and returns generic 200', async () => {
@@ -146,9 +142,7 @@ describe('/api/auth/send-verification route', () => {
 
   it('unauthenticated with unverified user issues a token', async () => {
     authMock.mockResolvedValue(null);
-    selectLimitMock.mockResolvedValue([
-      { id: 'user-999', emailVerified: null },
-    ]);
+    selectLimitMock.mockResolvedValue([{ id: 'user-999', emailVerified: null }]);
 
     const response = await POST(
       makeRequest({ body: { email: 'unverified@example.com' }, ip: '10.0.0.2' })
@@ -166,9 +160,7 @@ describe('/api/auth/send-verification route', () => {
 
   it('unauthenticated with already-verified user returns 200 and does NOT issue', async () => {
     authMock.mockResolvedValue(null);
-    selectLimitMock.mockResolvedValue([
-      { id: 'user-777', emailVerified: new Date('2024-01-01') },
-    ]);
+    selectLimitMock.mockResolvedValue([{ id: 'user-777', emailVerified: new Date('2024-01-01') }]);
 
     const response = await POST(
       makeRequest({ body: { email: 'verified@example.com' }, ip: '10.0.0.3' })
@@ -185,9 +177,7 @@ describe('/api/auth/send-verification route', () => {
 
   it('unauthenticated path rate-limits on the 4th request (same IP + email)', async () => {
     authMock.mockResolvedValue(null);
-    selectLimitMock.mockResolvedValue([
-      { id: 'user-555', emailVerified: null },
-    ]);
+    selectLimitMock.mockResolvedValue([{ id: 'user-555', emailVerified: null }]);
 
     // 3 requests should pass through with 200.
     for (let i = 0; i < 3; i += 1) {

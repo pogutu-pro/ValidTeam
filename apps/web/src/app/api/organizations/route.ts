@@ -7,7 +7,7 @@ import {
   workflows,
   workflowStatuses,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { auth } from '@/auth';
 import { and, eq, ne } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';

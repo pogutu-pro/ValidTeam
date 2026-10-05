@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { db, users } from '@tasknebula/db';
-import { passwordResetTokens } from '@tasknebula/db/src/schema/password-reset-tokens';
+import { db, users } from '@validteam/db';
+import { passwordResetTokens } from '@validteam/db/src/schema/password-reset-tokens';
 import { and, eq, isNull } from 'drizzle-orm';
 import { sendEmail } from '@/lib/email/sender';
 import { checkRateLimit, getClientIp } from '@/lib/auth/rate-limit';

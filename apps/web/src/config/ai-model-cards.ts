@@ -1,5 +1,5 @@
 /**
- * Technical metadata for TaskNebula's documented AI features.
+ * Technical metadata for ValidTeam's documented AI features.
  *
  * User-facing names and descriptions live under `aiModelCards.features` in
  * all locale catalogs. This module intentionally contains only identifiers,

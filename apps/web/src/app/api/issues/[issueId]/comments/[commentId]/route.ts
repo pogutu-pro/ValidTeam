@@ -8,7 +8,7 @@ import {
   getProjectById,
   createAuditLog,
   type issueComments,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { auth } from '@/auth';
 import { publishEvent } from '@/lib/realtime/events';
 import { withValidation } from '@/lib/api-validation';

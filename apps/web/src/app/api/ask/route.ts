@@ -15,7 +15,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db, llmCallAudit } from '@tasknebula/db';
+import { db, llmCallAudit } from '@validteam/db';
 import { auth } from '@/auth';
 import { aiDisabledResponse, isAiFeatureEnabled } from '@/lib/ai/feature-gate';
 import { runAsk, AskError, type AskUsage } from '@/lib/agents/ask';

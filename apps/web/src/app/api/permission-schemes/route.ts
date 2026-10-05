@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, permissionSchemes, projectPermissionSchemes } from '@tasknebula/db';
+import { db, permissionSchemes, projectPermissionSchemes } from '@validteam/db';
 import { eq, and, desc, inArray } from 'drizzle-orm';
-import { PERMISSION_KEYS, ROLE_DEFAULT_PERMISSIONS } from '@tasknebula/db';
+import { PERMISSION_KEYS, ROLE_DEFAULT_PERMISSIONS } from '@validteam/db';
 import { hasPermission } from '@/lib/auth/permissions';
 
 // GET /api/permission-schemes - List all permission schemes for an organization

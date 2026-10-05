@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SSL Certificate Generation Script for TaskNebula
+# SSL Certificate Generation Script for ValidTeam
 # This script generates a self-signed SSL certificate for development/testing
 
 DOMAIN="${SSL_DOMAIN:-localhost}"
@@ -19,7 +19,7 @@ openssl genrsa -out "$KEY_FILE" 2048
 
 # Generate certificate signing request
 echo "📝 Generating certificate signing request..."
-openssl req -new -key "$KEY_FILE" -out "$SSL_DIR/$DOMAIN.csr" -subj "/C=TR/ST=Istanbul/L=Istanbul/O=TaskNebula/OU=Development/CN=$DOMAIN"
+openssl req -new -key "$KEY_FILE" -out "$SSL_DIR/$DOMAIN.csr" -subj "/C=TR/ST=Istanbul/L=Istanbul/O=ValidTeam/OU=Development/CN=$DOMAIN"
 
 # Generate self-signed certificate
 echo "📝 Generating self-signed certificate..."

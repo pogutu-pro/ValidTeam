@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  *
- * Transactional apply-seed test. We mock @tasknebula/db so we can
+ * Transactional apply-seed test. We mock @validteam/db so we can
  * verify:
  *   1) the seed is validated before any DB calls
  *   2) every insert flows through tx.insert (the transaction callback),
@@ -21,7 +21,7 @@ jest.mock('@/lib/auth/access-control', () => ({
   resolveOrganizationAccess: (...args: unknown[]) => resolveOrganizationAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     transaction: (...args: unknown[]) => dbTransactionMock(...args),
@@ -232,7 +232,7 @@ describe('applyWorkspaceSeed transactional behavior', () => {
     // We identify the `issues` table by referential identity to the mocked
     // schema export.
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { issues: issuesTable } = jest.requireMock('@tasknebula/db') as {
+    const { issues: issuesTable } = jest.requireMock('@validteam/db') as {
       issues: unknown;
     };
     const tx = makeTxWithInsertHook((table) => {

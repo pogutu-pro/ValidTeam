@@ -15,14 +15,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, notifications, eq, and } from '@tasknebula/db';
+import { db, notifications, eq, and } from '@validteam/db';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -47,10 +44,7 @@ export async function POST(
       // Snoozing to the past is a no-op (would re-emerge instantly). Reject
       // so the UI surfaces the mistake rather than silently dropping it.
       if (parsed.getTime() <= Date.now()) {
-        return NextResponse.json(
-          { error: '`until` must be in the future.' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: '`until` must be in the future.' }, { status: 400 });
       }
       snoozedUntil = parsed;
     }

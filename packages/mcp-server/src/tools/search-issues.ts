@@ -14,8 +14,7 @@ export const searchIssuesInput = z.object({
 
 export const searchIssuesTool: ToolDefinition<typeof searchIssuesInput> = {
   name: 'search_issues',
-  description:
-    'Full-text search across issues in TaskNebula, optionally restricted to one project.',
+  description: 'Full-text search across issues in ValidTeam, optionally restricted to one project.',
   inputSchema: searchIssuesInput,
   async handler(input, { client }) {
     return client.get('/api/search', {

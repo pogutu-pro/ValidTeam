@@ -57,7 +57,7 @@ jest.mock('@/lib/agents/provider-endpoint', () => ({
   postPublicEndpoint: (...args: unknown[]) => mockPostPublicEndpoint(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   // Define table sentinels inside the factory so jest's hoisting doesn't
   // reference them before the file-level lets initialize.
   const webhooksTable = {
@@ -299,12 +299,12 @@ describe('triggerWebhooks — delivery semantics', () => {
     const call = mockPostPublicEndpoint.mock.calls[0];
     expect(call[0]).toBe('https://hook.example/ok');
     const init = call[1] as { body: string; headers: Record<string, string> };
-    expect(init.headers['X-TaskNebula-Event']).toBe('issue.created');
+    expect(init.headers['X-ValidTeam-Event']).toBe('issue.created');
     expect(init.headers['X-Webhook-ID']).toBe('wh-OK');
 
     const body = init.body;
     const expectedSig = signWebhookPayload(body, secret);
-    expect(init.headers['X-TaskNebula-Signature']).toBe(`sha256=${expectedSig}`);
+    expect(init.headers['X-ValidTeam-Signature']).toBe(`sha256=${expectedSig}`);
     expect(init.headers['X-Webhook-Signature']).toBe(expectedSig);
 
     // Envelope shape: data carries the original payload, top level carries
@@ -321,7 +321,7 @@ describe('triggerWebhooks — delivery semantics', () => {
     expect(typeof parsed.timestamp).toBe('string');
 
     const delivery = state.inserted.find((item) => item.table === 'webhook_deliveries');
-    expect(delivery?.id).toBe(init.headers['X-TaskNebula-Delivery']);
+    expect(delivery?.id).toBe(init.headers['X-ValidTeam-Delivery']);
     expect(call[2]).toEqual(
       expect.objectContaining({ allowInsecureHttp: false, hostAllowlist: [] })
     );

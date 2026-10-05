@@ -1,5 +1,5 @@
 import { auth } from '@/auth';
-import { db, users } from '@tasknebula/db';
+import { db, users } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { eventBus, ensureRealtimeBridge, type RealtimeEvent } from '@/lib/realtime/events';
 import { listActiveOrganizationMemberships } from '@/lib/auth/access-control';

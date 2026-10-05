@@ -8,7 +8,7 @@ const mockApplyTransition = jest.fn();
 const mockResolveStatus = jest.fn();
 const mockSweep = jest.fn();
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const table = (name: string) =>
     new Proxy({ __name: name } as Record<string, string>, {
       get(target, property: string) {

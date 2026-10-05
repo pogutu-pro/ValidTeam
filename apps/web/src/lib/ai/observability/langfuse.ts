@@ -16,7 +16,7 @@
  * Trace correlation
  * -----------------
  * Whenever an OpenTelemetry span is active we tag the Langfuse trace with the
- * trace + span IDs from the OTel context. Combined with `service.name=tasknebula-web`
+ * trace + span IDs from the OTel context. Combined with `service.name=validteam-web`
  * this lets operators jump from a SigNoz/Grafana trace straight to the
  * Langfuse generation that the span wrapped.
  */

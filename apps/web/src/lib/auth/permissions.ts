@@ -14,7 +14,7 @@ import {
   hasAnyPermission as checkAnyPermission,
   hasAllPermissions as checkAllPermissions,
   getRolePermissions,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import { listActiveOrganizationMemberships } from '@/lib/auth/access-control';

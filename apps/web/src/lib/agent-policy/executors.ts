@@ -16,7 +16,7 @@ import {
   workflows,
   users,
   type AgentApprovalRequest,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, desc, ne, sql } from 'drizzle-orm';
 import { syncIssueLabelsWithExecutor } from '@/lib/labels/sync';
 import type { RealtimeEventType } from '@/lib/realtime/events';

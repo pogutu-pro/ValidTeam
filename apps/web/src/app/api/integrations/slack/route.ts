@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { auditLogs, db, and, eq, sql } from '@tasknebula/db';
-import { integrationConnections } from '@tasknebula/db/src/schema/integration-connections';
+import { auditLogs, db, and, eq, sql } from '@validteam/db';
+import { integrationConnections } from '@validteam/db/src/schema/integration-connections';
 import { asTokenEnvelope, decryptToken } from '@/lib/integrations/token-crypto';
 import { hasPermission } from '@/lib/auth/permissions';
 

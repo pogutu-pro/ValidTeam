@@ -11,7 +11,7 @@
  *     comment, and updates the session row
  *   - invalid transition (complete -> active) is dropped (200, no row mutation)
  *
- * As with the dispatch test, we mock `@tasknebula/db` so the route handler
+ * As with the dispatch test, we mock `@validteam/db` so the route handler
  * can run without Postgres.
  */
 
@@ -44,7 +44,7 @@ const fake: FakeState = {
 };
 let failCommentInsert = false;
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const table = (name: string) => ({ __name: name });
 
   function selectRows(t: { __name: string }) {
@@ -261,7 +261,7 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
       reqWith(
         { state: 'active', sessionId: 'sess_1' },
         {
-          'x-tasknebula-session-id': 'sess_1',
+          'x-validteam-session-id': 'sess_1',
         }
       ) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
@@ -274,8 +274,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
     const body = { state: 'active', sessionId: 'sess_1' };
     const res = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': 'sha256=deadbeef',
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': 'sha256=deadbeef',
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -291,8 +291,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const response = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -309,8 +309,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
     const sig = signAgentPayload(raw, 'real-secret');
     const res = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -329,8 +329,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const res = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -366,8 +366,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const response = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -389,8 +389,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
     const sig = signAgentPayload(raw, 'top-secret');
     const request = () =>
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never;
 
     const [first, second] = await Promise.all([
@@ -415,8 +415,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
     const sig = signAgentPayload(raw, 'top-secret');
     const request = () =>
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never;
 
     failCommentInsert = true;
@@ -446,8 +446,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const response = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -466,8 +466,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const response = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -492,8 +492,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const res = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -518,8 +518,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const res = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'cursor' }) }
     );
@@ -539,8 +539,8 @@ describe('POST /api/webhooks/agent-session/[provider]', () => {
 
     const res = await receiveHandler(
       reqWith(body, {
-        'x-tasknebula-session-id': 'sess_1',
-        'x-tasknebula-signature': `sha256=${sig}`,
+        'x-validteam-session-id': 'sess_1',
+        'x-validteam-signature': `sha256=${sig}`,
       }) as never,
       { params: Promise.resolve({ provider: 'devin' }) }
     );

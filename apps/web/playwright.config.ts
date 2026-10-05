@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Playwright configuration for TaskNebula web E2E suite.
+ * Playwright configuration for ValidTeam web E2E suite.
  *
  * - `pnpm dev` is auto-started on port 3000 and reused if already running.
  * - Three browser projects (chromium, firefox, webkit) run in parallel.

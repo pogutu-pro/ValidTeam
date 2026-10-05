@@ -249,7 +249,7 @@ export function AiQuickSetup({
               onChange={(e) => setModel(e.target.value)}
               placeholder={
                 provider === 'native'
-                  ? 'tasknebula-planner-v1'
+                  ? 'validteam-planner-v1'
                   : t('aiQuickSetup.model_id_placeholder')
               }
               disabled={!canManage || mutation.isPending}

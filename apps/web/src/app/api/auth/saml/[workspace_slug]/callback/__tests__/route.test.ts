@@ -94,7 +94,7 @@ describe('/api/auth/saml/[workspace_slug]/callback mobile relay', () => {
 
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe(
-      'tasknebula://auth/saml?status=authenticated&server=https%3A%2F%2Ftasks.example.com&workspace=acme&token=saml-exchange-token&callbackUrl=%2Fsettings%2Fsso'
+      'validteam://auth/saml?status=authenticated&server=https%3A%2F%2Ftasks.example.com&workspace=acme&token=saml-exchange-token&callbackUrl=%2Fsettings%2Fsso'
     );
     expect(mintSamlExchangeTokenMock).toHaveBeenCalledWith({
       userId: 'user_1',

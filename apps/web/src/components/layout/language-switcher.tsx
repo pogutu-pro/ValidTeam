@@ -17,7 +17,7 @@ import { LOCALE_COOKIE, localeLabels, locales, type Locale } from '@/lib/i18n/co
 /**
  * Compact dropdown that lets a user pick one of the supported locales.
  *
- * We persist the choice in the `tasknebula-locale` cookie so the next-intl
+ * We persist the choice in the `validteam-locale` cookie so the next-intl
  * middleware can pick it up on the next request (and the root layout reads
  * the cookie when setting `<html lang>` + `dir`). After writing the cookie
  * we just refresh the page — that keeps the implementation simple and

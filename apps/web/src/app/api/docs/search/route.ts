@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { and, db, documentPages, documentSpaces, eq, inArray, sql } from '@tasknebula/db';
+import { and, db, documentPages, documentSpaces, eq, inArray, sql } from '@validteam/db';
 import {
   listAccessibleDocumentSpaces,
   resolveOrganizationIdForUser,

@@ -62,7 +62,7 @@
     {
       "source": "src/app/(public)/trust/page.tsx",
       "archetype": "public-evidence",
-      "decision": "Assess TaskNebula's operating and security posture from attributable evidence."
+      "decision": "Assess ValidTeam's operating and security posture from attributable evidence."
     },
     {
       "source": "src/app/(public)/ai-model-cards/page.tsx",

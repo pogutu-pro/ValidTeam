@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { and, desc, eq } from 'drizzle-orm';
-import { agentApprovalRequests, db, type AgentApprovalRequestStatus } from '@tasknebula/db';
+import { agentApprovalRequests, db, type AgentApprovalRequestStatus } from '@validteam/db';
 import { auth } from '@/auth';
 import { hasPermission } from '@/lib/auth/permissions';
 

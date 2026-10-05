@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, savedFilters } from '@tasknebula/db';
+import { db, savedFilters } from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { markSavedFilterUsedForUser } from '@/lib/saved-filters/usage';

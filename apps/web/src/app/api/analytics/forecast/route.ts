@@ -9,7 +9,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { and, eq, ne, isNull, or, sql } from 'drizzle-orm';
-import { db, issues, sprints, workflowStatuses } from '@tasknebula/db';
+import { db, issues, sprints, workflowStatuses } from '@validteam/db';
 import { auth } from '@/auth';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
 import { monteCarloForecast } from '@/lib/analytics/forecast';

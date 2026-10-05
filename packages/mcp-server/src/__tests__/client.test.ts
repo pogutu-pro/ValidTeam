@@ -1,13 +1,13 @@
-import { TaskNebulaClient, TaskNebulaApiError } from '../client';
+import { ValidTeamClient, ValidTeamApiError } from '../client';
 
-describe('TaskNebulaClient', () => {
+describe('ValidTeamClient', () => {
   it('sends X-API-Key when only apiKey is set', async () => {
     let captured: RequestInit | undefined;
     const fetchImpl = (async (_url: string, init: RequestInit) => {
       captured = init;
       return new Response('{}', { status: 200 });
     }) as unknown as typeof fetch;
-    const c = new TaskNebulaClient({
+    const c = new ValidTeamClient({
       apiUrl: 'https://api.test',
       apiKey: 'k',
       fetchImpl,
@@ -24,7 +24,7 @@ describe('TaskNebulaClient', () => {
       captured = init;
       return new Response('{}', { status: 200 });
     }) as unknown as typeof fetch;
-    const c = new TaskNebulaClient({
+    const c = new ValidTeamClient({
       apiUrl: 'https://api.test',
       apiKey: 'k',
       accessToken: 'oauth-tok',
@@ -36,11 +36,14 @@ describe('TaskNebulaClient', () => {
     expect(headers['X-API-Key']).toBeUndefined();
   });
 
-  it('throws TaskNebulaApiError on non-2xx', async () => {
+  it('throws ValidTeamApiError on non-2xx', async () => {
     const fetchImpl = (async () =>
-      new Response(JSON.stringify({ error: 'nope' }), { status: 404, statusText: 'Not Found' })) as unknown as typeof fetch;
-    const c = new TaskNebulaClient({ apiUrl: 'https://api.test', apiKey: 'k', fetchImpl });
-    await expect(c.get('/api/missing')).rejects.toBeInstanceOf(TaskNebulaApiError);
+      new Response(JSON.stringify({ error: 'nope' }), {
+        status: 404,
+        statusText: 'Not Found',
+      })) as unknown as typeof fetch;
+    const c = new ValidTeamClient({ apiUrl: 'https://api.test', apiKey: 'k', fetchImpl });
+    await expect(c.get('/api/missing')).rejects.toBeInstanceOf(ValidTeamApiError);
   });
 
   it('serializes query params and skips undefined', async () => {
@@ -49,7 +52,7 @@ describe('TaskNebulaClient', () => {
       capturedUrl = url;
       return new Response('{}', { status: 200 });
     }) as unknown as typeof fetch;
-    const c = new TaskNebulaClient({ apiUrl: 'https://api.test', apiKey: 'k', fetchImpl });
+    const c = new ValidTeamClient({ apiUrl: 'https://api.test', apiKey: 'k', fetchImpl });
     await c.get('/api/things', { a: 1, b: undefined, c: 'x' });
     expect(capturedUrl).toContain('a=1');
     expect(capturedUrl).toContain('c=x');

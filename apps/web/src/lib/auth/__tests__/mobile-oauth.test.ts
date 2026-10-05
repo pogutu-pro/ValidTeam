@@ -66,7 +66,7 @@ describe('mobile OAuth exchange tokens', () => {
     });
 
     expect(response.headers.get('location')).toBe(
-      'tasknebula://auth/oauth?status=authenticated&server=https%3A%2F%2Ftasks.example.com&provider=github&token=exchange-token&callbackUrl=%2Fsettings%2Fsso'
+      'validteam://auth/oauth?status=authenticated&server=https%3A%2F%2Ftasks.example.com&provider=github&token=exchange-token&callbackUrl=%2Fsettings%2Fsso'
     );
   });
 

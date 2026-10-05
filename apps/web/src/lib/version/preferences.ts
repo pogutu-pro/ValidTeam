@@ -1,7 +1,7 @@
-import { db, eq, systemSettings } from '@tasknebula/db';
+import { db, eq, systemSettings } from '@validteam/db';
 
 export const VERSION_UPDATE_PREFERENCES_KEY = 'version_update_preferences';
-export const VERSION_UPDATE_PREFERENCES_ADVISORY_LOCK = 'tasknebula:version-update-preferences:v1';
+export const VERSION_UPDATE_PREFERENCES_ADVISORY_LOCK = 'validteam:version-update-preferences:v1';
 
 type VersionPreferencesDbClient = Pick<typeof db, 'select' | 'insert'>;
 

@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, eq, sql, systemAuditLogs } from '@tasknebula/db';
-import { integrationClientCredentials } from '@tasknebula/db/src/schema/integration-client-credentials';
+import { db, eq, sql, systemAuditLogs } from '@validteam/db';
+import { integrationClientCredentials } from '@validteam/db/src/schema/integration-client-credentials';
 import {
   INTEGRATION_PROVIDERS,
   isIntegrationProvider,
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
 
   await db.transaction(async (tx) => {
     await tx.execute(
-      sql`select pg_advisory_xact_lock(hashtext(${`tasknebula:integration-credential:${provider}`}))`
+      sql`select pg_advisory_xact_lock(hashtext(${`validteam:integration-credential:${provider}`}))`
     );
     const [existing] = await tx
       .select({ id: integrationClientCredentials.id })
@@ -154,7 +154,7 @@ export async function DELETE(request: NextRequest) {
 
   const deleted = await db.transaction(async (tx) => {
     await tx.execute(
-      sql`select pg_advisory_xact_lock(hashtext(${`tasknebula:integration-credential:${provider}`}))`
+      sql`select pg_advisory_xact_lock(hashtext(${`validteam:integration-credential:${provider}`}))`
     );
     const rows = await tx
       .delete(integrationClientCredentials)

@@ -25,7 +25,7 @@ jest.mock('@/lib/sso/config-validation', () => ({
 jest.mock('@/lib/sso/private-key', () => ({
   protectSsoPrivateKey: (value: string) => (value.startsWith('enc:') ? value : `enc:${value}`),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const configTable = { tableName: 'sso_configs' };
   const auditTable = { tableName: 'audit_logs' };
   const tx = {

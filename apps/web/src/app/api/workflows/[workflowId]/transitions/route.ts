@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, workflowTransitions, workflowStatuses, workflows } from '@tasknebula/db';
+import { db, workflowTransitions, workflowStatuses, workflows } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';
 import { hasPermission } from '@/lib/auth/permissions';

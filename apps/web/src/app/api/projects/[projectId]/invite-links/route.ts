@@ -9,7 +9,7 @@ import {
   projectInviteLinks,
   users,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { auth } from '@/auth';
 import {
   buildProjectInviteUrl,

@@ -30,7 +30,7 @@ import {
   projects,
   slackChannelRoutes,
   sql,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { auth } from '@/auth';
 import { hasPermission } from '@/lib/auth/permissions';
 

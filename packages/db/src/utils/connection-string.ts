@@ -16,7 +16,7 @@ export function getDatabaseConnectionString() {
   const password = process.env.POSTGRES_PASSWORD || 'postgres';
   const host = process.env.POSTGRES_HOST || 'localhost';
   const port = process.env.DB_PORT || process.env.POSTGRES_PORT || '5432';
-  const database = process.env.POSTGRES_DB || 'tasknebula';
+  const database = process.env.POSTGRES_DB || 'validteam';
 
   return `postgresql://${user}:${password}@${host}:${port}/${database}`;
 }

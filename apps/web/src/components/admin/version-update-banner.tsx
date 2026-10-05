@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { ArrowUpCircle, X } from 'lucide-react';
 
 // Keyed by the dismissed update version so the banner reappears for the next one.
-const DISMISS_STORAGE_KEY = 'tasknebula-update-banner-dismissed';
+const DISMISS_STORAGE_KEY = 'validteam-update-banner-dismissed';
 
 function formatVersion(version: string) {
   return `v${version.replace(/^v/, '')}`;

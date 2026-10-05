@@ -21,7 +21,7 @@ import {
   and,
   lte,
   notInArray,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 import {
   sweepStaleIssues,

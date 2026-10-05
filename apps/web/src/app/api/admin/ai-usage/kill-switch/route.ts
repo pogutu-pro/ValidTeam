@@ -20,14 +20,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import {
-  auditLogs,
-  db,
-  organizations,
-  orgTokenBudgets,
-  sql,
-  systemAuditLogs,
-} from '@tasknebula/db';
+import { auditLogs, db, organizations, orgTokenBudgets, sql, systemAuditLogs } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 
@@ -66,7 +59,7 @@ export async function POST(request: NextRequest) {
 
   const result = await db.transaction(async (tx) => {
     await tx.execute(
-      sql`select pg_advisory_xact_lock(hashtext(${`tasknebula:ai-budget:${body.organizationId}`}))`
+      sql`select pg_advisory_xact_lock(hashtext(${`validteam:ai-budget:${body.organizationId}`}))`
     );
     const [org] = await tx
       .select({ id: organizations.id })

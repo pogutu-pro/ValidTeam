@@ -1,8 +1,8 @@
-# TaskNebula Design System
+# ValidTeam Design System
 
 **Verified:** 2026-08-20
 
-This is the implementation contract for TaskNebula's web UI. Read
+This is the implementation contract for ValidTeam's web UI. Read
 [`DESIGN.md`](DESIGN.md) first: it owns product intent, page archetypes, flow
 evidence, and acceptance. This document owns reusable visual and interaction
 decisions.
@@ -23,7 +23,7 @@ wins silently.
 
 ## Core language
 
-TaskNebula Workbench is square-ish, calm, dense, and architectural.
+ValidTeam Workbench is square-ish, calm, dense, and architectural.
 
 - Typography and spacing establish hierarchy before color or shadow.
 - One primary blue communicates action. Semantic color communicates real
@@ -244,9 +244,9 @@ Run from the repository root:
 ```bash
 pnpm ui:check
 pnpm i18n:check
-pnpm --filter @tasknebula/web type-check
-pnpm --filter @tasknebula/web lint
-pnpm --filter @tasknebula/web test
+pnpm --filter @validteam/web type-check
+pnpm --filter @validteam/web lint
+pnpm --filter @validteam/web test
 ```
 
 For visible changes, also exercise the real route with keyboard and pointer in

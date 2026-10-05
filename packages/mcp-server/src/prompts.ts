@@ -1,5 +1,5 @@
 /**
- * MCP prompt templates for TaskNebula.
+ * MCP prompt templates for ValidTeam.
  *
  * Prompts are short, parameterized chat templates that the model can
  * invoke to bootstrap a common workflow.
@@ -31,7 +31,7 @@ const triageInbox: PromptDefinition = {
         content: {
           type: 'text',
           text:
-            `You are a triage assistant for TaskNebula.\n\n` +
+            `You are a triage assistant for ValidTeam.\n\n` +
             `1. Call \`search_issues\` with status="open" and assigneeId omitted` +
             (args.projectId ? `, projectId="${args.projectId}"` : '') +
             `, limit=${args.limit ?? 20}.\n` +
@@ -59,7 +59,7 @@ const standupSummary: PromptDefinition = {
         content: {
           type: 'text',
           text:
-            `Generate a concise standup summary using TaskNebula data.\n` +
+            `Generate a concise standup summary using ValidTeam data.\n` +
             `Window: ${args.window ?? 'today'}.\n\n` +
             `Use \`list_my_assigned\` and \`get_my_workload\`. Output three bullet sections: ` +
             `"Done", "In Progress", "Blockers".`,
@@ -87,7 +87,7 @@ const sprintPlanning: PromptDefinition = {
             `Plan a ${args.sprintLengthDays ?? 14}-day sprint for project ${args.projectId} with ` +
             `${args.capacityHours ?? 80} hours of team capacity.\n\n` +
             `Steps:\n` +
-            `1. Read \`tasknebula://project/${args.projectId}\` for context.\n` +
+            `1. Read \`validteam://project/${args.projectId}\` for context.\n` +
             `2. Call \`search_issues\` with projectId="${args.projectId}", status="backlog".\n` +
             `3. Group by epic, sort by priority, fit within capacity using estimates.\n` +
             `4. Return a draft sprint with rationale and ask for sign-off before assigning.`,

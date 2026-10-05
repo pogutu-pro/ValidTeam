@@ -32,6 +32,7 @@ const PUBLIC_AUTH_ROUTES = [
   '/auth/verify-request',
   '/auth/verify-email',
   '/auth/forgot-password',
+  '/auth/request-access',
   '/auth/reset-password',
 ] as const;
 
@@ -77,7 +78,7 @@ export default auth((req) => {
   const { pathname } = request.nextUrl;
   const isLoggedIn = !!(req as unknown as { auth?: unknown }).auth;
 
-  // TaskNebula uses authenticated REST route handlers and currently ships no
+  // ValidTeam uses authenticated REST route handlers and currently ships no
   // Server Actions. Reject forged Next-Action probes at the edge so Next.js
   // does not attempt to resolve attacker-supplied action ids and flood runtime
   // logs with "Failed to find Server Action" errors.

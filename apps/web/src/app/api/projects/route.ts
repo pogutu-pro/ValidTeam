@@ -13,7 +13,7 @@ import {
   ROLE_DEFAULT_PERMISSIONS,
   hasPermission as roleHasPermission,
   type ProjectRole,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and, inArray, desc, ne } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { publishEvent } from '@/lib/realtime/events';

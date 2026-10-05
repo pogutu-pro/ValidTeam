@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { attachments, db, sql } from '@tasknebula/db';
+import { attachments, db, sql } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { canEditIssue, canReadIssue } from '@/lib/auth/access-control';

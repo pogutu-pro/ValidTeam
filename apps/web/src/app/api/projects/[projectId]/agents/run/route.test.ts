@@ -53,7 +53,7 @@ jest.mock('@/lib/agents/project-agent-run-store', () => ({
   findDurableProjectAgentRunReplay: (...args: unknown[]) => replayMock(...args),
   serializeProjectAgentRunEnvelope: (...args: unknown[]) => serializeMock(...args),
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: { select: (...args: unknown[]) => dbSelectMock(...args) },
   eq: jest.fn(),
   organizations: {},
@@ -164,7 +164,7 @@ describe('POST project agent run idempotency contract', () => {
       );
     const workspaceSettings = {
       provider: 'native',
-      model: 'tasknebula-planner-v1',
+      model: 'validteam-planner-v1',
       enabled: true,
       assistantEnabled: false,
       executionMode: 'manual',

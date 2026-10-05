@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { createAuditLog, db, eq, projects } from '@tasknebula/db';
+import { createAuditLog, db, eq, projects } from '@validteam/db';
 import { ChatAccessError, getProjectChatContext } from '@/lib/chat/server';
 import { normalizeProjectCommunicationsSettings } from '@/lib/chat/config';
 

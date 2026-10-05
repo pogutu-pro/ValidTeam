@@ -1,10 +1,4 @@
-import {
-  agentModelConfigRevisions,
-  agentModelConfigs,
-  db,
-  eq,
-  organizations,
-} from '@tasknebula/db';
+import { agentModelConfigRevisions, agentModelConfigs, db, eq, organizations } from '@validteam/db';
 import { and, count, desc, inArray } from 'drizzle-orm';
 import type { AgentProvider, WorkspaceAgentSettings } from './config';
 import {
@@ -53,7 +47,8 @@ export function normalizeAgentModelConfigSettings(
   input: unknown,
   options?: { provider?: AgentProvider; model?: string }
 ): AgentModelConfigSettings {
-  const source = typeof input === 'object' && input !== null ? input as Record<string, unknown> : {};
+  const source =
+    typeof input === 'object' && input !== null ? (input as Record<string, unknown>) : {};
   const provider = options?.provider || 'openai';
   const model = options?.model || '';
   const supportedReasoningOptions = getSupportedReasoningOptions(provider, model).filter(
@@ -65,8 +60,9 @@ export function normalizeAgentModelConfigSettings(
     temperature: clampNumber(source.temperature, 0, 2),
     maxOutputTokens: clampNumber(source.maxOutputTokens, 32, maxOutputTokensLimit),
     reasoningEffort:
-      typeof source.reasoningEffort === 'string' && supportedReasoningOptions.includes(source.reasoningEffort as AgentReasoningEffort)
-        ? source.reasoningEffort as AgentReasoningEffort
+      typeof source.reasoningEffort === 'string' &&
+      supportedReasoningOptions.includes(source.reasoningEffort as AgentReasoningEffort)
+        ? (source.reasoningEffort as AgentReasoningEffort)
         : null,
     notes: typeof source.notes === 'string' && source.notes.trim() ? source.notes.trim() : null,
   };
@@ -158,7 +154,10 @@ export async function listAgentModelConfigs(
     .where(
       includeArchived
         ? eq(agentModelConfigs.organizationId, organizationId)
-        : and(eq(agentModelConfigs.organizationId, organizationId), eq(agentModelConfigs.isArchived, false))
+        : and(
+            eq(agentModelConfigs.organizationId, organizationId),
+            eq(agentModelConfigs.isArchived, false)
+          )
     )
     .orderBy(desc(agentModelConfigs.isDefault), agentModelConfigs.name);
 
@@ -171,7 +170,9 @@ export async function getAgentModelConfigById(organizationId: string, configId: 
   const [row] = await db
     .select()
     .from(agentModelConfigs)
-    .where(and(eq(agentModelConfigs.organizationId, organizationId), eq(agentModelConfigs.id, configId)))
+    .where(
+      and(eq(agentModelConfigs.organizationId, organizationId), eq(agentModelConfigs.id, configId))
+    )
     .limit(1);
 
   if (!row) {
@@ -302,7 +303,12 @@ export async function updateAgentModelConfig(params: {
           updatedAt: new Date(),
           updatedBy: params.userId,
         })
-        .where(and(eq(agentModelConfigs.organizationId, params.organizationId), eq(agentModelConfigs.isDefault, true)));
+        .where(
+          and(
+            eq(agentModelConfigs.organizationId, params.organizationId),
+            eq(agentModelConfigs.isDefault, true)
+          )
+        );
     }
 
     const [updated] = await tx
@@ -318,7 +324,12 @@ export async function updateAgentModelConfig(params: {
         updatedAt: new Date(),
         updatedBy: params.userId,
       })
-      .where(and(eq(agentModelConfigs.organizationId, params.organizationId), eq(agentModelConfigs.id, params.configId)))
+      .where(
+        and(
+          eq(agentModelConfigs.organizationId, params.organizationId),
+          eq(agentModelConfigs.id, params.configId)
+        )
+      )
       .returning();
 
     if (!updated) {

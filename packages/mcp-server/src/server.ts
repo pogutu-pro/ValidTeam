@@ -9,17 +9,17 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { TaskNebulaClient } from './client.js';
+import { ValidTeamClient } from './client.js';
 import { allTools } from './tools/index.js';
 import { resourceTemplates } from './resources.js';
 import { allPrompts } from './prompts.js';
 import { toMcpContent } from './tools/types.js';
 
-export const SERVER_NAME = '@tasknebula/mcp-server';
+export const SERVER_NAME = '@validteam/mcp-server';
 export const SERVER_VERSION = '0.1.0';
 
 export interface CreateServerOptions {
-  client: TaskNebulaClient;
+  client: ValidTeamClient;
 }
 
 export function createMcpServer(opts: CreateServerOptions): McpServer {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, notifications } from '@tasknebula/db';
+import { db, notifications } from '@validteam/db';
 import { eq, and } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -25,12 +25,7 @@ export async function PATCH(
         readAt: new Date(),
         updatedAt: new Date(),
       })
-      .where(
-        and(
-          eq(notifications.id, notificationId),
-          eq(notifications.userId, session.user.id)
-        )
-      )
+      .where(and(eq(notifications.id, notificationId), eq(notifications.userId, session.user.id)))
       .returning();
 
     if (!notification) {
@@ -40,10 +35,7 @@ export async function PATCH(
     return NextResponse.json(notification);
   } catch (error) {
     console.error('Failed to update notification:', error);
-    return NextResponse.json(
-      { error: 'Failed to update notification' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update notification' }, { status: 500 });
   }
 }
 
@@ -62,12 +54,7 @@ export async function DELETE(
 
     const [notification] = await db
       .delete(notifications)
-      .where(
-        and(
-          eq(notifications.id, notificationId),
-          eq(notifications.userId, session.user.id)
-        )
-      )
+      .where(and(eq(notifications.id, notificationId), eq(notifications.userId, session.user.id)))
       .returning();
 
     if (!notification) {
@@ -77,10 +64,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete notification:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete notification' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete notification' }, { status: 500 });
   }
 }
-

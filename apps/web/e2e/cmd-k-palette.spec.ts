@@ -53,7 +53,7 @@ test.describe('cmd+k command palette', () => {
     await input.fill('summarize project risks');
 
     const askOption = palette.getByRole('option', {
-      name: /ask tasknebula.*summarize project risks/i,
+      name: /ask validteam.*summarize project risks/i,
     });
     await expect(askOption).toBeVisible({ timeout: 5_000 });
 

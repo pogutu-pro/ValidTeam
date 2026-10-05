@@ -10,7 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { and, db, eq, isNull, timeEntries } from '@tasknebula/db';
+import { and, db, eq, isNull, timeEntries } from '@validteam/db';
 import { assertIssueAccess, recomputeActualHours } from '@/lib/time-tracking/server';
 
 const StopBody = z

@@ -38,7 +38,7 @@ import {
   organizationMembers,
   organizations,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import {
   AGENT_PROVIDERS,
   AgentSessionEventSchema,
@@ -79,7 +79,7 @@ async function loadSessionFromHeaders(
   request: NextRequest,
   provider: AgentProviderKind
 ): Promise<typeof agentSessions.$inferSelect | null> {
-  const sessionId = request.headers.get('x-tasknebula-session-id');
+  const sessionId = request.headers.get('x-validteam-session-id');
   if (!sessionId) return null;
   const [row] = await db
     .select()
@@ -272,7 +272,7 @@ export async function POST(
   }
 
   const signatureHeader =
-    request.headers.get('x-tasknebula-signature') ||
+    request.headers.get('x-validteam-signature') ||
     request.headers.get('x-agent-signature') ||
     request.headers.get('linear-signature');
 

@@ -14,7 +14,7 @@ import {
   projects,
   issues,
   systemAuditLogs,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, desc, count, and, ilike, or, inArray } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';

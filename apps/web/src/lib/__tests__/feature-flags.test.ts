@@ -4,7 +4,7 @@
 
 const selectMock = jest.fn();
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: { select: (...args: unknown[]) => selectMock(...args) },
   featureFlags: { key: 'featureFlags.key', isEnabled: 'featureFlags.isEnabled' },
   organizations: { id: 'organizations.id' },

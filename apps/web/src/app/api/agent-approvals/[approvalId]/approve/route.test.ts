@@ -138,7 +138,7 @@ const database = {
   },
 };
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   agentApprovalRequests: approvalTable,
   agentApprovalEffectOutbox: effectTable,
   auditLogs: auditTable,

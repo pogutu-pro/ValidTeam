@@ -24,7 +24,7 @@ import {
   issues,
   projects,
   workflowStatuses,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { auth } from '@/auth';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';
 

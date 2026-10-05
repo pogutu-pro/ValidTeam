@@ -12,13 +12,7 @@
  */
 
 import { and, asc, eq, inArray, gt, lt, isNull, or, sql } from 'drizzle-orm';
-import {
-  db,
-  sprints,
-  issues,
-  issueStatusHistory,
-  workflowStatuses,
-} from '@tasknebula/db';
+import { db, sprints, issues, issueStatusHistory, workflowStatuses } from '@validteam/db';
 
 export interface RolloverCandidateIssue {
   id: string;
@@ -91,11 +85,7 @@ export async function rolloverCycle(
 ): Promise<RolloverOutcome> {
   const now = new Date();
 
-  const [cycle] = await db
-    .select()
-    .from(sprints)
-    .where(eq(sprints.id, cycleId))
-    .limit(1);
+  const [cycle] = await db.select().from(sprints).where(eq(sprints.id, cycleId)).limit(1);
 
   if (!cycle) {
     return { movedIssueIds: [], nextCycleId: null, reason: 'cycle_not_found' };
@@ -213,10 +203,7 @@ export async function rolloverAllOverdueCycles(
       and(
         eq(sprints.enableAutoRollover, true),
         lt(sprints.endDate, now),
-        or(
-          isNull(sprints.rolledOverAt),
-          lt(sprints.rolledOverAt, sprints.endDate)
-        )!
+        or(isNull(sprints.rolledOverAt), lt(sprints.rolledOverAt, sprints.endDate))!
       )
     );
 

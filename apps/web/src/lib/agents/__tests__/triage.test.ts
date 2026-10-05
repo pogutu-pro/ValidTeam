@@ -15,11 +15,11 @@ import {
 } from '../triage';
 import { AiDraftError } from '@/lib/ai/draft-issue';
 
-// Avoid pulling the real `@tasknebula/db` (which would try to connect to
+// Avoid pulling the real `@validteam/db` (which would try to connect to
 // pg). We never trigger the DB path because every test passes
 // `loadContextOverride`, but the file still imports the module so it
 // must resolve.
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   __esModule: true,
   db: {},
   desc: () => undefined,

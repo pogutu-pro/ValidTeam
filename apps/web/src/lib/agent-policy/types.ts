@@ -1,4 +1,4 @@
-import type { AgentApprovalRequestStatus } from '@tasknebula/db';
+import type { AgentApprovalRequestStatus } from '@validteam/db';
 
 export type AgentPolicyEffect = 'allow' | 'deny' | 'require_approval';
 

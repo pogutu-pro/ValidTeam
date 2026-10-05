@@ -87,7 +87,7 @@ describe('AiQuickSetup', () => {
         workspaceSettings={{
           ...BASE_SETTINGS,
           provider: 'native',
-          model: 'tasknebula-planner-v1',
+          model: 'validteam-planner-v1',
         }}
         providerConfigured={true}
         providerSource="server_env"

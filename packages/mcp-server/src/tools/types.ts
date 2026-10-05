@@ -1,5 +1,5 @@
 import { z, type ZodTypeAny } from 'zod';
-import type { TaskNebulaClient } from '../client.js';
+import type { ValidTeamClient } from '../client.js';
 
 /**
  * Internal tool definition shared between stdio and HTTP transports.
@@ -17,13 +17,10 @@ export interface ToolDefinition<Input extends ZodTypeAny = ZodTypeAny> {
   /** Zod schema for the tool input. */
   inputSchema: Input;
   /**
-   * Implementation. Receives the validated input and a TaskNebula REST
+   * Implementation. Receives the validated input and a ValidTeam REST
    * client and returns the tool result (a JSON-serializable value).
    */
-  handler: (
-    input: z.infer<Input>,
-    ctx: { client: TaskNebulaClient },
-  ) => Promise<unknown>;
+  handler: (input: z.infer<Input>, ctx: { client: ValidTeamClient }) => Promise<unknown>;
 }
 
 /**
@@ -40,12 +37,12 @@ export interface AnyToolDefinition {
   name: string;
   description: string;
   inputSchema: ZodTypeAny;
-  handler: (input: unknown, ctx: { client: TaskNebulaClient }) => Promise<unknown>;
+  handler: (input: unknown, ctx: { client: ValidTeamClient }) => Promise<unknown>;
 }
 
 /** Erase a strongly-typed tool into the registry-friendly form. */
 export function toAnyTool<Input extends ZodTypeAny>(
-  tool: ToolDefinition<Input>,
+  tool: ToolDefinition<Input>
 ): AnyToolDefinition {
   return {
     name: tool.name,
@@ -57,7 +54,6 @@ export function toAnyTool<Input extends ZodTypeAny>(
 
 /** Render a tool result into the MCP `content` array (text only for now). */
 export function toMcpContent(value: unknown): Array<{ type: 'text'; text: string }> {
-  const text =
-    typeof value === 'string' ? value : JSON.stringify(value, null, 2);
+  const text = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
   return [{ type: 'text', text }];
 }

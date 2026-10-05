@@ -1,4 +1,4 @@
-// Core domain types for TaskNebula
+// Core domain types for ValidTeam
 export * from './organization';
 export * from './user';
 export * from './project';

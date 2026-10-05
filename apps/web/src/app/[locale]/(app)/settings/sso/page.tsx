@@ -6,7 +6,7 @@
  */
 import { redirect } from 'next/navigation';
 import { auth } from '@/auth';
-import { db, organizations } from '@tasknebula/db';
+import { db, organizations } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { getTranslations } from 'next-intl/server';
 import { getPermittedOrganizationIds } from '@/lib/auth/permissions';

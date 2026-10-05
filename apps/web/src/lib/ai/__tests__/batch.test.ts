@@ -6,7 +6,7 @@
 const fakeRows: Array<Record<string, any>> = [];
 let lastInserted: Record<string, any> | null = null;
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   // eqMatcher carries enough info for the fake `where` to filter.
   const eqMatcher = (col: any, value: any) => ({ __eq: true, col, value });
 
@@ -120,9 +120,9 @@ describe('OpenAI Batch API wrapper', () => {
   });
 
   it('rejects empty requests', async () => {
-    await expect(
-      submitBatchJob([], { workload: 'weekly_summary' })
-    ).rejects.toMatchObject({ code: 'empty_batch' });
+    await expect(submitBatchJob([], { workload: 'weekly_summary' })).rejects.toMatchObject({
+      code: 'empty_batch',
+    });
   });
 
   it('rejects when OPENAI_API_KEY is missing', async () => {

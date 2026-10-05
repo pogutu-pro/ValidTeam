@@ -33,7 +33,7 @@
 
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
-import { db, llmCallAudit, orgTokenBudgets, type OrgTokenBudget } from '@tasknebula/db';
+import { db, llmCallAudit, orgTokenBudgets, type OrgTokenBudget } from '@validteam/db';
 
 export type BudgetCheckResult =
   | { allowed: true }

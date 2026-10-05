@@ -1,9 +1,9 @@
 /**
  * Production Database Seeder
- * 
+ *
  * Seeds initial data for production environment.
  * Only creates essential data (no demo data).
- * 
+ *
  * Usage: pnpm tsx scripts/seed-production.ts
  */
 
@@ -16,7 +16,7 @@ import * as schema from '../src/schema';
 // Load environment variables only in development
 try {
   if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const dotenv = require('dotenv');
     dotenv.config({ path: resolve(__dirname, '../../../.env') });
   }
@@ -41,7 +41,7 @@ async function seedProduction() {
   try {
     // Check if data already exists
     const existingOrgs = await db.query.organizations.findMany({ limit: 1 });
-    
+
     if (existingOrgs.length > 0) {
       console.log('⚠️  Database already contains data. Skipping seed.');
       return;
@@ -49,13 +49,14 @@ async function seedProduction() {
 
     // Create demo admin user first
     console.log('👤 Creating demo admin user...');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const bcrypt = require('bcryptjs');
     const passwordHash = await bcrypt.hash('demo123', 10);
 
     const adminUserId = createId();
     await db.insert(schema.users).values({
       id: adminUserId,
-      email: 'admin@tasknebula.io',
+      email: 'admin@validteam.io',
       name: 'Admin User',
       image: 'https://avatar.vercel.sh/admin',
       password: passwordHash,
@@ -69,9 +70,9 @@ async function seedProduction() {
     const demoOrgId = createId();
     await db.insert(schema.organizations).values({
       id: demoOrgId,
-      name: 'TaskNebula Demo',
-      slug: 'tasknebula-demo',
-      domain: 'tasknebula.io',
+      name: 'ValidTeam Demo',
+      slug: 'validteam-demo',
+      domain: 'validteam.io',
       settings: {},
       plan: 'growth',
       status: 'active',
@@ -182,13 +183,13 @@ async function seedProduction() {
     console.log('👥 Creating demo users...');
     const demoUsers = [];
     const userRoles = [
-      { email: 'po@tasknebula.io', name: 'Product Owner', role: 'Product Owner' },
-      { email: 'sm@tasknebula.io', name: 'Scrum Master', role: 'Scrum Master' },
-      { email: 'lead@tasknebula.io', name: 'Tech Lead', role: 'Tech Lead' },
-      { email: 'dev1@tasknebula.io', name: 'Developer', role: 'Developer' },
-      { email: 'qa@tasknebula.io', name: 'QA Engineer', role: 'QA Engineer' },
-      { email: 'design@tasknebula.io', name: 'Designer', role: 'Designer' },
-      { email: 'viewer@tasknebula.io', name: 'Viewer', role: 'Viewer' },
+      { email: 'po@validteam.io', name: 'Product Owner', role: 'Product Owner' },
+      { email: 'sm@validteam.io', name: 'Scrum Master', role: 'Scrum Master' },
+      { email: 'lead@validteam.io', name: 'Tech Lead', role: 'Tech Lead' },
+      { email: 'dev1@validteam.io', name: 'Developer', role: 'Developer' },
+      { email: 'qa@validteam.io', name: 'QA Engineer', role: 'QA Engineer' },
+      { email: 'design@validteam.io', name: 'Designer', role: 'Designer' },
+      { email: 'viewer@validteam.io', name: 'Viewer', role: 'Viewer' },
     ];
 
     for (const user of userRoles) {
@@ -273,9 +274,12 @@ async function seedProduction() {
           projectId: projectId,
           userId: member.userId,
           role: member.role,
-          canManageSprints: member.role === 'product_owner' || member.role === 'tech_lead' ? 'true' : 'false',
-          canStartSprint: member.role === 'product_owner' || member.role === 'tech_lead' ? 'true' : 'false',
-          canAssignIssues: member.role === 'product_owner' || member.role === 'tech_lead' ? 'true' : 'false',
+          canManageSprints:
+            member.role === 'product_owner' || member.role === 'tech_lead' ? 'true' : 'false',
+          canStartSprint:
+            member.role === 'product_owner' || member.role === 'tech_lead' ? 'true' : 'false',
+          canAssignIssues:
+            member.role === 'product_owner' || member.role === 'tech_lead' ? 'true' : 'false',
         });
       }
 
@@ -286,31 +290,152 @@ async function seedProduction() {
     console.log('📝 Creating demo issues...');
     const issueTemplates = [
       // Website Redesign issues
-      { projectIdx: 0, type: 'epic', title: 'Homepage Redesign', description: 'Redesign the entire homepage with new branding', priority: 'high', statusKey: 'inProgress', assigneeIdx: 2 },
-      { projectIdx: 0, type: 'story', title: 'Design new hero section', description: 'Create mockups for hero section with CTA', priority: 'high', statusKey: 'done', assigneeIdx: 2 },
-      { projectIdx: 0, type: 'task', title: 'Implement responsive navigation', description: 'Build mobile-first navigation component', priority: 'medium', statusKey: 'inProgress', assigneeIdx: 4 },
-      { projectIdx: 0, type: 'bug', title: 'Fix footer alignment on mobile', description: 'Footer is not aligned properly on small screens', priority: 'high', statusKey: 'todo', assigneeIdx: 4 },
-      { projectIdx: 0, type: 'task', title: 'Add dark mode support', description: 'Implement dark mode toggle and theme switching', priority: 'low', statusKey: 'todo', assigneeIdx: 1 },
+      {
+        projectIdx: 0,
+        type: 'epic',
+        title: 'Homepage Redesign',
+        description: 'Redesign the entire homepage with new branding',
+        priority: 'high',
+        statusKey: 'inProgress',
+        assigneeIdx: 2,
+      },
+      {
+        projectIdx: 0,
+        type: 'story',
+        title: 'Design new hero section',
+        description: 'Create mockups for hero section with CTA',
+        priority: 'high',
+        statusKey: 'done',
+        assigneeIdx: 2,
+      },
+      {
+        projectIdx: 0,
+        type: 'task',
+        title: 'Implement responsive navigation',
+        description: 'Build mobile-first navigation component',
+        priority: 'medium',
+        statusKey: 'inProgress',
+        assigneeIdx: 4,
+      },
+      {
+        projectIdx: 0,
+        type: 'bug',
+        title: 'Fix footer alignment on mobile',
+        description: 'Footer is not aligned properly on small screens',
+        priority: 'high',
+        statusKey: 'todo',
+        assigneeIdx: 4,
+      },
+      {
+        projectIdx: 0,
+        type: 'task',
+        title: 'Add dark mode support',
+        description: 'Implement dark mode toggle and theme switching',
+        priority: 'low',
+        statusKey: 'todo',
+        assigneeIdx: 1,
+      },
 
       // Mobile App issues
-      { projectIdx: 1, type: 'epic', title: 'User Authentication', description: 'Complete authentication flow for mobile app', priority: 'critical', statusKey: 'inProgress', assigneeIdx: 1 },
-      { projectIdx: 1, type: 'story', title: 'Social login integration', description: 'Add Google and Apple sign-in', priority: 'high', statusKey: 'inReview', assigneeIdx: 1 },
-      { projectIdx: 1, type: 'task', title: 'Design onboarding screens', description: 'Create welcome and tutorial screens', priority: 'medium', statusKey: 'done', assigneeIdx: 2 },
-      { projectIdx: 1, type: 'bug', title: 'App crashes on iOS 16', description: 'App crashes when opening camera on iOS 16', priority: 'critical', statusKey: 'inProgress', assigneeIdx: 1 },
-      { projectIdx: 1, type: 'task', title: 'Setup push notifications', description: 'Integrate Firebase Cloud Messaging', priority: 'high', statusKey: 'todo', assigneeIdx: 4 },
+      {
+        projectIdx: 1,
+        type: 'epic',
+        title: 'User Authentication',
+        description: 'Complete authentication flow for mobile app',
+        priority: 'critical',
+        statusKey: 'inProgress',
+        assigneeIdx: 1,
+      },
+      {
+        projectIdx: 1,
+        type: 'story',
+        title: 'Social login integration',
+        description: 'Add Google and Apple sign-in',
+        priority: 'high',
+        statusKey: 'inReview',
+        assigneeIdx: 1,
+      },
+      {
+        projectIdx: 1,
+        type: 'task',
+        title: 'Design onboarding screens',
+        description: 'Create welcome and tutorial screens',
+        priority: 'medium',
+        statusKey: 'done',
+        assigneeIdx: 2,
+      },
+      {
+        projectIdx: 1,
+        type: 'bug',
+        title: 'App crashes on iOS 16',
+        description: 'App crashes when opening camera on iOS 16',
+        priority: 'critical',
+        statusKey: 'inProgress',
+        assigneeIdx: 1,
+      },
+      {
+        projectIdx: 1,
+        type: 'task',
+        title: 'Setup push notifications',
+        description: 'Integrate Firebase Cloud Messaging',
+        priority: 'high',
+        statusKey: 'todo',
+        assigneeIdx: 4,
+      },
 
       // API Platform issues
-      { projectIdx: 2, type: 'epic', title: 'REST API v2', description: 'Build new version of REST API with better performance', priority: 'high', statusKey: 'inProgress', assigneeIdx: 1 },
-      { projectIdx: 2, type: 'story', title: 'Rate limiting implementation', description: 'Add rate limiting to all API endpoints', priority: 'high', statusKey: 'inReview', assigneeIdx: 1 },
-      { projectIdx: 2, type: 'task', title: 'Write API documentation', description: 'Complete OpenAPI/Swagger documentation', priority: 'medium', statusKey: 'todo', assigneeIdx: 0 },
-      { projectIdx: 2, type: 'bug', title: 'Authentication token expires too soon', description: 'JWT tokens expire after 5 minutes instead of 1 hour', priority: 'high', statusKey: 'inProgress', assigneeIdx: 1 },
-      { projectIdx: 2, type: 'task', title: 'Add GraphQL endpoint', description: 'Create GraphQL API alongside REST', priority: 'low', statusKey: 'todo', assigneeIdx: 1 },
+      {
+        projectIdx: 2,
+        type: 'epic',
+        title: 'REST API v2',
+        description: 'Build new version of REST API with better performance',
+        priority: 'high',
+        statusKey: 'inProgress',
+        assigneeIdx: 1,
+      },
+      {
+        projectIdx: 2,
+        type: 'story',
+        title: 'Rate limiting implementation',
+        description: 'Add rate limiting to all API endpoints',
+        priority: 'high',
+        statusKey: 'inReview',
+        assigneeIdx: 1,
+      },
+      {
+        projectIdx: 2,
+        type: 'task',
+        title: 'Write API documentation',
+        description: 'Complete OpenAPI/Swagger documentation',
+        priority: 'medium',
+        statusKey: 'todo',
+        assigneeIdx: 0,
+      },
+      {
+        projectIdx: 2,
+        type: 'bug',
+        title: 'Authentication token expires too soon',
+        description: 'JWT tokens expire after 5 minutes instead of 1 hour',
+        priority: 'high',
+        statusKey: 'inProgress',
+        assigneeIdx: 1,
+      },
+      {
+        projectIdx: 2,
+        type: 'task',
+        title: 'Add GraphQL endpoint',
+        description: 'Create GraphQL API alongside REST',
+        priority: 'low',
+        statusKey: 'todo',
+        assigneeIdx: 1,
+      },
     ];
 
-    let issueCounter = { WEB: 1, MOB: 1, API: 1 };
+    const issueCounter = { WEB: 1, MOB: 1, API: 1 };
     for (const template of issueTemplates) {
       const project = projectIds[template.projectIdx];
-      const assignee = template.assigneeIdx !== undefined ? demoUsers[template.assigneeIdx].userId : null;
+      const assignee =
+        template.assigneeIdx !== undefined ? demoUsers[template.assigneeIdx].userId : null;
 
       await db.insert(schema.issues).values({
         id: createId(),
@@ -337,14 +462,14 @@ async function seedProduction() {
     console.log('📊 Created:');
     console.log('  - 1 demo organization');
     console.log('  - 8 demo users (all password: demo123):');
-    console.log('    • admin@tasknebula.io (Admin)');
-    console.log('    • po@tasknebula.io (Product Owner)');
-    console.log('    • sm@tasknebula.io (Scrum Master)');
-    console.log('    • lead@tasknebula.io (Tech Lead)');
-    console.log('    • dev1@tasknebula.io (Developer)');
-    console.log('    • qa@tasknebula.io (QA Engineer)');
-    console.log('    • design@tasknebula.io (Designer)');
-    console.log('    • viewer@tasknebula.io (Viewer)');
+    console.log('    • admin@validteam.io (Admin)');
+    console.log('    • po@validteam.io (Product Owner)');
+    console.log('    • sm@validteam.io (Scrum Master)');
+    console.log('    • lead@validteam.io (Tech Lead)');
+    console.log('    • dev1@validteam.io (Developer)');
+    console.log('    • qa@validteam.io (QA Engineer)');
+    console.log('    • design@validteam.io (Designer)');
+    console.log('    • viewer@validteam.io (Viewer)');
     console.log('  - 3 demo projects (WEB, MOB, API)');
     console.log('  - 15 demo issues (stories, tasks, bugs, epics)');
     console.log('  - 1 default workflow');
@@ -363,4 +488,3 @@ seedProduction().catch((error) => {
   console.error('❌ Unexpected error:', error);
   process.exit(1);
 });
-

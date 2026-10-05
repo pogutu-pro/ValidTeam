@@ -28,12 +28,12 @@ import {
   or,
   isNull,
   sql,
-} from '@tasknebula/db';
+} from '@validteam/db';
 // automationExecutions is declared in the schema package but not yet
 // re-exported from the barrel index (schema/index.ts). Importing the table
 // directly via the subpath follows the existing pattern used for
 // password-reset-tokens / email-verification-tokens / project-modules.
-import { automationExecutions } from '@tasknebula/db/src/schema/automation-executions';
+import { automationExecutions } from '@validteam/db/src/schema/automation-executions';
 import { evaluateConditions, type AutomationCondition } from './conditions';
 import {
   applyPreparedIssueStatusTransition,

@@ -109,7 +109,7 @@ import { useGlobalVoice } from '@/components/chat/global-voice-provider';
 import { useMicrophoneMessageCatalog } from '@/components/chat/use-microphone-message-catalog';
 
 const QUICK_REACTIONS = ['👍', '👀', '🚀'];
-const VOICE_CLIENT_SESSION_STORAGE_KEY = 'tasknebula.voice-client-session';
+const VOICE_CLIENT_SESSION_STORAGE_KEY = 'validteam.voice-client-session';
 // Previously 1_500ms, which fired before most users could even click "Allow"
 // on Safari / Firefox — the app then fell back to "muted join + pending
 // promise" and the mic never came back. 8s is long enough to cover normal

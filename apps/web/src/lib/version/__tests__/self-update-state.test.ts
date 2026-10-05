@@ -3,7 +3,7 @@
 let storedRows: Array<{ value: unknown }> = [];
 let readError: Error | null = null;
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   systemSettings: { value: 'systemSettings.value', key: 'systemSettings.key' },
   systemAuditLogs: {},
   eq: (...args: unknown[]) => ({ eq: args }),
@@ -47,10 +47,10 @@ const job: SelfUpdateJob = {
   status: 'requested',
   currentVersion: '1.0.0',
   targetVersion: '1.1.0',
-  repository: 'example/tasknebula',
+  repository: 'example/validteam',
   imageTag: '1.1.0',
   digest: `sha256:${'a'.repeat(64)}`,
-  imageRef: `example/tasknebula@sha256:${'a'.repeat(64)}`,
+  imageRef: `example/validteam@sha256:${'a'.repeat(64)}`,
   backup,
   releaseUrl: 'https://example.com/releases/1.1.0',
   triggeredBy: 'admin_1',

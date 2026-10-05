@@ -15,7 +15,7 @@ export const createIssueInput = z.object({
 
 export const createIssueTool: ToolDefinition<typeof createIssueInput> = {
   name: 'create_issue',
-  description: 'Create a new issue in a TaskNebula project.',
+  description: 'Create a new issue in a ValidTeam project.',
   inputSchema: createIssueInput,
   async handler(input, { client }) {
     return client.post('/api/issues', withAgentPolicy(input));

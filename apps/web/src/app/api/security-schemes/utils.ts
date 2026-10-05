@@ -1,4 +1,4 @@
-import { db, issueSecuritySchemes } from '@tasknebula/db';
+import { db, issueSecuritySchemes } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { isActiveOrganizationMember } from '@/lib/auth/access-control';
 import { hasPermission } from '@/lib/auth/permissions';

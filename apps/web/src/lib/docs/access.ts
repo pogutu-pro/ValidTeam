@@ -1,4 +1,4 @@
-import { hasPermission as roleHasPermission } from '@tasknebula/db';
+import { hasPermission as roleHasPermission } from '@validteam/db';
 import type { OrgDocumentRole } from './server';
 
 export type DocumentProjectListingMode = 'all' | 'memberships' | 'none';

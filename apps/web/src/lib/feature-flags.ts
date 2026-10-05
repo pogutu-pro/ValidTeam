@@ -1,4 +1,4 @@
-import { db, featureFlags, organizations } from '@tasknebula/db';
+import { db, featureFlags, organizations } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 
 export const PRODUCT_FEATURE_FLAGS = {

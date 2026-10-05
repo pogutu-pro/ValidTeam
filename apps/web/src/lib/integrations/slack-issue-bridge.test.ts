@@ -77,7 +77,7 @@ jest.mock('drizzle-orm', () => ({
   ne: (...args: unknown[]) => ({ ne: args }),
   sql: (strings: TemplateStringsArray, ...values: unknown[]) => ({ strings, values }),
 }));
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   function table(name: string, columns: string[]) {
     return Object.fromEntries([
       ['name', name],

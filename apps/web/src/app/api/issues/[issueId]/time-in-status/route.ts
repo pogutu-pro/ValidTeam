@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, issueStatusHistory, workflowStatuses } from '@tasknebula/db';
+import { db, issueStatusHistory, workflowStatuses } from '@validteam/db';
 import { eq, asc } from 'drizzle-orm';
 import { computeTimeInStatus } from '@/lib/issues/time-in-status';
 import { canReadIssue, isActiveOrganizationMember } from '@/lib/auth/access-control';

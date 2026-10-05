@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
-import type { Permission } from '@tasknebula/db';
+import type { Permission } from '@validteam/db';
 
 export type { Permission };
 

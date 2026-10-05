@@ -4,7 +4,7 @@
  * dispatch-agent route flow test.
  *
  * Exercises POST /api/issues/[issueId]/dispatch-agent against a mocked
- * `@tasknebula/db`, mocked `auth`, and mocked global `fetch`. Asserts:
+ * `@validteam/db`, mocked `auth`, and mocked global `fetch`. Asserts:
  *   - 401 when there is no session
  *   - 422 when the workspace has no provider configured for the requested
  *     provider key
@@ -46,7 +46,7 @@ const fake: FakeQuery = {
   },
 };
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const tableSentinels = {
     users: { __name: 'users' },
     issues: { __name: 'issues' },
@@ -187,7 +187,7 @@ jest.mock('@/lib/agents/provider-endpoint', () => ({
 import { auth as authMock } from '@/auth';
 
 const originalAppUrl = process.env.NEXT_PUBLIC_APP_URL;
-process.env.NEXT_PUBLIC_APP_URL = 'https://tasknebula.test';
+process.env.NEXT_PUBLIC_APP_URL = 'https://validteam.test';
 
 // Pull the helpers we need _after_ the mocks above so the route picks them
 // up.
@@ -345,7 +345,7 @@ describe('POST /api/issues/[id]/dispatch-agent', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.state).toBe('active');
-    expect(body.callbackUrl).toBe('https://tasknebula.test/api/webhooks/agent-session/cursor');
+    expect(body.callbackUrl).toBe('https://validteam.test/api/webhooks/agent-session/cursor');
 
     // The provider URL was hit exactly once with a signed body.
     expect(mockPostAgentProviderEndpoint).toHaveBeenCalledTimes(1);
@@ -357,9 +357,9 @@ describe('POST /api/issues/[id]/dispatch-agent', () => {
     const headers = init.headers;
     const rawBody = init.body;
     const expectedSig = signAgentPayload(rawBody, hmacSecret);
-    expect(headers['X-TaskNebula-Signature']).toBe(`sha256=${expectedSig}`);
-    expect(headers['X-TaskNebula-Event']).toBe('agent.session.dispatch');
-    expect(headers['X-TaskNebula-Session-Id']).toBe(body.sessionId);
+    expect(headers['X-ValidTeam-Signature']).toBe(`sha256=${expectedSig}`);
+    expect(headers['X-ValidTeam-Event']).toBe('agent.session.dispatch');
+    expect(headers['X-ValidTeam-Session-Id']).toBe(body.sessionId);
 
     // The envelope carries the right Linear-compatible bits.
     const parsed = JSON.parse(rawBody);
@@ -368,14 +368,14 @@ describe('POST /api/issues/[id]/dispatch-agent', () => {
         sessionId: body.sessionId,
         actorUserId: 'user_caller',
         promptOverride: 'be fast',
-        callbackUrl: 'https://tasknebula.test/api/webhooks/agent-session/cursor',
+        callbackUrl: 'https://validteam.test/api/webhooks/agent-session/cursor',
         issue: expect.objectContaining({
           id: 'issue_1',
           key: 'TN-1',
           title: 'Wire agent dispatcher',
           projectId: 'proj_1',
           organizationId: 'org_1',
-          url: 'https://tasknebula.test/issues/issue_1',
+          url: 'https://validteam.test/issues/issue_1',
         }),
       })
     );
@@ -437,7 +437,7 @@ describe('POST /api/issues/[id]/dispatch-agent', () => {
     mockResolveLocalAgentRunner.mockReturnValue({
       provider: 'codex',
       command: 'codex',
-      cwd: '/srv/tasknebula',
+      cwd: '/srv/validteam',
       model: null,
       timeoutMs: 3600000,
       maxTurns: null,

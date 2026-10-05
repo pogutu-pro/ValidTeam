@@ -10,13 +10,13 @@ import {
   projects,
   workflows,
   workflowStatuses,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { getClientIp } from '@/lib/auth/rate-limit';
 import { checkIntakeRateLimit } from '@/lib/intake/rate-limit';
 import { isCaptchaConfigured, verifyCaptcha } from '@/lib/intake/captcha';
 import { buildIssueDescription, deriveIssueTitle, validateSubmission } from '@/lib/intake/schema';
-import type { IntakeFieldDefinition } from '@tasknebula/db';
+import type { IntakeFieldDefinition } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 
 export const dynamic = 'force-dynamic';

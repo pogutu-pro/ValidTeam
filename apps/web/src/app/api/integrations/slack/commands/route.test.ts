@@ -31,7 +31,7 @@ jest.mock('next-intl/server', () => ({
     return messages[key] ?? key;
   },
 }));
-jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
+jest.mock('@validteam/db/src/schema/integration-connections', () => ({
   integrationConnections: {
     id: 'integration.id',
     provider: 'integration.provider',
@@ -39,7 +39,7 @@ jest.mock('@tasknebula/db/src/schema/integration-connections', () => ({
     accessTokenEnc: 'integration.accessTokenEnc',
   },
 }));
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   eq: (...args: unknown[]) => ({ eq: args }),
   and: (...args: unknown[]) => ({ and: args }),
   db: {

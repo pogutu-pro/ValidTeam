@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, automationRules } from '@tasknebula/db';
+import { db, automationRules } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { authorizeAutomationRule } from '@/lib/automation/access';
 

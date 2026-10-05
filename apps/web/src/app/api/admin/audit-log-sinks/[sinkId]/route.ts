@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
 import { hasPermission } from '@/lib/auth/permissions';
-import { auditLogs, auditLogSinks, db, eq } from '@tasknebula/db';
+import { auditLogs, auditLogSinks, db, eq } from '@validteam/db';
 import { redactSinkConfig, validateSinkConfig } from '../utils';
 
 export const dynamic = 'force-dynamic';

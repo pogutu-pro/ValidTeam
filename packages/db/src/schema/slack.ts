@@ -9,7 +9,7 @@
  *     should receive new issues created from a Slack message (emoji-triage,
  *     "create issue from message", or a slash command without a project arg).
  *  2. `slack_message_links` — bidirectional mapping between a Slack message
- *     (and the bot thread we posted) and the TaskNebula issue it spawned, so
+ *     (and the bot thread we posted) and the ValidTeam issue it spawned, so
  *     subsequent comments and status changes mirror back into the same thread.
  *
  * Both tables are scoped by `organizationId` so multi-tenant data stays isolated;

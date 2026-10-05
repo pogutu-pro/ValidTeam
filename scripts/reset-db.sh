@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Reset the local TaskNebula database. This permanently deletes its data.
+# Reset the local ValidTeam database. This permanently deletes its data.
 
 set -euo pipefail
 
@@ -24,7 +24,7 @@ database_name="${POSTGRES_DB:-$(env_value .env POSTGRES_DB)}"
 database_user="${POSTGRES_USER:-$(env_value .env POSTGRES_USER)}"
 database_password="${POSTGRES_PASSWORD:-$(env_value .env POSTGRES_PASSWORD)}"
 database_port="${DB_PORT:-$(env_value .env DB_PORT)}"
-database_name="${database_name:-tasknebula}"
+database_name="${database_name:-validteam}"
 database_user="${database_user:-postgres}"
 database_port="${database_port:-5432}"
 database_host=''
@@ -40,9 +40,9 @@ if [[ -n "$database_url" ]]; then
 
   if [[ "$database_host" != 'localhost' && "$database_host" != '127.0.0.1' &&
     "$database_host" != '::1' && "$database_host" != 'postgres' &&
-    "${TASKNEBULA_ALLOW_REMOTE_DB_RESET:-0}" != '1' ]]; then
+    "${VALIDTEAM_ALLOW_REMOTE_DB_RESET:-0}" != '1' ]]; then
     printf 'Error: refusing to reset non-local database host %q.\n' "$database_host" >&2
-    printf 'Set TASKNEBULA_ALLOW_REMOTE_DB_RESET=1 only after independently verifying the target.\n' >&2
+    printf 'Set VALIDTEAM_ALLOW_REMOTE_DB_RESET=1 only after independently verifying the target.\n' >&2
     exit 1
   fi
 fi
@@ -52,7 +52,7 @@ if [[ ! "$database_name" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
   exit 1
 fi
 
-printf 'TaskNebula database reset\n'
+printf 'ValidTeam database reset\n'
 printf 'This will permanently drop and recreate database: %s\n' "$database_name"
 read -r -p "Type the database name to confirm: " confirmation
 if [[ "$confirmation" != "$database_name" ]]; then

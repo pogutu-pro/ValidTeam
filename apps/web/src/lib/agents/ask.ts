@@ -21,7 +21,7 @@
  */
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
-import { db } from '@tasknebula/db';
+import { db } from '@validteam/db';
 import {
   findUnresolvedCitations,
   parseCitations,

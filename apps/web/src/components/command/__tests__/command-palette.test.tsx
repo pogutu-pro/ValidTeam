@@ -229,7 +229,7 @@ describe('CommandPalette (FEAT-25 omnibar)', () => {
     await renderOpen();
 
     const askEvent = jest.fn();
-    window.addEventListener('tasknebula:ask-ai', askEvent);
+    window.addEventListener('validteam:ask-ai', askEvent);
 
     const input = screen.getByLabelText('Command palette query');
     await user.type(input, 'why is sprint velocity dropping?');
@@ -251,6 +251,6 @@ describe('CommandPalette (FEAT-25 omnibar)', () => {
         },
       })
     );
-    window.removeEventListener('tasknebula:ask-ai', askEvent);
+    window.removeEventListener('validteam:ask-ai', askEvent);
   });
 });

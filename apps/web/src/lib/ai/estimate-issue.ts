@@ -19,7 +19,7 @@
  */
 
 import { sql, and, eq, isNotNull, desc } from 'drizzle-orm';
-import { db, issues, workflowStatuses, contentEmbeddings } from '@tasknebula/db';
+import { db, issues, workflowStatuses, contentEmbeddings } from '@validteam/db';
 
 /**
  * Minimum number of neighbour issues we need before we trust the similarity

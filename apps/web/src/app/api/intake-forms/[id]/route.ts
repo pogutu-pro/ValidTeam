@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, intakeForms } from '@tasknebula/db';
+import { db, intakeForms } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { intakeFieldsArraySchema } from '@/lib/intake/schema';

@@ -1,5 +1,5 @@
 {
-  "name": "@tasknebula/db",
+  "name": "@validteam/db",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
-    "@tasknebula/types": "workspace:*",
+    "@validteam/types": "workspace:*",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.45.2",
@@ -28,7 +28,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@tasknebula/config": "workspace:*",
+    "@validteam/config": "workspace:*",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.10.2",
     "@types/web-push": "^3.6.4",

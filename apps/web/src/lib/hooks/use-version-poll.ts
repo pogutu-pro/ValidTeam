@@ -23,7 +23,7 @@ async function fetchVersionInfo(loadError: string): Promise<VersionInfo> {
  * Shares the `VERSION_INFO_QUERY_KEY` cache with `useVersionInfo`, so the
  * version panel and the banner stay in sync. Polling pauses while the tab is in
  * the background and stops entirely once the server reports the check is
- * disabled (`TASKNEBULA_DISABLE_UPDATE_CHECK`), so we never hammer the endpoint.
+ * disabled (`VALIDTEAM_DISABLE_UPDATE_CHECK`), so we never hammer the endpoint.
  */
 export function useVersionPoll() {
   const t = useTranslations('hookErrors.version');

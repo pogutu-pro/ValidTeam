@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, systemAuditLogs } from '@tasknebula/db';
+import { db, systemAuditLogs } from '@validteam/db';
 import {
   getLivekitConfigStored,
   sanitizeLivekitConfig,

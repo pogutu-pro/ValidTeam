@@ -457,7 +457,7 @@
     "viewDockerTag": "Docker tagini görüntüle",
     "published": "{date} tarihinde yayınlandı",
     "lastChecked": "Son denetim {time}",
-    "checksDisabledHint": "Güncelleme denetimleri TASKNEBULA_DISABLE_UPDATE_CHECK ortam değişkeniyle kapatılmış. Yeni sürümleri burada görmek için bu değişkeni kaldırın.",
+    "checksDisabledHint": "Güncelleme denetimleri VALIDTEAM_DISABLE_UPDATE_CHECK ortam değişkeniyle kapatılmış. Yeni sürümleri burada görmek için bu değişkeni kaldırın.",
     "notCheckedHint": "Henüz sürüm bilgisi yok. En son yayınlanan sürümle karşılaştırmak için denetim çalıştırın.",
     "releaseNotes": "Sürüm notları",
     "viewRelease": "Sürümü GitHub'da görüntüle",
@@ -495,10 +495,10 @@
       "jobTitle": "Son güncelleme isteği: {version}",
       "jobUpdated": "Son güncelleme {time}",
       "blocked": {
-        "disabled": "Kendini güncelleme kapalı. Etkinleştirmek için TASKNEBULA_SELF_UPDATE_ENABLED=true ayarlayın ve updater webhookunu yapılandırın.",
-        "missing_webhook": "Kendini güncelleme açık, ancak TASKNEBULA_SELF_UPDATE_WEBHOOK_URL eksik veya geçersiz.",
-        "missing_secret": "Kendini güncelleme açık, ancak TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET eksik.",
-        "weak_secret": "TASKNEBULA_SELF_UPDATE_WEBHOOK_SECRET en az 32 bayt öngörülemez gizli değer içermelidir.",
+        "disabled": "Kendini güncelleme kapalı. Etkinleştirmek için VALIDTEAM_SELF_UPDATE_ENABLED=true ayarlayın ve updater webhookunu yapılandırın.",
+        "missing_webhook": "Kendini güncelleme açık, ancak VALIDTEAM_SELF_UPDATE_WEBHOOK_URL eksik veya geçersiz.",
+        "missing_secret": "Kendini güncelleme açık, ancak VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET eksik.",
+        "weak_secret": "VALIDTEAM_SELF_UPDATE_WEBHOOK_SECRET en az 32 bayt öngörülemez gizli değer içermelidir.",
         "checks_disabled": "Güncelleme kontrolleri kapalı olduğu için uygulama güvenli şekilde hedef Docker imajı seçemez.",
         "no_update": "Daha yeni Docker imajı yok.",
         "missing_docker_image": "Docker Hub kurulacak semver imaj tagi döndürmedi.",
@@ -3788,7 +3788,7 @@
           "codex": "Codex CLI"
         },
         "reason": {
-          "disabled": "Yerel CLI gönderimi kapalı. Sağlayıcıyı buradan açın veya sunucu genelinde varsayılan olarak TASKNEBULA_LOCAL_AGENT_RUNNER_ENABLED=true ayarlayın.",
+          "disabled": "Yerel CLI gönderimi kapalı. Sağlayıcıyı buradan açın veya sunucu genelinde varsayılan olarak VALIDTEAM_LOCAL_AGENT_RUNNER_ENABLED=true ayarlayın.",
           "cwd_missing": "Çalışma dizini bulunamadı: {value}",
           "command_missing": "Komut PATH üzerinde bulunamadı: {value}"
         }
@@ -7154,5 +7154,16 @@
     "modalOpenFailed": "Yeni kayıt penceresi açılamadı. Yeniden deneyin.",
     "modalDescriptionStandaloneLabel": "Açıklama",
     "modalStandaloneProjectLabel": "Proje anahtarı (zorunlu, ör. TN)"
+  },
+  "requestAccessPage": {
+    "title": "Request access",
+    "intro": "ValidTeam is currently internal-only.",
+    "name": "Name",
+    "email": "Email",
+    "reason": "Why do you need access?",
+    "submit": "Send request",
+    "sent": "Request sent. I will review it personally.",
+    "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
+    "spamNotice": "This only sends me a note. No account is created until I approve."
   }
 }

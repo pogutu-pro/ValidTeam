@@ -9,7 +9,7 @@ import {
   issuePriorityEnum,
   issueTypeEnum,
   projects,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, and, or, inArray, gte, lte, desc, sql, type SQL } from 'drizzle-orm';
 import { withValidation } from '@/lib/api-validation';
 import { hybridSearch, looksLikeFreeText } from '@/lib/search/hybrid';
@@ -38,7 +38,7 @@ const searchQuerySchema = z.object({
 // pg enums — invalid values must never reach Postgres (enum cast error).
 // A filter left with no valid values matches nothing instead of everything.
 // `enumValues` is read lazily (not at module scope) so unit tests can mock
-// @tasknebula/db without stubbing the enum objects.
+// @validteam/db without stubbing the enum objects.
 type IssuePriority = (typeof issuePriorityEnum.enumValues)[number];
 type IssueType = (typeof issueTypeEnum.enumValues)[number];
 

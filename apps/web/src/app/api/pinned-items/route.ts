@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, pinnedItems } from '@tasknebula/db';
+import { db, pinnedItems } from '@validteam/db';
 import { eq, desc, and } from 'drizzle-orm';
 import { z } from 'zod';
 
@@ -36,10 +36,7 @@ export async function GET() {
     return NextResponse.json({ items });
   } catch (error) {
     console.error('Get pinned items error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get pinned items' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get pinned items' }, { status: 500 });
   }
 }
 
@@ -62,12 +59,7 @@ export async function POST(request: NextRequest) {
     const [existing] = await db
       .select()
       .from(pinnedItems)
-      .where(
-        and(
-          eq(pinnedItems.userId, session.user.id),
-          eq(pinnedItems.href, data.href)
-        )
-      )
+      .where(and(eq(pinnedItems.userId, session.user.id), eq(pinnedItems.href, data.href)))
       .limit(1);
 
     if (existing) {
@@ -95,9 +87,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('Create pinned item error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create pinned item' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create pinned item' }, { status: 500 });
   }
 }

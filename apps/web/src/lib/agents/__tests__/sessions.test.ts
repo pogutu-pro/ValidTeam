@@ -12,7 +12,7 @@
  *      "Devin completed PR #42" line the issue thread relies on.
  *
  * Pure helpers only — no DB, no network. The dispatch flow test below mocks
- * `@tasknebula/db` and global `fetch` so it can exercise the route handler
+ * `@validteam/db` and global `fetch` so it can exercise the route handler
  * end-to-end without Postgres.
  */
 

@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2';
-import { db, sql, systemAuditLogs } from '@tasknebula/db';
+import { db, sql, systemAuditLogs } from '@validteam/db';
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { resolveStorageConfig, STORAGE_CONFIG_ADVISORY_LOCK } from '@/lib/admin/system-settings';

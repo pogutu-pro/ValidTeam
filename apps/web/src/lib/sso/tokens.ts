@@ -11,7 +11,7 @@
  */
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { db, scimTokens, organizations, eq, and, isNull, ne } from '@tasknebula/db';
+import { db, scimTokens, organizations, eq, and, isNull, ne } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 import { hasScimScope, type ScimScope } from '@/lib/scim/scopes';
 

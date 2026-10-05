@@ -55,7 +55,7 @@ export const integrationConnections = pgTable(
     ),
     // Incoming Slack webhooks identify only the Slack workspace (`team_id`).
     // Make that identity globally unambiguous so an event can never be routed
-    // to an arbitrary TaskNebula organization.
+    // to an arbitrary ValidTeam organization.
     slackWorkspaceIdx: uniqueIndex('integration_connections_slack_workspace_idx')
       .on(table.externalAccountId)
       .where(sql`${table.provider} = 'slack' AND ${table.externalAccountId} IS NOT NULL`),

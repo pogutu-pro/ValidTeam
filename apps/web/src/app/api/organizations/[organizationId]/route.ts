@@ -8,7 +8,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { db, organizations, organizationMembers, projects, teams, apiKeys } from '@tasknebula/db';
+import { db, organizations, organizationMembers, projects, teams, apiKeys } from '@validteam/db';
 import { eq, and, count, ne } from 'drizzle-orm';
 import { hasPermission, getUserRole } from '@/lib/auth/permissions';
 

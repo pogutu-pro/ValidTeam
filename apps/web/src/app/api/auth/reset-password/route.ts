@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { sql } from 'drizzle-orm';
-import { db, users } from '@tasknebula/db';
-import { passwordResetTokens } from '@tasknebula/db/src/schema/password-reset-tokens';
+import { db, users } from '@validteam/db';
+import { passwordResetTokens } from '@validteam/db/src/schema/password-reset-tokens';
 import { eq } from 'drizzle-orm';
 import { checkRateLimit, getClientIp } from '@/lib/auth/rate-limit';
 

@@ -11,7 +11,7 @@ import {
   or,
   projectTemplates,
   users,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { auth } from '@/auth';
 import { getTemplateAuthz } from '@/lib/templates/authz';
 import {

@@ -31,7 +31,7 @@ imports `routes/index.ts` for its side effects and writes
 Run it locally with:
 
 ```bash
-pnpm --filter @tasknebula/web openapi:gen
+pnpm --filter @validteam/web openapi:gen
 ```
 
 ## Registering a new route
@@ -85,11 +85,11 @@ pnpm --filter @tasknebula/web openapi:gen
 4. **Regenerate the spec and commit it:**
 
    ```bash
-   pnpm --filter @tasknebula/web openapi:gen
+   pnpm --filter @validteam/web openapi:gen
    git add apps/web/public/openapi.json
    ```
 
-   CI runs `pnpm --filter @tasknebula/web openapi:check`, which regenerates the
+   CI runs `pnpm --filter @validteam/web openapi:check`, which regenerates the
    spec and fails on a tracked diff.
 
 ## Conventions

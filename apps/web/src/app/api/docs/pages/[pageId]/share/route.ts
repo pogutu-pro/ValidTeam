@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/auth';
-import { createAuditLog, db, documentPages, eq } from '@tasknebula/db';
+import { createAuditLog, db, documentPages, eq } from '@validteam/db';
 import {
   buildDocumentPageResponse,
   canManageDocumentPublicShare,
@@ -54,7 +54,9 @@ export async function PATCH(
     }
 
     const nextPublishedAt = nextEnabled ? currentPage.publicSharePublishedAt || new Date() : null;
-    const nextPublishedBy = nextEnabled ? currentPage.publicSharePublishedBy || session.user.id : null;
+    const nextPublishedBy = nextEnabled
+      ? currentPage.publicSharePublishedBy || session.user.id
+      : null;
 
     await db
       .update(documentPages)
@@ -115,7 +117,10 @@ export async function PATCH(
     return NextResponse.json(responsePage);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
     }
 
     console.error('Error updating document sharing:', error);

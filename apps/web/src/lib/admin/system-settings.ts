@@ -1,6 +1,6 @@
 import { createId } from '@paralleldrive/cuid2';
 import path from 'node:path';
-import { db, eq, systemSettings } from '@tasknebula/db';
+import { db, eq, systemSettings } from '@validteam/db';
 import {
   decryptSecretEnvelope,
   encryptSecretEnvelope,
@@ -12,7 +12,7 @@ import {
 export const SMTP_CONFIG_KEY = 'smtp_config';
 export const LIVEKIT_CONFIG_KEY = 'livekit_config';
 export const STORAGE_CONFIG_KEY = 'storage_config';
-export const STORAGE_CONFIG_ADVISORY_LOCK = 'tasknebula:storage-config:v1';
+export const STORAGE_CONFIG_ADVISORY_LOCK = 'validteam:storage-config:v1';
 
 type SystemSettingsDbClient = Pick<typeof db, 'select' | 'insert' | 'update'>;
 

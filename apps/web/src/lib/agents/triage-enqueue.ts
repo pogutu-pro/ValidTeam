@@ -9,7 +9,7 @@
  * assistance, not a critical-path side effect.
  */
 
-import { db, issueTriageSuggestions } from '@tasknebula/db';
+import { db, issueTriageSuggestions } from '@validteam/db';
 import { triageIssue } from './triage';
 
 export function enqueueTriageOnCreate(issueId: string): void {

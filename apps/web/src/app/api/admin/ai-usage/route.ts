@@ -16,15 +16,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, llmCallAudit, orgTokenBudgets, organizations } from '@tasknebula/db';
+import { db, llmCallAudit, orgTokenBudgets, organizations } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
 
 function startOfUtcDay(date = new Date()): Date {
-  return new Date(
-    Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
-  );
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
 function startOfUtcMonth(date = new Date()): Date {
@@ -38,17 +36,11 @@ export async function GET(request: NextRequest) {
   }
   const admin = await isSuperAdmin();
   if (!admin) {
-    return NextResponse.json(
-      { error: 'Super admin access required' },
-      { status: 403 }
-    );
+    return NextResponse.json({ error: 'Super admin access required' }, { status: 403 });
   }
 
   const url = new URL(request.url);
-  const days = Math.min(
-    Math.max(parseInt(url.searchParams.get('days') ?? '7', 10) || 7, 1),
-    90
-  );
+  const days = Math.min(Math.max(parseInt(url.searchParams.get('days') ?? '7', 10) || 7, 1), 90);
   const organizationFilter = url.searchParams.get('organizationId') ?? null;
 
   const dayStart = startOfUtcDay();
@@ -74,10 +66,7 @@ export async function GET(request: NextRequest) {
       killSwitchEnabled: orgTokenBudgets.killSwitchEnabled,
     })
     .from(organizations)
-    .leftJoin(
-      orgTokenBudgets,
-      eq(orgTokenBudgets.organizationId, organizations.id)
-    );
+    .leftJoin(orgTokenBudgets, eq(orgTokenBudgets.organizationId, organizations.id));
   const budgetRows = organizationFilter
     ? await budgetRowsQuery.where(eq(organizations.id, organizationFilter))
     : await budgetRowsQuery;
@@ -103,7 +92,7 @@ export async function GET(request: NextRequest) {
   const aggResult = await db.execute(aggregateQuery);
   const aggRows = Array.isArray(aggResult)
     ? (aggResult as Record<string, unknown>[])
-    : (((aggResult as { rows?: Record<string, unknown>[] }).rows) ?? []);
+    : ((aggResult as { rows?: Record<string, unknown>[] }).rows ?? []);
   const aggByOrg = new Map<string, Record<string, unknown>>();
   for (const row of aggRows) {
     aggByOrg.set(String(row.organization_id), row);
@@ -126,15 +115,16 @@ export async function GET(request: NextRequest) {
   const histResult = await db.execute(histQuery);
   const histRows = Array.isArray(histResult)
     ? (histResult as Record<string, unknown>[])
-    : (((histResult as { rows?: Record<string, unknown>[] }).rows) ?? []);
-  const histByOrg = new Map<string, Array<{ day: string; calls: number; tokens: number; cost: number }>>();
+    : ((histResult as { rows?: Record<string, unknown>[] }).rows ?? []);
+  const histByOrg = new Map<
+    string,
+    Array<{ day: string; calls: number; tokens: number; cost: number }>
+  >();
   for (const row of histRows) {
     const orgId = String(row.organization_id);
     const entry = {
       day:
-        row.day instanceof Date
-          ? row.day.toISOString().slice(0, 10)
-          : String(row.day).slice(0, 10),
+        row.day instanceof Date ? row.day.toISOString().slice(0, 10) : String(row.day).slice(0, 10),
       calls: Number(row.calls ?? 0),
       tokens: Number(row.tokens ?? 0),
       cost: Number(row.cost ?? 0),
@@ -162,8 +152,11 @@ export async function GET(request: NextRequest) {
   const featureResult = await db.execute(featureQuery);
   const featureRows = Array.isArray(featureResult)
     ? (featureResult as Record<string, unknown>[])
-    : (((featureResult as { rows?: Record<string, unknown>[] }).rows) ?? []);
-  const featuresByOrg = new Map<string, Array<{ feature: string; calls: number; tokens: number; cost: number }>>();
+    : ((featureResult as { rows?: Record<string, unknown>[] }).rows ?? []);
+  const featuresByOrg = new Map<
+    string,
+    Array<{ feature: string; calls: number; tokens: number; cost: number }>
+  >();
   for (const row of featureRows) {
     const orgId = String(row.organization_id);
     const list = featuresByOrg.get(orgId) ?? [];
@@ -185,8 +178,7 @@ export async function GET(request: NextRequest) {
         dailyTokens: row.dailyTokenLimit ?? null,
         monthlyTokens: row.monthlyTokenLimit ?? null,
         dailyCostUsd: row.dailyCostUsdLimit !== null ? Number(row.dailyCostUsdLimit) : null,
-        monthlyCostUsd:
-          row.monthlyCostUsdLimit !== null ? Number(row.monthlyCostUsdLimit) : null,
+        monthlyCostUsd: row.monthlyCostUsdLimit !== null ? Number(row.monthlyCostUsdLimit) : null,
       },
       reservedUsage: {
         dailyTokens: row.dailyUsedTokens ?? 0,

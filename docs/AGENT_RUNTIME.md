@@ -6,7 +6,7 @@
 durable, while deep research and the shared cross-product runtime remain
 partial.
 
-This document is the canonical contract for TaskNebula agent loops, research
+This document is the canonical contract for ValidTeam agent loops, research
 graphs, workflow mutation gates, and human approval. It deliberately separates
 what exists from the target architecture.
 

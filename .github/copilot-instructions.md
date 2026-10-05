@@ -1,4 +1,4 @@
-# TaskNebula repository instructions
+# ValidTeam repository instructions
 
 Read the root `AGENTS.md` and `CLAUDE.md` before making changes, then read the
 nearest package `CLAUDE.md`. Those files are canonical; this file is only a

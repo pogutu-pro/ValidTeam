@@ -1,4 +1,4 @@
-import { MAX_INITIATIVE_DEPTH } from '@tasknebula/db';
+import { MAX_INITIATIVE_DEPTH } from '@validteam/db';
 
 /**
  * Initiative depth helpers.

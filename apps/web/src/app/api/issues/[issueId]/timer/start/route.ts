@@ -10,7 +10,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { and, db, eq, isNull, timeEntries } from '@tasknebula/db';
+import { and, db, eq, isNull, timeEntries } from '@validteam/db';
 import { assertIssueAccess } from '@/lib/time-tracking/server';
 
 export async function POST(

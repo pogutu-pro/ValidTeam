@@ -1,4 +1,4 @@
-import { ROLE_DEFAULT_PERMISSIONS, type ProjectRole } from '@tasknebula/db';
+import { ROLE_DEFAULT_PERMISSIONS, type ProjectRole } from '@validteam/db';
 
 const PROJECT_PERMISSION_COLUMNS = [
   'canBrowseProject',

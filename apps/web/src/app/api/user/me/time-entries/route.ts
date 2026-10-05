@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { and, db, desc, eq, gte, lte, timeEntries, issues } from '@tasknebula/db';
+import { and, db, desc, eq, gte, lte, timeEntries, issues } from '@validteam/db';
 
 const DEFAULT_RANGE_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_RANGE_MS = 90 * 24 * 60 * 60 * 1000;

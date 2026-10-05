@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db, organizations, systemAuditLogs } from '@tasknebula/db';
+import { db, organizations, systemAuditLogs } from '@validteam/db';
 import { and, eq, ne } from 'drizzle-orm';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';

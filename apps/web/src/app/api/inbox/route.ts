@@ -41,7 +41,7 @@ import {
   lte,
   isNull,
   inArray,
-} from '@tasknebula/db';
+} from '@validteam/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,7 +76,14 @@ const TYPE_GROUPS: Record<string, DbNotificationType[]> = {
 };
 
 type InboxTypeChip = 'mention' | 'assignment' | 'due' | 'status' | 'comment' | 'reaction';
-const VALID_TYPE_CHIPS: InboxTypeChip[] = ['mention', 'assignment', 'due', 'status', 'comment', 'reaction'];
+const VALID_TYPE_CHIPS: InboxTypeChip[] = [
+  'mention',
+  'assignment',
+  'due',
+  'status',
+  'comment',
+  'reaction',
+];
 const VALID_ACTOR_TYPES = ['user', 'agent', 'webhook', 'system'] as const;
 type InboxActorType = (typeof VALID_ACTOR_TYPES)[number];
 
@@ -127,7 +134,10 @@ export async function GET(request: NextRequest) {
       conditions.push(eq(notifications.actorType, actorTypeParam as InboxActorType));
     }
 
-    if (notificationTypeParam && VALID_TYPE_CHIPS.includes(notificationTypeParam as InboxTypeChip)) {
+    if (
+      notificationTypeParam &&
+      VALID_TYPE_CHIPS.includes(notificationTypeParam as InboxTypeChip)
+    ) {
       const enumValues = TYPE_GROUPS[notificationTypeParam] ?? [];
       if (enumValues.length > 0) {
         conditions.push(inArray(notifications.type, enumValues));

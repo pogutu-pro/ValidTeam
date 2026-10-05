@@ -45,7 +45,7 @@ jest.mock('@/auth', () => ({
   auth: (...args: unknown[]) => authMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => {
+jest.mock('@validteam/db', () => {
   const op = (type: string, args: unknown[]) => ({ type, args });
   return {
     db: { update: (...args: unknown[]) => dbUpdateMock(...args) },
@@ -140,10 +140,7 @@ describe('POST /api/inbox/mark-all-read', () => {
     expect(
       findNodes(
         captured,
-        (n) =>
-          n.type === 'eq' &&
-          n.args[0] === 'notifications.projectId' &&
-          n.args[1] === 'p1'
+        (n) => n.type === 'eq' && n.args[0] === 'notifications.projectId' && n.args[1] === 'p1'
       ).length
     ).toBeGreaterThan(0);
   });

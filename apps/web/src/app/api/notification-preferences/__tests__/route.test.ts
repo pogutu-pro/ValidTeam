@@ -65,7 +65,7 @@ jest.mock('@/lib/auth/permissions', () => ({
   hasPermission: (...args: unknown[]) => hasPermissionMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),
@@ -128,9 +128,7 @@ describe('/api/notification-preferences route', () => {
     it('returns 401 when unauthenticated', async () => {
       authMock.mockResolvedValue(null);
       const response = await GET(
-        new NextRequestCtor(
-          'http://localhost/api/notification-preferences?organizationId=org-1'
-        )
+        new NextRequestCtor('http://localhost/api/notification-preferences?organizationId=org-1')
       );
       expect(response.status).toBe(401);
       await expect(response.json()).resolves.toEqual({ error: 'Unauthorized' });
@@ -152,9 +150,7 @@ describe('/api/notification-preferences route', () => {
       dbSelectMock.mockReturnValueOnce(selectReturning([]));
 
       const response = await GET(
-        new NextRequestCtor(
-          'http://localhost/api/notification-preferences?organizationId=org-1'
-        )
+        new NextRequestCtor('http://localhost/api/notification-preferences?organizationId=org-1')
       );
 
       expect(response.status).toBe(200);
@@ -197,9 +193,7 @@ describe('/api/notification-preferences route', () => {
       dbSelectMock.mockReturnValueOnce(selectReturning([existing]));
 
       const response = await GET(
-        new NextRequestCtor(
-          'http://localhost/api/notification-preferences?organizationId=org-1'
-        )
+        new NextRequestCtor('http://localhost/api/notification-preferences?organizationId=org-1')
       );
 
       expect(response.status).toBe(200);
@@ -313,9 +307,7 @@ describe('/api/notification-preferences route', () => {
 
     it('updates existing row via db.update (not insert)', async () => {
       authMock.mockResolvedValue({ user: { id: 'user-1' } });
-      dbSelectMock.mockReturnValueOnce(
-        selectReturning([{ id: 'existing-1', userId: 'user-1' }])
-      );
+      dbSelectMock.mockReturnValueOnce(selectReturning([{ id: 'existing-1', userId: 'user-1' }]));
       const setMock = jest.fn().mockReturnValue({
         where: jest.fn().mockReturnValue({
           returning: jest.fn().mockResolvedValue([{ id: 'existing-1' }]),
@@ -323,9 +315,7 @@ describe('/api/notification-preferences route', () => {
       });
       dbUpdateMock.mockReturnValueOnce({ set: setMock });
 
-      const response = await POST(
-        makeRequest({ organizationId: 'org-1', enableEmail: false })
-      );
+      const response = await POST(makeRequest({ organizationId: 'org-1', enableEmail: false }));
 
       expect(response.status).toBe(200);
       expect(dbUpdateMock).toHaveBeenCalledTimes(1);

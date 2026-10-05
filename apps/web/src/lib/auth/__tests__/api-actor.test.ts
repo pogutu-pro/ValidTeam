@@ -12,7 +12,7 @@ jest.mock('@/auth', () => ({
   auth: (...args: unknown[]) => authMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   apiKeys: {
     id: 'apiKeys.id',
     organizationId: 'apiKeys.organizationId',
@@ -159,7 +159,7 @@ describe('resolveApiActor', () => {
     await expect(
       resolveApiActor(
         new Request('https://app.test/api/issues', {
-          headers: { 'X-API-Key': 'not-a-tasknebula-key' },
+          headers: { 'X-API-Key': 'not-a-validteam-key' },
         })
       )
     ).resolves.toBeNull();

@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { Permission } from '@tasknebula/db';
+import { Permission } from '@validteam/db';
 import { hasPermission, hasAnyPermission, isSuperAdmin as checkSuperAdmin } from './permissions';
 
 /**

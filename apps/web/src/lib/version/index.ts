@@ -8,26 +8,26 @@
  *     Docker Hub tags API (`DOCKER_HUB_TAGS_URL`), at most once per
  *     `VERSION_CHECK_TTL_MS` (6h), when an admin/cron surface asks for update
  *     status or a Docker Hub webhook delivers a push event. No instance data
- *     is sent beyond a `tasknebula/<version>` User-Agent. This is not telemetry.
- *   - `TASKNEBULA_DISABLE_UPDATE_CHECK=true` disables all outbound calls.
+ *     is sent beyond a `validteam/<version>` User-Agent. This is not telemetry.
+ *   - `VALIDTEAM_DISABLE_UPDATE_CHECK=true` disables all outbound calls.
  *   - Results are cached in the `system_settings` table (key
  *     `version_check`) so multi-replica deployments share one cache.
  *   - Every failure mode (offline, 403/429, bad JSON, DB down) fails soft:
  *     callers get the last cached value or `null`, never an exception.
  */
 
-import { db, systemSettings, notifications, users, eq, and, sql } from '@tasknebula/db';
+import { db, systemSettings, notifications, users, eq, and, sql } from '@validteam/db';
 import pkg from '../../../package.json';
 import { getVersionUpdatePreferences } from './preferences';
 
 export const VERSION_CHECK_KEY = 'version_check';
 export const UPDATE_NOTIFICATION_KEY = 'version_update_notification';
-export const GITHUB_REPO_URL = 'https://github.com/neuraparse/taskNebula';
+export const GITHUB_REPO_URL = 'https://github.com/neuraparse/validTeam';
 export const RELEASES_LATEST_URL =
-  'https://api.github.com/repos/neuraparse/taskNebula/releases/latest';
-export const DOCKER_HUB_REPOSITORY = 'neuraparse/tasknebula';
+  'https://api.github.com/repos/neuraparse/validTeam/releases/latest';
+export const DOCKER_HUB_REPOSITORY = 'neuraparse/validteam';
 export const DOCKER_HUB_TAGS_URL =
-  'https://hub.docker.com/v2/namespaces/neuraparse/repositories/tasknebula/tags?page_size=100';
+  'https://hub.docker.com/v2/namespaces/neuraparse/repositories/validteam/tags?page_size=100';
 
 /** Cached check is considered fresh for 6 hours. */
 export const VERSION_CHECK_TTL_MS = 6 * 60 * 60 * 1000;
@@ -88,7 +88,7 @@ export type UpdateStatus = {
     updateAvailable: boolean;
     checkedAt: string | null;
   };
-  /** True when TASKNEBULA_DISABLE_UPDATE_CHECK suppresses all checks. */
+  /** True when VALIDTEAM_DISABLE_UPDATE_CHECK suppresses all checks. */
   checkDisabled: boolean;
 };
 
@@ -117,11 +117,11 @@ export type DockerHubWebhookResult = {
  * `process.env.npm_package_version` is NOT used — the Docker standalone
  * runtime starts via `node apps/web/server.js`, where it is undefined.
  * Importing package.json bakes the version into the bundle at build time.
- * `TASKNEBULA_VERSION` (when set to a valid semver) wins, so release
+ * `VALIDTEAM_VERSION` (when set to a valid semver) wins, so release
  * tooling can stamp images explicitly.
  */
 export function getCurrentVersion(): string {
-  const envVersion = process.env.TASKNEBULA_VERSION;
+  const envVersion = process.env.VALIDTEAM_VERSION;
   if (typeof envVersion === 'string' && SEMVERISH.test(envVersion.trim())) {
     return stripV(envVersion.trim());
   }
@@ -129,7 +129,7 @@ export function getCurrentVersion(): string {
 }
 
 export function isUpdateCheckDisabled(): boolean {
-  const flag = process.env.TASKNEBULA_DISABLE_UPDATE_CHECK;
+  const flag = process.env.VALIDTEAM_DISABLE_UPDATE_CHECK;
   return flag === 'true' || flag === '1';
 }
 
@@ -332,7 +332,7 @@ async function fetchLatestRelease(currentVersion: string): Promise<ReleaseCheckS
     const res = await fetch(RELEASES_LATEST_URL, {
       headers: {
         Accept: 'application/vnd.github+json',
-        'User-Agent': `tasknebula/${currentVersion}`,
+        'User-Agent': `validteam/${currentVersion}`,
       },
       // We manage our own TTL in system_settings — bypass Next's data cache.
       cache: 'no-store',
@@ -468,7 +468,7 @@ async function fetchLatestDockerImage(
     const res = await fetch(DOCKER_HUB_TAGS_URL, {
       headers: {
         Accept: 'application/json',
-        'User-Agent': `tasknebula/${currentVersion}`,
+        'User-Agent': `validteam/${currentVersion}`,
       },
       cache: 'no-store',
       signal: controller.signal,
@@ -609,8 +609,8 @@ function buildAvailableUpdateMessage(
     source === 'docker'
       ? `Docker Hub published ${status.image.repository}${dockerTag}.`
       : source === 'release_and_docker'
-        ? `GitHub and Docker Hub published TaskNebula ${latest}.`
-        : `GitHub published TaskNebula ${latest}.`;
+        ? `GitHub and Docker Hub published ValidTeam ${latest}.`
+        : `GitHub published ValidTeam ${latest}.`;
 
   return (
     `${sourceSentence} This instance is running v${status.current}. ` +

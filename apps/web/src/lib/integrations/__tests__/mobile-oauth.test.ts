@@ -63,7 +63,7 @@ describe('mobile integration OAuth state', () => {
     });
 
     expect(response.headers.get('location')).toBe(
-      'tasknebula://integrations/oauth?provider=github&status=error&server=https%3A%2F%2Ftasks.example.com&reason=invalid_state'
+      'validteam://integrations/oauth?provider=github&status=error&server=https%3A%2F%2Ftasks.example.com&reason=invalid_state'
     );
   });
 });

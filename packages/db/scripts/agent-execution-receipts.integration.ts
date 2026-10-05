@@ -2,7 +2,7 @@
  * Real-Postgres verification for migration 0061.
  *
  * Usage:
- *   TEST_DATABASE_URL=postgres://... pnpm --filter @tasknebula/db \
+ *   TEST_DATABASE_URL=postgres://... pnpm --filter @validteam/db \
  *     test:integration:agent-execution-receipts
  *
  * The target database must already have the repository migrations applied.

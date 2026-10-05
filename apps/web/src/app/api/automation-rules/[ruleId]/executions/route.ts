@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, automationRules, hasPermission as roleHasPermission } from '@tasknebula/db';
+import { db, automationRules, hasPermission as roleHasPermission } from '@validteam/db';
 import { eq, sql } from 'drizzle-orm';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 import { resolveProjectAccess } from '@/lib/auth/project-access';
@@ -8,7 +8,7 @@ import { resolveProjectAccess } from '@/lib/auth/project-access';
 // Local stub type for the automation_executions row.
 // The dedicated `automationExecutions` table is defined in the db package
 // (`packages/db/src/schema/automation-executions.ts`) but is not re-exported
-// through `@tasknebula/db` yet — another agent owns the schema/engine work.
+// through `@validteam/db` yet — another agent owns the schema/engine work.
 // Using raw SQL keeps this route unblocked for typecheck until the barrel
 // export lands; merge will clean this up to use the typed table directly.
 type AutomationExecutionRow = {

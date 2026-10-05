@@ -79,8 +79,8 @@ cd apps/web && npx tsx scripts/generate-openapi.ts
 - **Brand identity is centralized** in `apps/web/src/config/brand.ts`. Product
   name, company, domain, palette and routes all come from there or from
   environment overrides — never inline them.
-- **Preserve internal contract identifiers.** `TASKNEBULA_*` environment
-  variables, `X-TaskNebula-*` headers and `@tasknebula/*` package names are
+- **Preserve internal contract identifiers.** `VALIDTEAM_*` environment
+  variables, `X-ValidTeam-*` headers and `@validteam/*` package names are
   wire-level contracts with deployed services. They are not branding and should
   not be renamed casually.
 - **Database changes are hand-written migrations** in `packages/db`, not

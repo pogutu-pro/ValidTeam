@@ -1,5 +1,5 @@
 {
-  "name": "@tasknebula/types",
+  "name": "@validteam/types",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -9,7 +9,7 @@
     "lint": "eslint src --ext .ts"
   },
   "devDependencies": {
-    "@tasknebula/config": "workspace:*",
+    "@validteam/config": "workspace:*",
     "@types/node": "^22.10.2",
     "eslint": "^8.57.1",
     "typescript": "^5.7.2"

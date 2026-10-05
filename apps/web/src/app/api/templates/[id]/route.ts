@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db, eq, projectTemplates } from '@tasknebula/db';
+import { db, eq, projectTemplates } from '@validteam/db';
 import { auth } from '@/auth';
 import { getTemplateAuthz } from '@/lib/templates/authz';
 

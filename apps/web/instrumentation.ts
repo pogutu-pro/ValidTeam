@@ -26,7 +26,7 @@ export async function register() {
 
   // Boot-time version detection: when the running version differs from the
   // last booted one (system_settings key `last_boot_version`), super admins
-  // get an in-app "TaskNebula updated to vX.Y.Z" notification. Deliberately
+  // get an in-app "ValidTeam updated to vX.Y.Z" notification. Deliberately
   // fire-and-forget (not awaited): a slow or unavailable database must never
   // delay or crash server boot. Idempotent across multi-replica boots — see
   // src/lib/version/boot.ts.
@@ -48,7 +48,7 @@ export async function register() {
   try {
     const { registerOTel } = await import('@vercel/otel');
     registerOTel({
-      serviceName: process.env.OTEL_SERVICE_NAME || 'tasknebula-web',
+      serviceName: process.env.OTEL_SERVICE_NAME || 'validteam-web',
     });
   } catch (err) {
     // Failing to register OTel must not crash the server boot. Log and

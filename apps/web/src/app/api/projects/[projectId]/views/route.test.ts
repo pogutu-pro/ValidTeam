@@ -61,7 +61,7 @@ jest.mock('@/lib/auth/project-access', () => ({
   resolveProjectAccess: (...args: unknown[]) => resolveProjectAccessMock(...args),
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),

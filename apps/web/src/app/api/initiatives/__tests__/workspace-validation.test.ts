@@ -13,7 +13,7 @@
  *
  * Mock strategy mirrors apps/web/src/app/api/projects/route.test.ts and
  * apps/web/src/app/api/search/__tests__/membership-guard.test.ts: stub
- * `next/server`, `@/auth`, `@tasknebula/db`, `drizzle-orm`, and the
+ * `next/server`, `@/auth`, `@validteam/db`, `drizzle-orm`, and the
  * depth helpers. We queue a fresh builder per `db.select(...)` call so
  * each test only describes the rows relevant to that path.
  */
@@ -85,7 +85,7 @@ jest.mock('@paralleldrive/cuid2', () => ({
   createId: () => 'generated-id',
 }));
 
-jest.mock('@tasknebula/db', () => ({
+jest.mock('@validteam/db', () => ({
   db: {
     select: (...args: unknown[]) => dbSelectMock(...args),
     insert: (...args: unknown[]) => dbInsertMock(...args),

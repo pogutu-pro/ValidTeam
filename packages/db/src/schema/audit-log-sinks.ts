@@ -13,15 +13,7 @@
  * the other types use their own auth headers.
  */
 
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  jsonb,
-  pgEnum,
-  index,
-} from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, jsonb, pgEnum, index } from 'drizzle-orm/pg-core';
 import { createId } from '@paralleldrive/cuid2';
 import { organizations } from './organizations';
 import { users } from './users';
@@ -36,9 +28,11 @@ export const auditLogSinkTypeEnum = pgEnum('audit_log_sink_type', [
 export const auditLogSinks = pgTable(
   'audit_log_sinks',
   {
-    id: text('id').$defaultFn(() => createId()).primaryKey(),
+    id: text('id')
+      .$defaultFn(() => createId())
+      .primaryKey(),
 
-    // We map "workspace_id" to organizationId — workspaces in TaskNebula are
+    // We map "workspace_id" to organizationId — workspaces in ValidTeam are
     // organizations.
     workspaceId: text('workspace_id')
       .notNull()

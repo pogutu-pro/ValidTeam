@@ -4,13 +4,13 @@ import { createAgentPolicyDocument } from './parser';
 import type { AgentPolicyDocument } from './types';
 
 export const AGENT_POLICY_DISCOVERY_PATHS = [
-  '.tasknebula/AGENTOWNERS',
+  '.validteam/AGENTOWNERS',
   '.github/AGENTOWNERS',
   'AGENTOWNERS',
 ] as const;
 
 function resolvePolicyRoots() {
-  const configuredRoot = process.env.TASKNEBULA_POLICY_ROOT || process.env.AGENTOWNERS_ROOT;
+  const configuredRoot = process.env.VALIDTEAM_POLICY_ROOT || process.env.AGENTOWNERS_ROOT;
   if (configuredRoot) return [path.resolve(configuredRoot)];
 
   const cwd = path.resolve(process.cwd());

@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import { auth } from '@/auth';
-import { apiKeys, db, organizationMembers, organizations, users } from '@tasknebula/db';
+import { apiKeys, db, organizationMembers, organizations, users } from '@validteam/db';
 import { and, eq, gt, isNull, ne, or } from 'drizzle-orm';
 
 export type ApiActor = {

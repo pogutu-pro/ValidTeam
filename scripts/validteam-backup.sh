@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# TaskNebula full backup: Postgres custom archive + uploads volume archive.
+# ValidTeam full backup: Postgres custom archive + uploads volume archive.
 
 set -euo pipefail
 
@@ -11,17 +11,17 @@ if [ -f "$ENV_FILE" ]; then
   set +a
 fi
 
-BACKUP_DIR="${BACKUP_DIR:-/var/backups/tasknebula}"
+BACKUP_DIR="${BACKUP_DIR:-/var/backups/validteam}"
 RETENTION_DAYS="${RETENTION_DAYS:-14}"
-POSTGRES_CONTAINER="${POSTGRES_CONTAINER:-tasknebula-postgres}"
-WEB_CONTAINER="${WEB_CONTAINER:-tasknebula-web}"
-UPLOADS_VOLUME="${UPLOADS_VOLUME:-tasknebula_uploads_data}"
-DB="${POSTGRES_DB:-tasknebula}"
+POSTGRES_CONTAINER="${POSTGRES_CONTAINER:-validteam-postgres}"
+WEB_CONTAINER="${WEB_CONTAINER:-validteam-web}"
+UPLOADS_VOLUME="${UPLOADS_VOLUME:-validteam_uploads_data}"
+DB="${POSTGRES_DB:-validteam}"
 USER="${POSTGRES_USER:-postgres}"
 PASSWORD="${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in the selected environment file}"
 
 TS="$(date -u +%Y%m%d-%H%M%SZ)"
-OUT_DIR="$BACKUP_DIR/tasknebula-$TS"
+OUT_DIR="$BACKUP_DIR/validteam-$TS"
 
 mkdir -p "$OUT_DIR"
 chmod 700 "$BACKUP_DIR" "$OUT_DIR"
@@ -45,7 +45,7 @@ fi
 
 cat > "$OUT_DIR/manifest.json" <<JSON
 {
-  "kind": "tasknebula.backup",
+  "kind": "validteam.backup",
   "createdAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "postgresContainer": "$POSTGRES_CONTAINER",
   "webContainer": "$WEB_CONTAINER",
@@ -60,7 +60,7 @@ JSON
 
 chmod 600 "$OUT_DIR"/*
 
-find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d -name 'tasknebula-*' \
+find "$BACKUP_DIR" -mindepth 1 -maxdepth 1 -type d -name 'validteam-*' \
   -mtime +"$RETENTION_DAYS" -exec rm -rf {} +
 
-echo "[tasknebula-backup] wrote $OUT_DIR"
+echo "[validteam-backup] wrote $OUT_DIR"

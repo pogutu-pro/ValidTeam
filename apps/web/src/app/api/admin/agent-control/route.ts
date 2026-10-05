@@ -17,15 +17,7 @@ import {
   extractWorkspaceModelConfigId,
   listAgentModelConfigsByIds,
 } from '@/lib/agents/model-configs';
-import {
-  db,
-  agentRuns,
-  organizations,
-  projects,
-  sql,
-  systemAuditLogs,
-  users,
-} from '@tasknebula/db';
+import { db, agentRuns, organizations, projects, sql, systemAuditLogs, users } from '@validteam/db';
 import { desc, eq } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
 import { invalidateAiFeatureCache } from '@/lib/ai/feature-gate';

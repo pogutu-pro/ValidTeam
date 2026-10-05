@@ -11,7 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db, desc, eq, getIssueById, issueTriageSuggestions } from '@tasknebula/db';
+import { db, desc, eq, getIssueById, issueTriageSuggestions } from '@validteam/db';
 import { auth } from '@/auth';
 import { triageIssue } from '@/lib/agents/triage';
 import { AiDraftError } from '@/lib/ai/draft-issue';

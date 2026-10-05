@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, workflows, workflowStatuses, workflowTransitions } from '@tasknebula/db';
+import { db, workflows, workflowStatuses, workflowTransitions } from '@validteam/db';
 import { auth } from '@/auth';
 import { eq, and } from 'drizzle-orm';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';

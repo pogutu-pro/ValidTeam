@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, schema, eq, and, auditLogs, type ProjectRole } from '@tasknebula/db';
+import { db, schema, eq, and, auditLogs, type ProjectRole } from '@validteam/db';
 import { createId } from '@paralleldrive/cuid2';
 import { resolveProjectByIdOrKey } from '@/lib/projects/server';
 import { canReadProject } from '@/lib/auth/access-control';

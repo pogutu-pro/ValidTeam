@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, sprints, issues, workflowStatuses, projects } from '@tasknebula/db';
+import { db, sprints, issues, workflowStatuses, projects } from '@validteam/db';
 import { eq } from 'drizzle-orm';
 import { differenceInDays, addDays } from 'date-fns';
 import { canReadProject } from '@/lib/auth/access-control';

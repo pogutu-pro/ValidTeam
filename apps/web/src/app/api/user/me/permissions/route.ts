@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { Permission, SUPER_ADMIN_PERMISSIONS, getRolePermissions } from '@tasknebula/db';
+import { Permission, SUPER_ADMIN_PERMISSIONS, getRolePermissions } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 
 export async function GET(request: NextRequest) {

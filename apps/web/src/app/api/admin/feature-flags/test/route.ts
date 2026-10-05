@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, featureFlags, organizations } from '@tasknebula/db';
+import { db, featureFlags, organizations } from '@validteam/db';
 import { isSuperAdmin } from '@/lib/auth/permissions';
 import { eq, ne } from 'drizzle-orm';
 import { isFeatureEnabled } from '@/lib/feature-flags';

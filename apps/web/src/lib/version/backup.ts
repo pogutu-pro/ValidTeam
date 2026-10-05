@@ -60,12 +60,12 @@ function boolEnv(name: string, fallback: boolean): boolean {
 }
 
 function backupRequired(): boolean {
-  return boolEnv('TASKNEBULA_SELF_UPDATE_REQUIRE_BACKUP', true);
+  return boolEnv('VALIDTEAM_SELF_UPDATE_REQUIRE_BACKUP', true);
 }
 
 function backupDir(): string {
   const configured =
-    process.env.TASKNEBULA_UPDATE_BACKUP_DIR?.trim() || process.env.TASKNEBULA_BACKUP_DIR?.trim();
+    process.env.VALIDTEAM_UPDATE_BACKUP_DIR?.trim() || process.env.VALIDTEAM_BACKUP_DIR?.trim();
   return path.resolve(configured || DEFAULT_BACKUP_DIR);
 }
 
@@ -277,7 +277,7 @@ export async function createSelfUpdateBackup(input: {
     const uploads = await hashFile(uploadsPath);
 
     const manifestBody = {
-      kind: 'tasknebula.self_update.backup',
+      kind: 'validteam.self_update.backup',
       backupId: input.id,
       createdAt: startedAt,
       completedAt: new Date().toISOString(),

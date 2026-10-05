@@ -8,7 +8,7 @@ import {
   organizations,
   users,
   createAuditLog,
-} from '@tasknebula/db';
+} from '@validteam/db';
 import { eq, inArray, and } from 'drizzle-orm';
 import { z } from 'zod';
 import { publishEvent } from '@/lib/realtime/events';

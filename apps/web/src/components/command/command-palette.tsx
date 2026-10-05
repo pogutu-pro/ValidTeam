@@ -442,7 +442,7 @@ export function CommandPalette({
       }
       if (typeof window !== 'undefined') {
         window.dispatchEvent(
-          new CustomEvent('tasknebula:ask-ai', {
+          new CustomEvent('validteam:ask-ai', {
             detail: { prompt, organizationId: effectiveOrganizationId },
           })
         );

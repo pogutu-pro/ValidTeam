@@ -4,7 +4,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { auditLogs, db, scimTokens, eq, sql } from '@tasknebula/db';
+import { auditLogs, db, scimTokens, eq, sql } from '@validteam/db';
 import { hasPermission } from '@/lib/auth/permissions';
 
 export const runtime = 'nodejs';

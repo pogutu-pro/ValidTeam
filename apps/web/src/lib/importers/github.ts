@@ -14,7 +14,7 @@
  * Why a stub: a full GitHub migration also wants comments, reactions, the
  * milestone → sprint mapping, project (V2) boards, and reaction counts.
  * Those are marked TODO below. We bring back the basic issue payload here
- * so the runner can produce real TaskNebula issues for testing.
+ * so the runner can produce real ValidTeam issues for testing.
  */
 
 import { fetchWithBackoff } from './fetch-with-backoff';
@@ -22,7 +22,7 @@ import {
   Importer,
   ImportMapping,
   NormalizedRecord,
-  TaskNebulaIssue,
+  ValidTeamIssue,
   normalizePriority,
   normalizeType,
   safeParseDate,
@@ -92,7 +92,7 @@ export const githubImporter: Importer<GithubInput> = {
           Authorization: `Bearer ${input.accessToken}`,
           Accept: 'application/vnd.github+json',
           'X-GitHub-Api-Version': '2026-03-10',
-          'User-Agent': 'TaskNebula-Importer',
+          'User-Agent': 'ValidTeam-Importer',
         },
       });
 
@@ -140,8 +140,8 @@ export const githubImporter: Importer<GithubInput> = {
     );
   },
 
-  mapRecord(rec, mapping: ImportMapping): TaskNebulaIssue {
-    // Map GitHub state → a coarse TaskNebula priority bucket only if the
+  mapRecord(rec, mapping: ImportMapping): ValidTeamIssue {
+    // Map GitHub state → a coarse ValidTeam priority bucket only if the
     // user wired up a priority column in their mapping; otherwise medium.
     return {
       sourceKey: rec.key,

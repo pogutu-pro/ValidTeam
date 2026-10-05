@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { createId } from '@paralleldrive/cuid2';
 import { auth } from '@/auth';
 import { isSuperAdmin } from '@/lib/auth/permissions';
-import { db, systemAuditLogs, users, eq } from '@tasknebula/db';
+import { db, systemAuditLogs, users, eq } from '@validteam/db';
 import { resolveSmtpConfig } from '@/lib/admin/system-settings';
 import { getTranslations } from 'next-intl/server';
 

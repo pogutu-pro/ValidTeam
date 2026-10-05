@@ -8,14 +8,11 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, notifications, eq, and } from '@tasknebula/db';
+import { db, notifications, eq, and } from '@validteam/db';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -41,9 +38,6 @@ export async function POST(
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Failed to mark inbox item as read:', error);
-    return NextResponse.json(
-      { error: 'Failed to mark inbox item as read' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to mark inbox item as read' }, { status: 500 });
   }
 }

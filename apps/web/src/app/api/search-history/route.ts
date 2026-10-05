@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import { db, searchHistory } from '@tasknebula/db';
+import { db, searchHistory } from '@validteam/db';
 import { eq, and, desc, lt, type SQL } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';
@@ -53,10 +53,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ history });
   } catch (error) {
     console.error('Get search history error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get search history' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get search history' }, { status: 500 });
   }
 }
 
@@ -75,9 +72,10 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = (await request.json().catch(() => null)) as
-      | { id?: string; pinned?: boolean }
-      | null;
+    const body = (await request.json().catch(() => null)) as {
+      id?: string;
+      pinned?: boolean;
+    } | null;
 
     if (!body || typeof body.id !== 'string' || typeof body.pinned !== 'boolean') {
       return NextResponse.json(
@@ -89,12 +87,7 @@ export async function PATCH(request: NextRequest) {
     const updated = await db
       .update(searchHistory)
       .set({ pinned: body.pinned })
-      .where(
-        and(
-          eq(searchHistory.id, body.id),
-          eq(searchHistory.userId, session.user.id)
-        )
-      )
+      .where(and(eq(searchHistory.id, body.id), eq(searchHistory.userId, session.user.id)))
       .returning();
 
     if (updated.length === 0) {
@@ -104,10 +97,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ item: updated[0] });
   } catch (error) {
     console.error('Update search history error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update search history' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update search history' }, { status: 500 });
   }
 }
 
@@ -144,10 +134,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Clear search history error:', error);
-    return NextResponse.json(
-      { error: 'Failed to clear search history' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to clear search history' }, { status: 500 });
   }
 }
 
@@ -170,19 +157,11 @@ export async function POST(_request: NextRequest) {
 
     await db
       .delete(searchHistory)
-      .where(
-        and(
-          lt(searchHistory.createdAt, thirtyDaysAgo),
-          eq(searchHistory.pinned, false)
-        )
-      );
+      .where(and(lt(searchHistory.createdAt, thirtyDaysAgo), eq(searchHistory.pinned, false)));
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Cleanup search history error:', error);
-    return NextResponse.json(
-      { error: 'Failed to cleanup search history' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to cleanup search history' }, { status: 500 });
   }
 }
