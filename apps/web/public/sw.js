@@ -42,10 +42,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames
           .filter(
-            (name) =>
-              (name.startsWith('validteam-') || name.startsWith('validteam-')) &&
-              name !== CACHE_NAME &&
-              name !== RUNTIME_CACHE
+            (name) => name.startsWith('validteam-') && name !== CACHE_NAME && name !== RUNTIME_CACHE
           )
           .map((name) => caches.delete(name))
       );

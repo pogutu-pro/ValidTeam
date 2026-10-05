@@ -123,7 +123,7 @@ export const viewport: Viewport = {
  */
 async function resolveLocale(): Promise<Locale> {
   const headerStore = await headers();
-  const fromHeader = headerStore.get('x-validteam-locale') ?? headerStore.get('x-validteam-locale');
+  const fromHeader = headerStore.get('x-validteam-locale');
   if (isSupportedLocale(fromHeader)) return fromHeader;
 
   const cookieStore = await cookies();
@@ -162,24 +162,6 @@ export default async function RootLayout({
             __html: `
               (function() {
                 try {
-                  // Migrate pre-rebrand preference keys once, before the theme
-                  // providers read them, so an upgrade keeps the user's choices.
-                  var keyPairs = [
-                    ['validteam-color-mode', 'validteam-color-mode'],
-                    ['validteam-theme', 'validteam-theme']
-                  ];
-                  for (var i = 0; i < keyPairs.length; i++) {
-                    var from = keyPairs[i][0];
-                    var to = keyPairs[i][1];
-                    if (localStorage.getItem(to) === null) {
-                      var previous = localStorage.getItem(from);
-                      if (previous !== null) {
-                        localStorage.setItem(to, previous);
-                      }
-                    }
-                    localStorage.removeItem(from);
-                  }
-
                   var storedColorMode = localStorage.getItem('validteam-color-mode');
                   if (!storedColorMode) {
                     var legacyColorMode = localStorage.getItem('theme');

@@ -27,8 +27,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   if (!isSupportedLocale(resolved)) {
     const headerStore = await headers();
-    resolved =
-      headerStore.get('x-validteam-locale') ?? headerStore.get('x-validteam-locale') ?? undefined;
+    resolved = headerStore.get('x-validteam-locale') ?? undefined;
   }
   if (!isSupportedLocale(resolved)) {
     const cookieStore = await cookies();

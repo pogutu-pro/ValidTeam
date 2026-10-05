@@ -32,8 +32,6 @@ const COLOR_MODE_STORAGE_KEY = 'validteam-color-mode';
 const PENDING_COLOR_MODE_STORAGE_KEY = 'validteam-color-mode-pending-sync';
 /** Pre-next-themes key. */
 const LEGACY_COLOR_MODE_STORAGE_KEY = 'theme';
-/** Pre-rebrand key. Read once so an upgrade keeps the user's colour mode. */
-const PRE_REBRAND_COLOR_MODE_STORAGE_KEY = 'validteam-color-mode';
 
 function isColorMode(value: unknown): value is ColorMode {
   return value === 'light' || value === 'dark' || value === 'system';
@@ -46,7 +44,7 @@ function getStoredColorMode(): ColorMode | null {
     const storedColorMode = window.localStorage.getItem(COLOR_MODE_STORAGE_KEY);
     if (isColorMode(storedColorMode)) return storedColorMode;
 
-    for (const key of [PRE_REBRAND_COLOR_MODE_STORAGE_KEY, LEGACY_COLOR_MODE_STORAGE_KEY]) {
+    for (const key of [LEGACY_COLOR_MODE_STORAGE_KEY]) {
       const legacyColorMode = window.localStorage.getItem(key);
       if (isColorMode(legacyColorMode)) return legacyColorMode;
     }
@@ -77,7 +75,6 @@ function storeColorMode(mode: ColorMode, options: { pendingSync?: boolean } = {}
       window.localStorage.setItem(PENDING_COLOR_MODE_STORAGE_KEY, mode);
     }
     window.localStorage.removeItem(LEGACY_COLOR_MODE_STORAGE_KEY);
-    window.localStorage.removeItem(PRE_REBRAND_COLOR_MODE_STORAGE_KEY);
   } catch {
     // Browsers can deny storage in private contexts. The server sync still
     // preserves the preference for authenticated users.
