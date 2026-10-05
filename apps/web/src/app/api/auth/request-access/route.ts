@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, getClientIp } from '@/lib/auth/rate-limit';
 import { sendEmail } from '@/lib/email/sender';
+import { renderAccessRequestMessage } from '@/lib/email/templates';
 
 export const dynamic = 'force-dynamic';
 
-const ADMIN_EMAIL = 'pogutu010@gmail.com';
+/**
+ * Recipient for access-request notifications. Configured via
+ * `ACCESS_REQUEST_ADMIN_EMAIL` so the address is not baked into the bundle;
+ * falls back to the superadmin address used during setup.
+ */
+const ADMIN_EMAIL = process.env.ACCESS_REQUEST_ADMIN_EMAIL || 'pogutu010@gmail.com';
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
@@ -24,14 +30,29 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/request-access?error=1', request.url));
   }
 
-  const { sent, error } = await sendEmail({
-    to: ADMIN_EMAIL,
-    subject: `ValidTeam access request from ${email}`,
-    html: `<p><strong>${name}</strong> &lt;${email}&gt; requested access to ValidTeam.</p><p>Reason:</p><p>${reason || '(none)'}</p>`,
-    text: `${name} <${email}> requested access.\n\n${reason}`,
+  const { subject, html, text } = renderAccessRequestMessage({
+    name,
+    requesterEmail: email,
+    reason,
   });
 
-  if (!sent && !error) {
+  const { sent, error, skipped } = await sendEmail({
+    to: ADMIN_EMAIL,
+    subject,
+    html,
+    text,
+  });
+
+  // Treat every non-delivery outcome as a failure: a hard error, or an SMTP
+  // layer that was never configured (`skipped`). Silently reporting success
+  // would lose the request entirely.
+  if (!sent) {
+    console.error('[auth/request-access] delivery failed:', error ?? 'smtp not configured');
+    return NextResponse.redirect(new URL('/auth/request-access?error=1', request.url));
+  }
+
+  if (skipped) {
+    console.warn('[auth/request-access] smtp not configured; request not delivered');
     return NextResponse.redirect(new URL('/auth/request-access?error=1', request.url));
   }
 

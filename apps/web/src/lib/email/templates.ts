@@ -86,6 +86,69 @@ export function renderPasswordResetMessage(args: {
   return { subject: 'Reset your ValidTeam password', html, text };
 }
 
+function escapeHtmlValue(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Render the admin-facing "someone requested access" notification.
+ *
+ * `name`, `requesterEmail` and `reason` are all untrusted user input and are
+ * escaped before being embedded in HTML.
+ */
+export function renderAccessRequestMessage(args: {
+  name: string;
+  requesterEmail: string;
+  reason?: string;
+  requestedAt?: string;
+}): { subject: string; html: string; text: string } {
+  const requestedAt = args.requestedAt || new Date().toUTCString();
+  const safeName = escapeHtmlValue(args.name);
+  const safeEmail = escapeHtmlValue(args.requesterEmail);
+  const safeReason = escapeHtmlValue(args.reason?.trim() || 'No reason given.');
+
+  const html = renderShell({
+    kicker: 'ACCESS REQUEST',
+    heading: 'Someone requested access',
+    subheading: `${safeName} would like to join ValidTeam.`,
+    preheader: `${safeName} requested access to ValidTeam. No account was created.`,
+    body:
+      paragraph(
+        `<strong>${safeName}</strong> &lt;${safeEmail}&gt; submitted an access request. No account was created — grant access manually if you approve it.`
+      ) +
+      infoCard({
+        tone: 'info',
+        title: 'Requested by',
+        body: `${safeName}<br />${safeEmail}`,
+      }) +
+      infoCard({
+        tone: 'warning',
+        title: 'Reason given',
+        body: safeReason,
+      }) +
+      paragraph(`Received ${requestedAt}.`, { muted: true, spacingTop: 14 }),
+  });
+
+  const text =
+    'ACCESS REQUEST\n\n' +
+    `${args.name} <${args.requesterEmail}> requested access to ValidTeam.\n\n` +
+    `Reason: ${args.reason?.trim() || 'No reason given.'}\n\n` +
+    'No account was created. Grant access manually if you approve this request.\n\n' +
+    `Received: ${requestedAt}\n` +
+    textFooter();
+
+  return {
+    subject: `ValidTeam access request from ${args.requesterEmail}`,
+    html,
+    text,
+  };
+}
+
 /** Render the org-invitation message (subject/html/text). */
 export function renderInvitationMessage(args: {
   inviteeEmail: string;
