@@ -95,7 +95,8 @@
     "banner_verification_invalid": "वह सत्यापन लिंक अब मान्य नहीं है।",
     "banner_generic_signin_error": "साइन इन करते समय कुछ गलत हो गया।",
     "loading": "लोड हो रहा है",
-    "dismiss_notification": "सूचना खारिज करें"
+    "dismiss_notification": "सूचना खारिज करें",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "लोड हो रहा है…",

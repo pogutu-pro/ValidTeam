@@ -49,7 +49,7 @@ services:
     logging: *default-logging
 
   web:
-    image: ${VALIDTEAM_IMAGE:-neuraparse/validteam:0.17.3}
+    image: ${VALIDTEAM_IMAGE:-stratnovo/validteam:0.17.3}
     restart: unless-stopped
     depends_on:
       postgres:

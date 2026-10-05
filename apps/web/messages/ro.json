@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Acel link de verificare nu mai este valid.",
     "banner_generic_signin_error": "Ceva nu a funcționat la autentificare.",
     "loading": "Se încarcă",
-    "dismiss_notification": "Închide notificarea"
+    "dismiss_notification": "Închide notificarea",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Se încarcă…",

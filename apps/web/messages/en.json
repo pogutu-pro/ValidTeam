@@ -95,7 +95,8 @@
     "banner_verification_invalid": "That verification link is no longer valid.",
     "banner_generic_signin_error": "Something went wrong while signing in.",
     "loading": "Loading",
-    "dismiss_notification": "Dismiss notification"
+    "dismiss_notification": "Dismiss notification",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Loading…",

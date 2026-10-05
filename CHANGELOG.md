@@ -685,7 +685,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 ### Added
 
 - **Docker Hub update alerts for self-hosted super-admins.** The authenticated app shell now mounts the version-update banner for super-admins outside the Admin dashboard too, so Docker Hub/GitHub updates surface while admins are using the product instead of only after opening Admin → Updates. Docker Hub-only updates get Docker-specific banner copy and link back to the Updates panel.
-- **One-time in-app notifications for newly detected upstream updates.** When the existing version check detects a newer GitHub release or `neuraparse/validteam` Docker Hub image, ValidTeam records an idempotent `system_settings` marker and inserts a single unread bell notification for each super-admin, avoiding repeated noise for the same version.
+- **One-time in-app notifications for newly detected upstream updates.** When the existing version check detects a newer GitHub release or `stratnovo/validteam` Docker Hub image, ValidTeam records an idempotent `system_settings` marker and inserts a single unread bell notification for each super-admin, avoiding repeated noise for the same version.
 
 ### Changed
 
@@ -714,7 +714,7 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 - **AGENTOWNERS governance for AI-driven actions.** Added a local policy parser/evaluator for `AGENTOWNERS`, `.github/AGENTOWNERS`, and `.validteam/AGENTOWNERS`, with explicit `allow`, `deny`, and `require-approval` decisions for agent actors and project-management actions. AI issue and board actions now pass through the central policy guard before execution, denied actions return clear explanations, approval-required actions create pending approval requests, and every policy decision is audit-logged. A sample policy ships at `docs/examples/AGENTOWNERS.example`.
 - **Admin approval queue and governance UI.** Admin AI settings now include policy status, parsed-rule previews, validation errors, default approval behavior, pending AI approval requests, and approve/reject controls that execute the original proposed payload only after approval.
-- **Docker Hub update visibility for admins.** The admin Updates panel now checks the published `neuraparse/validteam` Docker Hub image in addition to GitHub releases, showing the latest tag, pushed time, digest, size, and Docker tag link. The check uses Docker Hub tag metadata, keeps the existing six-hour cache/manual refresh behavior, and chooses the most recently pushed semver tag instead of a stale larger semver.
+- **Docker Hub update visibility for admins.** The admin Updates panel now checks the published `stratnovo/validteam` Docker Hub image in addition to GitHub releases, showing the latest tag, pushed time, digest, size, and Docker tag link. The check uses Docker Hub tag metadata, keeps the existing six-hour cache/manual refresh behavior, and chooses the most recently pushed semver tag instead of a stale larger semver.
 
 ### Changed
 
@@ -1012,42 +1012,42 @@ mobile apps, cloud and offline/on-premise deployment, and flexible licensing.
 
 - Internal alpha release. [See git log] for details.
 
-[Unreleased]: https://github.com/neuraparse/validteam/compare/v0.14.0...HEAD
-[0.14.0]: https://github.com/neuraparse/validteam/compare/v0.13.0...v0.14.0
-[0.13.0]: https://github.com/neuraparse/validteam/compare/v0.7.11...v0.13.0
-[0.7.11]: https://github.com/neuraparse/validteam/compare/v0.7.10...v0.7.11
-[0.7.10]: https://github.com/neuraparse/validteam/compare/v0.7.9...v0.7.10
-[0.7.9]: https://github.com/neuraparse/validteam/compare/v0.7.8...v0.7.9
-[0.7.8]: https://github.com/neuraparse/validteam/compare/v0.7.7...v0.7.8
-[0.7.7]: https://github.com/neuraparse/validteam/compare/v0.7.6...v0.7.7
-[0.7.6]: https://github.com/neuraparse/validteam/compare/v0.7.5...v0.7.6
-[0.7.5]: https://github.com/neuraparse/validteam/compare/v0.7.4...v0.7.5
-[0.7.4]: https://github.com/neuraparse/validteam/compare/v0.7.3...v0.7.4
-[0.7.3]: https://github.com/neuraparse/validteam/compare/v0.7.2...v0.7.3
-[0.7.2]: https://github.com/neuraparse/validteam/compare/v0.7.1...v0.7.2
-[0.7.1]: https://github.com/neuraparse/validteam/compare/v0.7.0...v0.7.1
-[0.7.0]: https://github.com/neuraparse/validteam/compare/v0.6.9...v0.7.0
-[0.6.9]: https://github.com/neuraparse/validteam/compare/v0.6.8...v0.6.9
-[0.6.8]: https://github.com/neuraparse/validteam/compare/v0.6.7...v0.6.8
-[0.6.7]: https://github.com/neuraparse/validteam/compare/v0.6.6...v0.6.7
-[0.6.6]: https://github.com/neuraparse/validteam/compare/v0.6.5...v0.6.6
-[0.6.5]: https://github.com/neuraparse/validteam/compare/v0.6.4...v0.6.5
-[0.6.4]: https://github.com/neuraparse/validteam/compare/v0.6.3...v0.6.4
-[0.6.3]: https://github.com/neuraparse/validteam/compare/v0.6.2...v0.6.3
-[0.6.2]: https://github.com/neuraparse/validteam/compare/v0.6.1...v0.6.2
-[0.6.1]: https://github.com/neuraparse/validteam/compare/v0.6.0...v0.6.1
-[0.6.0]: https://github.com/neuraparse/validteam/compare/v0.5.1...v0.6.0
-[0.5.1]: https://github.com/neuraparse/validteam/compare/v0.5.0...v0.5.1
-[0.5.0]: https://github.com/neuraparse/validteam/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/neuraparse/validteam/compare/v0.3.4...v0.4.0
-[0.3.4]: https://github.com/neuraparse/validteam/compare/v0.3.3...v0.3.4
-[0.3.3]: https://github.com/neuraparse/validteam/compare/v0.3.2...v0.3.3
-[0.3.2]: https://github.com/neuraparse/validteam/releases/tag/v0.3.2
-[0.3.1]: https://github.com/neuraparse/validteam/commit/a2211ec
-[0.3.0]: https://github.com/neuraparse/validteam/commit/14e9bab
-[0.2.9]: https://github.com/neuraparse/validteam/commit/1b0ef18
-[0.2.8]: https://github.com/neuraparse/validteam/commit/38ad445
-[0.2.7]: https://github.com/neuraparse/validteam/commit/fc3afe7
-[0.2.6]: https://github.com/neuraparse/validteam/releases/tag/v0.2.6
-[0.2.0]: https://github.com/neuraparse/validteam/releases/tag/v0.2.0
-[0.1.0]: https://github.com/neuraparse/validteam/commit/b07e16c
+[Unreleased]: https://github.com/stratnovo/validteam/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/stratnovo/validteam/compare/v0.13.0...v0.14.0
+[0.13.0]: https://github.com/stratnovo/validteam/compare/v0.7.11...v0.13.0
+[0.7.11]: https://github.com/stratnovo/validteam/compare/v0.7.10...v0.7.11
+[0.7.10]: https://github.com/stratnovo/validteam/compare/v0.7.9...v0.7.10
+[0.7.9]: https://github.com/stratnovo/validteam/compare/v0.7.8...v0.7.9
+[0.7.8]: https://github.com/stratnovo/validteam/compare/v0.7.7...v0.7.8
+[0.7.7]: https://github.com/stratnovo/validteam/compare/v0.7.6...v0.7.7
+[0.7.6]: https://github.com/stratnovo/validteam/compare/v0.7.5...v0.7.6
+[0.7.5]: https://github.com/stratnovo/validteam/compare/v0.7.4...v0.7.5
+[0.7.4]: https://github.com/stratnovo/validteam/compare/v0.7.3...v0.7.4
+[0.7.3]: https://github.com/stratnovo/validteam/compare/v0.7.2...v0.7.3
+[0.7.2]: https://github.com/stratnovo/validteam/compare/v0.7.1...v0.7.2
+[0.7.1]: https://github.com/stratnovo/validteam/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/stratnovo/validteam/compare/v0.6.9...v0.7.0
+[0.6.9]: https://github.com/stratnovo/validteam/compare/v0.6.8...v0.6.9
+[0.6.8]: https://github.com/stratnovo/validteam/compare/v0.6.7...v0.6.8
+[0.6.7]: https://github.com/stratnovo/validteam/compare/v0.6.6...v0.6.7
+[0.6.6]: https://github.com/stratnovo/validteam/compare/v0.6.5...v0.6.6
+[0.6.5]: https://github.com/stratnovo/validteam/compare/v0.6.4...v0.6.5
+[0.6.4]: https://github.com/stratnovo/validteam/compare/v0.6.3...v0.6.4
+[0.6.3]: https://github.com/stratnovo/validteam/compare/v0.6.2...v0.6.3
+[0.6.2]: https://github.com/stratnovo/validteam/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/stratnovo/validteam/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/stratnovo/validteam/compare/v0.5.1...v0.6.0
+[0.5.1]: https://github.com/stratnovo/validteam/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/stratnovo/validteam/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/stratnovo/validteam/compare/v0.3.4...v0.4.0
+[0.3.4]: https://github.com/stratnovo/validteam/compare/v0.3.3...v0.3.4
+[0.3.3]: https://github.com/stratnovo/validteam/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/stratnovo/validteam/releases/tag/v0.3.2
+[0.3.1]: https://github.com/stratnovo/validteam/commit/a2211ec
+[0.3.0]: https://github.com/stratnovo/validteam/commit/14e9bab
+[0.2.9]: https://github.com/stratnovo/validteam/commit/1b0ef18
+[0.2.8]: https://github.com/stratnovo/validteam/commit/38ad445
+[0.2.7]: https://github.com/stratnovo/validteam/commit/fc3afe7
+[0.2.6]: https://github.com/stratnovo/validteam/releases/tag/v0.2.6
+[0.2.0]: https://github.com/stratnovo/validteam/releases/tag/v0.2.0
+[0.1.0]: https://github.com/stratnovo/validteam/commit/b07e16c

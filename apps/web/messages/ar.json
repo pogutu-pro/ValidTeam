@@ -95,7 +95,8 @@
     "banner_verification_invalid": "رابط التحقق هذا لم يعد صالحًا.",
     "banner_generic_signin_error": "حدث خطأ ما أثناء تسجيل الدخول.",
     "loading": "جارٍ التحميل",
-    "dismiss_notification": "تجاهل الإشعار"
+    "dismiss_notification": "تجاهل الإشعار",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "جارٍ التحميل…",

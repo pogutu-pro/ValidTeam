@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Liên kết xác minh đó không còn hợp lệ.",
     "banner_generic_signin_error": "Đã xảy ra sự cố khi đăng nhập.",
     "loading": "Đang tải",
-    "dismiss_notification": "Bỏ qua thông báo"
+    "dismiss_notification": "Bỏ qua thông báo",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Đang tải…",

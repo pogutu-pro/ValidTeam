@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Dieser Bestätigungslink ist nicht mehr gültig.",
     "banner_generic_signin_error": "Beim Anmelden ist ein Fehler aufgetreten.",
     "loading": "Wird geladen",
-    "dismiss_notification": "Benachrichtigung schließen"
+    "dismiss_notification": "Benachrichtigung schließen",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Wird geladen…",

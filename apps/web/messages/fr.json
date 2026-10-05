@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Ce lien de vérification n'est plus valide.",
     "banner_generic_signin_error": "Une erreur s'est produite lors de la connexion.",
     "loading": "Chargement",
-    "dismiss_notification": "Ignorer la notification"
+    "dismiss_notification": "Ignorer la notification",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Chargement…",

@@ -48,7 +48,7 @@ env_value() {
 if [ ! -d "$TARGET_DIR/.git" ]; then
   log "Cloning ValidTeam into $TARGET_DIR ..."
   command -v git >/dev/null 2>&1 || die "git is required for the first install."
-  git clone --depth 1 https://github.com/neuraparse/validteam.git "$TARGET_DIR"
+  git clone --depth 1 https://github.com/stratnovo/validteam.git "$TARGET_DIR"
 else
   log "Updating existing checkout in $TARGET_DIR ..."
   git -C "$TARGET_DIR" pull --ff-only
@@ -97,7 +97,7 @@ if [ -z "$(env_value CRON_SECRET)" ]; then
   ok "Generated CRON_SECRET for the approval reconciler."
 fi
 
-log "Pulling latest published image: neuraparse/validteam:latest ..."
+log "Pulling latest published image: stratnovo/validteam:latest ..."
 docker compose pull web || warn "Image pull failed — will fall back to local build."
 
 log "Starting services (postgres · redis · web · approval reconciler) ..."

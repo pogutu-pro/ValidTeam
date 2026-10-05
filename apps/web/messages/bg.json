@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Този линк за потвърждение вече не е валиден.",
     "banner_generic_signin_error": "Нещо се обърка при влизането.",
     "loading": "Зареждане",
-    "dismiss_notification": "Отхвърляне на известието"
+    "dismiss_notification": "Отхвърляне на известието",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Зареждане…",

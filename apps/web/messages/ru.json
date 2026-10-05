@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Эта ссылка для подтверждения больше недействительна.",
     "banner_generic_signin_error": "При входе что-то пошло не так.",
     "loading": "Загрузка",
-    "dismiss_notification": "Закрыть уведомление"
+    "dismiss_notification": "Закрыть уведомление",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Загрузка…",

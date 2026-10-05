@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Це посилання для підтвердження більше недійсне.",
     "banner_generic_signin_error": "Під час входу сталася помилка.",
     "loading": "Завантаження",
-    "dismiss_notification": "Закрити сповіщення"
+    "dismiss_notification": "Закрити сповіщення",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Завантаження…",

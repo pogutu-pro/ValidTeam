@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Essa ligação de verificação já não é válida.",
     "banner_generic_signin_error": "Ocorreu um problema ao iniciar sessão.",
     "loading": "A carregar",
-    "dismiss_notification": "Dispensar notificação"
+    "dismiss_notification": "Dispensar notificação",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "A carregar…",

@@ -104,7 +104,7 @@ services:
     # VALIDTEAM_IMAGE=... or run `docker compose build web` to rebuild from
     # source — the `build:` stanza below is the fallback when the image is
     # not available locally or on the registry.
-    image: ${VALIDTEAM_IMAGE:-neuraparse/validteam:latest}
+    image: ${VALIDTEAM_IMAGE:-stratnovo/validteam:latest}
     build:
       context: .
       dockerfile: Dockerfile

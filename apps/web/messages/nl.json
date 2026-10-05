@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Die verificatielink is niet langer geldig.",
     "banner_generic_signin_error": "Er ging iets mis tijdens het aanmelden.",
     "loading": "Laden",
-    "dismiss_notification": "Melding sluiten"
+    "dismiss_notification": "Melding sluiten",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Laden…",

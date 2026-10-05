@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Doğrulama bağlantısı artık geçerli değil.",
     "banner_generic_signin_error": "Giriş sırasında bir şeyler ters gitti.",
     "loading": "Yükleniyor",
-    "dismiss_notification": "Bildirimi kapat"
+    "dismiss_notification": "Bildirimi kapat",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Yükleniyor…",

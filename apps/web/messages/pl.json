@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Ten link weryfikacyjny jest już nieważny.",
     "banner_generic_signin_error": "Coś poszło nie tak podczas logowania.",
     "loading": "Ładowanie",
-    "dismiss_notification": "Zamknij powiadomienie"
+    "dismiss_notification": "Zamknij powiadomienie",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Ładowanie…",

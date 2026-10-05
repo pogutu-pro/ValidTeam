@@ -109,7 +109,7 @@ function githubResponse(overrides: Record<string, unknown> = {}, ok = true) {
     ok,
     json: jest.fn().mockResolvedValue({
       tag_name: 'v9.9.9',
-      html_url: 'https://github.com/neuraparse/validTeam/releases/tag/v9.9.9',
+      html_url: 'https://github.com/stratnovo/validTeam/releases/tag/v9.9.9',
       published_at: '2026-06-01T00:00:00.000Z',
       body: 'Release notes',
       ...overrides,
@@ -139,7 +139,7 @@ function cachedState(ageMs: number, overrides: Partial<VersionCheckState> = {}):
   return {
     release: {
       latest: '8.8.8',
-      htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v8.8.8',
+      htmlUrl: 'https://github.com/stratnovo/validTeam/releases/tag/v8.8.8',
       publishedAt: '2026-01-01T00:00:00.000Z',
       notes: 'old notes',
     },
@@ -250,13 +250,13 @@ describe('checkLatestVersion', () => {
 
     expect(result?.release?.latest).toBe('9.9.9'); // leading v stripped
     expect(result?.release?.htmlUrl).toBe(
-      'https://github.com/neuraparse/validTeam/releases/tag/v9.9.9'
+      'https://github.com/stratnovo/validTeam/releases/tag/v9.9.9'
     );
     expect(result?.release?.notes).toBe('Release notes');
     expect(result?.docker).toEqual({
       repository: DOCKER_HUB_REPOSITORY,
       latestTag: '9.9.9',
-      tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=9.9.9',
+      tagUrl: 'https://hub.docker.com/r/stratnovo/validteam/tags?name=9.9.9',
       pushedAt: '2026-06-01T00:01:00.000Z',
       digest: 'sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
       sizeBytes: 123456789,
@@ -398,7 +398,7 @@ describe('getUpdateStatus', () => {
     const sameVersion = cachedState(1 * HOUR_MS, {
       release: {
         latest: '9.9.9',
-        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v9.9.9',
+        htmlUrl: 'https://github.com/stratnovo/validTeam/releases/tag/v9.9.9',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: 'same notes',
       },
@@ -422,14 +422,14 @@ describe('getUpdateStatus', () => {
     const cached = cachedState(1 * HOUR_MS, {
       release: {
         latest: '1.2.3',
-        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v1.2.3',
+        htmlUrl: 'https://github.com/stratnovo/validTeam/releases/tag/v1.2.3',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: null,
       },
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/stratnovo/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-02T00:00:00.000Z',
         digest: 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
         sizeBytes: 987654321,
@@ -458,14 +458,14 @@ describe('getUpdateStatus', () => {
     const cached = cachedState(1 * HOUR_MS, {
       release: {
         latest: '1.2.3',
-        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v1.2.3',
+        htmlUrl: 'https://github.com/stratnovo/validTeam/releases/tag/v1.2.3',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: null,
       },
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/stratnovo/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-02T00:00:00.000Z',
         digest: 'sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
         sizeBytes: 987654321,
@@ -509,7 +509,7 @@ describe('getUpdateStatus', () => {
         type: 'issue_updated',
         actorType: 'system',
         title: 'ValidTeam v1.2.4 is available',
-        message: expect.stringContaining('Docker Hub published neuraparse/validteam:1.2.4'),
+        message: expect.stringContaining('Docker Hub published stratnovo/validteam:1.2.4'),
       }),
       expect.objectContaining({
         userId: 'admin-2',
@@ -525,7 +525,7 @@ describe('getUpdateStatus', () => {
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/stratnovo/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-02T00:00:00.000Z',
         digest: null,
         sizeBytes: null,
@@ -557,7 +557,7 @@ describe('getUpdateStatus', () => {
     const cached = cachedState(1 * HOUR_MS, {
       release: {
         latest: '1.2.3',
-        htmlUrl: 'https://github.com/neuraparse/validTeam/releases/tag/v1.2.3',
+        htmlUrl: 'https://github.com/stratnovo/validTeam/releases/tag/v1.2.3',
         publishedAt: '2026-06-01T00:00:00.000Z',
         notes: null,
       },
@@ -568,7 +568,7 @@ describe('getUpdateStatus', () => {
       docker: {
         repository: DOCKER_HUB_REPOSITORY,
         latestTag: '1.2.4',
-        tagUrl: 'https://hub.docker.com/r/neuraparse/validteam/tags?name=1.2.4',
+        tagUrl: 'https://hub.docker.com/r/stratnovo/validteam/tags?name=1.2.4',
         pushedAt: '2026-06-22T16:13:20.000Z',
         digest: null,
         sizeBytes: null,
@@ -607,7 +607,7 @@ describe('getUpdateStatus', () => {
       },
       repository: {
         repo_name: 'validteam',
-        namespace: 'neuraparse',
+        namespace: 'stratnovo',
         name: 'validteam',
       },
     });
@@ -637,7 +637,7 @@ describe('getUpdateStatus', () => {
         userId: 'admin-1',
         actorType: 'system',
         title: 'ValidTeam v1.2.4 is available',
-        message: expect.stringContaining('Docker Hub published neuraparse/validteam:1.2.4'),
+        message: expect.stringContaining('Docker Hub published stratnovo/validteam:1.2.4'),
       }),
     ]);
   });

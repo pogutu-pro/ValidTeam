@@ -117,7 +117,7 @@ describe('handleBootVersionChange', () => {
       expect(row.title).toBe('ValidTeam updated to v9.9.9');
       expect(row.message).toContain('previously v9.9.8');
       expect(row.message).toContain('/admin?tab=updates');
-      expect(row.message).toContain('https://github.com/neuraparse/validTeam/releases/tag/v9.9.9');
+      expect(row.message).toContain('https://github.com/stratnovo/validTeam/releases/tag/v9.9.9');
     }
     // No baseline re-seed when the update already changed the row.
     expect(inserts.filter((i) => i.table === systemSettingsTable)).toHaveLength(0);

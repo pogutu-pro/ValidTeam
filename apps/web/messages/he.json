@@ -95,7 +95,8 @@
     "banner_verification_invalid": "קישור האימות כבר אינו תקף.",
     "banner_generic_signin_error": "משהו השתבש במהלך ההתחברות.",
     "loading": "טוען",
-    "dismiss_notification": "סגירת ההתראה"
+    "dismiss_notification": "סגירת ההתראה",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "טוען…",

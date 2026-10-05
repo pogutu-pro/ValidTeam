@@ -4,7 +4,7 @@ How to cut a ValidTeam release and publish the Docker image. SemVer; the
 source of truth for the version is the root `package.json` `version`.
 
 > Prerequisites: working tree clean, on `main` (or a release branch), `docker
-login` as the **`neuraparse`** Docker Hub account, and `pnpm install` run.
+login` as the **`stratnovo`** Docker Hub account, and `pnpm install` run.
 >
 > **Publication gate:** preparing or validating a release does not authorize an
 > outward-facing action. Push commits/tags, create a GitHub release, and publish
@@ -24,7 +24,7 @@ Update the version in every pinned location:
 
 - `package.json` → `"version"`
 - `apps/web/package.json` → `"version"`
-- `docker-compose.desktop.yml` → `neuraparse/validteam:<v>`
+- `docker-compose.desktop.yml` → `stratnovo/validteam:<v>`
 - any concrete version pin found with `rg '<current-version>'` (do not replace
   historical `CHANGELOG.md` entries)
 - Regenerate the web API spec:
@@ -35,7 +35,7 @@ Update the version in every pinned location:
   the script only exists in the `@validteam/web` workspace.)
 
 > `docker-compose.yml` (production) keeps the web service at `:latest` and is
-> pinned at deploy time via `VALIDTEAM_IMAGE=neuraparse/validteam:<v>`, so it
+> pinned at deploy time via `VALIDTEAM_IMAGE=stratnovo/validteam:<v>`, so it
 > does not need editing.
 
 ## 3. Update the changelog
@@ -59,7 +59,7 @@ the current task. Releases go straight to `main` for the maintainer:
 ```bash
 git pull --rebase
 git add -A
-git commit -m "chore(release): v<v>"   # author: Neura Parse <hello@neuraparse.com>
+git commit -m "chore(release): v<v>"   # author: Stratnovo <hello@stratnovo.com>
 git push origin main
 git tag -a v<v> -m "ValidTeam v<v>"
 git push origin v<v>
@@ -68,27 +68,27 @@ git push origin v<v>
 ## 6. Build & push the Docker image (registry authorization required)
 
 Only perform this section when Docker Hub publication was explicitly
-authorized, independently of GitHub. Image: `neuraparse/validteam`, platform
+authorized, independently of GitHub. Image: `stratnovo/validteam`, platform
 `linux/amd64`.
 
 ```bash
 # Build the web image (uses the multi-stage Dockerfile, standalone output)
 docker build \
-  -t neuraparse/validteam:<v> \
-  -t neuraparse/validteam:latest \
+  -t stratnovo/validteam:<v> \
+  -t stratnovo/validteam:latest \
   --build-arg NEXT_PUBLIC_APP_URL=http://localhost:3000 \
   .
 # (equivalently: docker compose build web)
 
 # Push both tags
-docker push neuraparse/validteam:<v>
-docker push neuraparse/validteam:latest
+docker push stratnovo/validteam:<v>
+docker push stratnovo/validteam:latest
 ```
 
 Confirm the published digest:
 
 ```bash
-docker buildx imagetools inspect neuraparse/validteam:<v>
+docker buildx imagetools inspect stratnovo/validteam:<v>
 ```
 
 ## 7. Publish release notes (GitHub authorization required)
@@ -105,7 +105,7 @@ Operators pin a known-good tag without a rebuild:
 
 ```bash
 ./scripts/validteam-backup.sh
-VALIDTEAM_IMAGE=neuraparse/validteam:<previous> docker compose up -d
+VALIDTEAM_IMAGE=stratnovo/validteam:<previous> docker compose up -d
 ```
 
 ## Notes

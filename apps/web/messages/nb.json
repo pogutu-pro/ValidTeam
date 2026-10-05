@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Den bekreftelseslenken er ikke lenger gyldig.",
     "banner_generic_signin_error": "Noe gikk galt under innlogging.",
     "loading": "Laster",
-    "dismiss_notification": "Lukk varsel"
+    "dismiss_notification": "Lukk varsel",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Laster …",

@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Questo link di verifica non è più valido.",
     "banner_generic_signin_error": "Si è verificato un problema durante l'accesso.",
     "loading": "Caricamento",
-    "dismiss_notification": "Ignora notifica"
+    "dismiss_notification": "Ignora notifica",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Caricamento…",

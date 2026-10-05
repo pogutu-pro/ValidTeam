@@ -44,7 +44,7 @@ database dumps, or live URLs.
 ## Docker Compose
 
 The root Compose stack runs Postgres, Redis, the web image, and a small
-approval-effect reconciler. It pulls `neuraparse/validteam:latest` by default;
+approval-effect reconciler. It pulls `stratnovo/validteam:latest` by default;
 set `VALIDTEAM_IMAGE` to an immutable version or local tag for reproducible
 deployment. The separate `voice` and scheduled-product `cron` profiles are
 opt-in.

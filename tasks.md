@@ -465,7 +465,7 @@ converted to completed work.
       to `0.17.0`.
 - [x] Pass the canonical release quality gate after the final source change.
 - [x] Create the local `chore(release): v0.17.0` commit with the canonical author.
-- [x] Publish `neuraparse/validteam:0.17.0` and `latest` for `linux/amd64`, then
+- [x] Publish `stratnovo/validteam:0.17.0` and `latest` for `linux/amd64`, then
       verify the registry digest.
 - [x] Keep the hosted environment unchanged; this release authorization covers
       Docker Hub publication, not a live restart or deployment.

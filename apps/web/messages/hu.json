@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Ez a megerősítő hivatkozás már nem érvényes.",
     "banner_generic_signin_error": "Hiba történt a bejelentkezés során.",
     "loading": "Betöltés",
-    "dismiss_notification": "Értesítés elvetése"
+    "dismiss_notification": "Értesítés elvetése",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Betöltés…",

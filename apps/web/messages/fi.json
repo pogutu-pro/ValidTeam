@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Vahvistuslinkki ei ole enää voimassa.",
     "banner_generic_signin_error": "Sisäänkirjautumisessa tapahtui virhe.",
     "loading": "Ladataan",
-    "dismiss_notification": "Hylkää ilmoitus"
+    "dismiss_notification": "Hylkää ilmoitus",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Ladataan…",

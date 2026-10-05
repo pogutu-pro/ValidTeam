@@ -17,7 +17,7 @@ import { getVersionUpdatePreferences } from '@/lib/version/preferences';
  *   publishedAt: string | null, // ISO timestamp from GitHub
  *   notes: string | null,       // release body, first 2000 chars
  *   checkedAt: string | null,   // ISO timestamp of the last upstream fetch
- *   image: object,              // Docker Hub tag metadata for neuraparse/validteam
+ *   image: object,              // Docker Hub tag metadata for stratnovo/validteam
  *   checkDisabled: boolean,     // VALIDTEAM_DISABLE_UPDATE_CHECK=true
  *   updatePreferences: object,  // DB-backed banner/inbox notification settings
  *   selfUpdate: object          // opt-in external-updater capability/status

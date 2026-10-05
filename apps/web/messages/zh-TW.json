@@ -95,7 +95,8 @@
     "banner_verification_invalid": "該驗證連結已失效。",
     "banner_generic_signin_error": "登入時發生問題。",
     "loading": "載入中",
-    "dismiss_notification": "關閉通知"
+    "dismiss_notification": "關閉通知",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "載入中…",

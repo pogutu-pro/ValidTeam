@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Tautan verifikasi itu sudah tidak berlaku.",
     "banner_generic_signin_error": "Terjadi kesalahan saat masuk.",
     "loading": "Memuat",
-    "dismiss_notification": "Tutup notifikasi"
+    "dismiss_notification": "Tutup notifikasi",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Memuat…",

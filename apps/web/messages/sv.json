@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Den verifieringslänken är inte längre giltig.",
     "banner_generic_signin_error": "Något gick fel vid inloggningen.",
     "loading": "Laddar",
-    "dismiss_notification": "Stäng avisering"
+    "dismiss_notification": "Stäng avisering",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Läser in…",

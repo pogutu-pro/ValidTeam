@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Tento ověřovací odkaz už není platný.",
     "banner_generic_signin_error": "Při přihlašování se něco pokazilo.",
     "loading": "Načítání",
-    "dismiss_notification": "Zavřít oznámení"
+    "dismiss_notification": "Zavřít oznámení",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Načítání…",

@@ -281,15 +281,8 @@ export function SignInForm() {
 
       <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-sm">
         <span>{tAuth('no_account')}</span>
-        <Link
-          href={
-            projectInviteToken
-              ? `/auth/signup?projectInviteToken=${encodeURIComponent(projectInviteToken)}`
-              : '/auth/signup'
-          }
-          className={AUTH_STANDALONE_LINK_CLASS_NAME}
-        >
-          {tAuth('signup')}
+        <Link href="/auth/request-access" className={AUTH_STANDALONE_LINK_CLASS_NAME}>
+          {tAuth('requestAccess')}
         </Link>
       </p>
     </div>

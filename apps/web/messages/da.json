@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Det bekræftelseslink er ikke længere gyldigt.",
     "banner_generic_signin_error": "Noget gik galt under login.",
     "loading": "Indlæser",
-    "dismiss_notification": "Afvis notifikation"
+    "dismiss_notification": "Afvis notifikation",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Indlæser …",

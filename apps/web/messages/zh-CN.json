@@ -95,7 +95,8 @@
     "banner_verification_invalid": "该验证链接已失效。",
     "banner_generic_signin_error": "登录时出现问题。",
     "loading": "加载中",
-    "dismiss_notification": "关闭通知"
+    "dismiss_notification": "关闭通知",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "加载中…",

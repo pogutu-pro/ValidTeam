@@ -44,7 +44,7 @@ function requireWebhookAuth(request: NextRequest): NextResponse | null {
 /**
  * POST /api/webhooks/docker-hub
  *
- * Docker Hub repository webhook receiver for `neuraparse/validteam`. Configure
+ * Docker Hub repository webhook receiver for `stratnovo/validteam`. Configure
  * Docker Hub with a URL like:
  *
  *   https://<host>/api/webhooks/docker-hub?secret=<VALIDTEAM_DOCKER_HUB_WEBHOOK_SECRET>

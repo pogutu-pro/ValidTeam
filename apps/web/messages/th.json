@@ -95,7 +95,8 @@
     "banner_verification_invalid": "ลิงก์ยืนยันนี้ใช้ไม่ได้แล้ว",
     "banner_generic_signin_error": "เกิดข้อผิดพลาดขณะเข้าสู่ระบบ",
     "loading": "กำลังโหลด",
-    "dismiss_notification": "ปิดการแจ้งเตือน"
+    "dismiss_notification": "ปิดการแจ้งเตือน",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "กำลังโหลด…",

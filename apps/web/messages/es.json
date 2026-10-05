@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Ese enlace de verificación ya no es válido.",
     "banner_generic_signin_error": "Algo salió mal al iniciar sesión.",
     "loading": "Cargando",
-    "dismiss_notification": "Descartar notificación"
+    "dismiss_notification": "Descartar notificación",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Cargando…",

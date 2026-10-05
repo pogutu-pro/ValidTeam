@@ -95,7 +95,8 @@
     "banner_verification_invalid": "해당 인증 링크는 더 이상 유효하지 않습니다.",
     "banner_generic_signin_error": "로그인 중 문제가 발생했습니다.",
     "loading": "불러오는 중",
-    "dismiss_notification": "알림 닫기"
+    "dismiss_notification": "알림 닫기",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "불러오는 중…",

@@ -83,8 +83,8 @@ lint-staged (ESLint + Prettier).
 
 ## Git, branches & PRs
 
-- Remote is **SSH**: `git@github.com:neuraparse/validTeam.git`. Default branch: `main`.
-- **Push work directly to `main`** (`git push origin main`) — this repo's owner prefers no branch/PR ceremony for normal work. Commits are authored as **Neura Parse `<hello@neuraparse.com>`**.
+- Remote is **SSH**: `git@github.com:stratnovo/validTeam.git`. Default branch: `main`.
+- **Push work directly to `main`** (`git push origin main`) — this repo's owner prefers no branch/PR ceremony for normal work. Commits are authored as **Stratnovo `<hello@stratnovo.com>`**.
 - **Publication requires explicit user authorization.** Never push commits or
   tags, create a GitHub release, or publish Docker images (including moving
   `latest`) unless the user explicitly requests that outward action in the
@@ -98,12 +98,12 @@ lint-staged (ESLint + Prettier).
 ## Releases & Docker images
 
 - **Versioning**: SemVer, single source of truth is the root `package.json` `version` (check it — do not trust hardcoded versions in docs). Changelog follows _Keep a Changelog_ in `CHANGELOG.md` (`[Unreleased]` → new version section).
-- **Image**: published to **Docker Hub** as `neuraparse/validteam` (the machine's `docker login` is the `neuraparse` account). Platform `linux/amd64`, runtime port `3000`, health at `GET /api/health`. The web image is a Next.js **standalone** build (`Dockerfile`, entrypoint runs migrations).
+- **Image**: published to **Docker Hub** as `stratnovo/validteam` (the machine's `docker login` is the `stratnovo` account). Platform `linux/amd64`, runtime port `3000`, health at `GET /api/health`. The web image is a Next.js **standalone** build (`Dockerfile`, entrypoint runs migrations).
 - **Build & push** a release:
   ```bash
-  docker compose build web                                   # or: docker build -t neuraparse/validteam:<v> --build-arg NEXT_PUBLIC_APP_URL=https://app.example.com .
-  docker tag neuraparse/validteam:latest neuraparse/validteam:<v>
-  docker push neuraparse/validteam:<v> && docker push neuraparse/validteam:latest
+  docker compose build web                                   # or: docker build -t stratnovo/validteam:<v> --build-arg NEXT_PUBLIC_APP_URL=https://app.example.com .
+  docker tag stratnovo/validteam:latest stratnovo/validteam:<v>
+  docker push stratnovo/validteam:<v> && docker push stratnovo/validteam:latest
   ```
 - **Version bump touches**: `package.json`, `apps/web/package.json`, `docker-compose.desktop.yml`, README version references, then regenerate `apps/web/public/openapi.json` via `pnpm --filter @validteam/web openapi:gen`. `docker-compose.yml` web service defaults to `:latest` and is overridable with `VALIDTEAM_IMAGE`.
 - Full step-by-step runbook: **`docs/RELEASE.md`**. To cut a release with Claude, use the `/release` command; to push work safely, use `/ship`.

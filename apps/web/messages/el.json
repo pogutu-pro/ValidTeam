@@ -95,7 +95,8 @@
     "banner_verification_invalid": "Αυτός ο σύνδεσμος επαλήθευσης δεν ισχύει πλέον.",
     "banner_generic_signin_error": "Κάτι πήγε στραβά κατά τη σύνδεση.",
     "loading": "Φόρτωση",
-    "dismiss_notification": "Απόρριψη ειδοποίησης"
+    "dismiss_notification": "Απόρριψη ειδοποίησης",
+    "requestAccess": "Request access"
   },
   "common": {
     "loading": "Φόρτωση…",

@@ -22,12 +22,12 @@ import { getVersionUpdatePreferences } from './preferences';
 
 export const VERSION_CHECK_KEY = 'version_check';
 export const UPDATE_NOTIFICATION_KEY = 'version_update_notification';
-export const GITHUB_REPO_URL = 'https://github.com/neuraparse/validTeam';
+export const GITHUB_REPO_URL = 'https://github.com/stratnovo/validTeam';
 export const RELEASES_LATEST_URL =
-  'https://api.github.com/repos/neuraparse/validTeam/releases/latest';
-export const DOCKER_HUB_REPOSITORY = 'neuraparse/validteam';
+  'https://api.github.com/repos/stratnovo/validTeam/releases/latest';
+export const DOCKER_HUB_REPOSITORY = 'stratnovo/validteam';
 export const DOCKER_HUB_TAGS_URL =
-  'https://hub.docker.com/v2/namespaces/neuraparse/repositories/validteam/tags?page_size=100';
+  'https://hub.docker.com/v2/namespaces/stratnovo/repositories/validteam/tags?page_size=100';
 
 /** Cached check is considered fresh for 6 hours. */
 export const VERSION_CHECK_TTL_MS = 6 * 60 * 60 * 1000;
