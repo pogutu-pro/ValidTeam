@@ -484,6 +484,13 @@
       "when": 1787241600003,
       "tag": "0068_email_notifications_default_on",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1787241600004,
+      "tag": "0069_meetings",
+      "breakpoints": true
     }
   ]
 }

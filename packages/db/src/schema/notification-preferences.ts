@@ -66,6 +66,11 @@ export const notificationPreferences = pgTable('notification_preferences', {
   // Project lifecycle events
   emailOnProjectCreated: boolean('email_on_project_created').notNull().default(true),
   emailOnProjectArchived: boolean('email_on_project_archived').notNull().default(true),
+  // Meetings (0069)
+  emailOnMeetingInvite: boolean('email_on_meeting_invite').notNull().default(true),
+  emailOnMeetingReminder: boolean('email_on_meeting_reminder').notNull().default(true),
+  emailOnMeetingNoShow: boolean('email_on_meeting_no_show').notNull().default(true),
+  emailOnMeetingSummary: boolean('email_on_meeting_summary').notNull().default(true),
 
   // Event-specific settings (in-app)
   inAppOnAssigned: boolean('in_app_on_assigned').notNull().default(true),

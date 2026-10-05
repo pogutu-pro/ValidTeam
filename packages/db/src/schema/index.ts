@@ -59,3 +59,6 @@ export * from './time-entries';
 export * from './labels';
 export * from './versions';
 export * from './components';
+
+// Meetings (0069)
+export * from './meetings';

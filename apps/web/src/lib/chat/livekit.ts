@@ -1,4 +1,4 @@
-import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
+import { AccessToken, RoomServiceClient, type VideoGrant } from 'livekit-server-sdk';
 import { createId } from '@paralleldrive/cuid2';
 import { resolveLivekitConfig } from '@/lib/admin/system-settings';
 
@@ -186,6 +186,9 @@ export async function createLivekitToken(params: {
   name: string;
   metadata?: string;
   publicUrlOverride?: string;
+  /** Meetings pass role-specific grants; chat calls keep the default. */
+  grant?: VideoGrant;
+  ttlSeconds?: number;
 }) {
   const config = await resolveLivekitConfigForServer();
   const publicUrl = params.publicUrlOverride || config.publicUrl;
@@ -197,14 +200,17 @@ export async function createLivekitToken(params: {
     identity: params.identity,
     name: params.name,
     metadata: params.metadata,
+    ...(params.ttlSeconds ? { ttl: params.ttlSeconds } : {}),
   });
 
-  token.addGrant({
-    room: params.roomName,
-    roomJoin: true,
-    canPublish: true,
-    canSubscribe: true,
-  });
+  token.addGrant(
+    params.grant ?? {
+      room: params.roomName,
+      roomJoin: true,
+      canPublish: true,
+      canSubscribe: true,
+    }
+  );
 
   return {
     url: publicUrl,
