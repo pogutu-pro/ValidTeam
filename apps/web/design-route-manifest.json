@@ -402,6 +402,21 @@
       "source": "src/app/meet/[slug]/page.tsx",
       "archetype": "command",
       "decision": "Check camera and microphone, then join the meeting as a member or invited guest."
+    },
+    {
+      "source": "src/app/(public)/legal/privacy/page.tsx",
+      "archetype": "public-evidence",
+      "decision": "Understand what data ValidTeam handles and how it is protected before deciding to trust it."
+    },
+    {
+      "source": "src/app/(public)/legal/terms/page.tsx",
+      "archetype": "public-evidence",
+      "decision": "Understand the terms of use before deciding to create or use an account."
+    },
+    {
+      "source": "src/app/auth/request-access/page.tsx",
+      "archetype": "auth-setup",
+      "decision": "Request access to a workspace and know what happens next."
     }
   ]
 }
