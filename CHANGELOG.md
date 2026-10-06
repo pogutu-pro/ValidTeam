@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.
 
 ## [Unreleased]
 
+### Added
+
+- Meetings: instant, scheduled and recurring meetings independent of projects,
+  with internal participants and account-free external guests; pre-join screen,
+  live room (camera, microphone, screen share, participants, transient chat,
+  host remove/end); per-session attendance tracking from LiveKit webhooks;
+  meeting and organization/personal analytics; invitation, reminder, no-show and
+  summary emails with an `.ics` attachment; `/api/cron/meetings-tick`.
+  Migration `0069_meetings`. Translated in all 30 catalogs.
+
 ## [0.17.3] - 2026-09-26
 
 This is the final open-source ValidTeam release. ValidTeam continues as

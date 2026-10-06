@@ -40,6 +40,18 @@ The values below are a dated inventory, not agent instructions:
   admission, checkpoints/events, leased recovery/cancellation and fenced
   database effects; local Claude/Codex subprocesses receive an allowlisted
   environment. The separate research topology has focused library tests.
+- Meetings: a project-independent area (instant, scheduled and recurring
+  meetings; members and external guests) on the existing LiveKit server. Guests
+  join without an account through hashed, expiring, revocable per-meeting
+  tokens. Attendance is recorded as sessions from signed LiveKit webhooks with
+  server-side LiveKit reconciliation (rejoins and simultaneous tabs are merged,
+  never `last_leave - first_join`); statistics and organization/personal
+  analytics are computed from those sessions. Invitation, 30-minute reminder,
+  30-minute no-show and post-meeting summary emails use the existing SMTP
+  pipeline through an idempotent claim ledger driven by
+  `/api/cron/meetings-tick` (about once a minute). Meeting chat is transient
+  LiveKit data-channel chat. Recording, transcription, captions and AI
+  summaries are reserved in the schema (`none`) and deliberately not run.
 - Enterprise controls: SAML/SCIM lifecycle and scoped tokens, audit/SIEM,
   database-backed LiveKit/SMTP/storage settings, session revocation, trust and
   AI transparency surfaces, and permission/security scheme configuration.
@@ -107,6 +119,13 @@ definition of a production engine.
   all consumers.
 - Notifications, pagination/virtualization, mounted analytics, import depth,
   and full external-provider/device smoke coverage remain uneven.
+- Meetings gaps: no persistent meeting chat, no host mute control, no custom
+  recurrence beyond daily/weekly/monthly with interval and count, no provider
+  calendar integration (invitations carry an `.ics` file and a Google Calendar
+  link only), series-wide edits and adding people to a whole series are not
+  supported (cancel works), SMTP provides no open/delivery tracking, and
+  meeting emails are English-only like the other transactional mail. A mail
+  timeout is terminal rather than retried so a message is never duplicated.
 - All 30 locale catalogs have key and ICU-contract parity, but linguistic QA is
   incomplete: the quality signal still finds legacy English-copy candidates in
   non-English catalogs.

@@ -21,6 +21,7 @@ import {
   type Meeting,
   type MeetingParticipant,
 } from '@validteam/db';
+import { MeetingError } from './errors';
 import { recordMeetingEvent } from './events';
 import {
   NO_SHOW_DELAY_MS,
@@ -169,6 +170,8 @@ export async function findCandidates(
 }
 
 export interface NotificationRunSummary {
+  /** Candidates left for the next tick because the time budget ran out. */
+  deferred: number;
   considered: number;
   claimed: number;
   sent: number;
@@ -177,16 +180,23 @@ export interface NotificationRunSummary {
   released: number;
 }
 
+export const DEFAULT_LIMIT_PER_KIND = 50;
+export const NOTIFICATION_CONCURRENCY = 4;
+
 export async function processNotifications(opts: {
   now: Date;
   sender: MeetingNotificationSender;
   limitPerKind?: number;
+  concurrency?: number;
+  /** Epoch ms after which no new deliveries start (the rest wait for the next tick). */
+  deadlineMs?: number;
 }): Promise<Record<MeetingNotificationKind, NotificationRunSummary>> {
   const kinds: MeetingNotificationKind[] = ['invitation', 'reminder_30m', 'no_show_30m', 'summary'];
   const out = {} as Record<MeetingNotificationKind, NotificationRunSummary>;
 
   for (const kind of kinds) {
     const s: NotificationRunSummary = {
+      deferred: 0,
       considered: 0,
       claimed: 0,
       sent: 0,
@@ -195,66 +205,88 @@ export async function processNotifications(opts: {
       released: 0,
     };
     out[kind] = s;
-    const candidates = await findCandidates(kind, opts.now, opts.limitPerKind ?? 200);
-    for (const { meeting, participant } of candidates) {
-      s.considered += 1;
-      const due = {
-        status: meeting.status,
-        isInstant: meeting.isInstant,
-        scheduledStartAt: meeting.scheduledStartAt,
-        endedAt: meeting.endedAt,
-        hadAttendance: true,
-      };
-      const ok =
-        kind === 'invitation'
-          ? isInvitationDue(due, opts.now)
-          : kind === 'reminder_30m'
-            ? isReminderDue(due, opts.now)
-            : kind === 'no_show_30m'
-              ? isNoShowDue(due, opts.now)
-              : isSummaryDue(due, opts.now);
-      if (!ok) continue;
-
-      const claimId = await claimNotification({ meeting, participantId: participant.id, kind });
-      if (!claimId) continue;
-      s.claimed += 1;
-
-      try {
-        const result = await opts.sender({ meeting, participant, kind });
-        if (result.status === 'unsupported') {
-          await db.delete(meetingNotifications).where(eq(meetingNotifications.id, claimId));
-          s.released += 1;
-        } else if (result.status === 'skipped') {
-          await db
-            .update(meetingNotifications)
-            .set({ status: 'skipped', error: result.reason })
-            .where(eq(meetingNotifications.id, claimId));
-          s.skipped += 1;
-        } else {
-          await db
-            .update(meetingNotifications)
-            .set({ status: 'sent', sentAt: new Date() })
-            .where(eq(meetingNotifications.id, claimId));
-          await recordMeetingEvent(db, {
-            meetingId: meeting.id,
-            organizationId: meeting.organizationId,
-            participantId: participant.id,
-            type: kind === 'invitation' ? 'meeting_invitation_sent' : 'notification_sent',
-            data: { kind },
-          });
-          s.sent += 1;
-        }
-      } catch (error) {
-        await db
-          .update(meetingNotifications)
-          .set({
-            status: 'failed',
-            error: (error instanceof Error ? error.message : String(error)).slice(0, 500),
-          })
-          .where(eq(meetingNotifications.id, claimId));
-        s.failed += 1;
+    const candidates = await findCandidates(
+      kind,
+      opts.now,
+      opts.limitPerKind ?? DEFAULT_LIMIT_PER_KIND
+    );
+    const size = opts.concurrency ?? NOTIFICATION_CONCURRENCY;
+    for (let i = 0; i < candidates.length; i += size) {
+      if (opts.deadlineMs !== undefined && Date.now() > opts.deadlineMs) {
+        s.deferred += candidates.length - i;
+        break;
       }
+      await Promise.all(candidates.slice(i, i + size).map((c) => deliverOne(kind, c, opts, s)));
     }
   }
   return out;
+}
+
+async function deliverOne(
+  kind: MeetingNotificationKind,
+  { meeting, participant }: Candidate,
+  opts: { now: Date; sender: MeetingNotificationSender },
+  s: NotificationRunSummary
+): Promise<void> {
+  s.considered += 1;
+  const due = {
+    status: meeting.status,
+    isInstant: meeting.isInstant,
+    scheduledStartAt: meeting.scheduledStartAt,
+    endedAt: meeting.endedAt,
+    hadAttendance: true,
+  };
+  const ok =
+    kind === 'invitation'
+      ? isInvitationDue(due, opts.now)
+      : kind === 'reminder_30m'
+        ? isReminderDue(due, opts.now)
+        : kind === 'no_show_30m'
+          ? isNoShowDue(due, opts.now)
+          : isSummaryDue(due, opts.now);
+  if (!ok) return;
+
+  const claimId = await claimNotification({ meeting, participantId: participant.id, kind });
+  if (!claimId) return;
+  s.claimed += 1;
+
+  try {
+    const result = await opts.sender({ meeting, participant, kind });
+    if (result.status === 'unsupported') {
+      await db.delete(meetingNotifications).where(eq(meetingNotifications.id, claimId));
+      s.released += 1;
+    } else if (result.status === 'skipped') {
+      await db
+        .update(meetingNotifications)
+        .set({ status: 'skipped', error: result.reason })
+        .where(eq(meetingNotifications.id, claimId));
+      s.skipped += 1;
+    } else {
+      await db
+        .update(meetingNotifications)
+        .set({ status: 'sent', sentAt: new Date() })
+        .where(eq(meetingNotifications.id, claimId));
+      await recordMeetingEvent(db, {
+        meetingId: meeting.id,
+        organizationId: meeting.organizationId,
+        participantId: participant.id,
+        type: kind === 'invitation' ? 'meeting_invitation_sent' : 'notification_sent',
+        data: { kind },
+      });
+      s.sent += 1;
+    }
+  } catch (error) {
+    // A timeout is ambiguous (the mail may still be delivered), so it is
+    // terminal: retrying could duplicate a message. Other errors retry.
+    const timedOut = error instanceof MeetingError && error.code === 'email_timeout';
+    await db
+      .update(meetingNotifications)
+      .set({
+        status: 'failed',
+        error: (error instanceof Error ? error.message : String(error)).slice(0, 500),
+        ...(timedOut ? { attempts: MAX_NOTIFICATION_ATTEMPTS } : {}),
+      })
+      .where(eq(meetingNotifications.id, claimId));
+    s.failed += 1;
+  }
 }

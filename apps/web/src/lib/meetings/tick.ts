@@ -42,26 +42,65 @@ export const RECONCILE_GRACE_MS = 60_000;
 /** Pulse-only fallback: used only when LiveKit cannot be queried. */
 export const PULSE_STALE_MS = 3 * 60_000;
 
+/** Total wall-clock budget; notification delivery stops starting new sends after it. */
+export const TICK_BUDGET_MS = 40_000;
+const TICK_LOCK_KEY = 'validteam:meetings-tick';
+
 export interface TickDeps {
   now?: Date;
+  /** Disable the overlap guard (tests that exercise per-row claim atomicity). */
+  useLock?: boolean;
   roomIdentities?: (roomName: string) => Promise<Set<string> | null>;
   sender?: MeetingNotificationSender;
   notificationsEnabled?: boolean;
 }
 
-export async function runMeetingTick(deps: TickDeps = {}) {
+/**
+ * Overlapping ticks (slow SMTP, restarts, two replicas) would only repeat
+ * work — every step is idempotent — so a cluster-wide advisory lock lets the
+ * later ticks skip instead of piling up behind the first.
+ */
+export interface TickReport {
+  /** Set when another tick holds the lock; nothing was done. */
+  skipped: 'tick_in_progress' | null;
+  seriesExtended: number;
+  occurrencesCreated: number;
+  sessionsClosed: number;
+  sessionsOpened: number;
+  meetingsEnded: number;
+  statsBackfilled: number;
+  notifications: Awaited<ReturnType<typeof processNotifications>> | null;
+  errors: string[];
+}
+
+const emptyReport = (): TickReport => ({
+  skipped: null,
+  seriesExtended: 0,
+  occurrencesCreated: 0,
+  sessionsClosed: 0,
+  sessionsOpened: 0,
+  meetingsEnded: 0,
+  statsBackfilled: 0,
+  notifications: null,
+  errors: [],
+});
+
+export async function runMeetingTick(deps: TickDeps = {}): Promise<TickReport> {
+  if (deps.useLock === false) return runTickBody(deps);
+  return db.transaction(async (tx) => {
+    const [row] = await tx.execute<{ ok: boolean }>(
+      sql`SELECT pg_try_advisory_xact_lock(hashtext(${TICK_LOCK_KEY})) AS ok`
+    );
+    if (!row?.ok) return { ...emptyReport(), skipped: 'tick_in_progress' as const };
+    return runTickBody(deps);
+  });
+}
+
+async function runTickBody(deps: TickDeps): Promise<TickReport> {
+  const startedAt = Date.now();
   const now = deps.now ?? new Date();
   const roomIdentities = deps.roomIdentities ?? listRoomIdentities;
-  const report = {
-    seriesExtended: 0,
-    occurrencesCreated: 0,
-    sessionsClosed: 0,
-    sessionsOpened: 0,
-    meetingsEnded: 0,
-    statsBackfilled: 0,
-    notifications: null as Awaited<ReturnType<typeof processNotifications>> | null,
-    errors: [] as string[],
-  };
+  const report = emptyReport();
   const guard = async (name: string, fn: () => Promise<void>) => {
     try {
       await fn();
@@ -213,6 +252,7 @@ export async function runMeetingTick(deps: TickDeps = {}) {
       report.notifications = await processNotifications({
         now,
         sender: deps.sender ?? createMeetingEmailSender(),
+        deadlineMs: startedAt + TICK_BUDGET_MS,
       });
     });
   }

@@ -47,6 +47,25 @@ const PREF_FIELD = {
   keyof typeof notificationPreferences.$inferSelect
 >;
 
+/** Upper bound for one SMTP delivery so a slow server can never stall the tick. */
+export const EMAIL_SEND_TIMEOUT_MS = 15_000;
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () =>
+        reject(new MeetingError('email_timeout', 504, `Email delivery timed out after ${ms}ms`)),
+      ms
+    );
+  });
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export function appBaseUrl(): string {
   return (
     process.env.NEXT_PUBLIC_APP_URL ||
@@ -56,7 +75,11 @@ export function appBaseUrl(): string {
 }
 
 export function createMeetingEmailSender(
-  deps: { send?: (p: SendEmailParams) => Promise<SendEmailResult>; appUrl?: string } = {}
+  deps: {
+    send?: (p: SendEmailParams) => Promise<SendEmailResult>;
+    appUrl?: string;
+    timeoutMs?: number;
+  } = {}
 ): MeetingNotificationSender {
   const send = deps.send ?? defaultSend;
 
@@ -242,13 +265,16 @@ export function createMeetingEmailSender(
       );
     }
 
-    const result = await send({
-      to,
-      subject: email.subject,
-      html: email.html,
-      text: email.text,
-      ...(attachments ? { attachments } : {}),
-    });
+    const result = await withTimeout(
+      send({
+        to,
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+        ...(attachments ? { attachments } : {}),
+      }),
+      deps.timeoutMs ?? EMAIL_SEND_TIMEOUT_MS
+    );
     if (result.sent) return { status: 'sent' };
     if (result.skipped) return { status: 'skipped', reason: 'smtp_not_configured' };
     throw new MeetingError('email_failed', 502, result.error ?? 'Email delivery failed');

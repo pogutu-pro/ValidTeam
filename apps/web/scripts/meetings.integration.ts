@@ -925,6 +925,113 @@ async function main() {
     );
   });
 
+  console.log('tick safety under slow dependencies');
+  await check(
+    'overlapping ticks: one does the work, the rest skip instead of piling up',
+    async () => {
+      const mid = await mk('LockMtg', 20, 'UTC', { userIds: [u.a], guests: [] });
+      mine.add(mid);
+      const slowSender = async (p: {
+        kind: string;
+        meeting: { id: string };
+        participant: { id: string };
+      }) => {
+        if (p.meeting.id === mid) await new Promise((r) => setTimeout(r, 400));
+        return { status: 'skipped' as const, reason: 'test' };
+      };
+      const results = await Promise.all(
+        [1, 2, 3].map(() =>
+          runMeetingTick({
+            now: new Date(),
+            notificationsEnabled: true,
+            sender: slowSender,
+            roomIdentities: async () => null,
+          })
+        )
+      );
+      const skipped = results.filter((r) => r.skipped === 'tick_in_progress').length;
+      assert.equal(skipped, 2);
+      assert.equal(results.filter((r) => r.skipped === null).length, 1);
+      // The lock is released afterwards.
+      assert.equal(
+        (
+          await runMeetingTick({
+            now: new Date(),
+            notificationsEnabled: false,
+            roomIdentities: async () => null,
+          })
+        ).skipped,
+        null
+      );
+    }
+  );
+  await check(
+    'a hanging SMTP server times out quickly; the timeout is terminal (never re-sent)',
+    async () => {
+      const mid = await mk('SlowSmtp', 20, 'UTC', { userIds: [u.a], guests: [] });
+      mine.add(mid);
+      const hanging = createMeetingEmailSender({
+        appUrl: 'https://app.test',
+        timeoutMs: 80,
+        send: () => new Promise(() => {}),
+      });
+      const t0 = Date.now();
+      const rep = await runMeetingTick({
+        now: new Date(),
+        notificationsEnabled: true,
+        sender: hanging,
+        roomIdentities: async () => null,
+        useLock: false,
+      });
+      assert.ok(Date.now() - t0 < 5_000, 'tick must not wait for the hung connection');
+      assert.ok(rep.notifications!.reminder_30m.failed >= 1);
+      const rows = await db
+        .select()
+        .from(meetingNotifications)
+        .where(and(eq(meetingNotifications.meetingId, mid), sql`kind = 'reminder_30m'`));
+      assert.ok(
+        rows.every(
+          (r) => r.status === 'failed' && r.attempts >= 3 && /timed out/.test(r.error ?? '')
+        )
+      );
+      // Next ticks never retry it.
+      let calls = 0;
+      await runMeetingTick({
+        now: new Date(),
+        notificationsEnabled: true,
+        roomIdentities: async () => null,
+        useLock: false,
+        sender: async (p) => {
+          if (p.meeting.id === mid && p.kind === 'reminder_30m') calls += 1;
+          return { status: 'skipped' as const, reason: 'x' };
+        },
+      });
+      assert.equal(calls, 0);
+    }
+  );
+  await check(
+    'the time budget defers remaining deliveries to the next tick without losing them',
+    async () => {
+      const mid = await mk('Budget', 20, 'UTC', { userIds: [u.a, u.b], guests: [] });
+      mine.add(mid);
+      const { processNotifications } = await import('../src/lib/meetings/notifications');
+      const delivered: string[] = [];
+      const rec = async (p: { kind: string; meeting: { id: string } }) => {
+        if (p.meeting.id === mid) delivered.push(p.kind);
+        return { status: 'sent' as const };
+      };
+      const out = await processNotifications({
+        now: new Date(),
+        sender: rec,
+        deadlineMs: Date.now() - 1,
+      });
+      assert.ok(out.reminder_30m.deferred >= 1);
+      assert.equal(delivered.length, 0);
+      await processNotifications({ now: new Date(), sender: rec }); // next tick, new budget
+      assert.ok(delivered.includes('reminder_30m'));
+    }
+  );
+
   // cleanup (cascades)
   await db.delete(meetingSeries).where(eq(meetingSeries.organizationId, org.A));
   await db.delete(organizations).where(sql`${organizations.id} IN (${org.A}, ${org.B})`);
