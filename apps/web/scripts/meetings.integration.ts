@@ -74,17 +74,15 @@ async function main() {
   await db
     .insert(users)
     .values(Object.entries(u).map(([k, v]) => ({ id: v, email: emails[k]!, name: k })));
-  await db
-    .insert(organizationMembers)
-    .values([
-      ...[u.host, u.a, u.b, u.c].map((userId) => ({
-        organizationId: org.A,
-        userId,
-        role: 'member' as const,
-      })),
-      { organizationId: org.A, userId: u.admin, role: 'admin' as const },
-      { organizationId: org.B, userId: u.outsider, role: 'member' as const },
-    ]);
+  await db.insert(organizationMembers).values([
+    ...[u.host, u.a, u.b, u.c].map((userId) => ({
+      organizationId: org.A,
+      userId,
+      role: 'member' as const,
+    })),
+    { organizationId: org.A, userId: u.admin, role: 'admin' as const },
+    { organizationId: org.B, userId: u.outsider, role: 'member' as const },
+  ]);
 
   const minute = 60_000;
   const now = new Date();
@@ -524,16 +522,14 @@ async function main() {
       livekitRoomName: `vm-ns-${sfx}`,
     })
     .where(eq(meetings.id, ns));
-  await db
-    .insert(meetingAttendanceSessions)
-    .values({
-      meetingId: ns,
-      organizationId: org.A,
-      participantId: nsA.id,
-      identity: buildMeetingIdentity(nsA.id, 'tabnsabc'),
-      joinedAt: new Date(now.getTime() - 33 * minute),
-      lastSeenAt: new Date(),
-    });
+  await db.insert(meetingAttendanceSessions).values({
+    meetingId: ns,
+    organizationId: org.A,
+    participantId: nsA.id,
+    identity: buildMeetingIdentity(nsA.id, 'tabnsabc'),
+    joinedAt: new Date(now.getTime() - 33 * minute),
+    lastSeenAt: new Date(),
+  });
 
   const mine = new Set(ids);
   const count = (kind: string, meetingId?: string) =>
@@ -613,9 +609,8 @@ async function main() {
     'without a sender implementation nothing is consumed (claims are released)',
     async () => {
       const mid = await mk('NoSender', 20, 'UTC', { userIds: [u.a], guests: [] });
-      const { defaultMeetingNotificationSender } = await import(
-        '../src/lib/meetings/notification-sender'
-      );
+      const { unsupportedMeetingNotificationSender: defaultMeetingNotificationSender } =
+        await import('../src/lib/meetings/notification-sender');
       await runMeetingTick(tickOpts({ sender: defaultMeetingNotificationSender }));
       const rows = await db
         .select()
@@ -664,16 +659,14 @@ async function main() {
         })
         .where(eq(meetings.id, mid));
       const ghost = buildMeetingIdentity(pa.id, 'ghostabc');
-      await db
-        .insert(meetingAttendanceSessions)
-        .values({
-          meetingId: mid,
-          organizationId: org.A,
-          participantId: pa.id,
-          identity: ghost,
-          joinedAt: new Date(Date.now() - 5 * minute),
-          lastSeenAt: new Date(),
-        });
+      await db.insert(meetingAttendanceSessions).values({
+        meetingId: mid,
+        organizationId: org.A,
+        participantId: pa.id,
+        identity: ghost,
+        joinedAt: new Date(Date.now() - 5 * minute),
+        lastSeenAt: new Date(),
+      });
       const missed = buildMeetingIdentity(pb.id, 'missedab');
       const r = await runMeetingTick({
         now: new Date(),
@@ -756,6 +749,181 @@ async function main() {
       assert.equal(other.summary.invited, 0);
     }
   );
+
+  console.log('email delivery');
+  const outbox: Array<{
+    to: string;
+    subject: string;
+    html: string;
+    text?: string | undefined;
+    attachments?: Array<{ filename: string }> | undefined;
+  }> = [];
+  const { createMeetingEmailSender } = await import('../src/lib/meetings/email-sender');
+  const emailSender = createMeetingEmailSender({
+    appUrl: 'https://app.test',
+    send: async (p) => {
+      outbox.push(p);
+      return { sent: true };
+    },
+  });
+  const { notificationPreferences } = dbPkg;
+  const emailMeetingId = await mk('EmailMtg <b>x</b>', 20, 'UTC', {
+    userIds: [u.a, u.b],
+    guests: [{ email: `guest-email-${sfx}@example.test` }],
+  });
+  const emailMeeting = (
+    await db.select().from(meetings).where(eq(meetings.id, emailMeetingId))
+  )[0]!;
+  const eParts = await db
+    .select()
+    .from(meetingParticipants)
+    .where(eq(meetingParticipants.meetingId, emailMeetingId));
+  const forUser = (uid: string) => eParts.find((p) => p.userId === uid)!;
+  const eGuest = eParts.find((p) => p.guestEmail)!;
+  await check('member invitation: link without token, escaped title, .ics attached', async () => {
+    const r = await emailSender({
+      meeting: emailMeeting,
+      participant: forUser(u.a),
+      kind: 'invitation',
+    });
+    assert.equal(r.status, 'sent');
+    const m = outbox.at(-1)!;
+    assert.equal(m.to, emails.a);
+    assert.ok(
+      m.html.includes(`https://app.test/meet/${emailMeeting.slug}`) && !m.html.includes('?g=')
+    );
+    assert.ok(!m.html.includes('<b>x</b>'));
+    assert.deepEqual(
+      m.attachments?.map((x) => x.filename),
+      ['invite.ics']
+    );
+  });
+  await check('guest invitation carries a working single-meeting token link', async () => {
+    const r = await emailSender({ meeting: emailMeeting, participant: eGuest, kind: 'invitation' });
+    assert.equal(r.status, 'sent');
+    const m = outbox.at(-1)!;
+    const token = /\?g=([A-Za-z0-9_-]{43})/.exec(m.text ?? '')?.[1];
+    assert.ok(token, 'token present in text body');
+    const resolved = await access.resolveGuestPrincipal(emailMeeting.slug, token);
+    assert.equal(resolved.principal.participant.id, eGuest.id);
+    await assert.rejects(access.resolveGuestPrincipal(m1.slug, token)); // not valid for another meeting
+  });
+  await check('member preferences gate delivery per kind and globally', async () => {
+    await db
+      .insert(notificationPreferences)
+      .values({ userId: u.b, organizationId: org.A, emailOnMeetingReminder: false });
+    const before = outbox.length;
+    assert.deepEqual(
+      await emailSender({ meeting: emailMeeting, participant: forUser(u.b), kind: 'reminder_30m' }),
+      { status: 'skipped', reason: 'preferences' }
+    );
+    assert.equal(
+      (await emailSender({ meeting: emailMeeting, participant: forUser(u.b), kind: 'invitation' }))
+        .status,
+      'sent'
+    );
+    assert.equal(outbox.length, before + 1);
+    await db
+      .update(notificationPreferences)
+      .set({ enableEmail: false })
+      .where(eq(notificationPreferences.userId, u.b));
+    assert.equal(
+      (await emailSender({ meeting: emailMeeting, participant: forUser(u.b), kind: 'invitation' }))
+        .status,
+      'skipped'
+    );
+  });
+  await check(
+    'summary: guests see no other attendee; members see the roster; no-attendance meetings are skipped',
+    async () => {
+      const scParts = await db
+        .select()
+        .from(meetingParticipants)
+        .where(eq(meetingParticipants.meetingId, sc.meeting.id));
+      const scMeeting = (
+        await db.select().from(meetings).where(eq(meetings.id, sc.meeting.id))
+      )[0]!;
+      const member = scParts.find((p) => p.userId === u.a)!;
+      assert.equal(
+        (await emailSender({ meeting: scMeeting, participant: member, kind: 'summary' })).status,
+        'sent'
+      );
+      const mm = outbox.at(-1)!;
+      assert.ok(
+        mm.html.includes('Attendance overview') && mm.html.includes('View meeting analytics')
+      );
+      assert.ok(mm.html.includes('50m') || mm.html.includes('0h 50m'));
+      // Convert one participant of the scenario into a guest-style recipient to prove privacy filtering.
+      const guestLike = {
+        ...member,
+        userId: null,
+        guestEmail: `g-${sfx}@example.test`,
+        guestName: 'Gus',
+      } as typeof member;
+      await db
+        .insert(meetingParticipants)
+        .values({
+          meetingId: sc.meeting.id,
+          organizationId: org.A,
+          guestEmail: guestLike.guestEmail!,
+          guestName: 'Gus',
+        })
+        .onConflictDoNothing();
+      const gRow = (
+        await db
+          .select()
+          .from(meetingParticipants)
+          .where(
+            and(
+              eq(meetingParticipants.meetingId, sc.meeting.id),
+              eq(meetingParticipants.guestEmail, guestLike.guestEmail!)
+            )
+          )
+      )[0]!;
+      assert.equal(
+        (await emailSender({ meeting: scMeeting, participant: gRow, kind: 'summary' })).status,
+        'sent'
+      );
+      const gm = outbox.at(-1)!;
+      assert.ok(
+        !gm.html.includes('Attendance overview') && !gm.html.includes('View meeting analytics')
+      );
+      assert.ok(!gm.html.includes(emails.a!) && !/>\s*b\s*&mdash;/.test(gm.html));
+      const empty = (await db.select().from(meetings).where(eq(meetings.id, nsEnded)))[0]!;
+      const ep = (
+        await db
+          .select()
+          .from(meetingParticipants)
+          .where(eq(meetingParticipants.meetingId, nsEnded))
+      )[0]!;
+      assert.equal(
+        (await emailSender({ meeting: empty, participant: ep, kind: 'summary' })).status,
+        'skipped'
+      );
+    }
+  );
+  await check('SMTP errors surface for retry; unconfigured SMTP is a soft skip', async () => {
+    const failing = createMeetingEmailSender({
+      appUrl: 'https://app.test',
+      send: async () => ({ sent: false, error: 'boom' }),
+    });
+    await assert.rejects(
+      failing({ meeting: emailMeeting, participant: forUser(u.a), kind: 'reminder_30m' }),
+      /boom/
+    );
+    const unconfigured = createMeetingEmailSender({
+      appUrl: 'https://app.test',
+      send: async () => ({ sent: false, skipped: true }),
+    });
+    assert.deepEqual(
+      await unconfigured({
+        meeting: emailMeeting,
+        participant: forUser(u.a),
+        kind: 'reminder_30m',
+      }),
+      { status: 'skipped', reason: 'smtp_not_configured' }
+    );
+  });
 
   // cleanup (cascades)
   await db.delete(meetingSeries).where(eq(meetingSeries.organizationId, org.A));

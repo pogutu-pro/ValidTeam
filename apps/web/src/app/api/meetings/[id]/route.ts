@@ -60,8 +60,16 @@ export async function GET(request: Request, { params }: Ctx) {
         };
       });
 
+    const [hostRow] = await db
+      .select({ name: users.name, email: users.email })
+      .from(users)
+      .where(eq(users.id, meeting.hostId))
+      .limit(1);
     return NextResponse.json({
-      meeting: meetingSummary(meeting),
+      meeting: {
+        ...meetingSummary(meeting),
+        host: { name: hostRow?.name ?? hostRow?.email ?? null },
+      },
       you: { isHost: principal.isHost, canManage: principal.canManage, canJoin: principal.canJoin },
       participants: roster,
     });

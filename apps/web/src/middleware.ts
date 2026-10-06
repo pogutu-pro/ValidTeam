@@ -108,7 +108,9 @@ export default auth((req) => {
 
   // Un-localized public routes (landing page lives at the root and is also
   // not under a [locale] segment for now).
-  if (pathname === '/' || pathname.startsWith('/share/')) {
+  // `/meet/<slug>` is public by design: guests join with an invitation token,
+  // members are authorised by the API (the page itself carries no data).
+  if (pathname === '/' || pathname.startsWith('/share/') || pathname.startsWith('/meet/')) {
     return continueWithLocale(request, resolveRequestLocale(request));
   }
 

@@ -32,11 +32,8 @@ import { listRoomIdentities } from './livekit-admin';
 import { parseMeetingIdentity } from './livekit';
 import { neverStartedDeadline } from './notification-rules';
 import { processNotifications } from './notifications';
-import {
-  defaultMeetingNotificationSender,
-  meetingNotificationsEnabled,
-  type MeetingNotificationSender,
-} from './notification-sender';
+import { createMeetingEmailSender } from './email-sender';
+import { meetingNotificationsEnabled, type MeetingNotificationSender } from './notification-sender';
 
 /** A live room with nobody in it ends after this long (matches LiveKit's empty-room timeout). */
 export const EMPTY_ROOM_GRACE_MS = 5 * 60_000;
@@ -215,7 +212,7 @@ export async function runMeetingTick(deps: TickDeps = {}) {
     await guard('notifications', async () => {
       report.notifications = await processNotifications({
         now,
-        sender: deps.sender ?? defaultMeetingNotificationSender,
+        sender: deps.sender ?? createMeetingEmailSender(),
       });
     });
   }

@@ -18,15 +18,12 @@ export type MeetingNotificationSender = (
   payload: MeetingNotificationPayload
 ) => Promise<MeetingNotificationResult>;
 
-/**
- * Phase 1 ships the idempotency/claim machinery only. Phase 3 replaces this
- * with a sender built on the existing `sendEmail` + email-layout kit and the
- * `emailOnMeeting*` preference columns.
- */
-export const defaultMeetingNotificationSender: MeetingNotificationSender = async () => ({
+/** Test/ops stub: releases every claim so nothing is consumed. */
+export const unsupportedMeetingNotificationSender: MeetingNotificationSender = async () => ({
   status: 'unsupported',
 });
 
+/** On by default; set MEETING_NOTIFICATIONS_ENABLED=false to pause delivery. */
 export function meetingNotificationsEnabled(): boolean {
-  return process.env.MEETING_NOTIFICATIONS_ENABLED === 'true';
+  return process.env.MEETING_NOTIFICATIONS_ENABLED !== 'false';
 }

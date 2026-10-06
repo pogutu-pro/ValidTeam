@@ -20,6 +20,8 @@ export interface SendEmailParams {
   text?: string;
   /** Extra MIME headers, e.g. `List-Unsubscribe` on notification mail. */
   headers?: Record<string, string>;
+  /** Optional attachments (e.g. a calendar invite). */
+  attachments?: Array<{ filename: string; content: string; contentType?: string }>;
 }
 
 export interface SendEmailResult {
@@ -102,6 +104,7 @@ export async function sendEmail(params: SendEmailParams): Promise<SendEmailResul
       html: params.html,
       text: params.text,
       ...(params.headers ? { headers: params.headers } : {}),
+      ...(params.attachments ? { attachments: params.attachments } : {}),
     });
 
     // QUAL-21: under exactOptionalPropertyTypes, `messageId?: string` cannot
