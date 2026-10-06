@@ -17,6 +17,7 @@
     "tests:e2e:surfaces": "playwright test e2e/app-surfaces.spec.ts --project=chromium",
     "tests:e2e:install": "playwright install --with-deps",
     "test:integration:durable-project-agent-runtime": "tsx scripts/durable-project-agent-runtime.integration.ts",
+    "test:integration:meetings": "tsx scripts/meetings.integration.ts",
     "test:integration:scim-runtime": "tsx scripts/scim-runtime.integration.ts",
     "tests:e2e:ui": "playwright test --ui",
     "type-check": "tsc --noEmit"

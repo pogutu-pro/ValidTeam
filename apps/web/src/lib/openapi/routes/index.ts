@@ -30,3 +30,4 @@ import './users';
 import './search';
 import './health';
 import './agents';
+import './meetings';

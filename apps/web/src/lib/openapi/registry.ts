@@ -32,6 +32,7 @@ export const TAGS = {
   Search: 'Search',
   Health: 'Health',
   Agents: 'Agents',
+  Meetings: 'Meetings',
 } as const;
 
 /** Browser sessions and organization-bound ValidTeam API keys are alternatives. */

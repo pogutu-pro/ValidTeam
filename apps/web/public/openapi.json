@@ -1479,6 +1479,30 @@
           "uptime",
           "checks"
         ]
+      },
+      "MeetingError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {}
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
       }
     },
     "parameters": {}
@@ -3950,6 +3974,1051 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings": {
+      "get": {
+        "summary": "List meetings",
+        "description": "Upcoming, live or past meetings the caller hosts or is invited to (admins may pass view=all).",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "upcoming",
+                "live",
+                "past"
+              ]
+            },
+            "required": false,
+            "name": "scope",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mine",
+                "all"
+              ]
+            },
+            "required": false,
+            "name": "view",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "required": false,
+            "name": "offset",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meetings page."
+          },
+          "400": {
+            "description": "Error 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an instant, scheduled or recurring meeting",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organizationId": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "instant",
+                      "scheduled"
+                    ]
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "durationMinutes": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 1440
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "example": "Africa/Nairobi"
+                  },
+                  "participantUserIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "guests": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "email"
+                      ]
+                    }
+                  },
+                  "recurrence": {
+                    "type": "object",
+                    "properties": {
+                      "freq": {
+                        "type": "string",
+                        "enum": [
+                          "daily",
+                          "weekly",
+                          "monthly"
+                        ]
+                      },
+                      "interval": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 52
+                      },
+                      "byWeekday": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 0,
+                          "maximum": 6
+                        }
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 366
+                      },
+                      "until": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    },
+                    "required": [
+                      "freq"
+                    ]
+                  },
+                  "access": {
+                    "type": "string",
+                    "enum": [
+                      "invited",
+                      "organization"
+                    ]
+                  },
+                  "allowGuests": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "organizationId",
+                  "title"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Meeting created."
+          },
+          "400": {
+            "description": "Error 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error 429.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/{id}": {
+      "get": {
+        "summary": "Meeting details and roster",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meeting."
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Edit, reschedule or cancel a meeting (host or admin)",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated."
+          },
+          "400": {
+            "description": "Error 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error 409.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/{id}/join": {
+      "post": {
+        "summary": "Join as an organization member; returns a short-lived LiveKit token",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "LiveKit URL, token and identity."
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error 410.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "425": {
+            "description": "Error 425.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error 429.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error 503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/{id}/guest-join": {
+      "post": {
+        "summary": "Join as an external guest with an invitation token (no account)",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "LiveKit URL, token and identity."
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Error 410.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "425": {
+            "description": "Error 425.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Error 429.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Error 503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/{id}/end": {
+      "post": {
+        "summary": "End the meeting for everyone (host or admin)",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ended (idempotent)."
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error 409.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/{id}/participants": {
+      "get": {
+        "summary": "List participants",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Participants."
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Invite more members or external guests (host or admin)",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Added."
+          },
+          "400": {
+            "description": "Error 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Error 409.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a participant and disconnect them (host or admin)",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "participantId",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed."
+          },
+          "400": {
+            "description": "Error 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/{id}/analytics": {
+      "get": {
+        "summary": "Computed attendance statistics for a finished meeting",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Unguessable public meeting slug (not an internal id)."
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stats (available=false until the meeting ends)."
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/meetings/analytics": {
+      "get": {
+        "summary": "Organization (admins) or personal meeting analytics",
+        "tags": [
+          "Meetings"
+        ],
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": true,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": true,
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ]
+            },
+            "required": false,
+            "name": "bucket",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "timezone",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "organization",
+                "me"
+              ]
+            },
+            "required": false,
+            "name": "scope",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Analytics."
+          },
+          "400": {
+            "description": "Error 400.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error 401.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Error 403.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error 404.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingError"
                 }
               }
             }

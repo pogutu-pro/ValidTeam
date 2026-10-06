@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { WebhookReceiver } from 'livekit-server-sdk';
 import { handleLivekitWebhookEvent } from '@/lib/chat/server';
 import { chatServerDebug, chatServerError } from '@/lib/chat/debug';
+import { isMeetingRoomName } from '@/lib/meetings/livekit';
+import { handleMeetingWebhookEvent } from '@/lib/meetings/webhook';
 
 function getWebhookReceiver() {
   const apiKey = process.env.LIVEKIT_API_KEY || '';
@@ -17,7 +19,10 @@ function getWebhookReceiver() {
 export async function POST(request: Request) {
   const receiver = getWebhookReceiver();
   if (!receiver) {
-    return NextResponse.json({ error: 'LiveKit webhook receiver is not configured' }, { status: 503 });
+    return NextResponse.json(
+      { error: 'LiveKit webhook receiver is not configured' },
+      { status: 503 }
+    );
   }
 
   try {
@@ -30,6 +35,21 @@ export async function POST(request: Request) {
       roomName: event.room?.name || null,
       participantIdentity: event.participant?.identity || null,
     });
+
+    // Meeting rooms (`vm-*`) are handled by the meetings domain; every other
+    // room keeps the unchanged chat-call path below.
+    if (isMeetingRoomName(event.room?.name)) {
+      const result = await handleMeetingWebhookEvent({
+        event: event.event,
+        roomName: event.room!.name,
+        participantIdentity: event.participant?.identity || null,
+        // livekit TrackSource: 3 = SCREEN_SHARE
+        trackSource: event.track?.source === 3 ? 'screen_share' : null,
+        createdAt: event.createdAt ?? null,
+      });
+      chatServerDebug('route.livekit.webhook.meeting', { event: event.event, result });
+      return NextResponse.json({ ok: true, result });
+    }
 
     const result = await handleLivekitWebhookEvent({
       event: event.event,
