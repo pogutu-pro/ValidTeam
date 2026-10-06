@@ -45,7 +45,10 @@
     "system": "Järjestelmä",
     "updates": "Päivitykset",
     "ai_transparency": "Tekoälyn läpinäkyvyys",
-    "initiatives": "Aloitteet"
+    "initiatives": "Aloitteet",
+    "meetings": "Kokoukset",
+    "meetings_all": "Kaikki kokoukset",
+    "meetings_analytics": "Analytiikka"
   },
   "actions": {
     "create_issue": "Luo työ",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Kokoukset",
+    "subtitle": "Aloita pikakokous tai ajoita kokous kollegoiden ja ulkopuolisten vieraiden kanssa.",
+    "analytics": "Analytiikka",
+    "schedule": "Ajasta",
+    "startMeeting": "Aloita kokous",
+    "instantTitle": "Pikakokous",
+    "start": "Aloita",
+    "join": "Liity",
+    "recurring": "Toistuva",
+    "hostedBy": "Isäntä: {name}",
+    "participantCount": "Osallistujat: {count}",
+    "retry": "Yritä uudelleen",
+    "loading": "Ladataan kokousta…",
+    "cancel": "Peruuta",
+    "scheduled": "Kokous ajastettu",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Tulevat",
+      "live": "Livenä",
+      "past": "Menneet"
+    },
+    "status": {
+      "scheduled": "Ajastettu",
+      "live": "Livenä",
+      "ended": "Päättynyt",
+      "cancelled": "Peruttu"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Ei tulevia kokouksia",
+        "body": "Aloita kokous nyt tai ajasta sellainen myöhemmäksi."
+      },
+      "live": {
+        "title": "Ei live-kokouksia",
+        "body": "Käynnissä olevat kokoukset näkyvät tässä."
+      },
+      "past": {
+        "title": "Ei vielä menneitä kokouksia",
+        "body": "Päättyneet kokoukset ja niiden osallistuminen näkyvät tässä."
+      }
+    },
+    "errors": {
+      "createFailed": "Kokousta ei voitu luoda. Yritä uudelleen.",
+      "loadFailed": "Kokouksia ei voitu ladata.",
+      "titleRequired": "Anna kokouksen otsikko.",
+      "invalidDateTime": "Anna kelvollinen päivämäärä ja kellonaika.",
+      "pastStart": "Aloitusaika on menneisyydessä.",
+      "invalidEmails": "Nämä sähköpostiosoitteet eivät kelpaa: {emails}",
+      "invalidCount": "Toistojen määrän on oltava luku väliltä 1–366.",
+      "invalidParticipants": "Jotkin valituista henkilöistä eivät ole tämän työtilan jäseniä.",
+      "guestsNotAllowed": "Ulkopuoliset vieraat eivät ole sallittuja tässä kokouksessa."
+    },
+    "scheduleDialog": {
+      "title": "Ajasta kokous",
+      "description": "Kutsut lähetetään sähköpostitse. Vieraat liittyvät linkistä ilman tiliä.",
+      "submit": "Ajasta kokous"
+    },
+    "fields": {
+      "title": "Otsikko",
+      "date": "Päivämäärä",
+      "startTime": "Alkamisaika",
+      "duration": "Kesto",
+      "timezone": "Aikavyöhyke",
+      "repeat": "Toista",
+      "occurrences": "Toistot",
+      "occurrencesPlaceholder": "Valinnainen",
+      "people": "Henkilöt",
+      "searchPeople": "Hae henkilöitä",
+      "noPeople": "Ei vastaavia henkilöitä",
+      "selectedCount": "Valittu: {count}",
+      "guests": "Ulkopuoliset vieraat",
+      "allowGuests": "Salli vieraat",
+      "guestsPlaceholder": "nimi@esimerkki.fi, toinen@esimerkki.fi",
+      "guestsHint": "Erota osoitteet pilkuilla tai rivinvaihdoilla. Vieraat eivät tarvitse tiliä.",
+      "description": "Kuvaus (valinnainen)"
+    },
+    "repeat": {
+      "none": "Ei toistu",
+      "daily": "Päivittäin",
+      "weekly": "Viikoittain",
+      "monthly": "Kuukausittain"
+    },
+    "denied": {
+      "signin": {
+        "title": "Kirjaudu sisään liittyäksesi",
+        "body": "Tämä kokous on työtilan jäsenille. Kirjaudu sisään tai käytä kutsun vierailinkkiä.",
+        "action": "Kirjaudu sisään"
+      },
+      "notFound": {
+        "title": "Kokousta ei löytynyt",
+        "body": "Linkki voi olla virheellinen tai sinulla ei ole pääsyä tähän kokoukseen."
+      },
+      "closed": {
+        "title": "Tämä kokous on päättynyt",
+        "body": "Kokous on päättynyt tai se peruttiin."
+      },
+      "invalidGuestLink": {
+        "title": "Tämä vierailinkki ei kelpaa",
+        "body": "Se on voinut vanhentua tai korvautua. Pyydä isännältä uusi kutsu."
+      },
+      "error": {
+        "title": "Jokin meni pieleen",
+        "body": "Kokousta ei voitu avata. Yritä uudelleen."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Poistuit kokouksesta",
+        "body": "Voit liittyä uudelleen, kunhan kokous on vielä auki."
+      },
+      "removed": {
+        "title": "Sinut poistettiin",
+        "body": "Isäntä poisti sinut tästä kokouksesta."
+      },
+      "ended": {
+        "title": "Kokous on päättynyt",
+        "body": "Isäntä päätti kokouksen kaikille."
+      },
+      "rejoin": "Liity uudelleen",
+      "viewMeeting": "Näytä kokous"
+    },
+    "prejoin": {
+      "preview": "Kameran esikatselu",
+      "micOn": "Mikrofoni päällä",
+      "micOff": "Mikrofoni pois päältä",
+      "cameraOn": "Kamera päällä",
+      "cameraOff": "Kamera pois päältä",
+      "cameraBlocked": "Kamera ei ole käytettävissä. Tarkista selaimen käyttöoikeudet.",
+      "organizedBy": "Järjestäjä: {name}",
+      "inProgress": "Käynnissä",
+      "joiningAsGuest": "Liityt vieraana",
+      "yourName": "Nimesi",
+      "joining": "Liitytään…",
+      "joinMeeting": "Liity kokoukseen",
+      "errors": {
+        "tooEarly": "Tämä kokous ei ole vielä avautunut. Yritä uudelleen lähempänä alkamisaikaa.",
+        "ended": "Tämä kokous ei ole enää auki.",
+        "unavailable": "Videopalvelu ei ole nyt käytettävissä.",
+        "rateLimited": "Liian monta yritystä. Odota hetki ja yritä uudelleen.",
+        "invalidGuestLink": "Tämä vierailinkki ei kelpaa.",
+        "forbidden": "Sinua ei ole kutsuttu tähän kokoukseen.",
+        "generic": "Kokoukseen liittyminen epäonnistui. Yritä uudelleen."
+      }
+    },
+    "room": {
+      "you": "Sinä",
+      "guest": "Vieras",
+      "micOff": "Mikrofoni pois päältä",
+      "micOn": "Mikrofoni päällä",
+      "cameraOff": "Kamera pois päältä",
+      "cameraOn": "Kamera päällä",
+      "removeParticipant": "Poista {name}",
+      "people": "Henkilöt",
+      "host": "Isäntä",
+      "participants": "Osallistujat",
+      "closePanel": "Sulje paneeli",
+      "chat": "Keskustelu",
+      "chatNote": "Viestit näkyvät vain kokouksen aikana, eikä niitä tallenneta.",
+      "messagePlaceholder": "Lähetä viesti",
+      "send": "Lähetä",
+      "presenting": "{name} esittää",
+      "moreParticipants": "+{count} muuta",
+      "inMeeting": "Kokouksessa: {count}",
+      "reconnecting": "Yhdistetään uudelleen…",
+      "controls": "Kokouksen hallinta",
+      "muteMic": "Mykistä mikrofoni",
+      "unmuteMic": "Poista mykistys",
+      "stopCamera": "Sammuta kamera",
+      "startCamera": "Käynnistä kamera",
+      "stopShare": "Lopeta jakaminen",
+      "shareScreen": "Jaa näyttö",
+      "endForAll": "Päätä kaikille",
+      "leave": "Poistu",
+      "endConfirmTitle": "Päätetäänkö kokous kaikille?",
+      "endConfirmBody": "Kaikkien yhteys katkaistaan ja kokous suljetaan.",
+      "cancel": "Peruuta"
+    },
+    "details": {
+      "didNotAttend": "Ei osallistunut",
+      "late": "Myöhässä",
+      "leftEarly": "Lähti aikaisin",
+      "notFoundTitle": "Kokousta ei löytynyt",
+      "notFoundBody": "Se on voitu poistaa tai sinulla ei ole pääsyä.",
+      "loadFailed": "Kokousta ei voitu ladata.",
+      "backToMeetings": "Takaisin kokouksiin",
+      "copyFailed": "Linkkiä ei voitu kopioida.",
+      "invited": "Kutsut lähetetty",
+      "inviteFailed": "Näitä henkilöitä ei voitu kutsua.",
+      "cancelMeeting": "Peruuta kokous",
+      "endMeeting": "Päätä kokous",
+      "overview": "Yleiskatsaus",
+      "host": "Isäntä",
+      "duration": "Kesto",
+      "people": "Henkilöt",
+      "peopleSummary": "Kutsuttu: {count} · Vieraat: {guests}",
+      "type": "Tyyppi",
+      "instant": "Pikakokous",
+      "oneTime": "Kertakokous",
+      "copied": "Kopioitu",
+      "copyLink": "Kopioi linkki",
+      "analytics": "Kokouksen analytiikka",
+      "attended": "Osallistui",
+      "noShows": "Poissa: {count}",
+      "peak": "Osallistujien huippu",
+      "avgAttendance": "Keskimääräinen osallistuminen",
+      "participantTime": "Osallistujien kokonaisaika",
+      "lateArrivals": "Myöhästymiset",
+      "earlyDepartures": "Aikaiset poistumiset",
+      "joins": "Liittymiset",
+      "leaves": "Poistumiset: {count}",
+      "analyticsPending": "Analytiikka on saatavilla pian kokouksen päätyttyä.",
+      "participants": "Osallistujat",
+      "name": "Nimi",
+      "joined": "Liittyi",
+      "left": "Poistui",
+      "attendance": "Osallistuminen",
+      "hostBadge": "Isäntä",
+      "guestBadge": "Vieras",
+      "remove": "Poista",
+      "inviteMore": "Kutsu lisää henkilöitä",
+      "sendInvites": "Lähetä kutsut",
+      "cancelTitle": "Perutaanko tämä kokous?",
+      "cancelBody": "Osallistujat eivät voi enää liittyä.",
+      "cancelSeries": "Peruuta koko sarja",
+      "cancelThisOne": "Peruuta vain tämä kokous"
+    },
+    "analyticsPage": {
+      "title": "Kokousanalytiikka",
+      "subtitle": "Osallistuminen, aika ja aktiivisuus kokouksissasi.",
+      "back": "Takaisin kokouksiin",
+      "noData": "Ei tietoja tältä ajalta",
+      "loadFailed": "Analytiikkaa ei voitu ladata.",
+      "invalidRange": "Päättymispäivän on oltava alkamispäivän jälkeen.",
+      "scope": {
+        "me": "Omat kokoukset",
+        "organization": "Organisaatio"
+      },
+      "filters": {
+        "range": "Ajanjakso",
+        "from": "Alkaen",
+        "to": "Päättyen",
+        "recurrence": "Toistuvuus",
+        "allMeetings": "Kaikki kokoukset",
+        "recurring": "Toistuvat",
+        "oneTime": "Kertaluonteiset",
+        "guests": "Vieraat",
+        "anyGuests": "Vieraiden kanssa tai ilman",
+        "withGuests": "Ulkopuolisten vieraiden kanssa",
+        "internalOnly": "Vain sisäiset"
+      },
+      "presets": {
+        "today": "Tänään",
+        "week": "Tämä viikko",
+        "month": "Tämä kuukausi",
+        "last30": "Viimeiset 30 päivää",
+        "last90": "Viimeiset 90 päivää",
+        "custom": "Mukautettu jakso"
+      },
+      "kpi": {
+        "total": "Kokouksia yhteensä",
+        "completedCancelled": "Valmiit: {completed} · Peruttu: {cancelled}",
+        "hours": "Kokoustunnit",
+        "attendance": "Osallistumisaste",
+        "attendedOfInvited": "Osallistui: {attended} / {invited}",
+        "noShow": "Poissaoloaste",
+        "noShowCount": "Poissa: {count}",
+        "avgDuration": "Keskimääräinen kesto",
+        "avgAttended": "Keskimääräinen läsnäoloaika",
+        "late": "Myöhästymiset",
+        "earlyHint": "Lähti aikaisin: {rate}",
+        "live": "Livenä nyt",
+        "peakHint": "Keskimääräinen huippu: {peak}"
+      },
+      "charts": {
+        "volume": "Kokoukset ja tunnit",
+        "meetings": "Kokoukset",
+        "hours": "Tunnit",
+        "attendance": "Osallistuminen ja poissaolot",
+        "attendanceRate": "Osallistumisaste",
+        "noShowRate": "Poissaoloaste"
+      },
+      "tables": {
+        "people": "Osallistuminen henkilöittäin",
+        "person": "Henkilö",
+        "attended": "Osallistui",
+        "missed": "Jäi väliin",
+        "time": "Aika",
+        "avg": "Keskim. osallistuminen",
+        "hosts": "Aktiivisimmat isännät"
+      },
+      "me": {
+        "attended": "Osallistui",
+        "invitedHint": "Kutsuttu: {count}",
+        "missed": "Jäi väliin",
+        "hours": "Kokoustunnit",
+        "hosted": "Isännöity",
+        "avgTime": "Keskimääräinen läsnäoloaika",
+        "avgPct": "Keskimääräinen osallistuminen",
+        "early": "Aikaiset poistumiset",
+        "trend": "Osallistuminen ajan yli",
+        "history": "Viimeaikaiset kokoukset",
+        "didNotAttend": "Ei osallistunut"
+      }
+    }
   }
 }

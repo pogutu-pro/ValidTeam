@@ -45,7 +45,10 @@
     "system": "System",
     "updates": "Aktualizacje",
     "ai_transparency": "Przejrzystość AI",
-    "initiatives": "Inicjatywy"
+    "initiatives": "Inicjatywy",
+    "meetings": "Spotkania",
+    "meetings_all": "Wszystkie spotkania",
+    "meetings_analytics": "Statystyki"
   },
   "actions": {
     "create_issue": "Utwórz zgłoszenie",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Spotkania",
+    "subtitle": "Rozpocznij spotkanie od razu lub zaplanuj je z członkami zespołu i gośćmi zewnętrznymi.",
+    "analytics": "Statystyki",
+    "schedule": "Zaplanuj",
+    "startMeeting": "Rozpocznij spotkanie",
+    "instantTitle": "Spotkanie natychmiastowe",
+    "start": "Rozpocznij",
+    "join": "Dołącz",
+    "recurring": "Cykliczne",
+    "hostedBy": "Organizator: {name}",
+    "participantCount": "Uczestnicy: {count}",
+    "retry": "Spróbuj ponownie",
+    "loading": "Wczytywanie spotkania…",
+    "cancel": "Anuluj",
+    "scheduled": "Spotkanie zaplanowane",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Nadchodzące",
+      "live": "Na żywo",
+      "past": "Minione"
+    },
+    "status": {
+      "scheduled": "Zaplanowane",
+      "live": "Na żywo",
+      "ended": "Zakończone",
+      "cancelled": "Anulowane"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Brak nadchodzących spotkań",
+        "body": "Rozpocznij spotkanie teraz lub zaplanuj je na później."
+      },
+      "live": {
+        "title": "Brak spotkań na żywo",
+        "body": "Trwające spotkania pojawią się tutaj."
+      },
+      "past": {
+        "title": "Brak minionych spotkań",
+        "body": "Zakończone spotkania i ich frekwencja pojawią się tutaj."
+      }
+    },
+    "errors": {
+      "createFailed": "Nie udało się utworzyć spotkania. Spróbuj ponownie.",
+      "loadFailed": "Nie udało się wczytać spotkań.",
+      "titleRequired": "Wpisz tytuł spotkania.",
+      "invalidDateTime": "Wpisz prawidłową datę i godzinę.",
+      "pastStart": "Godzina rozpoczęcia jest w przeszłości.",
+      "invalidEmails": "Te adresy e-mail są nieprawidłowe: {emails}",
+      "invalidCount": "Liczba wystąpień musi mieścić się w zakresie od 1 do 366.",
+      "invalidParticipants": "Niektóre wybrane osoby nie należą do tej przestrzeni roboczej.",
+      "guestsNotAllowed": "Goście zewnętrzni nie są dozwoleni na tym spotkaniu."
+    },
+    "scheduleDialog": {
+      "title": "Zaplanuj spotkanie",
+      "description": "Zaproszenia są wysyłane e-mailem. Goście dołączają z linku bez konta.",
+      "submit": "Zaplanuj spotkanie"
+    },
+    "fields": {
+      "title": "Tytuł",
+      "date": "Data",
+      "startTime": "Godzina rozpoczęcia",
+      "duration": "Czas trwania",
+      "timezone": "Strefa czasowa",
+      "repeat": "Powtarzaj",
+      "occurrences": "Wystąpienia",
+      "occurrencesPlaceholder": "Opcjonalne",
+      "people": "Osoby",
+      "searchPeople": "Szukaj osób",
+      "noPeople": "Brak pasujących osób",
+      "selectedCount": "Wybrano: {count}",
+      "guests": "Goście zewnętrzni",
+      "allowGuests": "Zezwalaj na gości",
+      "guestsPlaceholder": "imie@przyklad.pl, inny@przyklad.pl",
+      "guestsHint": "Oddziel adresy przecinkami lub nowymi wierszami. Goście nie potrzebują konta.",
+      "description": "Opis (opcjonalnie)"
+    },
+    "repeat": {
+      "none": "Nie powtarza się",
+      "daily": "Codziennie",
+      "weekly": "Co tydzień",
+      "monthly": "Co miesiąc"
+    },
+    "denied": {
+      "signin": {
+        "title": "Zaloguj się, aby dołączyć",
+        "body": "To spotkanie jest dla członków przestrzeni roboczej. Zaloguj się lub użyj linku dla gości z zaproszenia.",
+        "action": "Zaloguj się"
+      },
+      "notFound": {
+        "title": "Nie znaleziono spotkania",
+        "body": "Link może być nieprawidłowy lub możesz nie mieć dostępu do tego spotkania."
+      },
+      "closed": {
+        "title": "To spotkanie się zakończyło",
+        "body": "Spotkanie dobiegło końca lub zostało anulowane."
+      },
+      "invalidGuestLink": {
+        "title": "Ten link dla gości jest nieprawidłowy",
+        "body": "Mógł wygasnąć lub zostać zastąpiony. Poproś organizatora o nowe zaproszenie."
+      },
+      "error": {
+        "title": "Coś poszło nie tak",
+        "body": "Nie udało się otworzyć tego spotkania. Spróbuj ponownie."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Opuszczono spotkanie",
+        "body": "Możesz dołączyć ponownie, dopóki spotkanie jest otwarte."
+      },
+      "removed": {
+        "title": "Usunięto Cię ze spotkania",
+        "body": "Organizator usunął Cię z tego spotkania."
+      },
+      "ended": {
+        "title": "Spotkanie zostało zakończone",
+        "body": "Organizator zakończył spotkanie dla wszystkich."
+      },
+      "rejoin": "Dołącz ponownie",
+      "viewMeeting": "Zobacz spotkanie"
+    },
+    "prejoin": {
+      "preview": "Podgląd kamery",
+      "micOn": "Mikrofon włączony",
+      "micOff": "Mikrofon wyłączony",
+      "cameraOn": "Kamera włączona",
+      "cameraOff": "Kamera wyłączona",
+      "cameraBlocked": "Kamera jest niedostępna. Sprawdź uprawnienia przeglądarki.",
+      "organizedBy": "Organizator: {name}",
+      "inProgress": "W toku",
+      "joiningAsGuest": "Dołączasz jako gość",
+      "yourName": "Twoje imię i nazwisko",
+      "joining": "Dołączanie…",
+      "joinMeeting": "Dołącz do spotkania",
+      "errors": {
+        "tooEarly": "To spotkanie nie zostało jeszcze otwarte. Spróbuj ponownie bliżej godziny rozpoczęcia.",
+        "ended": "To spotkanie nie jest już otwarte.",
+        "unavailable": "Usługa wideo jest teraz niedostępna.",
+        "rateLimited": "Zbyt wiele prób. Odczekaj chwilę i spróbuj ponownie.",
+        "invalidGuestLink": "Ten link dla gości jest nieprawidłowy.",
+        "forbidden": "Nie masz zaproszenia na to spotkanie.",
+        "generic": "Nie udało się dołączyć do spotkania. Spróbuj ponownie."
+      }
+    },
+    "room": {
+      "you": "Ty",
+      "guest": "Gość",
+      "micOff": "Mikrofon wyłączony",
+      "micOn": "Mikrofon włączony",
+      "cameraOff": "Kamera wyłączona",
+      "cameraOn": "Kamera włączona",
+      "removeParticipant": "Usuń: {name}",
+      "people": "Osoby",
+      "host": "Organizator",
+      "participants": "Uczestnicy",
+      "closePanel": "Zamknij panel",
+      "chat": "Czat",
+      "chatNote": "Wiadomości są widoczne tylko podczas spotkania i nie są zapisywane.",
+      "messagePlaceholder": "Wyślij wiadomość",
+      "send": "Wyślij",
+      "presenting": "{name} prezentuje",
+      "moreParticipants": "+{count} więcej",
+      "inMeeting": "W spotkaniu: {count}",
+      "reconnecting": "Ponowne łączenie…",
+      "controls": "Sterowanie spotkaniem",
+      "muteMic": "Wycisz mikrofon",
+      "unmuteMic": "Wyłącz wyciszenie",
+      "stopCamera": "Wyłącz kamerę",
+      "startCamera": "Włącz kamerę",
+      "stopShare": "Zatrzymaj udostępnianie",
+      "shareScreen": "Udostępnij ekran",
+      "endForAll": "Zakończ dla wszystkich",
+      "leave": "Opuść",
+      "endConfirmTitle": "Zakończyć spotkanie dla wszystkich?",
+      "endConfirmBody": "Wszyscy zostaną rozłączeni, a spotkanie zostanie zamknięte.",
+      "cancel": "Anuluj"
+    },
+    "details": {
+      "didNotAttend": "Nieobecny",
+      "late": "Spóźniony",
+      "leftEarly": "Wyszedł wcześniej",
+      "notFoundTitle": "Nie znaleziono spotkania",
+      "notFoundBody": "Mogło zostać usunięte lub możesz nie mieć dostępu.",
+      "loadFailed": "Nie udało się wczytać spotkania.",
+      "backToMeetings": "Wróć do spotkań",
+      "copyFailed": "Nie udało się skopiować linku.",
+      "invited": "Wysłano zaproszenia",
+      "inviteFailed": "Nie udało się zaprosić tych osób.",
+      "cancelMeeting": "Anuluj spotkanie",
+      "endMeeting": "Zakończ spotkanie",
+      "overview": "Przegląd",
+      "host": "Organizator",
+      "duration": "Czas trwania",
+      "people": "Osoby",
+      "peopleSummary": "Zaproszeni: {count} · Goście: {guests}",
+      "type": "Typ",
+      "instant": "Spotkanie natychmiastowe",
+      "oneTime": "Spotkanie jednorazowe",
+      "copied": "Skopiowano",
+      "copyLink": "Kopiuj link",
+      "analytics": "Statystyki spotkania",
+      "attended": "Obecni",
+      "noShows": "Nieobecności: {count}",
+      "peak": "Szczyt liczby uczestników",
+      "avgAttendance": "Średnia frekwencja",
+      "participantTime": "Łączny czas uczestników",
+      "lateArrivals": "Spóźnienia",
+      "earlyDepartures": "Wcześniejsze wyjścia",
+      "joins": "Dołączenia",
+      "leaves": "Wyjścia: {count}",
+      "analyticsPending": "Statystyki będą dostępne wkrótce po zakończeniu spotkania.",
+      "participants": "Uczestnicy",
+      "name": "Nazwa",
+      "joined": "Dołączył",
+      "left": "Wyszedł",
+      "attendance": "Frekwencja",
+      "hostBadge": "Organizator",
+      "guestBadge": "Gość",
+      "remove": "Usuń",
+      "inviteMore": "Zaproś więcej osób",
+      "sendInvites": "Wyślij zaproszenia",
+      "cancelTitle": "Anulować to spotkanie?",
+      "cancelBody": "Uczestnicy nie będą mogli już dołączyć.",
+      "cancelSeries": "Anuluj całą serię",
+      "cancelThisOne": "Anuluj tylko to spotkanie"
+    },
+    "analyticsPage": {
+      "title": "Statystyki spotkań",
+      "subtitle": "Frekwencja, czas i udział w Twoich spotkaniach.",
+      "back": "Wróć do spotkań",
+      "noData": "Brak danych dla tego okresu",
+      "loadFailed": "Nie udało się wczytać statystyk.",
+      "invalidRange": "Data zakończenia musi być późniejsza niż data rozpoczęcia.",
+      "scope": {
+        "me": "Moje spotkania",
+        "organization": "Organizacja"
+      },
+      "filters": {
+        "range": "Okres",
+        "from": "Od",
+        "to": "Do",
+        "recurrence": "Cykliczność",
+        "allMeetings": "Wszystkie spotkania",
+        "recurring": "Cykliczne",
+        "oneTime": "Jednorazowe",
+        "guests": "Goście",
+        "anyGuests": "Z gośćmi lub bez",
+        "withGuests": "Z gośćmi zewnętrznymi",
+        "internalOnly": "Tylko wewnętrzne"
+      },
+      "presets": {
+        "today": "Dzisiaj",
+        "week": "Ten tydzień",
+        "month": "Ten miesiąc",
+        "last30": "Ostatnie 30 dni",
+        "last90": "Ostatnie 90 dni",
+        "custom": "Zakres niestandardowy"
+      },
+      "kpi": {
+        "total": "Wszystkie spotkania",
+        "completedCancelled": "Zakończone: {completed} · Anulowane: {cancelled}",
+        "hours": "Godziny spotkań",
+        "attendance": "Wskaźnik frekwencji",
+        "attendedOfInvited": "Obecni: {attended} z {invited}",
+        "noShow": "Wskaźnik nieobecności",
+        "noShowCount": "Nieobecności: {count}",
+        "avgDuration": "Średni czas trwania",
+        "avgAttended": "Średni czas obecności",
+        "late": "Spóźnienia",
+        "earlyHint": "Wcześniejsze wyjścia: {rate}",
+        "live": "Teraz na żywo",
+        "peakHint": "Średni szczyt: {peak}"
+      },
+      "charts": {
+        "volume": "Spotkania i godziny",
+        "meetings": "Spotkania",
+        "hours": "Godziny",
+        "attendance": "Frekwencja i nieobecności",
+        "attendanceRate": "Wskaźnik frekwencji",
+        "noShowRate": "Wskaźnik nieobecności"
+      },
+      "tables": {
+        "people": "Udział według osób",
+        "person": "Osoba",
+        "attended": "Obecny",
+        "missed": "Opuszczone",
+        "time": "Czas",
+        "avg": "Śr. frekwencja",
+        "hosts": "Najczęstsi organizatorzy"
+      },
+      "me": {
+        "attended": "Obecny",
+        "invitedHint": "Zaproszony: {count}",
+        "missed": "Opuszczone",
+        "hours": "Godziny spotkań",
+        "hosted": "Zorganizowane",
+        "avgTime": "Średni czas obecności",
+        "avgPct": "Średnia frekwencja",
+        "early": "Wcześniejsze wyjścia",
+        "trend": "Frekwencja w czasie",
+        "history": "Ostatnie spotkania",
+        "didNotAttend": "Nieobecny"
+      }
+    }
   }
 }

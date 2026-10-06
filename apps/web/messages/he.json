@@ -45,7 +45,10 @@
     "system": "מערכת",
     "updates": "עדכונים",
     "ai_transparency": "שקיפות AI",
-    "initiatives": "יוזמות"
+    "initiatives": "יוזמות",
+    "meetings": "פגישות",
+    "meetings_all": "כל הפגישות",
+    "meetings_analytics": "ניתוחים"
   },
   "actions": {
     "create_issue": "יצירת משימה",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "פגישות",
+    "subtitle": "התחילו פגישה מיידית או תזמנו פגישה עם עמיתים ואורחים חיצוניים.",
+    "analytics": "ניתוחים",
+    "schedule": "תזמון",
+    "startMeeting": "התחלת פגישה",
+    "instantTitle": "פגישה מיידית",
+    "start": "התחלה",
+    "join": "הצטרפות",
+    "recurring": "חוזרת",
+    "hostedBy": "מארגן/ת: {name}",
+    "participantCount": "משתתפים: {count}",
+    "retry": "נסו שוב",
+    "loading": "טוען את הפגישה…",
+    "cancel": "ביטול",
+    "scheduled": "הפגישה תוזמנה",
+    "minutes": "{count} דק׳",
+    "tabs": {
+      "upcoming": "קרובות",
+      "live": "שידור חי",
+      "past": "קודמות"
+    },
+    "status": {
+      "scheduled": "מתוזמנת",
+      "live": "שידור חי",
+      "ended": "הסתיימה",
+      "cancelled": "בוטלה"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "אין פגישות קרובות",
+        "body": "התחילו פגישה עכשיו או תזמנו אחת למועד מאוחר יותר."
+      },
+      "live": {
+        "title": "אין פגישות חיות",
+        "body": "פגישות שמתקיימות כעת יופיעו כאן."
+      },
+      "past": {
+        "title": "עדיין אין פגישות קודמות",
+        "body": "פגישות שהסתיימו והנוכחות בהן יופיעו כאן."
+      }
+    },
+    "errors": {
+      "createFailed": "לא ניתן היה ליצור את הפגישה. נסו שוב.",
+      "loadFailed": "לא ניתן היה לטעון את הפגישות.",
+      "titleRequired": "הזינו כותרת לפגישה.",
+      "invalidDateTime": "הזינו תאריך ושעה תקינים.",
+      "pastStart": "שעת ההתחלה בעבר.",
+      "invalidEmails": "כתובות האימייל האלה אינן תקינות: {emails}",
+      "invalidCount": "מספר החזרות חייב להיות מספר בין 1 ל-366.",
+      "invalidParticipants": "חלק מהאנשים שנבחרו אינם חברים במרחב העבודה הזה.",
+      "guestsNotAllowed": "אורחים חיצוניים אינם מותרים בפגישה זו."
+    },
+    "scheduleDialog": {
+      "title": "תזמון פגישה",
+      "description": "ההזמנות נשלחות באימייל. אורחים מצטרפים מקישור ללא חשבון.",
+      "submit": "תזמון הפגישה"
+    },
+    "fields": {
+      "title": "כותרת",
+      "date": "תאריך",
+      "startTime": "שעת התחלה",
+      "duration": "משך",
+      "timezone": "אזור זמן",
+      "repeat": "חזרה",
+      "occurrences": "חזרות",
+      "occurrencesPlaceholder": "אופציונלי",
+      "people": "אנשים",
+      "searchPeople": "חיפוש אנשים",
+      "noPeople": "לא נמצאו אנשים מתאימים",
+      "selectedCount": "נבחרו: {count}",
+      "guests": "אורחים חיצוניים",
+      "allowGuests": "אפשרו אורחים",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "הפרידו בין כתובות בפסיקים או בשורות חדשות. אורחים אינם צריכים חשבון.",
+      "description": "תיאור (אופציונלי)"
+    },
+    "repeat": {
+      "none": "לא חוזרת",
+      "daily": "יומית",
+      "weekly": "שבועית",
+      "monthly": "חודשית"
+    },
+    "denied": {
+      "signin": {
+        "title": "התחברו כדי להצטרף",
+        "body": "פגישה זו מיועדת לחברי מרחב העבודה. התחברו או השתמשו בקישור האורח מההזמנה.",
+        "action": "התחברות"
+      },
+      "notFound": {
+        "title": "הפגישה לא נמצאה",
+        "body": "ייתכן שהקישור שגוי או שאין לכם גישה לפגישה זו."
+      },
+      "closed": {
+        "title": "הפגישה הסתיימה",
+        "body": "הפגישה הסתיימה או בוטלה."
+      },
+      "invalidGuestLink": {
+        "title": "קישור האורח הזה אינו תקין",
+        "body": "ייתכן שפג תוקפו או שהוחלף. בקשו מהמארגן הזמנה חדשה."
+      },
+      "error": {
+        "title": "משהו השתבש",
+        "body": "לא ניתן היה לפתוח את הפגישה. נסו שוב."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "עזבתם את הפגישה",
+        "body": "אפשר להצטרף שוב כל עוד הפגישה פתוחה."
+      },
+      "removed": {
+        "title": "הוסרתם",
+        "body": "המארגן הסיר אתכם מהפגישה."
+      },
+      "ended": {
+        "title": "הפגישה הסתיימה",
+        "body": "המארגן סיים את הפגישה עבור כולם."
+      },
+      "rejoin": "הצטרפות מחדש",
+      "viewMeeting": "צפייה בפגישה"
+    },
+    "prejoin": {
+      "preview": "תצוגה מקדימה של המצלמה",
+      "micOn": "המיקרופון פועל",
+      "micOff": "המיקרופון כבוי",
+      "cameraOn": "המצלמה פועלת",
+      "cameraOff": "המצלמה כבויה",
+      "cameraBlocked": "המצלמה אינה זמינה. בדקו את הרשאות הדפדפן.",
+      "organizedBy": "מארגן/ת: {name}",
+      "inProgress": "מתקיימת",
+      "joiningAsGuest": "מצטרפים כאורחים",
+      "yourName": "השם שלכם",
+      "joining": "מצטרפים…",
+      "joinMeeting": "הצטרפות לפגישה",
+      "errors": {
+        "tooEarly": "הפגישה עדיין לא נפתחה. נסו שוב קרוב יותר לשעת ההתחלה.",
+        "ended": "הפגישה כבר אינה פתוחה.",
+        "unavailable": "שירות הווידאו אינו זמין כרגע.",
+        "rateLimited": "יותר מדי ניסיונות. המתינו רגע ונסו שוב.",
+        "invalidGuestLink": "קישור האורח הזה אינו תקין.",
+        "forbidden": "לא הוזמנתם לפגישה זו.",
+        "generic": "לא ניתן היה להצטרף לפגישה. נסו שוב."
+      }
+    },
+    "room": {
+      "you": "את/ה",
+      "guest": "אורח/ת",
+      "micOff": "המיקרופון כבוי",
+      "micOn": "המיקרופון פועל",
+      "cameraOff": "המצלמה כבויה",
+      "cameraOn": "המצלמה פועלת",
+      "removeParticipant": "הסרת {name}",
+      "people": "אנשים",
+      "host": "מארגן/ת",
+      "participants": "משתתפים",
+      "closePanel": "סגירת החלונית",
+      "chat": "צ׳אט",
+      "chatNote": "הודעות גלויות רק במהלך הפגישה ואינן נשמרות.",
+      "messagePlaceholder": "שליחת הודעה",
+      "send": "שליחה",
+      "presenting": "{name} מציג/ה",
+      "moreParticipants": "+{count} נוספים",
+      "inMeeting": "בפגישה: {count}",
+      "reconnecting": "מתחבר מחדש…",
+      "controls": "פקדי הפגישה",
+      "muteMic": "השתקת המיקרופון",
+      "unmuteMic": "ביטול השתקה",
+      "stopCamera": "כיבוי המצלמה",
+      "startCamera": "הפעלת המצלמה",
+      "stopShare": "הפסקת שיתוף",
+      "shareScreen": "שיתוף מסך",
+      "endForAll": "סיום עבור כולם",
+      "leave": "עזיבה",
+      "endConfirmTitle": "לסיים את הפגישה עבור כולם?",
+      "endConfirmBody": "כולם ינותקו והפגישה תיסגר.",
+      "cancel": "ביטול"
+    },
+    "details": {
+      "didNotAttend": "לא הגיע/ה",
+      "late": "איחר/ה",
+      "leftEarly": "עזב/ה מוקדם",
+      "notFoundTitle": "הפגישה לא נמצאה",
+      "notFoundBody": "ייתכן שהוסרה או שאין לכם גישה.",
+      "loadFailed": "לא ניתן היה לטעון את הפגישה.",
+      "backToMeetings": "חזרה לפגישות",
+      "copyFailed": "לא ניתן היה להעתיק את הקישור.",
+      "invited": "ההזמנות נשלחו",
+      "inviteFailed": "לא ניתן היה להזמין את האנשים האלה.",
+      "cancelMeeting": "ביטול הפגישה",
+      "endMeeting": "סיום הפגישה",
+      "overview": "סקירה",
+      "host": "מארגן/ת",
+      "duration": "משך",
+      "people": "אנשים",
+      "peopleSummary": "הוזמנו: {count} · אורחים: {guests}",
+      "type": "סוג",
+      "instant": "פגישה מיידית",
+      "oneTime": "פגישה חד-פעמית",
+      "copied": "הועתק",
+      "copyLink": "העתקת קישור",
+      "analytics": "ניתוח הפגישה",
+      "attended": "הגיעו",
+      "noShows": "לא הגיעו: {count}",
+      "peak": "שיא משתתפים",
+      "avgAttendance": "נוכחות ממוצעת",
+      "participantTime": "זמן משתתפים כולל",
+      "lateArrivals": "הגעות באיחור",
+      "earlyDepartures": "עזיבות מוקדמות",
+      "joins": "הצטרפויות",
+      "leaves": "עזיבות: {count}",
+      "analyticsPending": "הניתוח יהיה זמין זמן קצר לאחר סיום הפגישה.",
+      "participants": "משתתפים",
+      "name": "שם",
+      "joined": "הצטרף/ה",
+      "left": "עזב/ה",
+      "attendance": "נוכחות",
+      "hostBadge": "מארגן/ת",
+      "guestBadge": "אורח/ת",
+      "remove": "הסרה",
+      "inviteMore": "הזמנת אנשים נוספים",
+      "sendInvites": "שליחת הזמנות",
+      "cancelTitle": "לבטל את הפגישה?",
+      "cancelBody": "המשתתפים לא יוכלו עוד להצטרף.",
+      "cancelSeries": "ביטול כל הסדרה",
+      "cancelThisOne": "ביטול פגישה זו בלבד"
+    },
+    "analyticsPage": {
+      "title": "ניתוחי פגישות",
+      "subtitle": "נוכחות, זמן והשתתפות בפגישות שלכם.",
+      "back": "חזרה לפגישות",
+      "noData": "אין נתונים לתקופה זו",
+      "loadFailed": "לא ניתן היה לטעון את הניתוחים.",
+      "invalidRange": "תאריך הסיום חייב להיות אחרי תאריך ההתחלה.",
+      "scope": {
+        "me": "הפגישות שלי",
+        "organization": "ארגון"
+      },
+      "filters": {
+        "range": "תקופה",
+        "from": "מתאריך",
+        "to": "עד תאריך",
+        "recurrence": "חזרתיות",
+        "allMeetings": "כל הפגישות",
+        "recurring": "חוזרות",
+        "oneTime": "חד-פעמיות",
+        "guests": "אורחים",
+        "anyGuests": "עם אורחים או בלעדיהם",
+        "withGuests": "עם אורחים חיצוניים",
+        "internalOnly": "פנימיות בלבד"
+      },
+      "presets": {
+        "today": "היום",
+        "week": "השבוע",
+        "month": "החודש",
+        "last30": "30 הימים האחרונים",
+        "last90": "90 הימים האחרונים",
+        "custom": "טווח מותאם אישית"
+      },
+      "kpi": {
+        "total": "סה״כ פגישות",
+        "completedCancelled": "הושלמו: {completed} · בוטלו: {cancelled}",
+        "hours": "שעות פגישה",
+        "attendance": "שיעור נוכחות",
+        "attendedOfInvited": "הגיעו: {attended} מתוך {invited}",
+        "noShow": "שיעור אי-הגעה",
+        "noShowCount": "לא הגיעו: {count}",
+        "avgDuration": "משך ממוצע",
+        "avgAttended": "זמן נוכחות ממוצע",
+        "late": "הגעות באיחור",
+        "earlyHint": "עזבו מוקדם: {rate}",
+        "live": "חי עכשיו",
+        "peakHint": "שיא ממוצע: {peak}"
+      },
+      "charts": {
+        "volume": "פגישות ושעות",
+        "meetings": "פגישות",
+        "hours": "שעות",
+        "attendance": "נוכחות ואי-הגעה",
+        "attendanceRate": "שיעור נוכחות",
+        "noShowRate": "שיעור אי-הגעה"
+      },
+      "tables": {
+        "people": "השתתפות לפי אדם",
+        "person": "אדם",
+        "attended": "הגיע/ה",
+        "missed": "הוחמצו",
+        "time": "זמן",
+        "avg": "נוכחות ממוצעת",
+        "hosts": "המארגנים השכיחים ביותר"
+      },
+      "me": {
+        "attended": "הגיע/ה",
+        "invitedHint": "הוזמן/ה ל: {count}",
+        "missed": "הוחמצו",
+        "hours": "שעות פגישה",
+        "hosted": "ארגן/ה",
+        "avgTime": "זמן נוכחות ממוצע",
+        "avgPct": "נוכחות ממוצעת",
+        "early": "עזיבות מוקדמות",
+        "trend": "נוכחות לאורך זמן",
+        "history": "פגישות אחרונות",
+        "didNotAttend": "לא הגיע/ה"
+      }
+    }
   }
 }

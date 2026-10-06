@@ -45,7 +45,10 @@
     "system": "System",
     "updates": "Uppdateringar",
     "ai_transparency": "AI-transparens",
-    "initiatives": "Initiativ"
+    "initiatives": "Initiativ",
+    "meetings": "Möten",
+    "meetings_all": "Alla möten",
+    "meetings_analytics": "Analys"
   },
   "actions": {
     "create_issue": "Skapa ärende",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Möten",
+    "subtitle": "Starta ett direktmöte eller boka ett med kollegor och externa gäster.",
+    "analytics": "Analys",
+    "schedule": "Boka",
+    "startMeeting": "Starta ett möte",
+    "instantTitle": "Direktmöte",
+    "start": "Starta",
+    "join": "Anslut",
+    "recurring": "Återkommande",
+    "hostedBy": "Värd: {name}",
+    "participantCount": "Deltagare: {count}",
+    "retry": "Försök igen",
+    "loading": "Läser in mötet…",
+    "cancel": "Avbryt",
+    "scheduled": "Mötet är bokat",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Kommande",
+      "live": "Live",
+      "past": "Tidigare"
+    },
+    "status": {
+      "scheduled": "Bokat",
+      "live": "Live",
+      "ended": "Avslutat",
+      "cancelled": "Inställt"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Inga kommande möten",
+        "body": "Starta ett möte nu eller boka ett till senare."
+      },
+      "live": {
+        "title": "Inga livemöten",
+        "body": "Pågående möten visas här."
+      },
+      "past": {
+        "title": "Inga tidigare möten än",
+        "body": "Avslutade möten och deras närvaro visas här."
+      }
+    },
+    "errors": {
+      "createFailed": "Det gick inte att skapa mötet. Försök igen.",
+      "loadFailed": "Det gick inte att läsa in mötena.",
+      "titleRequired": "Ange en mötestitel.",
+      "invalidDateTime": "Ange ett giltigt datum och en giltig tid.",
+      "pastStart": "Starttiden ligger i det förflutna.",
+      "invalidEmails": "Dessa e-postadresser är ogiltiga: {emails}",
+      "invalidCount": "Antalet upprepningar måste vara ett tal från 1 till 366.",
+      "invalidParticipants": "Vissa valda personer är inte medlemmar i den här arbetsytan.",
+      "guestsNotAllowed": "Externa gäster är inte tillåtna för det här mötet."
+    },
+    "scheduleDialog": {
+      "title": "Boka ett möte",
+      "description": "Inbjudningar skickas via e-post. Gäster ansluter från en länk utan konto.",
+      "submit": "Boka möte"
+    },
+    "fields": {
+      "title": "Titel",
+      "date": "Datum",
+      "startTime": "Starttid",
+      "duration": "Längd",
+      "timezone": "Tidszon",
+      "repeat": "Upprepa",
+      "occurrences": "Upprepningar",
+      "occurrencesPlaceholder": "Valfritt",
+      "people": "Personer",
+      "searchPeople": "Sök personer",
+      "noPeople": "Inga matchande personer",
+      "selectedCount": "Valda: {count}",
+      "guests": "Externa gäster",
+      "allowGuests": "Tillåt gäster",
+      "guestsPlaceholder": "namn@exempel.se, annan@exempel.se",
+      "guestsHint": "Separera adresser med kommatecken eller radbrytningar. Gäster behöver inget konto.",
+      "description": "Beskrivning (valfritt)"
+    },
+    "repeat": {
+      "none": "Upprepas inte",
+      "daily": "Dagligen",
+      "weekly": "Varje vecka",
+      "monthly": "Varje månad"
+    },
+    "denied": {
+      "signin": {
+        "title": "Logga in för att ansluta",
+        "body": "Det här mötet är för medlemmar i arbetsytan. Logga in eller använd gästlänken från din inbjudan.",
+        "action": "Logga in"
+      },
+      "notFound": {
+        "title": "Mötet hittades inte",
+        "body": "Länken kan vara fel, eller så har du inte åtkomst till det här mötet."
+      },
+      "closed": {
+        "title": "Det här mötet har avslutats",
+        "body": "Mötet är slut eller har ställts in."
+      },
+      "invalidGuestLink": {
+        "title": "Den här gästlänken är ogiltig",
+        "body": "Den kan ha gått ut eller ersatts. Be värden om en ny inbjudan."
+      },
+      "error": {
+        "title": "Något gick fel",
+        "body": "Vi kunde inte öppna det här mötet. Försök igen."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Du lämnade mötet",
+        "body": "Du kan ansluta igen så länge mötet är öppet."
+      },
+      "removed": {
+        "title": "Du har tagits bort",
+        "body": "Värden tog bort dig från det här mötet."
+      },
+      "ended": {
+        "title": "Mötet har avslutats",
+        "body": "Värden avslutade mötet för alla."
+      },
+      "rejoin": "Anslut igen",
+      "viewMeeting": "Visa mötet"
+    },
+    "prejoin": {
+      "preview": "Förhandsvisning av kamera",
+      "micOn": "Mikrofon på",
+      "micOff": "Mikrofon av",
+      "cameraOn": "Kamera på",
+      "cameraOff": "Kamera av",
+      "cameraBlocked": "Kameran är inte tillgänglig. Kontrollera webbläsarens behörigheter.",
+      "organizedBy": "Värd: {name}",
+      "inProgress": "Pågår",
+      "joiningAsGuest": "Du ansluter som gäst",
+      "yourName": "Ditt namn",
+      "joining": "Ansluter…",
+      "joinMeeting": "Anslut till mötet",
+      "errors": {
+        "tooEarly": "Det här mötet har inte öppnat än. Försök igen närmare starttiden.",
+        "ended": "Det här mötet är inte längre öppet.",
+        "unavailable": "Videotjänsten är inte tillgänglig just nu.",
+        "rateLimited": "För många försök. Vänta en stund och försök igen.",
+        "invalidGuestLink": "Den här gästlänken är ogiltig.",
+        "forbidden": "Du är inte inbjuden till det här mötet.",
+        "generic": "Det gick inte att ansluta till mötet. Försök igen."
+      }
+    },
+    "room": {
+      "you": "Du",
+      "guest": "Gäst",
+      "micOff": "Mikrofon av",
+      "micOn": "Mikrofon på",
+      "cameraOff": "Kamera av",
+      "cameraOn": "Kamera på",
+      "removeParticipant": "Ta bort {name}",
+      "people": "Personer",
+      "host": "Värd",
+      "participants": "Deltagare",
+      "closePanel": "Stäng panelen",
+      "chat": "Chatt",
+      "chatNote": "Meddelanden syns bara under mötet och sparas inte.",
+      "messagePlaceholder": "Skicka ett meddelande",
+      "send": "Skicka",
+      "presenting": "{name} presenterar",
+      "moreParticipants": "+{count} till",
+      "inMeeting": "I mötet: {count}",
+      "reconnecting": "Återansluter…",
+      "controls": "Mötesreglage",
+      "muteMic": "Stäng av mikrofonen",
+      "unmuteMic": "Slå på mikrofonen",
+      "stopCamera": "Stäng av kameran",
+      "startCamera": "Slå på kameran",
+      "stopShare": "Sluta dela",
+      "shareScreen": "Dela skärm",
+      "endForAll": "Avsluta för alla",
+      "leave": "Lämna",
+      "endConfirmTitle": "Avsluta mötet för alla?",
+      "endConfirmBody": "Alla kopplas från och mötet stängs.",
+      "cancel": "Avbryt"
+    },
+    "details": {
+      "didNotAttend": "Deltog inte",
+      "late": "Sen",
+      "leftEarly": "Gick tidigt",
+      "notFoundTitle": "Mötet hittades inte",
+      "notFoundBody": "Det kan ha tagits bort, eller så har du inte åtkomst.",
+      "loadFailed": "Det gick inte att läsa in mötet.",
+      "backToMeetings": "Tillbaka till möten",
+      "copyFailed": "Det gick inte att kopiera länken.",
+      "invited": "Inbjudningar skickade",
+      "inviteFailed": "Det gick inte att bjuda in de här personerna.",
+      "cancelMeeting": "Ställ in mötet",
+      "endMeeting": "Avsluta mötet",
+      "overview": "Översikt",
+      "host": "Värd",
+      "duration": "Längd",
+      "people": "Personer",
+      "peopleSummary": "Inbjudna: {count} · Gäster: {guests}",
+      "type": "Typ",
+      "instant": "Direktmöte",
+      "oneTime": "Engångsmöte",
+      "copied": "Kopierad",
+      "copyLink": "Kopiera länk",
+      "analytics": "Mötesanalys",
+      "attended": "Deltog",
+      "noShows": "Uteblev: {count}",
+      "peak": "Högsta antal deltagare",
+      "avgAttendance": "Genomsnittlig närvaro",
+      "participantTime": "Total deltagartid",
+      "lateArrivals": "Sena ankomster",
+      "earlyDepartures": "Tidiga avgångar",
+      "joins": "Anslutningar",
+      "leaves": "Avslut: {count}",
+      "analyticsPending": "Analysen blir tillgänglig strax efter att mötet avslutats.",
+      "participants": "Deltagare",
+      "name": "Namn",
+      "joined": "Anslöt",
+      "left": "Lämnade",
+      "attendance": "Närvaro",
+      "hostBadge": "Värd",
+      "guestBadge": "Gäst",
+      "remove": "Ta bort",
+      "inviteMore": "Bjud in fler personer",
+      "sendInvites": "Skicka inbjudningar",
+      "cancelTitle": "Ställa in det här mötet?",
+      "cancelBody": "Deltagare kommer inte längre kunna ansluta.",
+      "cancelSeries": "Ställ in hela serien",
+      "cancelThisOne": "Ställ bara in det här mötet"
+    },
+    "analyticsPage": {
+      "title": "Mötesanalys",
+      "subtitle": "Närvaro, tid och deltagande över dina möten.",
+      "back": "Tillbaka till möten",
+      "noData": "Inga data för den här perioden",
+      "loadFailed": "Det gick inte att läsa in analysen.",
+      "invalidRange": "Slutdatumet måste vara efter startdatumet.",
+      "scope": {
+        "me": "Mina möten",
+        "organization": "Organisation"
+      },
+      "filters": {
+        "range": "Period",
+        "from": "Från",
+        "to": "Till",
+        "recurrence": "Upprepning",
+        "allMeetings": "Alla möten",
+        "recurring": "Återkommande",
+        "oneTime": "Engångs",
+        "guests": "Gäster",
+        "anyGuests": "Med eller utan gäster",
+        "withGuests": "Med externa gäster",
+        "internalOnly": "Endast interna"
+      },
+      "presets": {
+        "today": "Idag",
+        "week": "Den här veckan",
+        "month": "Den här månaden",
+        "last30": "Senaste 30 dagarna",
+        "last90": "Senaste 90 dagarna",
+        "custom": "Anpassat intervall"
+      },
+      "kpi": {
+        "total": "Totalt antal möten",
+        "completedCancelled": "Genomförda: {completed} · Inställda: {cancelled}",
+        "hours": "Mötestimmar",
+        "attendance": "Närvarograd",
+        "attendedOfInvited": "Deltog: {attended} av {invited}",
+        "noShow": "Utebliven grad",
+        "noShowCount": "Uteblev: {count}",
+        "avgDuration": "Genomsnittlig längd",
+        "avgAttended": "Genomsnittlig närvarotid",
+        "late": "Sena ankomster",
+        "earlyHint": "Gick tidigt: {rate}",
+        "live": "Live nu",
+        "peakHint": "Genomsnittlig topp: {peak}"
+      },
+      "charts": {
+        "volume": "Möten och timmar",
+        "meetings": "Möten",
+        "hours": "Timmar",
+        "attendance": "Närvaro och uteblivna",
+        "attendanceRate": "Närvarograd",
+        "noShowRate": "Utebliven grad"
+      },
+      "tables": {
+        "people": "Deltagande per person",
+        "person": "Person",
+        "attended": "Deltog",
+        "missed": "Missade",
+        "time": "Tid",
+        "avg": "Snittnärvaro",
+        "hosts": "Vanligaste värdar"
+      },
+      "me": {
+        "attended": "Deltog",
+        "invitedHint": "Inbjuden till: {count}",
+        "missed": "Missade",
+        "hours": "Mötestimmar",
+        "hosted": "Värd för",
+        "avgTime": "Genomsnittlig närvarotid",
+        "avgPct": "Genomsnittlig närvaro",
+        "early": "Tidiga avgångar",
+        "trend": "Närvaro över tid",
+        "history": "Senaste möten",
+        "didNotAttend": "Deltog inte"
+      }
+    }
   }
 }

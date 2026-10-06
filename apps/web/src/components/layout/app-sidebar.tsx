@@ -55,6 +55,8 @@ import {
   MessageSquareText,
   Scroll,
   ScrollText,
+  Video,
+  BarChart3,
 } from 'lucide-react';
 import { ValidTeamLogo } from '@/components/branding/validteam-logo';
 import { PRODUCT_INITIALS, productName } from '@/config/brand';
@@ -157,6 +159,11 @@ const DASHBOARD_LINKS: Array<{ href: string; i18nKey: string; icon: typeof Home 
   { href: '/dashboard', i18nKey: 'overview', icon: Home },
   { href: '/drafts', i18nKey: 'drafts', icon: FileText },
   { href: '/templates', i18nKey: 'templates', icon: Pin },
+];
+
+const MEETINGS_LINKS: Array<{ href: string; i18nKey: string; icon: typeof Home }> = [
+  { href: '/meetings', i18nKey: 'meetings_all', icon: Video },
+  { href: '/meetings/analytics', i18nKey: 'meetings_analytics', icon: BarChart3 },
 ];
 
 const TEAM_LINKS: NavLink[] = [
@@ -417,6 +424,7 @@ function getSectionKey(pathname: string | null | undefined): string {
   if (path.startsWith('/initiatives')) return 'projects';
   if (path.startsWith('/projects')) return 'projects';
   if (path.startsWith('/docs')) return 'docs';
+  if (path.startsWith('/meetings')) return 'meetings';
   if (path.startsWith('/team')) return 'team';
   if (path.startsWith('/admin')) return 'admin';
   if (path.startsWith('/settings')) return 'settings';
@@ -742,6 +750,22 @@ export function AppSidebar({
                     </Link>
                   );
                 })}
+              </div>
+            ) : null}
+
+            {hasWorkspaceAccess && normalizedPathname.startsWith('/meetings') ? (
+              <div className="space-y-0.5">
+                {MEETINGS_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    data-active={normalizedPathname === link.href ? 'true' : undefined}
+                    className={SIDEBAR_NAV_LINK_CLASS}
+                  >
+                    <link.icon className="h-4 w-4 shrink-0" />
+                    <span className={SIDEBAR_NAV_LABEL_CLASS}>{tNav(link.i18nKey)}</span>
+                  </Link>
+                ))}
               </div>
             ) : null}
 

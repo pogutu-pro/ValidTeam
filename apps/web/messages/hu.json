@@ -45,7 +45,10 @@
     "system": "Rendszer",
     "updates": "Frissítések",
     "ai_transparency": "AI-átláthatóság",
-    "initiatives": "Kezdeményezések"
+    "initiatives": "Kezdeményezések",
+    "meetings": "Megbeszélések",
+    "meetings_all": "Minden megbeszélés",
+    "meetings_analytics": "Elemzések"
   },
   "actions": {
     "create_issue": "Feladat létrehozása",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Megbeszélések",
+    "subtitle": "Indíts azonnali megbeszélést, vagy ütemezz egyet kollégákkal és külső vendégekkel.",
+    "analytics": "Elemzések",
+    "schedule": "Ütemezés",
+    "startMeeting": "Megbeszélés indítása",
+    "instantTitle": "Azonnali megbeszélés",
+    "start": "Indítás",
+    "join": "Csatlakozás",
+    "recurring": "Ismétlődő",
+    "hostedBy": "Szervező: {name}",
+    "participantCount": "Résztvevők: {count}",
+    "retry": "Újrapróbálás",
+    "loading": "Megbeszélés betöltése…",
+    "cancel": "Mégse",
+    "scheduled": "Megbeszélés ütemezve",
+    "minutes": "{count} perc",
+    "tabs": {
+      "upcoming": "Közelgő",
+      "live": "Élő",
+      "past": "Korábbi"
+    },
+    "status": {
+      "scheduled": "Ütemezett",
+      "live": "Élő",
+      "ended": "Befejezett",
+      "cancelled": "Lemondva"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Nincs közelgő megbeszélés",
+        "body": "Indíts most megbeszélést, vagy ütemezz egyet későbbre."
+      },
+      "live": {
+        "title": "Nincs élő megbeszélés",
+        "body": "A folyamatban lévő megbeszélések itt jelennek meg."
+      },
+      "past": {
+        "title": "Még nincs korábbi megbeszélés",
+        "body": "A befejezett megbeszélések és a részvétel itt jelennek meg."
+      }
+    },
+    "errors": {
+      "createFailed": "A megbeszélést nem sikerült létrehozni. Próbáld újra.",
+      "loadFailed": "A megbeszéléseket nem sikerült betölteni.",
+      "titleRequired": "Add meg a megbeszélés címét.",
+      "invalidDateTime": "Adj meg érvényes dátumot és időpontot.",
+      "pastStart": "A kezdési időpont a múltban van.",
+      "invalidEmails": "Ezek az e-mail-címek érvénytelenek: {emails}",
+      "invalidCount": "Az ismétlések számának 1 és 366 közötti számnak kell lennie.",
+      "invalidParticipants": "Néhány kiválasztott személy nem tagja ennek a munkaterületnek.",
+      "guestsNotAllowed": "Külső vendégek nem engedélyezettek ezen a megbeszélésen."
+    },
+    "scheduleDialog": {
+      "title": "Megbeszélés ütemezése",
+      "description": "A meghívókat e-mailben küldjük. A vendégek fiók nélkül, egy hivatkozásról csatlakoznak.",
+      "submit": "Megbeszélés ütemezése"
+    },
+    "fields": {
+      "title": "Cím",
+      "date": "Dátum",
+      "startTime": "Kezdési idő",
+      "duration": "Időtartam",
+      "timezone": "Időzóna",
+      "repeat": "Ismétlés",
+      "occurrences": "Ismétlések",
+      "occurrencesPlaceholder": "Opcionális",
+      "people": "Személyek",
+      "searchPeople": "Személyek keresése",
+      "noPeople": "Nincs egyező személy",
+      "selectedCount": "Kiválasztva: {count}",
+      "guests": "Külső vendégek",
+      "allowGuests": "Vendégek engedélyezése",
+      "guestsPlaceholder": "nev@pelda.hu, masik@pelda.hu",
+      "guestsHint": "A címeket vesszővel vagy új sorral válaszd el. A vendégeknek nincs szükségük fiókra.",
+      "description": "Leírás (opcionális)"
+    },
+    "repeat": {
+      "none": "Nem ismétlődik",
+      "daily": "Naponta",
+      "weekly": "Hetente",
+      "monthly": "Havonta"
+    },
+    "denied": {
+      "signin": {
+        "title": "Jelentkezz be a csatlakozáshoz",
+        "body": "Ez a megbeszélés a munkaterület tagjainak szól. Jelentkezz be, vagy használd a meghívóban kapott vendéghivatkozást.",
+        "action": "Bejelentkezés"
+      },
+      "notFound": {
+        "title": "A megbeszélés nem található",
+        "body": "A hivatkozás hibás lehet, vagy nincs hozzáférésed ehhez a megbeszéléshez."
+      },
+      "closed": {
+        "title": "Ez a megbeszélés véget ért",
+        "body": "A megbeszélés véget ért vagy lemondták."
+      },
+      "invalidGuestLink": {
+        "title": "Ez a vendéghivatkozás érvénytelen",
+        "body": "Lejárhatott vagy lecserélték. Kérj új meghívót a szervezőtől."
+      },
+      "error": {
+        "title": "Valami hiba történt",
+        "body": "Nem sikerült megnyitni ezt a megbeszélést. Próbáld újra."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Elhagytad a megbeszélést",
+        "body": "Újra csatlakozhatsz, amíg a megbeszélés nyitva van."
+      },
+      "removed": {
+        "title": "Eltávolítottak",
+        "body": "A szervező eltávolított ebből a megbeszélésből."
+      },
+      "ended": {
+        "title": "A megbeszélés véget ért",
+        "body": "A szervező mindenki számára befejezte a megbeszélést."
+      },
+      "rejoin": "Újracsatlakozás",
+      "viewMeeting": "Megbeszélés megtekintése"
+    },
+    "prejoin": {
+      "preview": "Kamera előnézete",
+      "micOn": "Mikrofon bekapcsolva",
+      "micOff": "Mikrofon kikapcsolva",
+      "cameraOn": "Kamera bekapcsolva",
+      "cameraOff": "Kamera kikapcsolva",
+      "cameraBlocked": "A kamera nem érhető el. Ellenőrizd a böngésző engedélyeit.",
+      "organizedBy": "Szervező: {name}",
+      "inProgress": "Folyamatban",
+      "joiningAsGuest": "Vendégként csatlakozol",
+      "yourName": "A neved",
+      "joining": "Csatlakozás…",
+      "joinMeeting": "Csatlakozás a megbeszéléshez",
+      "errors": {
+        "tooEarly": "Ez a megbeszélés még nem nyílt meg. Próbáld újra a kezdéshez közelebb.",
+        "ended": "Ez a megbeszélés már nem nyitott.",
+        "unavailable": "A videószolgáltatás jelenleg nem érhető el.",
+        "rateLimited": "Túl sok próbálkozás. Várj egy kicsit, és próbáld újra.",
+        "invalidGuestLink": "Ez a vendéghivatkozás érvénytelen.",
+        "forbidden": "Nem vagy meghívva erre a megbeszélésre.",
+        "generic": "Nem sikerült csatlakozni a megbeszéléshez. Próbáld újra."
+      }
+    },
+    "room": {
+      "you": "Te",
+      "guest": "Vendég",
+      "micOff": "Mikrofon kikapcsolva",
+      "micOn": "Mikrofon bekapcsolva",
+      "cameraOff": "Kamera kikapcsolva",
+      "cameraOn": "Kamera bekapcsolva",
+      "removeParticipant": "{name} eltávolítása",
+      "people": "Személyek",
+      "host": "Szervező",
+      "participants": "Résztvevők",
+      "closePanel": "Panel bezárása",
+      "chat": "Csevegés",
+      "chatNote": "Az üzenetek csak a megbeszélés alatt láthatók, és nem kerülnek mentésre.",
+      "messagePlaceholder": "Üzenet küldése",
+      "send": "Küldés",
+      "presenting": "{name} prezentál",
+      "moreParticipants": "+{count} további",
+      "inMeeting": "A megbeszélésen: {count}",
+      "reconnecting": "Újracsatlakozás…",
+      "controls": "Megbeszélés vezérlői",
+      "muteMic": "Mikrofon némítása",
+      "unmuteMic": "Némítás feloldása",
+      "stopCamera": "Kamera kikapcsolása",
+      "startCamera": "Kamera bekapcsolása",
+      "stopShare": "Megosztás leállítása",
+      "shareScreen": "Képernyő megosztása",
+      "endForAll": "Befejezés mindenkinek",
+      "leave": "Kilépés",
+      "endConfirmTitle": "Befejezed a megbeszélést mindenkinek?",
+      "endConfirmBody": "Mindenki le lesz választva, és a megbeszélés bezárul.",
+      "cancel": "Mégse"
+    },
+    "details": {
+      "didNotAttend": "Nem jelent meg",
+      "late": "Késett",
+      "leftEarly": "Korán távozott",
+      "notFoundTitle": "A megbeszélés nem található",
+      "notFoundBody": "Lehet, hogy eltávolították, vagy nincs hozzáférésed.",
+      "loadFailed": "A megbeszélést nem sikerült betölteni.",
+      "backToMeetings": "Vissza a megbeszélésekhez",
+      "copyFailed": "A hivatkozást nem sikerült másolni.",
+      "invited": "Meghívók elküldve",
+      "inviteFailed": "Ezeket a személyeket nem sikerült meghívni.",
+      "cancelMeeting": "Megbeszélés lemondása",
+      "endMeeting": "Megbeszélés befejezése",
+      "overview": "Áttekintés",
+      "host": "Szervező",
+      "duration": "Időtartam",
+      "people": "Személyek",
+      "peopleSummary": "Meghívva: {count} · Vendégek: {guests}",
+      "type": "Típus",
+      "instant": "Azonnali megbeszélés",
+      "oneTime": "Egyszeri megbeszélés",
+      "copied": "Másolva",
+      "copyLink": "Hivatkozás másolása",
+      "analytics": "Megbeszélés elemzése",
+      "attended": "Megjelent",
+      "noShows": "Meg nem jelent: {count}",
+      "peak": "Résztvevők csúcsa",
+      "avgAttendance": "Átlagos részvétel",
+      "participantTime": "Résztvevők teljes ideje",
+      "lateArrivals": "Késői érkezések",
+      "earlyDepartures": "Korai távozások",
+      "joins": "Csatlakozások",
+      "leaves": "Kilépések: {count}",
+      "analyticsPending": "Az elemzés röviddel a megbeszélés vége után lesz elérhető.",
+      "participants": "Résztvevők",
+      "name": "Név",
+      "joined": "Csatlakozott",
+      "left": "Kilépett",
+      "attendance": "Részvétel",
+      "hostBadge": "Szervező",
+      "guestBadge": "Vendég",
+      "remove": "Eltávolítás",
+      "inviteMore": "További személyek meghívása",
+      "sendInvites": "Meghívók küldése",
+      "cancelTitle": "Lemondod ezt a megbeszélést?",
+      "cancelBody": "A résztvevők többé nem tudnak csatlakozni.",
+      "cancelSeries": "Az egész sorozat lemondása",
+      "cancelThisOne": "Csak ez a megbeszélés lemondása"
+    },
+    "analyticsPage": {
+      "title": "Megbeszélések elemzése",
+      "subtitle": "Részvétel, idő és aktivitás a megbeszéléseidben.",
+      "back": "Vissza a megbeszélésekhez",
+      "noData": "Nincs adat erre az időszakra",
+      "loadFailed": "Az elemzést nem sikerült betölteni.",
+      "invalidRange": "A befejezés dátumának a kezdés után kell lennie.",
+      "scope": {
+        "me": "Saját megbeszéléseim",
+        "organization": "Szervezet"
+      },
+      "filters": {
+        "range": "Időszak",
+        "from": "Kezdete",
+        "to": "Vége",
+        "recurrence": "Ismétlődés",
+        "allMeetings": "Minden megbeszélés",
+        "recurring": "Ismétlődő",
+        "oneTime": "Egyszeri",
+        "guests": "Vendégek",
+        "anyGuests": "Vendégekkel vagy nélkülük",
+        "withGuests": "Külső vendégekkel",
+        "internalOnly": "Csak belső"
+      },
+      "presets": {
+        "today": "Ma",
+        "week": "Ez a hét",
+        "month": "Ez a hónap",
+        "last30": "Elmúlt 30 nap",
+        "last90": "Elmúlt 90 nap",
+        "custom": "Egyéni időszak"
+      },
+      "kpi": {
+        "total": "Megbeszélések összesen",
+        "completedCancelled": "Lezárt: {completed} · Lemondott: {cancelled}",
+        "hours": "Megbeszélési órák",
+        "attendance": "Részvételi arány",
+        "attendedOfInvited": "Megjelent: {attended} / {invited}",
+        "noShow": "Meg nem jelenési arány",
+        "noShowCount": "Meg nem jelent: {count}",
+        "avgDuration": "Átlagos időtartam",
+        "avgAttended": "Átlagos jelenléti idő",
+        "late": "Késői érkezések",
+        "earlyHint": "Korán távozott: {rate}",
+        "live": "Most élő",
+        "peakHint": "Átlagos csúcs: {peak}"
+      },
+      "charts": {
+        "volume": "Megbeszélések és órák",
+        "meetings": "Megbeszélések",
+        "hours": "Órák",
+        "attendance": "Részvétel és meg nem jelenések",
+        "attendanceRate": "Részvételi arány",
+        "noShowRate": "Meg nem jelenési arány"
+      },
+      "tables": {
+        "people": "Részvétel személyenként",
+        "person": "Személy",
+        "attended": "Megjelent",
+        "missed": "Kihagyott",
+        "time": "Idő",
+        "avg": "Átl. részvétel",
+        "hosts": "Leggyakoribb szervezők"
+      },
+      "me": {
+        "attended": "Megjelent",
+        "invitedHint": "Meghívva: {count}",
+        "missed": "Kihagyott",
+        "hours": "Megbeszélési órák",
+        "hosted": "Szervezett",
+        "avgTime": "Átlagos jelenléti idő",
+        "avgPct": "Átlagos részvétel",
+        "early": "Korai távozások",
+        "trend": "Részvétel az idő során",
+        "history": "Legutóbbi megbeszélések",
+        "didNotAttend": "Nem jelent meg"
+      }
+    }
   }
 }

@@ -45,7 +45,10 @@
     "system": "システム",
     "updates": "アップデート",
     "ai_transparency": "AI 透明性",
-    "initiatives": "イニシアチブ"
+    "initiatives": "イニシアチブ",
+    "meetings": "ミーティング",
+    "meetings_all": "すべてのミーティング",
+    "meetings_analytics": "分析"
   },
   "actions": {
     "create_issue": "課題を作成",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "ミーティング",
+    "subtitle": "すぐにミーティングを開始するか、チームメンバーや外部ゲストとスケジュールします。",
+    "analytics": "分析",
+    "schedule": "スケジュール",
+    "startMeeting": "ミーティングを開始",
+    "instantTitle": "インスタントミーティング",
+    "start": "開始",
+    "join": "参加",
+    "recurring": "定期",
+    "hostedBy": "主催者: {name}",
+    "participantCount": "参加者: {count}",
+    "retry": "再試行",
+    "loading": "ミーティングを読み込み中…",
+    "cancel": "キャンセル",
+    "scheduled": "ミーティングをスケジュールしました",
+    "minutes": "{count}分",
+    "tabs": {
+      "upcoming": "今後",
+      "live": "ライブ",
+      "past": "過去"
+    },
+    "status": {
+      "scheduled": "予定済み",
+      "live": "ライブ",
+      "ended": "終了",
+      "cancelled": "キャンセル済み"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "今後のミーティングはありません",
+        "body": "今すぐミーティングを開始するか、後日分をスケジュールしましょう。"
+      },
+      "live": {
+        "title": "ライブのミーティングはありません",
+        "body": "進行中のミーティングがここに表示されます。"
+      },
+      "past": {
+        "title": "過去のミーティングはまだありません",
+        "body": "終了したミーティングと出席状況がここに表示されます。"
+      }
+    },
+    "errors": {
+      "createFailed": "ミーティングを作成できませんでした。もう一度お試しください。",
+      "loadFailed": "ミーティングを読み込めませんでした。",
+      "titleRequired": "ミーティングのタイトルを入力してください。",
+      "invalidDateTime": "有効な日付と時刻を入力してください。",
+      "pastStart": "開始時刻が過去です。",
+      "invalidEmails": "次のメールアドレスは無効です: {emails}",
+      "invalidCount": "繰り返し回数は1〜366の数値で指定してください。",
+      "invalidParticipants": "選択した一部のユーザーはこのワークスペースのメンバーではありません。",
+      "guestsNotAllowed": "このミーティングでは外部ゲストは許可されていません。"
+    },
+    "scheduleDialog": {
+      "title": "ミーティングをスケジュール",
+      "description": "招待はメールで送信されます。ゲストはアカウントなしでリンクから参加できます。",
+      "submit": "ミーティングをスケジュール"
+    },
+    "fields": {
+      "title": "タイトル",
+      "date": "日付",
+      "startTime": "開始時刻",
+      "duration": "所要時間",
+      "timezone": "タイムゾーン",
+      "repeat": "繰り返し",
+      "occurrences": "繰り返し回数",
+      "occurrencesPlaceholder": "任意",
+      "people": "ユーザー",
+      "searchPeople": "ユーザーを検索",
+      "noPeople": "一致するユーザーがいません",
+      "selectedCount": "選択済み: {count}",
+      "guests": "外部ゲスト",
+      "allowGuests": "ゲストを許可",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "メールアドレスはカンマまたは改行で区切ってください。ゲストはアカウント不要です。",
+      "description": "説明（任意）"
+    },
+    "repeat": {
+      "none": "繰り返さない",
+      "daily": "毎日",
+      "weekly": "毎週",
+      "monthly": "毎月"
+    },
+    "denied": {
+      "signin": {
+        "title": "参加するにはサインインしてください",
+        "body": "このミーティングはワークスペースのメンバー用です。サインインするか、招待に記載のゲストリンクを使用してください。",
+        "action": "サインイン"
+      },
+      "notFound": {
+        "title": "ミーティングが見つかりません",
+        "body": "リンクが間違っているか、このミーティングへのアクセス権がない可能性があります。"
+      },
+      "closed": {
+        "title": "このミーティングは終了しました",
+        "body": "ミーティングは終了したか、キャンセルされました。"
+      },
+      "invalidGuestLink": {
+        "title": "このゲストリンクは無効です",
+        "body": "期限切れか、置き換えられた可能性があります。主催者に新しい招待を依頼してください。"
+      },
+      "error": {
+        "title": "問題が発生しました",
+        "body": "このミーティングを開けませんでした。もう一度お試しください。"
+      }
+    },
+    "left": {
+      "left": {
+        "title": "ミーティングから退出しました",
+        "body": "ミーティングが開いている間は再参加できます。"
+      },
+      "removed": {
+        "title": "削除されました",
+        "body": "主催者があなたをこのミーティングから削除しました。"
+      },
+      "ended": {
+        "title": "ミーティングは終了しました",
+        "body": "主催者が全員のミーティングを終了しました。"
+      },
+      "rejoin": "再参加",
+      "viewMeeting": "ミーティングを表示"
+    },
+    "prejoin": {
+      "preview": "カメラのプレビュー",
+      "micOn": "マイクオン",
+      "micOff": "マイクオフ",
+      "cameraOn": "カメラオン",
+      "cameraOff": "カメラオフ",
+      "cameraBlocked": "カメラを利用できません。ブラウザーの権限を確認してください。",
+      "organizedBy": "主催者: {name}",
+      "inProgress": "進行中",
+      "joiningAsGuest": "ゲストとして参加します",
+      "yourName": "お名前",
+      "joining": "参加中…",
+      "joinMeeting": "ミーティングに参加",
+      "errors": {
+        "tooEarly": "このミーティングはまだ開始されていません。開始時刻に近い時間に再度お試しください。",
+        "ended": "このミーティングはもう開いていません。",
+        "unavailable": "現在、ビデオサービスを利用できません。",
+        "rateLimited": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+        "invalidGuestLink": "このゲストリンクは無効です。",
+        "forbidden": "このミーティングには招待されていません。",
+        "generic": "ミーティングに参加できませんでした。もう一度お試しください。"
+      }
+    },
+    "room": {
+      "you": "あなた",
+      "guest": "ゲスト",
+      "micOff": "マイクオフ",
+      "micOn": "マイクオン",
+      "cameraOff": "カメラオフ",
+      "cameraOn": "カメラオン",
+      "removeParticipant": "{name}を削除",
+      "people": "ユーザー",
+      "host": "主催者",
+      "participants": "参加者",
+      "closePanel": "パネルを閉じる",
+      "chat": "チャット",
+      "chatNote": "メッセージはミーティング中のみ表示され、保存されません。",
+      "messagePlaceholder": "メッセージを送信",
+      "send": "送信",
+      "presenting": "{name}が発表中",
+      "moreParticipants": "他{count}人",
+      "inMeeting": "ミーティング中: {count}",
+      "reconnecting": "再接続中…",
+      "controls": "ミーティングのコントロール",
+      "muteMic": "マイクをミュート",
+      "unmuteMic": "ミュート解除",
+      "stopCamera": "カメラをオフにする",
+      "startCamera": "カメラをオンにする",
+      "stopShare": "共有を停止",
+      "shareScreen": "画面を共有",
+      "endForAll": "全員に対して終了",
+      "leave": "退出",
+      "endConfirmTitle": "全員に対してミーティングを終了しますか？",
+      "endConfirmBody": "全員の接続が切断され、ミーティングが閉じられます。",
+      "cancel": "キャンセル"
+    },
+    "details": {
+      "didNotAttend": "欠席",
+      "late": "遅刻",
+      "leftEarly": "早退",
+      "notFoundTitle": "ミーティングが見つかりません",
+      "notFoundBody": "削除されたか、アクセス権がない可能性があります。",
+      "loadFailed": "ミーティングを読み込めませんでした。",
+      "backToMeetings": "ミーティングに戻る",
+      "copyFailed": "リンクをコピーできませんでした。",
+      "invited": "招待を送信しました",
+      "inviteFailed": "これらのユーザーを招待できませんでした。",
+      "cancelMeeting": "ミーティングをキャンセル",
+      "endMeeting": "ミーティングを終了",
+      "overview": "概要",
+      "host": "主催者",
+      "duration": "所要時間",
+      "people": "ユーザー",
+      "peopleSummary": "招待済み: {count} · ゲスト: {guests}",
+      "type": "種類",
+      "instant": "インスタントミーティング",
+      "oneTime": "単発ミーティング",
+      "copied": "コピーしました",
+      "copyLink": "リンクをコピー",
+      "analytics": "ミーティング分析",
+      "attended": "出席",
+      "noShows": "欠席: {count}",
+      "peak": "最大参加者数",
+      "avgAttendance": "平均出席率",
+      "participantTime": "参加者の合計時間",
+      "lateArrivals": "遅刻",
+      "earlyDepartures": "早退",
+      "joins": "参加回数",
+      "leaves": "退出回数: {count}",
+      "analyticsPending": "ミーティング終了後しばらくすると分析が利用できます。",
+      "participants": "参加者",
+      "name": "名前",
+      "joined": "参加",
+      "left": "退出",
+      "attendance": "出席",
+      "hostBadge": "主催者",
+      "guestBadge": "ゲスト",
+      "remove": "削除",
+      "inviteMore": "さらに招待",
+      "sendInvites": "招待を送信",
+      "cancelTitle": "このミーティングをキャンセルしますか？",
+      "cancelBody": "参加者はもう参加できなくなります。",
+      "cancelSeries": "シリーズ全体をキャンセル",
+      "cancelThisOne": "このミーティングのみキャンセル"
+    },
+    "analyticsPage": {
+      "title": "ミーティング分析",
+      "subtitle": "ミーティング全体の出席状況、時間、参加状況。",
+      "back": "ミーティングに戻る",
+      "noData": "この期間のデータはありません",
+      "loadFailed": "分析を読み込めませんでした。",
+      "invalidRange": "終了日は開始日より後にしてください。",
+      "scope": {
+        "me": "自分のミーティング",
+        "organization": "組織"
+      },
+      "filters": {
+        "range": "期間",
+        "from": "開始",
+        "to": "終了",
+        "recurrence": "繰り返し",
+        "allMeetings": "すべてのミーティング",
+        "recurring": "定期",
+        "oneTime": "単発",
+        "guests": "ゲスト",
+        "anyGuests": "ゲストあり・なし",
+        "withGuests": "外部ゲストあり",
+        "internalOnly": "内部のみ"
+      },
+      "presets": {
+        "today": "今日",
+        "week": "今週",
+        "month": "今月",
+        "last30": "過去30日間",
+        "last90": "過去90日間",
+        "custom": "カスタム範囲"
+      },
+      "kpi": {
+        "total": "ミーティング合計",
+        "completedCancelled": "完了: {completed} · キャンセル: {cancelled}",
+        "hours": "ミーティング時間",
+        "attendance": "出席率",
+        "attendedOfInvited": "出席: {invited}人中{attended}人",
+        "noShow": "欠席率",
+        "noShowCount": "欠席: {count}",
+        "avgDuration": "平均所要時間",
+        "avgAttended": "平均出席時間",
+        "late": "遅刻",
+        "earlyHint": "早退: {rate}",
+        "live": "現在ライブ",
+        "peakHint": "平均ピーク: {peak}"
+      },
+      "charts": {
+        "volume": "ミーティングと時間",
+        "meetings": "ミーティング",
+        "hours": "時間",
+        "attendance": "出席と欠席",
+        "attendanceRate": "出席率",
+        "noShowRate": "欠席率"
+      },
+      "tables": {
+        "people": "ユーザー別の参加状況",
+        "person": "ユーザー",
+        "attended": "出席",
+        "missed": "不参加",
+        "time": "時間",
+        "avg": "平均出席率",
+        "hosts": "最も多い主催者"
+      },
+      "me": {
+        "attended": "出席",
+        "invitedHint": "招待: {count}",
+        "missed": "不参加",
+        "hours": "ミーティング時間",
+        "hosted": "主催",
+        "avgTime": "平均出席時間",
+        "avgPct": "平均出席率",
+        "early": "早退",
+        "trend": "出席の推移",
+        "history": "最近のミーティング",
+        "didNotAttend": "欠席"
+      }
+    }
   }
 }

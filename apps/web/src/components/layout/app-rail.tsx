@@ -14,6 +14,7 @@ import {
   PanelLeftOpen,
   Settings,
   Shield,
+  Video,
   Users,
   type LucideIcon,
 } from 'lucide-react';
@@ -43,6 +44,7 @@ type RailItemKey =
   | 'initiatives'
   | 'projects'
   | 'docs'
+  | 'meetings'
   | 'team'
   | 'settings';
 
@@ -55,6 +57,7 @@ const railItems: (Omit<RailItem, 'name'> & { key: RailItemKey })[] = [
   { key: 'initiatives', href: '/initiatives', icon: Flag },
   { key: 'projects', href: '/projects', icon: FolderKanban },
   { key: 'docs', href: '/docs', icon: BookOpenText },
+  { key: 'meetings', href: '/meetings', icon: Video },
   { key: 'team', href: '/team', icon: Users, requiredAnyPermissions: ['member:view', 'team:view'] },
   { key: 'settings', href: '/settings', icon: Settings },
 ];

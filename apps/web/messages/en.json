@@ -45,7 +45,10 @@
     "system": "System",
     "updates": "Updates",
     "ai_transparency": "AI Transparency",
-    "initiatives": "Initiatives"
+    "initiatives": "Initiatives",
+    "meetings": "Meetings",
+    "meetings_all": "All meetings",
+    "meetings_analytics": "Analytics"
   },
   "actions": {
     "create_issue": "Create issue",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Meetings",
+    "subtitle": "Start an instant meeting or schedule one with teammates and external guests.",
+    "analytics": "Analytics",
+    "schedule": "Schedule",
+    "startMeeting": "Start a meeting",
+    "instantTitle": "Instant meeting",
+    "start": "Start",
+    "join": "Join",
+    "recurring": "Recurring",
+    "hostedBy": "Hosted by {name}",
+    "participantCount": "Participants: {count}",
+    "retry": "Try again",
+    "loading": "Loading meeting…",
+    "cancel": "Cancel",
+    "scheduled": "Meeting scheduled",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Upcoming",
+      "live": "Live",
+      "past": "Past"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "live": "Live",
+      "ended": "Ended",
+      "cancelled": "Cancelled"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "No upcoming meetings",
+        "body": "Start a meeting now or schedule one for later."
+      },
+      "live": {
+        "title": "No live meetings",
+        "body": "Meetings that are in progress appear here."
+      },
+      "past": {
+        "title": "No past meetings yet",
+        "body": "Finished meetings and their attendance appear here."
+      }
+    },
+    "errors": {
+      "createFailed": "Could not create the meeting. Please try again.",
+      "loadFailed": "Could not load meetings.",
+      "titleRequired": "Enter a meeting title.",
+      "invalidDateTime": "Enter a valid date and time.",
+      "pastStart": "The start time is in the past.",
+      "invalidEmails": "These email addresses are not valid: {emails}",
+      "invalidCount": "Occurrences must be a number from 1 to 366.",
+      "invalidParticipants": "Some selected people are not members of this workspace.",
+      "guestsNotAllowed": "External guests are not allowed for this meeting."
+    },
+    "scheduleDialog": {
+      "title": "Schedule a meeting",
+      "description": "Invitations are sent by email. Guests join from a link without an account.",
+      "submit": "Schedule meeting"
+    },
+    "fields": {
+      "title": "Title",
+      "date": "Date",
+      "startTime": "Start time",
+      "duration": "Duration",
+      "timezone": "Time zone",
+      "repeat": "Repeat",
+      "occurrences": "Occurrences",
+      "occurrencesPlaceholder": "Optional",
+      "people": "People",
+      "searchPeople": "Search people",
+      "noPeople": "No matching people",
+      "selectedCount": "Selected: {count}",
+      "guests": "External guests",
+      "allowGuests": "Allow guests",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "Separate email addresses with commas or new lines. Guests do not need an account.",
+      "description": "Description (optional)"
+    },
+    "repeat": {
+      "none": "Does not repeat",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "denied": {
+      "signin": {
+        "title": "Sign in to join",
+        "body": "This meeting is for workspace members. Sign in, or use the guest link from your invitation.",
+        "action": "Sign in"
+      },
+      "notFound": {
+        "title": "Meeting not found",
+        "body": "The link may be wrong, or you may not have access to this meeting."
+      },
+      "closed": {
+        "title": "This meeting has ended",
+        "body": "The meeting is over or was cancelled."
+      },
+      "invalidGuestLink": {
+        "title": "This guest link is not valid",
+        "body": "It may have expired or been replaced. Ask the host for a new invitation."
+      },
+      "error": {
+        "title": "Something went wrong",
+        "body": "We could not open this meeting. Please try again."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "You left the meeting",
+        "body": "You can rejoin while the meeting is still open."
+      },
+      "removed": {
+        "title": "You were removed",
+        "body": "The host removed you from this meeting."
+      },
+      "ended": {
+        "title": "The meeting has ended",
+        "body": "The host ended the meeting for everyone."
+      },
+      "rejoin": "Rejoin",
+      "viewMeeting": "View meeting"
+    },
+    "prejoin": {
+      "preview": "Camera preview",
+      "micOn": "Microphone on",
+      "micOff": "Microphone off",
+      "cameraOn": "Camera on",
+      "cameraOff": "Camera off",
+      "cameraBlocked": "The camera is unavailable. Check your browser permissions.",
+      "organizedBy": "Organized by {name}",
+      "inProgress": "In progress",
+      "joiningAsGuest": "Joining as a guest",
+      "yourName": "Your name",
+      "joining": "Joining…",
+      "joinMeeting": "Join meeting",
+      "errors": {
+        "tooEarly": "This meeting has not opened yet. Try again closer to the start time.",
+        "ended": "This meeting is no longer open.",
+        "unavailable": "The video service is not available right now.",
+        "rateLimited": "Too many attempts. Wait a moment and try again.",
+        "invalidGuestLink": "This guest link is not valid.",
+        "forbidden": "You are not invited to this meeting.",
+        "generic": "Could not join the meeting. Please try again."
+      }
+    },
+    "room": {
+      "you": "You",
+      "guest": "Guest",
+      "micOff": "Microphone off",
+      "micOn": "Microphone on",
+      "cameraOff": "Camera off",
+      "cameraOn": "Camera on",
+      "removeParticipant": "Remove {name}",
+      "people": "People",
+      "host": "Host",
+      "participants": "Participants",
+      "closePanel": "Close panel",
+      "chat": "Chat",
+      "chatNote": "Messages are only visible during the meeting and are not saved.",
+      "messagePlaceholder": "Send a message",
+      "send": "Send",
+      "presenting": "{name} is presenting",
+      "moreParticipants": "+{count} more",
+      "inMeeting": "In meeting: {count}",
+      "reconnecting": "Reconnecting…",
+      "controls": "Meeting controls",
+      "muteMic": "Mute microphone",
+      "unmuteMic": "Unmute microphone",
+      "stopCamera": "Turn camera off",
+      "startCamera": "Turn camera on",
+      "stopShare": "Stop sharing",
+      "shareScreen": "Share screen",
+      "endForAll": "End for everyone",
+      "leave": "Leave",
+      "endConfirmTitle": "End the meeting for everyone?",
+      "endConfirmBody": "Everyone will be disconnected and the meeting will close.",
+      "cancel": "Cancel"
+    },
+    "details": {
+      "didNotAttend": "Did not attend",
+      "late": "Late",
+      "leftEarly": "Left early",
+      "notFoundTitle": "Meeting not found",
+      "notFoundBody": "It may have been removed, or you may not have access.",
+      "loadFailed": "Could not load the meeting.",
+      "backToMeetings": "Back to meetings",
+      "copyFailed": "Could not copy the link.",
+      "invited": "Invitations sent",
+      "inviteFailed": "Could not invite these people.",
+      "cancelMeeting": "Cancel meeting",
+      "endMeeting": "End meeting",
+      "overview": "Overview",
+      "host": "Host",
+      "duration": "Duration",
+      "people": "People",
+      "peopleSummary": "Invited: {count} · Guests: {guests}",
+      "type": "Type",
+      "instant": "Instant meeting",
+      "oneTime": "One-time meeting",
+      "copied": "Copied",
+      "copyLink": "Copy link",
+      "analytics": "Meeting analytics",
+      "attended": "Attended",
+      "noShows": "No-shows: {count}",
+      "peak": "Peak participants",
+      "avgAttendance": "Average attendance",
+      "participantTime": "Total participant time",
+      "lateArrivals": "Late arrivals",
+      "earlyDepartures": "Early departures",
+      "joins": "Joins",
+      "leaves": "Leaves: {count}",
+      "analyticsPending": "Analytics will be available shortly after the meeting ends.",
+      "participants": "Participants",
+      "name": "Name",
+      "joined": "Joined",
+      "left": "Left",
+      "attendance": "Attendance",
+      "hostBadge": "Host",
+      "guestBadge": "Guest",
+      "remove": "Remove",
+      "inviteMore": "Invite more people",
+      "sendInvites": "Send invitations",
+      "cancelTitle": "Cancel this meeting?",
+      "cancelBody": "Participants will no longer be able to join.",
+      "cancelSeries": "Cancel the whole series",
+      "cancelThisOne": "Cancel this meeting only"
+    },
+    "analyticsPage": {
+      "title": "Meeting analytics",
+      "subtitle": "Attendance, time and participation across your meetings.",
+      "back": "Back to meetings",
+      "noData": "No data for this period",
+      "loadFailed": "Could not load analytics.",
+      "invalidRange": "The end date must be after the start date.",
+      "scope": {
+        "me": "My meetings",
+        "organization": "Organization"
+      },
+      "filters": {
+        "range": "Period",
+        "from": "From",
+        "to": "To",
+        "recurrence": "Recurrence",
+        "allMeetings": "All meetings",
+        "recurring": "Recurring",
+        "oneTime": "One-time",
+        "guests": "Guests",
+        "anyGuests": "With or without guests",
+        "withGuests": "With external guests",
+        "internalOnly": "Internal only"
+      },
+      "presets": {
+        "today": "Today",
+        "week": "This week",
+        "month": "This month",
+        "last30": "Last 30 days",
+        "last90": "Last 90 days",
+        "custom": "Custom range"
+      },
+      "kpi": {
+        "total": "Total meetings",
+        "completedCancelled": "Completed: {completed} · Cancelled: {cancelled}",
+        "hours": "Meeting hours",
+        "attendance": "Attendance rate",
+        "attendedOfInvited": "Attended: {attended} of {invited}",
+        "noShow": "No-show rate",
+        "noShowCount": "No-shows: {count}",
+        "avgDuration": "Average duration",
+        "avgAttended": "Average time attended",
+        "late": "Late arrivals",
+        "earlyHint": "Left early: {rate}",
+        "live": "Live now",
+        "peakHint": "Average peak: {peak}"
+      },
+      "charts": {
+        "volume": "Meetings and hours",
+        "meetings": "Meetings",
+        "hours": "Hours",
+        "attendance": "Attendance and no-shows",
+        "attendanceRate": "Attendance rate",
+        "noShowRate": "No-show rate"
+      },
+      "tables": {
+        "people": "Participation by person",
+        "person": "Person",
+        "attended": "Attended",
+        "missed": "Missed",
+        "time": "Time",
+        "avg": "Avg. attendance",
+        "hosts": "Most frequent hosts"
+      },
+      "me": {
+        "attended": "Attended",
+        "invitedHint": "Invited: {count}",
+        "missed": "Missed",
+        "hours": "Meeting hours",
+        "hosted": "Hosted",
+        "avgTime": "Average time attended",
+        "avgPct": "Average attendance",
+        "early": "Early departures",
+        "trend": "Attendance over time",
+        "history": "Recent meetings",
+        "didNotAttend": "Did not attend"
+      }
+    }
   }
 }

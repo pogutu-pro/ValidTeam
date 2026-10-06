@@ -45,7 +45,10 @@
     "system": "सिस्टम",
     "updates": "अपडेट",
     "ai_transparency": "AI पारदर्शिता",
-    "initiatives": "पहलें"
+    "initiatives": "पहलें",
+    "meetings": "मीटिंग",
+    "meetings_all": "सभी मीटिंग",
+    "meetings_analytics": "विश्लेषण"
   },
   "actions": {
     "create_issue": "इश्यू बनाएं",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "मीटिंग",
+    "subtitle": "तुरंत मीटिंग शुरू करें या सहकर्मियों और बाहरी मेहमानों के साथ मीटिंग शेड्यूल करें।",
+    "analytics": "विश्लेषण",
+    "schedule": "शेड्यूल करें",
+    "startMeeting": "मीटिंग शुरू करें",
+    "instantTitle": "त्वरित मीटिंग",
+    "start": "शुरू करें",
+    "join": "शामिल हों",
+    "recurring": "आवर्ती",
+    "hostedBy": "आयोजक: {name}",
+    "participantCount": "प्रतिभागी: {count}",
+    "retry": "फिर कोशिश करें",
+    "loading": "मीटिंग लोड हो रही है…",
+    "cancel": "रद्द करें",
+    "scheduled": "मीटिंग शेड्यूल हो गई",
+    "minutes": "{count} मिनट",
+    "tabs": {
+      "upcoming": "आगामी",
+      "live": "लाइव",
+      "past": "पिछली"
+    },
+    "status": {
+      "scheduled": "शेड्यूल की गई",
+      "live": "लाइव",
+      "ended": "समाप्त",
+      "cancelled": "रद्द"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "कोई आगामी मीटिंग नहीं",
+        "body": "अभी मीटिंग शुरू करें या बाद के लिए शेड्यूल करें।"
+      },
+      "live": {
+        "title": "कोई लाइव मीटिंग नहीं",
+        "body": "चल रही मीटिंग यहाँ दिखाई देंगी।"
+      },
+      "past": {
+        "title": "अभी तक कोई पिछली मीटिंग नहीं",
+        "body": "समाप्त मीटिंग और उनकी उपस्थिति यहाँ दिखाई देगी।"
+      }
+    },
+    "errors": {
+      "createFailed": "मीटिंग नहीं बन सकी। कृपया फिर कोशिश करें।",
+      "loadFailed": "मीटिंग लोड नहीं हो सकीं।",
+      "titleRequired": "मीटिंग का शीर्षक दर्ज करें।",
+      "invalidDateTime": "मान्य तारीख और समय दर्ज करें।",
+      "pastStart": "शुरू होने का समय बीत चुका है।",
+      "invalidEmails": "ये ईमेल पते मान्य नहीं हैं: {emails}",
+      "invalidCount": "दोहराव की संख्या 1 से 366 के बीच होनी चाहिए।",
+      "invalidParticipants": "चुने गए कुछ लोग इस वर्कस्पेस के सदस्य नहीं हैं।",
+      "guestsNotAllowed": "इस मीटिंग में बाहरी मेहमानों की अनुमति नहीं है।"
+    },
+    "scheduleDialog": {
+      "title": "मीटिंग शेड्यूल करें",
+      "description": "आमंत्रण ईमेल से भेजे जाते हैं। मेहमान बिना खाते के लिंक से शामिल होते हैं।",
+      "submit": "मीटिंग शेड्यूल करें"
+    },
+    "fields": {
+      "title": "शीर्षक",
+      "date": "तारीख",
+      "startTime": "शुरू होने का समय",
+      "duration": "अवधि",
+      "timezone": "समय क्षेत्र",
+      "repeat": "दोहराएँ",
+      "occurrences": "दोहराव",
+      "occurrencesPlaceholder": "वैकल्पिक",
+      "people": "लोग",
+      "searchPeople": "लोग खोजें",
+      "noPeople": "कोई मेल खाता व्यक्ति नहीं",
+      "selectedCount": "चुने गए: {count}",
+      "guests": "बाहरी मेहमान",
+      "allowGuests": "मेहमानों को अनुमति दें",
+      "guestsPlaceholder": "naam@example.com, other@example.com",
+      "guestsHint": "पतों को अल्पविराम या नई पंक्ति से अलग करें। मेहमानों को खाते की आवश्यकता नहीं है।",
+      "description": "विवरण (वैकल्पिक)"
+    },
+    "repeat": {
+      "none": "दोहराई नहीं जाती",
+      "daily": "प्रतिदिन",
+      "weekly": "साप्ताहिक",
+      "monthly": "मासिक"
+    },
+    "denied": {
+      "signin": {
+        "title": "शामिल होने के लिए साइन इन करें",
+        "body": "यह मीटिंग वर्कस्पेस के सदस्यों के लिए है। साइन इन करें या अपने आमंत्रण का अतिथि लिंक उपयोग करें।",
+        "action": "साइन इन करें"
+      },
+      "notFound": {
+        "title": "मीटिंग नहीं मिली",
+        "body": "लिंक गलत हो सकता है या आपके पास इस मीटिंग तक पहुँच नहीं है।"
+      },
+      "closed": {
+        "title": "यह मीटिंग समाप्त हो गई है",
+        "body": "मीटिंग खत्म हो गई या रद्द कर दी गई।"
+      },
+      "invalidGuestLink": {
+        "title": "यह अतिथि लिंक मान्य नहीं है",
+        "body": "यह समाप्त हो गया हो या बदल दिया गया हो। आयोजक से नया आमंत्रण माँगें।"
+      },
+      "error": {
+        "title": "कुछ गलत हो गया",
+        "body": "हम यह मीटिंग नहीं खोल सके। कृपया फिर कोशिश करें।"
+      }
+    },
+    "left": {
+      "left": {
+        "title": "आपने मीटिंग छोड़ दी",
+        "body": "जब तक मीटिंग खुली है, आप दोबारा शामिल हो सकते हैं।"
+      },
+      "removed": {
+        "title": "आपको हटा दिया गया",
+        "body": "आयोजक ने आपको इस मीटिंग से हटा दिया।"
+      },
+      "ended": {
+        "title": "मीटिंग समाप्त हो गई",
+        "body": "आयोजक ने सभी के लिए मीटिंग समाप्त कर दी।"
+      },
+      "rejoin": "दोबारा शामिल हों",
+      "viewMeeting": "मीटिंग देखें"
+    },
+    "prejoin": {
+      "preview": "कैमरा पूर्वावलोकन",
+      "micOn": "माइक्रोफ़ोन चालू",
+      "micOff": "माइक्रोफ़ोन बंद",
+      "cameraOn": "कैमरा चालू",
+      "cameraOff": "कैमरा बंद",
+      "cameraBlocked": "कैमरा उपलब्ध नहीं है। अपने ब्राउज़र की अनुमतियाँ जाँचें।",
+      "organizedBy": "आयोजक: {name}",
+      "inProgress": "जारी है",
+      "joiningAsGuest": "आप अतिथि के रूप में शामिल हो रहे हैं",
+      "yourName": "आपका नाम",
+      "joining": "शामिल हो रहे हैं…",
+      "joinMeeting": "मीटिंग में शामिल हों",
+      "errors": {
+        "tooEarly": "यह मीटिंग अभी खुली नहीं है। शुरू होने के समय के करीब फिर कोशिश करें।",
+        "ended": "यह मीटिंग अब खुली नहीं है।",
+        "unavailable": "वीडियो सेवा अभी उपलब्ध नहीं है।",
+        "rateLimited": "बहुत अधिक प्रयास। थोड़ा रुकें और फिर कोशिश करें।",
+        "invalidGuestLink": "यह अतिथि लिंक मान्य नहीं है।",
+        "forbidden": "आपको इस मीटिंग में आमंत्रित नहीं किया गया है।",
+        "generic": "मीटिंग में शामिल नहीं हो सके। कृपया फिर कोशिश करें।"
+      }
+    },
+    "room": {
+      "you": "आप",
+      "guest": "अतिथि",
+      "micOff": "माइक्रोफ़ोन बंद",
+      "micOn": "माइक्रोफ़ोन चालू",
+      "cameraOff": "कैमरा बंद",
+      "cameraOn": "कैमरा चालू",
+      "removeParticipant": "{name} को हटाएँ",
+      "people": "लोग",
+      "host": "आयोजक",
+      "participants": "प्रतिभागी",
+      "closePanel": "पैनल बंद करें",
+      "chat": "चैट",
+      "chatNote": "संदेश केवल मीटिंग के दौरान दिखते हैं और सहेजे नहीं जाते।",
+      "messagePlaceholder": "संदेश भेजें",
+      "send": "भेजें",
+      "presenting": "{name} प्रस्तुति दे रहे हैं",
+      "moreParticipants": "+{count} और",
+      "inMeeting": "मीटिंग में: {count}",
+      "reconnecting": "फिर से जुड़ रहा है…",
+      "controls": "मीटिंग नियंत्रण",
+      "muteMic": "माइक्रोफ़ोन म्यूट करें",
+      "unmuteMic": "माइक्रोफ़ोन अनम्यूट करें",
+      "stopCamera": "कैमरा बंद करें",
+      "startCamera": "कैमरा चालू करें",
+      "stopShare": "साझा करना रोकें",
+      "shareScreen": "स्क्रीन साझा करें",
+      "endForAll": "सभी के लिए समाप्त करें",
+      "leave": "छोड़ें",
+      "endConfirmTitle": "सभी के लिए मीटिंग समाप्त करें?",
+      "endConfirmBody": "सभी का कनेक्शन कट जाएगा और मीटिंग बंद हो जाएगी।",
+      "cancel": "रद्द करें"
+    },
+    "details": {
+      "didNotAttend": "उपस्थित नहीं हुए",
+      "late": "देर से आए",
+      "leftEarly": "जल्दी चले गए",
+      "notFoundTitle": "मीटिंग नहीं मिली",
+      "notFoundBody": "हो सकता है इसे हटा दिया गया हो या आपके पास पहुँच न हो।",
+      "loadFailed": "मीटिंग लोड नहीं हो सकी।",
+      "backToMeetings": "मीटिंग पर वापस जाएँ",
+      "copyFailed": "लिंक कॉपी नहीं हो सका।",
+      "invited": "आमंत्रण भेजे गए",
+      "inviteFailed": "इन लोगों को आमंत्रित नहीं किया जा सका।",
+      "cancelMeeting": "मीटिंग रद्द करें",
+      "endMeeting": "मीटिंग समाप्त करें",
+      "overview": "अवलोकन",
+      "host": "आयोजक",
+      "duration": "अवधि",
+      "people": "लोग",
+      "peopleSummary": "आमंत्रित: {count} · मेहमान: {guests}",
+      "type": "प्रकार",
+      "instant": "त्वरित मीटिंग",
+      "oneTime": "एक बार की मीटिंग",
+      "copied": "कॉपी किया गया",
+      "copyLink": "लिंक कॉपी करें",
+      "analytics": "मीटिंग विश्लेषण",
+      "attended": "उपस्थित",
+      "noShows": "अनुपस्थित: {count}",
+      "peak": "प्रतिभागियों की अधिकतम संख्या",
+      "avgAttendance": "औसत उपस्थिति",
+      "participantTime": "प्रतिभागियों का कुल समय",
+      "lateArrivals": "देर से आगमन",
+      "earlyDepartures": "जल्दी प्रस्थान",
+      "joins": "शामिल होना",
+      "leaves": "छोड़ना: {count}",
+      "analyticsPending": "मीटिंग समाप्त होने के कुछ समय बाद विश्लेषण उपलब्ध होगा।",
+      "participants": "प्रतिभागी",
+      "name": "नाम",
+      "joined": "शामिल हुए",
+      "left": "छोड़ा",
+      "attendance": "उपस्थिति",
+      "hostBadge": "आयोजक",
+      "guestBadge": "अतिथि",
+      "remove": "हटाएँ",
+      "inviteMore": "और लोगों को आमंत्रित करें",
+      "sendInvites": "आमंत्रण भेजें",
+      "cancelTitle": "यह मीटिंग रद्द करें?",
+      "cancelBody": "प्रतिभागी अब शामिल नहीं हो सकेंगे।",
+      "cancelSeries": "पूरी श्रृंखला रद्द करें",
+      "cancelThisOne": "केवल यह मीटिंग रद्द करें"
+    },
+    "analyticsPage": {
+      "title": "मीटिंग विश्लेषण",
+      "subtitle": "आपकी मीटिंग में उपस्थिति, समय और भागीदारी।",
+      "back": "मीटिंग पर वापस जाएँ",
+      "noData": "इस अवधि के लिए कोई डेटा नहीं",
+      "loadFailed": "विश्लेषण लोड नहीं हो सका।",
+      "invalidRange": "समाप्ति की तारीख शुरुआत की तारीख के बाद होनी चाहिए।",
+      "scope": {
+        "me": "मेरी मीटिंग",
+        "organization": "संगठन"
+      },
+      "filters": {
+        "range": "अवधि",
+        "from": "से",
+        "to": "तक",
+        "recurrence": "पुनरावृत्ति",
+        "allMeetings": "सभी मीटिंग",
+        "recurring": "आवर्ती",
+        "oneTime": "एक बार की",
+        "guests": "मेहमान",
+        "anyGuests": "मेहमानों के साथ या बिना",
+        "withGuests": "बाहरी मेहमानों के साथ",
+        "internalOnly": "केवल आंतरिक"
+      },
+      "presets": {
+        "today": "आज",
+        "week": "इस सप्ताह",
+        "month": "इस महीने",
+        "last30": "पिछले 30 दिन",
+        "last90": "पिछले 90 दिन",
+        "custom": "कस्टम अवधि"
+      },
+      "kpi": {
+        "total": "कुल मीटिंग",
+        "completedCancelled": "पूर्ण: {completed} · रद्द: {cancelled}",
+        "hours": "मीटिंग के घंटे",
+        "attendance": "उपस्थिति दर",
+        "attendedOfInvited": "उपस्थित: {invited} में से {attended}",
+        "noShow": "अनुपस्थिति दर",
+        "noShowCount": "अनुपस्थित: {count}",
+        "avgDuration": "औसत अवधि",
+        "avgAttended": "औसत उपस्थिति समय",
+        "late": "देर से आगमन",
+        "earlyHint": "जल्दी गए: {rate}",
+        "live": "अभी लाइव",
+        "peakHint": "औसत शिखर: {peak}"
+      },
+      "charts": {
+        "volume": "मीटिंग और घंटे",
+        "meetings": "मीटिंग",
+        "hours": "घंटे",
+        "attendance": "उपस्थिति और अनुपस्थिति",
+        "attendanceRate": "उपस्थिति दर",
+        "noShowRate": "अनुपस्थिति दर"
+      },
+      "tables": {
+        "people": "व्यक्ति के अनुसार भागीदारी",
+        "person": "व्यक्ति",
+        "attended": "उपस्थित",
+        "missed": "छूटी",
+        "time": "समय",
+        "avg": "औसत उपस्थिति",
+        "hosts": "सबसे अधिक बार आयोजक"
+      },
+      "me": {
+        "attended": "उपस्थित",
+        "invitedHint": "आमंत्रित: {count}",
+        "missed": "छूटी",
+        "hours": "मीटिंग के घंटे",
+        "hosted": "आयोजित",
+        "avgTime": "औसत उपस्थिति समय",
+        "avgPct": "औसत उपस्थिति",
+        "early": "जल्दी प्रस्थान",
+        "trend": "समय के साथ उपस्थिति",
+        "history": "हाल की मीटिंग",
+        "didNotAttend": "उपस्थित नहीं हुए"
+      }
+    }
   }
 }

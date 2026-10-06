@@ -45,7 +45,10 @@
     "system": "النظام",
     "updates": "التحديثات",
     "ai_transparency": "شفافية الذكاء الاصطناعي",
-    "initiatives": "المبادرات"
+    "initiatives": "المبادرات",
+    "meetings": "الاجتماعات",
+    "meetings_all": "كل الاجتماعات",
+    "meetings_analytics": "التحليلات"
   },
   "actions": {
     "create_issue": "إنشاء مهمة",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "الاجتماعات",
+    "subtitle": "ابدأ اجتماعًا فوريًا أو جدول اجتماعًا مع زملائك وضيوف من خارج المؤسسة.",
+    "analytics": "التحليلات",
+    "schedule": "جدولة",
+    "startMeeting": "بدء اجتماع",
+    "instantTitle": "اجتماع فوري",
+    "start": "ابدأ",
+    "join": "انضمام",
+    "recurring": "متكرر",
+    "hostedBy": "المنظِّم: {name}",
+    "participantCount": "المشاركون: {count}",
+    "retry": "أعد المحاولة",
+    "loading": "جارٍ تحميل الاجتماع…",
+    "cancel": "إلغاء",
+    "scheduled": "تمت جدولة الاجتماع",
+    "minutes": "{count} د",
+    "tabs": {
+      "upcoming": "القادمة",
+      "live": "مباشر",
+      "past": "السابقة"
+    },
+    "status": {
+      "scheduled": "مجدول",
+      "live": "مباشر",
+      "ended": "انتهى",
+      "cancelled": "أُلغي"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "لا توجد اجتماعات قادمة",
+        "body": "ابدأ اجتماعًا الآن أو جدول اجتماعًا لوقت لاحق."
+      },
+      "live": {
+        "title": "لا توجد اجتماعات مباشرة",
+        "body": "تظهر هنا الاجتماعات الجارية."
+      },
+      "past": {
+        "title": "لا توجد اجتماعات سابقة بعد",
+        "body": "تظهر هنا الاجتماعات المنتهية وحضورها."
+      }
+    },
+    "errors": {
+      "createFailed": "تعذّر إنشاء الاجتماع. حاول مرة أخرى.",
+      "loadFailed": "تعذّر تحميل الاجتماعات.",
+      "titleRequired": "أدخل عنوانًا للاجتماع.",
+      "invalidDateTime": "أدخل تاريخًا ووقتًا صالحين.",
+      "pastStart": "وقت البدء في الماضي.",
+      "invalidEmails": "عناوين البريد الإلكتروني هذه غير صالحة: {emails}",
+      "invalidCount": "يجب أن يكون عدد التكرارات رقمًا من 1 إلى 366.",
+      "invalidParticipants": "بعض الأشخاص المحددين ليسوا أعضاء في مساحة العمل هذه.",
+      "guestsNotAllowed": "الضيوف الخارجيون غير مسموح بهم في هذا الاجتماع."
+    },
+    "scheduleDialog": {
+      "title": "جدولة اجتماع",
+      "description": "تُرسل الدعوات بالبريد الإلكتروني. ينضم الضيوف عبر رابط دون حساب.",
+      "submit": "جدولة الاجتماع"
+    },
+    "fields": {
+      "title": "العنوان",
+      "date": "التاريخ",
+      "startTime": "وقت البدء",
+      "duration": "المدة",
+      "timezone": "المنطقة الزمنية",
+      "repeat": "التكرار",
+      "occurrences": "عدد التكرارات",
+      "occurrencesPlaceholder": "اختياري",
+      "people": "الأشخاص",
+      "searchPeople": "بحث عن أشخاص",
+      "noPeople": "لا يوجد أشخاص مطابقون",
+      "selectedCount": "المحدَّد: {count}",
+      "guests": "ضيوف خارجيون",
+      "allowGuests": "السماح بالضيوف",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "افصل بين العناوين بفواصل أو أسطر جديدة. لا يحتاج الضيوف إلى حساب.",
+      "description": "الوصف (اختياري)"
+    },
+    "repeat": {
+      "none": "لا يتكرر",
+      "daily": "يوميًا",
+      "weekly": "أسبوعيًا",
+      "monthly": "شهريًا"
+    },
+    "denied": {
+      "signin": {
+        "title": "سجّل الدخول للانضمام",
+        "body": "هذا الاجتماع لأعضاء مساحة العمل. سجّل الدخول أو استخدم رابط الضيف من دعوتك.",
+        "action": "تسجيل الدخول"
+      },
+      "notFound": {
+        "title": "لم يُعثر على الاجتماع",
+        "body": "قد يكون الرابط خاطئًا أو قد لا تملك صلاحية الوصول إلى هذا الاجتماع."
+      },
+      "closed": {
+        "title": "انتهى هذا الاجتماع",
+        "body": "انتهى الاجتماع أو أُلغي."
+      },
+      "invalidGuestLink": {
+        "title": "رابط الضيف هذا غير صالح",
+        "body": "قد تكون صلاحيته انتهت أو استُبدل. اطلب دعوة جديدة من المنظِّم."
+      },
+      "error": {
+        "title": "حدث خطأ ما",
+        "body": "تعذّر فتح هذا الاجتماع. حاول مرة أخرى."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "غادرت الاجتماع",
+        "body": "يمكنك الانضمام مجددًا ما دام الاجتماع مفتوحًا."
+      },
+      "removed": {
+        "title": "تمت إزالتك",
+        "body": "أزالك المنظِّم من هذا الاجتماع."
+      },
+      "ended": {
+        "title": "انتهى الاجتماع",
+        "body": "أنهى المنظِّم الاجتماع للجميع."
+      },
+      "rejoin": "إعادة الانضمام",
+      "viewMeeting": "عرض الاجتماع"
+    },
+    "prejoin": {
+      "preview": "معاينة الكاميرا",
+      "micOn": "الميكروفون قيد التشغيل",
+      "micOff": "الميكروفون متوقف",
+      "cameraOn": "الكاميرا قيد التشغيل",
+      "cameraOff": "الكاميرا متوقفة",
+      "cameraBlocked": "الكاميرا غير متاحة. تحقق من أذونات المتصفح.",
+      "organizedBy": "المنظِّم: {name}",
+      "inProgress": "قيد التقدم",
+      "joiningAsGuest": "أنت تنضم كضيف",
+      "yourName": "اسمك",
+      "joining": "جارٍ الانضمام…",
+      "joinMeeting": "الانضمام إلى الاجتماع",
+      "errors": {
+        "tooEarly": "لم يُفتح هذا الاجتماع بعد. حاول مرة أخرى قرب وقت البدء.",
+        "ended": "لم يعد هذا الاجتماع مفتوحًا.",
+        "unavailable": "خدمة الفيديو غير متاحة حاليًا.",
+        "rateLimited": "محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",
+        "invalidGuestLink": "رابط الضيف هذا غير صالح.",
+        "forbidden": "أنت غير مدعو إلى هذا الاجتماع.",
+        "generic": "تعذّر الانضمام إلى الاجتماع. حاول مرة أخرى."
+      }
+    },
+    "room": {
+      "you": "أنت",
+      "guest": "ضيف",
+      "micOff": "الميكروفون متوقف",
+      "micOn": "الميكروفون قيد التشغيل",
+      "cameraOff": "الكاميرا متوقفة",
+      "cameraOn": "الكاميرا قيد التشغيل",
+      "removeParticipant": "إزالة {name}",
+      "people": "الأشخاص",
+      "host": "المنظِّم",
+      "participants": "المشاركون",
+      "closePanel": "إغلاق اللوحة",
+      "chat": "الدردشة",
+      "chatNote": "الرسائل مرئية أثناء الاجتماع فقط ولا تُحفظ.",
+      "messagePlaceholder": "أرسل رسالة",
+      "send": "إرسال",
+      "presenting": "{name} يعرض الآن",
+      "moreParticipants": "+{count} آخرين",
+      "inMeeting": "في الاجتماع: {count}",
+      "reconnecting": "جارٍ إعادة الاتصال…",
+      "controls": "عناصر التحكم في الاجتماع",
+      "muteMic": "كتم الميكروفون",
+      "unmuteMic": "إلغاء كتم الميكروفون",
+      "stopCamera": "إيقاف الكاميرا",
+      "startCamera": "تشغيل الكاميرا",
+      "stopShare": "إيقاف المشاركة",
+      "shareScreen": "مشاركة الشاشة",
+      "endForAll": "إنهاء للجميع",
+      "leave": "مغادرة",
+      "endConfirmTitle": "إنهاء الاجتماع للجميع؟",
+      "endConfirmBody": "سيُفصل الجميع وسيُغلق الاجتماع.",
+      "cancel": "إلغاء"
+    },
+    "details": {
+      "didNotAttend": "لم يحضر",
+      "late": "متأخر",
+      "leftEarly": "غادر مبكرًا",
+      "notFoundTitle": "لم يُعثر على الاجتماع",
+      "notFoundBody": "ربما أُزيل أو لا تملك صلاحية الوصول.",
+      "loadFailed": "تعذّر تحميل الاجتماع.",
+      "backToMeetings": "العودة إلى الاجتماعات",
+      "copyFailed": "تعذّر نسخ الرابط.",
+      "invited": "تم إرسال الدعوات",
+      "inviteFailed": "تعذّرت دعوة هؤلاء الأشخاص.",
+      "cancelMeeting": "إلغاء الاجتماع",
+      "endMeeting": "إنهاء الاجتماع",
+      "overview": "نظرة عامة",
+      "host": "المنظِّم",
+      "duration": "المدة",
+      "people": "الأشخاص",
+      "peopleSummary": "المدعوون: {count} · الضيوف: {guests}",
+      "type": "النوع",
+      "instant": "اجتماع فوري",
+      "oneTime": "اجتماع لمرة واحدة",
+      "copied": "تم النسخ",
+      "copyLink": "نسخ الرابط",
+      "analytics": "تحليلات الاجتماع",
+      "attended": "حضروا",
+      "noShows": "لم يحضروا: {count}",
+      "peak": "ذروة المشاركين",
+      "avgAttendance": "متوسط الحضور",
+      "participantTime": "إجمالي وقت المشاركين",
+      "lateArrivals": "حالات التأخر",
+      "earlyDepartures": "حالات المغادرة المبكرة",
+      "joins": "مرات الانضمام",
+      "leaves": "مرات المغادرة: {count}",
+      "analyticsPending": "ستتوفر التحليلات بعد وقت قصير من انتهاء الاجتماع.",
+      "participants": "المشاركون",
+      "name": "الاسم",
+      "joined": "انضم",
+      "left": "غادر",
+      "attendance": "الحضور",
+      "hostBadge": "المنظِّم",
+      "guestBadge": "ضيف",
+      "remove": "إزالة",
+      "inviteMore": "دعوة المزيد من الأشخاص",
+      "sendInvites": "إرسال الدعوات",
+      "cancelTitle": "إلغاء هذا الاجتماع؟",
+      "cancelBody": "لن يتمكن المشاركون من الانضمام بعد الآن.",
+      "cancelSeries": "إلغاء السلسلة كاملة",
+      "cancelThisOne": "إلغاء هذا الاجتماع فقط"
+    },
+    "analyticsPage": {
+      "title": "تحليلات الاجتماعات",
+      "subtitle": "الحضور والوقت والمشاركة عبر اجتماعاتك.",
+      "back": "العودة إلى الاجتماعات",
+      "noData": "لا توجد بيانات لهذه الفترة",
+      "loadFailed": "تعذّر تحميل التحليلات.",
+      "invalidRange": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.",
+      "scope": {
+        "me": "اجتماعاتي",
+        "organization": "المؤسسة"
+      },
+      "filters": {
+        "range": "الفترة",
+        "from": "من",
+        "to": "إلى",
+        "recurrence": "التكرار",
+        "allMeetings": "كل الاجتماعات",
+        "recurring": "المتكررة",
+        "oneTime": "لمرة واحدة",
+        "guests": "الضيوف",
+        "anyGuests": "مع ضيوف أو بدونهم",
+        "withGuests": "مع ضيوف خارجيين",
+        "internalOnly": "داخلية فقط"
+      },
+      "presets": {
+        "today": "اليوم",
+        "week": "هذا الأسبوع",
+        "month": "هذا الشهر",
+        "last30": "آخر 30 يومًا",
+        "last90": "آخر 90 يومًا",
+        "custom": "نطاق مخصص"
+      },
+      "kpi": {
+        "total": "إجمالي الاجتماعات",
+        "completedCancelled": "المكتملة: {completed} · الملغاة: {cancelled}",
+        "hours": "ساعات الاجتماعات",
+        "attendance": "معدل الحضور",
+        "attendedOfInvited": "حضر {attended} من {invited}",
+        "noShow": "معدل الغياب",
+        "noShowCount": "لم يحضروا: {count}",
+        "avgDuration": "متوسط المدة",
+        "avgAttended": "متوسط وقت الحضور",
+        "late": "حالات التأخر",
+        "earlyHint": "غادروا مبكرًا: {rate}",
+        "live": "مباشر الآن",
+        "peakHint": "متوسط الذروة: {peak}"
+      },
+      "charts": {
+        "volume": "الاجتماعات والساعات",
+        "meetings": "الاجتماعات",
+        "hours": "الساعات",
+        "attendance": "الحضور والغياب",
+        "attendanceRate": "معدل الحضور",
+        "noShowRate": "معدل الغياب"
+      },
+      "tables": {
+        "people": "المشاركة حسب الشخص",
+        "person": "الشخص",
+        "attended": "حضر",
+        "missed": "فاتت",
+        "time": "الوقت",
+        "avg": "متوسط الحضور",
+        "hosts": "أكثر المنظِّمين تكرارًا"
+      },
+      "me": {
+        "attended": "حضر",
+        "invitedHint": "مدعو إلى: {count}",
+        "missed": "فاتت",
+        "hours": "ساعات الاجتماعات",
+        "hosted": "نظّمها",
+        "avgTime": "متوسط وقت الحضور",
+        "avgPct": "متوسط الحضور",
+        "early": "حالات المغادرة المبكرة",
+        "trend": "الحضور عبر الزمن",
+        "history": "الاجتماعات الأخيرة",
+        "didNotAttend": "لم يحضر"
+      }
+    }
   }
 }

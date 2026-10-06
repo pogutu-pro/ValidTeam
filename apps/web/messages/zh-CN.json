@@ -45,7 +45,10 @@
     "system": "系统",
     "updates": "更新",
     "ai_transparency": "AI 透明度",
-    "initiatives": "倡议"
+    "initiatives": "倡议",
+    "meetings": "会议",
+    "meetings_all": "所有会议",
+    "meetings_analytics": "分析"
   },
   "actions": {
     "create_issue": "创建事项",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "会议",
+    "subtitle": "立即开始会议，或与同事和外部访客安排会议。",
+    "analytics": "分析",
+    "schedule": "安排",
+    "startMeeting": "开始会议",
+    "instantTitle": "即时会议",
+    "start": "开始",
+    "join": "加入",
+    "recurring": "重复",
+    "hostedBy": "主持人：{name}",
+    "participantCount": "参会人数：{count}",
+    "retry": "重试",
+    "loading": "正在加载会议…",
+    "cancel": "取消",
+    "scheduled": "会议已安排",
+    "minutes": "{count} 分钟",
+    "tabs": {
+      "upcoming": "即将开始",
+      "live": "进行中",
+      "past": "已结束"
+    },
+    "status": {
+      "scheduled": "已安排",
+      "live": "进行中",
+      "ended": "已结束",
+      "cancelled": "已取消"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "没有即将开始的会议",
+        "body": "立即开始会议，或安排到稍后。"
+      },
+      "live": {
+        "title": "没有进行中的会议",
+        "body": "正在进行的会议会显示在这里。"
+      },
+      "past": {
+        "title": "暂无历史会议",
+        "body": "已结束的会议及其出席情况会显示在这里。"
+      }
+    },
+    "errors": {
+      "createFailed": "无法创建会议，请重试。",
+      "loadFailed": "无法加载会议。",
+      "titleRequired": "请输入会议标题。",
+      "invalidDateTime": "请输入有效的日期和时间。",
+      "pastStart": "开始时间已过。",
+      "invalidEmails": "这些电子邮件地址无效：{emails}",
+      "invalidCount": "重复次数必须是 1 到 366 之间的数字。",
+      "invalidParticipants": "部分所选人员不是此工作区的成员。",
+      "guestsNotAllowed": "此会议不允许外部访客。"
+    },
+    "scheduleDialog": {
+      "title": "安排会议",
+      "description": "邀请将通过电子邮件发送。访客无需账户，通过链接即可加入。",
+      "submit": "安排会议"
+    },
+    "fields": {
+      "title": "标题",
+      "date": "日期",
+      "startTime": "开始时间",
+      "duration": "时长",
+      "timezone": "时区",
+      "repeat": "重复",
+      "occurrences": "重复次数",
+      "occurrencesPlaceholder": "可选",
+      "people": "人员",
+      "searchPeople": "搜索人员",
+      "noPeople": "没有匹配的人员",
+      "selectedCount": "已选择：{count}",
+      "guests": "外部访客",
+      "allowGuests": "允许访客",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "请用逗号或换行分隔地址。访客无需账户。",
+      "description": "描述（可选）"
+    },
+    "repeat": {
+      "none": "不重复",
+      "daily": "每天",
+      "weekly": "每周",
+      "monthly": "每月"
+    },
+    "denied": {
+      "signin": {
+        "title": "请登录后加入",
+        "body": "此会议仅限工作区成员。请登录，或使用邀请中的访客链接。",
+        "action": "登录"
+      },
+      "notFound": {
+        "title": "未找到会议",
+        "body": "链接可能有误，或您无权访问此会议。"
+      },
+      "closed": {
+        "title": "此会议已结束",
+        "body": "会议已结束或已被取消。"
+      },
+      "invalidGuestLink": {
+        "title": "此访客链接无效",
+        "body": "它可能已过期或被替换。请向主持人索取新的邀请。"
+      },
+      "error": {
+        "title": "出了点问题",
+        "body": "无法打开此会议，请重试。"
+      }
+    },
+    "left": {
+      "left": {
+        "title": "您已离开会议",
+        "body": "会议仍在进行时，您可以重新加入。"
+      },
+      "removed": {
+        "title": "您已被移出",
+        "body": "主持人已将您移出此会议。"
+      },
+      "ended": {
+        "title": "会议已结束",
+        "body": "主持人已为所有人结束会议。"
+      },
+      "rejoin": "重新加入",
+      "viewMeeting": "查看会议"
+    },
+    "prejoin": {
+      "preview": "摄像头预览",
+      "micOn": "麦克风已开启",
+      "micOff": "麦克风已关闭",
+      "cameraOn": "摄像头已开启",
+      "cameraOff": "摄像头已关闭",
+      "cameraBlocked": "摄像头不可用，请检查浏览器权限。",
+      "organizedBy": "主持人：{name}",
+      "inProgress": "进行中",
+      "joiningAsGuest": "您将以访客身份加入",
+      "yourName": "您的姓名",
+      "joining": "正在加入…",
+      "joinMeeting": "加入会议",
+      "errors": {
+        "tooEarly": "此会议尚未开放，请在临近开始时间时重试。",
+        "ended": "此会议已不再开放。",
+        "unavailable": "视频服务当前不可用。",
+        "rateLimited": "尝试次数过多，请稍候再试。",
+        "invalidGuestLink": "此访客链接无效。",
+        "forbidden": "您未被邀请参加此会议。",
+        "generic": "无法加入会议，请重试。"
+      }
+    },
+    "room": {
+      "you": "您",
+      "guest": "访客",
+      "micOff": "麦克风已关闭",
+      "micOn": "麦克风已开启",
+      "cameraOff": "摄像头已关闭",
+      "cameraOn": "摄像头已开启",
+      "removeParticipant": "移除 {name}",
+      "people": "人员",
+      "host": "主持人",
+      "participants": "参会者",
+      "closePanel": "关闭面板",
+      "chat": "聊天",
+      "chatNote": "消息仅在会议期间可见，不会被保存。",
+      "messagePlaceholder": "发送消息",
+      "send": "发送",
+      "presenting": "{name} 正在演示",
+      "moreParticipants": "另有 {count} 人",
+      "inMeeting": "会议中：{count}",
+      "reconnecting": "正在重新连接…",
+      "controls": "会议控制",
+      "muteMic": "静音麦克风",
+      "unmuteMic": "取消静音",
+      "stopCamera": "关闭摄像头",
+      "startCamera": "开启摄像头",
+      "stopShare": "停止共享",
+      "shareScreen": "共享屏幕",
+      "endForAll": "为所有人结束",
+      "leave": "离开",
+      "endConfirmTitle": "为所有人结束会议？",
+      "endConfirmBody": "所有人都将断开连接，会议将关闭。",
+      "cancel": "取消"
+    },
+    "details": {
+      "didNotAttend": "缺席",
+      "late": "迟到",
+      "leftEarly": "提前离开",
+      "notFoundTitle": "未找到会议",
+      "notFoundBody": "它可能已被删除，或您无权访问。",
+      "loadFailed": "无法加载会议。",
+      "backToMeetings": "返回会议",
+      "copyFailed": "无法复制链接。",
+      "invited": "邀请已发送",
+      "inviteFailed": "无法邀请这些人员。",
+      "cancelMeeting": "取消会议",
+      "endMeeting": "结束会议",
+      "overview": "概览",
+      "host": "主持人",
+      "duration": "时长",
+      "people": "人员",
+      "peopleSummary": "已邀请：{count} · 访客：{guests}",
+      "type": "类型",
+      "instant": "即时会议",
+      "oneTime": "一次性会议",
+      "copied": "已复制",
+      "copyLink": "复制链接",
+      "analytics": "会议分析",
+      "attended": "已出席",
+      "noShows": "未到：{count}",
+      "peak": "参会人数峰值",
+      "avgAttendance": "平均出席率",
+      "participantTime": "参会者总时长",
+      "lateArrivals": "迟到",
+      "earlyDepartures": "提前离开",
+      "joins": "加入次数",
+      "leaves": "离开次数：{count}",
+      "analyticsPending": "会议结束后不久即可查看分析。",
+      "participants": "参会者",
+      "name": "姓名",
+      "joined": "加入时间",
+      "left": "离开时间",
+      "attendance": "出席",
+      "hostBadge": "主持人",
+      "guestBadge": "访客",
+      "remove": "移除",
+      "inviteMore": "邀请更多人员",
+      "sendInvites": "发送邀请",
+      "cancelTitle": "取消此会议？",
+      "cancelBody": "参会者将无法再加入。",
+      "cancelSeries": "取消整个系列",
+      "cancelThisOne": "仅取消此会议"
+    },
+    "analyticsPage": {
+      "title": "会议分析",
+      "subtitle": "您所有会议的出席、时间和参与情况。",
+      "back": "返回会议",
+      "noData": "此时间段没有数据",
+      "loadFailed": "无法加载分析。",
+      "invalidRange": "结束日期必须晚于开始日期。",
+      "scope": {
+        "me": "我的会议",
+        "organization": "组织"
+      },
+      "filters": {
+        "range": "时间段",
+        "from": "从",
+        "to": "至",
+        "recurrence": "重复性",
+        "allMeetings": "所有会议",
+        "recurring": "重复",
+        "oneTime": "一次性",
+        "guests": "访客",
+        "anyGuests": "有或没有访客",
+        "withGuests": "有外部访客",
+        "internalOnly": "仅内部"
+      },
+      "presets": {
+        "today": "今天",
+        "week": "本周",
+        "month": "本月",
+        "last30": "最近 30 天",
+        "last90": "最近 90 天",
+        "custom": "自定义范围"
+      },
+      "kpi": {
+        "total": "会议总数",
+        "completedCancelled": "已完成：{completed} · 已取消：{cancelled}",
+        "hours": "会议时长",
+        "attendance": "出席率",
+        "attendedOfInvited": "已出席：{invited} 人中 {attended} 人",
+        "noShow": "缺席率",
+        "noShowCount": "未到：{count}",
+        "avgDuration": "平均时长",
+        "avgAttended": "平均出席时间",
+        "late": "迟到",
+        "earlyHint": "提前离开：{rate}",
+        "live": "正在进行",
+        "peakHint": "平均峰值：{peak}"
+      },
+      "charts": {
+        "volume": "会议与时长",
+        "meetings": "会议",
+        "hours": "小时",
+        "attendance": "出席与缺席",
+        "attendanceRate": "出席率",
+        "noShowRate": "缺席率"
+      },
+      "tables": {
+        "people": "按人员统计的参与情况",
+        "person": "人员",
+        "attended": "已出席",
+        "missed": "错过",
+        "time": "时间",
+        "avg": "平均出席率",
+        "hosts": "最常见的主持人"
+      },
+      "me": {
+        "attended": "已出席",
+        "invitedHint": "已邀请：{count}",
+        "missed": "错过",
+        "hours": "会议时长",
+        "hosted": "主持",
+        "avgTime": "平均出席时间",
+        "avgPct": "平均出席率",
+        "early": "提前离开",
+        "trend": "出席趋势",
+        "history": "最近的会议",
+        "didNotAttend": "未出席"
+      }
+    }
   }
 }

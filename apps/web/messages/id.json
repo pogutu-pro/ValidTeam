@@ -45,7 +45,10 @@
     "system": "Sistem",
     "updates": "Pembaruan",
     "ai_transparency": "Transparansi AI",
-    "initiatives": "Inisiatif"
+    "initiatives": "Inisiatif",
+    "meetings": "Rapat",
+    "meetings_all": "Semua rapat",
+    "meetings_analytics": "Analitik"
   },
   "actions": {
     "create_issue": "Buat isu",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Rapat",
+    "subtitle": "Mulai rapat instan atau jadwalkan rapat dengan rekan tim dan tamu eksternal.",
+    "analytics": "Analitik",
+    "schedule": "Jadwalkan",
+    "startMeeting": "Mulai rapat",
+    "instantTitle": "Rapat instan",
+    "start": "Mulai",
+    "join": "Gabung",
+    "recurring": "Berulang",
+    "hostedBy": "Diselenggarakan oleh {name}",
+    "participantCount": "Peserta: {count}",
+    "retry": "Coba lagi",
+    "loading": "Memuat rapat…",
+    "cancel": "Batal",
+    "scheduled": "Rapat dijadwalkan",
+    "minutes": "{count} mnt",
+    "tabs": {
+      "upcoming": "Mendatang",
+      "live": "Langsung",
+      "past": "Lampau"
+    },
+    "status": {
+      "scheduled": "Terjadwal",
+      "live": "Langsung",
+      "ended": "Selesai",
+      "cancelled": "Dibatalkan"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Tidak ada rapat mendatang",
+        "body": "Mulai rapat sekarang atau jadwalkan untuk nanti."
+      },
+      "live": {
+        "title": "Tidak ada rapat langsung",
+        "body": "Rapat yang sedang berlangsung muncul di sini."
+      },
+      "past": {
+        "title": "Belum ada rapat lampau",
+        "body": "Rapat yang selesai beserta kehadirannya muncul di sini."
+      }
+    },
+    "errors": {
+      "createFailed": "Rapat tidak dapat dibuat. Silakan coba lagi.",
+      "loadFailed": "Rapat tidak dapat dimuat.",
+      "titleRequired": "Masukkan judul rapat.",
+      "invalidDateTime": "Masukkan tanggal dan waktu yang valid.",
+      "pastStart": "Waktu mulai sudah lewat.",
+      "invalidEmails": "Alamat email ini tidak valid: {emails}",
+      "invalidCount": "Jumlah pengulangan harus berupa angka dari 1 hingga 366.",
+      "invalidParticipants": "Beberapa orang yang dipilih bukan anggota ruang kerja ini.",
+      "guestsNotAllowed": "Tamu eksternal tidak diizinkan untuk rapat ini."
+    },
+    "scheduleDialog": {
+      "title": "Jadwalkan rapat",
+      "description": "Undangan dikirim lewat email. Tamu bergabung dari tautan tanpa akun.",
+      "submit": "Jadwalkan rapat"
+    },
+    "fields": {
+      "title": "Judul",
+      "date": "Tanggal",
+      "startTime": "Waktu mulai",
+      "duration": "Durasi",
+      "timezone": "Zona waktu",
+      "repeat": "Ulangi",
+      "occurrences": "Pengulangan",
+      "occurrencesPlaceholder": "Opsional",
+      "people": "Orang",
+      "searchPeople": "Cari orang",
+      "noPeople": "Tidak ada orang yang cocok",
+      "selectedCount": "Dipilih: {count}",
+      "guests": "Tamu eksternal",
+      "allowGuests": "Izinkan tamu",
+      "guestsPlaceholder": "nama@contoh.com, lain@contoh.com",
+      "guestsHint": "Pisahkan alamat dengan koma atau baris baru. Tamu tidak memerlukan akun.",
+      "description": "Deskripsi (opsional)"
+    },
+    "repeat": {
+      "none": "Tidak berulang",
+      "daily": "Harian",
+      "weekly": "Mingguan",
+      "monthly": "Bulanan"
+    },
+    "denied": {
+      "signin": {
+        "title": "Masuk untuk bergabung",
+        "body": "Rapat ini untuk anggota ruang kerja. Masuk atau gunakan tautan tamu dari undangan Anda.",
+        "action": "Masuk"
+      },
+      "notFound": {
+        "title": "Rapat tidak ditemukan",
+        "body": "Tautan mungkin salah atau Anda tidak memiliki akses ke rapat ini."
+      },
+      "closed": {
+        "title": "Rapat ini telah berakhir",
+        "body": "Rapat sudah selesai atau dibatalkan."
+      },
+      "invalidGuestLink": {
+        "title": "Tautan tamu ini tidak valid",
+        "body": "Mungkin sudah kedaluwarsa atau diganti. Minta undangan baru kepada penyelenggara."
+      },
+      "error": {
+        "title": "Terjadi kesalahan",
+        "body": "Kami tidak dapat membuka rapat ini. Silakan coba lagi."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Anda meninggalkan rapat",
+        "body": "Anda dapat bergabung kembali selama rapat masih terbuka."
+      },
+      "removed": {
+        "title": "Anda dikeluarkan",
+        "body": "Penyelenggara mengeluarkan Anda dari rapat ini."
+      },
+      "ended": {
+        "title": "Rapat telah berakhir",
+        "body": "Penyelenggara mengakhiri rapat untuk semua orang."
+      },
+      "rejoin": "Gabung kembali",
+      "viewMeeting": "Lihat rapat"
+    },
+    "prejoin": {
+      "preview": "Pratinjau kamera",
+      "micOn": "Mikrofon aktif",
+      "micOff": "Mikrofon mati",
+      "cameraOn": "Kamera aktif",
+      "cameraOff": "Kamera mati",
+      "cameraBlocked": "Kamera tidak tersedia. Periksa izin browser Anda.",
+      "organizedBy": "Diselenggarakan oleh {name}",
+      "inProgress": "Sedang berlangsung",
+      "joiningAsGuest": "Bergabung sebagai tamu",
+      "yourName": "Nama Anda",
+      "joining": "Bergabung…",
+      "joinMeeting": "Gabung ke rapat",
+      "errors": {
+        "tooEarly": "Rapat ini belum dibuka. Coba lagi mendekati waktu mulai.",
+        "ended": "Rapat ini tidak lagi terbuka.",
+        "unavailable": "Layanan video tidak tersedia saat ini.",
+        "rateLimited": "Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi.",
+        "invalidGuestLink": "Tautan tamu ini tidak valid.",
+        "forbidden": "Anda tidak diundang ke rapat ini.",
+        "generic": "Tidak dapat bergabung ke rapat. Silakan coba lagi."
+      }
+    },
+    "room": {
+      "you": "Anda",
+      "guest": "Tamu",
+      "micOff": "Mikrofon mati",
+      "micOn": "Mikrofon aktif",
+      "cameraOff": "Kamera mati",
+      "cameraOn": "Kamera aktif",
+      "removeParticipant": "Keluarkan {name}",
+      "people": "Orang",
+      "host": "Penyelenggara",
+      "participants": "Peserta",
+      "closePanel": "Tutup panel",
+      "chat": "Obrolan",
+      "chatNote": "Pesan hanya terlihat selama rapat dan tidak disimpan.",
+      "messagePlaceholder": "Kirim pesan",
+      "send": "Kirim",
+      "presenting": "{name} sedang presentasi",
+      "moreParticipants": "+{count} lagi",
+      "inMeeting": "Dalam rapat: {count}",
+      "reconnecting": "Menyambung kembali…",
+      "controls": "Kontrol rapat",
+      "muteMic": "Bisukan mikrofon",
+      "unmuteMic": "Aktifkan mikrofon",
+      "stopCamera": "Matikan kamera",
+      "startCamera": "Nyalakan kamera",
+      "stopShare": "Hentikan berbagi",
+      "shareScreen": "Bagikan layar",
+      "endForAll": "Akhiri untuk semua",
+      "leave": "Keluar",
+      "endConfirmTitle": "Akhiri rapat untuk semua orang?",
+      "endConfirmBody": "Semua orang akan diputus dan rapat akan ditutup.",
+      "cancel": "Batal"
+    },
+    "details": {
+      "didNotAttend": "Tidak hadir",
+      "late": "Terlambat",
+      "leftEarly": "Pergi lebih awal",
+      "notFoundTitle": "Rapat tidak ditemukan",
+      "notFoundBody": "Mungkin telah dihapus atau Anda tidak memiliki akses.",
+      "loadFailed": "Rapat tidak dapat dimuat.",
+      "backToMeetings": "Kembali ke rapat",
+      "copyFailed": "Tautan tidak dapat disalin.",
+      "invited": "Undangan terkirim",
+      "inviteFailed": "Orang-orang ini tidak dapat diundang.",
+      "cancelMeeting": "Batalkan rapat",
+      "endMeeting": "Akhiri rapat",
+      "overview": "Ringkasan",
+      "host": "Penyelenggara",
+      "duration": "Durasi",
+      "people": "Orang",
+      "peopleSummary": "Diundang: {count} · Tamu: {guests}",
+      "type": "Jenis",
+      "instant": "Rapat instan",
+      "oneTime": "Rapat sekali",
+      "copied": "Tersalin",
+      "copyLink": "Salin tautan",
+      "analytics": "Analitik rapat",
+      "attended": "Hadir",
+      "noShows": "Tidak hadir: {count}",
+      "peak": "Puncak peserta",
+      "avgAttendance": "Rata-rata kehadiran",
+      "participantTime": "Total waktu peserta",
+      "lateArrivals": "Kedatangan terlambat",
+      "earlyDepartures": "Kepergian lebih awal",
+      "joins": "Bergabung",
+      "leaves": "Keluar: {count}",
+      "analyticsPending": "Analitik akan tersedia tidak lama setelah rapat berakhir.",
+      "participants": "Peserta",
+      "name": "Nama",
+      "joined": "Bergabung",
+      "left": "Keluar",
+      "attendance": "Kehadiran",
+      "hostBadge": "Penyelenggara",
+      "guestBadge": "Tamu",
+      "remove": "Hapus",
+      "inviteMore": "Undang lebih banyak orang",
+      "sendInvites": "Kirim undangan",
+      "cancelTitle": "Batalkan rapat ini?",
+      "cancelBody": "Peserta tidak akan dapat bergabung lagi.",
+      "cancelSeries": "Batalkan seluruh seri",
+      "cancelThisOne": "Batalkan rapat ini saja"
+    },
+    "analyticsPage": {
+      "title": "Analitik rapat",
+      "subtitle": "Kehadiran, waktu, dan partisipasi di seluruh rapat Anda.",
+      "back": "Kembali ke rapat",
+      "noData": "Tidak ada data untuk periode ini",
+      "loadFailed": "Analitik tidak dapat dimuat.",
+      "invalidRange": "Tanggal akhir harus setelah tanggal mulai.",
+      "scope": {
+        "me": "Rapat saya",
+        "organization": "Organisasi"
+      },
+      "filters": {
+        "range": "Periode",
+        "from": "Dari",
+        "to": "Hingga",
+        "recurrence": "Pengulangan",
+        "allMeetings": "Semua rapat",
+        "recurring": "Berulang",
+        "oneTime": "Sekali",
+        "guests": "Tamu",
+        "anyGuests": "Dengan atau tanpa tamu",
+        "withGuests": "Dengan tamu eksternal",
+        "internalOnly": "Hanya internal"
+      },
+      "presets": {
+        "today": "Hari ini",
+        "week": "Minggu ini",
+        "month": "Bulan ini",
+        "last30": "30 hari terakhir",
+        "last90": "90 hari terakhir",
+        "custom": "Rentang kustom"
+      },
+      "kpi": {
+        "total": "Total rapat",
+        "completedCancelled": "Selesai: {completed} · Dibatalkan: {cancelled}",
+        "hours": "Jam rapat",
+        "attendance": "Tingkat kehadiran",
+        "attendedOfInvited": "Hadir: {attended} dari {invited}",
+        "noShow": "Tingkat ketidakhadiran",
+        "noShowCount": "Tidak hadir: {count}",
+        "avgDuration": "Durasi rata-rata",
+        "avgAttended": "Rata-rata waktu hadir",
+        "late": "Kedatangan terlambat",
+        "earlyHint": "Pergi lebih awal: {rate}",
+        "live": "Langsung sekarang",
+        "peakHint": "Puncak rata-rata: {peak}"
+      },
+      "charts": {
+        "volume": "Rapat dan jam",
+        "meetings": "Rapat",
+        "hours": "Jam",
+        "attendance": "Kehadiran dan ketidakhadiran",
+        "attendanceRate": "Tingkat kehadiran",
+        "noShowRate": "Tingkat ketidakhadiran"
+      },
+      "tables": {
+        "people": "Partisipasi per orang",
+        "person": "Orang",
+        "attended": "Hadir",
+        "missed": "Terlewat",
+        "time": "Waktu",
+        "avg": "Rata-rata kehadiran",
+        "hosts": "Penyelenggara tersering"
+      },
+      "me": {
+        "attended": "Hadir",
+        "invitedHint": "Diundang: {count}",
+        "missed": "Terlewat",
+        "hours": "Jam rapat",
+        "hosted": "Diselenggarakan",
+        "avgTime": "Rata-rata waktu hadir",
+        "avgPct": "Rata-rata kehadiran",
+        "early": "Kepergian lebih awal",
+        "trend": "Kehadiran dari waktu ke waktu",
+        "history": "Rapat terbaru",
+        "didNotAttend": "Tidak hadir"
+      }
+    }
   }
 }

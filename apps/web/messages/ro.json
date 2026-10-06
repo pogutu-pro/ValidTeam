@@ -45,7 +45,10 @@
     "system": "Sistem",
     "updates": "Actualizări",
     "ai_transparency": "Transparență AI",
-    "initiatives": "Inițiative"
+    "initiatives": "Inițiative",
+    "meetings": "Întâlniri",
+    "meetings_all": "Toate întâlnirile",
+    "meetings_analytics": "Analize"
   },
   "actions": {
     "create_issue": "Creează sarcină",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Întâlniri",
+    "subtitle": "Pornește o întâlnire instantanee sau programează una cu colegii și invitați externi.",
+    "analytics": "Analize",
+    "schedule": "Programează",
+    "startMeeting": "Pornește o întâlnire",
+    "instantTitle": "Întâlnire instantanee",
+    "start": "Pornește",
+    "join": "Alătură-te",
+    "recurring": "Recurentă",
+    "hostedBy": "Organizată de {name}",
+    "participantCount": "Participanți: {count}",
+    "retry": "Încearcă din nou",
+    "loading": "Se încarcă întâlnirea…",
+    "cancel": "Anulează",
+    "scheduled": "Întâlnire programată",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Viitoare",
+      "live": "În direct",
+      "past": "Trecute"
+    },
+    "status": {
+      "scheduled": "Programată",
+      "live": "În direct",
+      "ended": "Încheiată",
+      "cancelled": "Anulată"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Nicio întâlnire viitoare",
+        "body": "Pornește o întâlnire acum sau programează una pentru mai târziu."
+      },
+      "live": {
+        "title": "Nicio întâlnire în direct",
+        "body": "Întâlnirile în desfășurare apar aici."
+      },
+      "past": {
+        "title": "Încă nu există întâlniri trecute",
+        "body": "Întâlnirile încheiate și prezența lor apar aici."
+      }
+    },
+    "errors": {
+      "createFailed": "Întâlnirea nu a putut fi creată. Încearcă din nou.",
+      "loadFailed": "Întâlnirile nu au putut fi încărcate.",
+      "titleRequired": "Introdu un titlu pentru întâlnire.",
+      "invalidDateTime": "Introdu o dată și o oră valide.",
+      "pastStart": "Ora de început este în trecut.",
+      "invalidEmails": "Aceste adrese de e-mail nu sunt valide: {emails}",
+      "invalidCount": "Numărul de repetări trebuie să fie între 1 și 366.",
+      "invalidParticipants": "Unele persoane selectate nu sunt membre ale acestui spațiu de lucru.",
+      "guestsNotAllowed": "Invitații externi nu sunt permiși la această întâlnire."
+    },
+    "scheduleDialog": {
+      "title": "Programează o întâlnire",
+      "description": "Invitațiile se trimit prin e-mail. Invitații se alătură dintr-un link, fără cont.",
+      "submit": "Programează întâlnirea"
+    },
+    "fields": {
+      "title": "Titlu",
+      "date": "Data",
+      "startTime": "Ora de început",
+      "duration": "Durată",
+      "timezone": "Fus orar",
+      "repeat": "Repetă",
+      "occurrences": "Repetări",
+      "occurrencesPlaceholder": "Opțional",
+      "people": "Persoane",
+      "searchPeople": "Caută persoane",
+      "noPeople": "Nicio persoană corespunzătoare",
+      "selectedCount": "Selectate: {count}",
+      "guests": "Invitați externi",
+      "allowGuests": "Permite invitați",
+      "guestsPlaceholder": "nume@exemplu.ro, altul@exemplu.ro",
+      "guestsHint": "Separă adresele prin virgule sau rânduri noi. Invitații nu au nevoie de cont.",
+      "description": "Descriere (opțional)"
+    },
+    "repeat": {
+      "none": "Nu se repetă",
+      "daily": "Zilnic",
+      "weekly": "Săptămânal",
+      "monthly": "Lunar"
+    },
+    "denied": {
+      "signin": {
+        "title": "Autentifică-te pentru a te alătura",
+        "body": "Această întâlnire este pentru membrii spațiului de lucru. Autentifică-te sau folosește linkul de invitat din invitație.",
+        "action": "Autentificare"
+      },
+      "notFound": {
+        "title": "Întâlnirea nu a fost găsită",
+        "body": "Linkul poate fi greșit sau este posibil să nu ai acces la această întâlnire."
+      },
+      "closed": {
+        "title": "Această întâlnire s-a încheiat",
+        "body": "Întâlnirea s-a terminat sau a fost anulată."
+      },
+      "invalidGuestLink": {
+        "title": "Acest link de invitat nu este valid",
+        "body": "Poate a expirat sau a fost înlocuit. Cere gazdei o nouă invitație."
+      },
+      "error": {
+        "title": "Ceva nu a funcționat",
+        "body": "Nu am putut deschide această întâlnire. Încearcă din nou."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Ai părăsit întâlnirea",
+        "body": "Te poți alătura din nou cât timp întâlnirea este deschisă."
+      },
+      "removed": {
+        "title": "Ai fost eliminat",
+        "body": "Gazda te-a eliminat din această întâlnire."
+      },
+      "ended": {
+        "title": "Întâlnirea s-a încheiat",
+        "body": "Gazda a încheiat întâlnirea pentru toți."
+      },
+      "rejoin": "Alătură-te din nou",
+      "viewMeeting": "Vezi întâlnirea"
+    },
+    "prejoin": {
+      "preview": "Previzualizare cameră",
+      "micOn": "Microfon pornit",
+      "micOff": "Microfon oprit",
+      "cameraOn": "Cameră pornită",
+      "cameraOff": "Cameră oprită",
+      "cameraBlocked": "Camera nu este disponibilă. Verifică permisiunile browserului.",
+      "organizedBy": "Organizată de {name}",
+      "inProgress": "În desfășurare",
+      "joiningAsGuest": "Te alături ca invitat",
+      "yourName": "Numele tău",
+      "joining": "Se conectează…",
+      "joinMeeting": "Alătură-te întâlnirii",
+      "errors": {
+        "tooEarly": "Această întâlnire nu s-a deschis încă. Încearcă din nou mai aproape de ora de început.",
+        "ended": "Această întâlnire nu mai este deschisă.",
+        "unavailable": "Serviciul video nu este disponibil momentan.",
+        "rateLimited": "Prea multe încercări. Așteaptă puțin și încearcă din nou.",
+        "invalidGuestLink": "Acest link de invitat nu este valid.",
+        "forbidden": "Nu ești invitat la această întâlnire.",
+        "generic": "Nu te-ai putut alătura întâlnirii. Încearcă din nou."
+      }
+    },
+    "room": {
+      "you": "Tu",
+      "guest": "Invitat",
+      "micOff": "Microfon oprit",
+      "micOn": "Microfon pornit",
+      "cameraOff": "Cameră oprită",
+      "cameraOn": "Cameră pornită",
+      "removeParticipant": "Elimină pe {name}",
+      "people": "Persoane",
+      "host": "Gazdă",
+      "participants": "Participanți",
+      "closePanel": "Închide panoul",
+      "chat": "Chat",
+      "chatNote": "Mesajele sunt vizibile doar în timpul întâlnirii și nu sunt salvate.",
+      "messagePlaceholder": "Trimite un mesaj",
+      "send": "Trimite",
+      "presenting": "{name} prezintă",
+      "moreParticipants": "+încă {count}",
+      "inMeeting": "În întâlnire: {count}",
+      "reconnecting": "Se reconectează…",
+      "controls": "Comenzile întâlnirii",
+      "muteMic": "Oprește microfonul",
+      "unmuteMic": "Pornește microfonul",
+      "stopCamera": "Oprește camera",
+      "startCamera": "Pornește camera",
+      "stopShare": "Oprește partajarea",
+      "shareScreen": "Partajează ecranul",
+      "endForAll": "Încheie pentru toți",
+      "leave": "Părăsește",
+      "endConfirmTitle": "Încheii întâlnirea pentru toți?",
+      "endConfirmBody": "Toți vor fi deconectați, iar întâlnirea se va închide.",
+      "cancel": "Anulează"
+    },
+    "details": {
+      "didNotAttend": "Absent",
+      "late": "Întârziat",
+      "leftEarly": "A plecat devreme",
+      "notFoundTitle": "Întâlnirea nu a fost găsită",
+      "notFoundBody": "Poate a fost eliminată sau nu ai acces.",
+      "loadFailed": "Întâlnirea nu a putut fi încărcată.",
+      "backToMeetings": "Înapoi la întâlniri",
+      "copyFailed": "Linkul nu a putut fi copiat.",
+      "invited": "Invitații trimise",
+      "inviteFailed": "Aceste persoane nu au putut fi invitate.",
+      "cancelMeeting": "Anulează întâlnirea",
+      "endMeeting": "Încheie întâlnirea",
+      "overview": "Prezentare generală",
+      "host": "Gazdă",
+      "duration": "Durată",
+      "people": "Persoane",
+      "peopleSummary": "Invitați: {count} · Externi: {guests}",
+      "type": "Tip",
+      "instant": "Întâlnire instantanee",
+      "oneTime": "Întâlnire unică",
+      "copied": "Copiat",
+      "copyLink": "Copiază linkul",
+      "analytics": "Analiza întâlnirii",
+      "attended": "Prezenți",
+      "noShows": "Absențe: {count}",
+      "peak": "Vârf de participanți",
+      "avgAttendance": "Prezență medie",
+      "participantTime": "Timp total al participanților",
+      "lateArrivals": "Sosiri târzii",
+      "earlyDepartures": "Plecări anticipate",
+      "joins": "Alăturări",
+      "leaves": "Plecări: {count}",
+      "analyticsPending": "Analiza va fi disponibilă la scurt timp după încheierea întâlnirii.",
+      "participants": "Participanți",
+      "name": "Nume",
+      "joined": "S-a alăturat",
+      "left": "A plecat",
+      "attendance": "Prezență",
+      "hostBadge": "Gazdă",
+      "guestBadge": "Invitat",
+      "remove": "Elimină",
+      "inviteMore": "Invită mai multe persoane",
+      "sendInvites": "Trimite invitații",
+      "cancelTitle": "Anulezi această întâlnire?",
+      "cancelBody": "Participanții nu se vor mai putea alătura.",
+      "cancelSeries": "Anulează întreaga serie",
+      "cancelThisOne": "Anulează doar această întâlnire"
+    },
+    "analyticsPage": {
+      "title": "Analize întâlniri",
+      "subtitle": "Prezență, timp și participare în întâlnirile tale.",
+      "back": "Înapoi la întâlniri",
+      "noData": "Nu există date pentru această perioadă",
+      "loadFailed": "Analizele nu au putut fi încărcate.",
+      "invalidRange": "Data de sfârșit trebuie să fie după data de început.",
+      "scope": {
+        "me": "Întâlnirile mele",
+        "organization": "Organizație"
+      },
+      "filters": {
+        "range": "Perioadă",
+        "from": "De la",
+        "to": "Până la",
+        "recurrence": "Recurență",
+        "allMeetings": "Toate întâlnirile",
+        "recurring": "Recurente",
+        "oneTime": "Unice",
+        "guests": "Invitați",
+        "anyGuests": "Cu sau fără invitați",
+        "withGuests": "Cu invitați externi",
+        "internalOnly": "Doar interne"
+      },
+      "presets": {
+        "today": "Astăzi",
+        "week": "Săptămâna aceasta",
+        "month": "Luna aceasta",
+        "last30": "Ultimele 30 de zile",
+        "last90": "Ultimele 90 de zile",
+        "custom": "Interval personalizat"
+      },
+      "kpi": {
+        "total": "Total întâlniri",
+        "completedCancelled": "Finalizate: {completed} · Anulate: {cancelled}",
+        "hours": "Ore de întâlniri",
+        "attendance": "Rată de prezență",
+        "attendedOfInvited": "Prezenți: {attended} din {invited}",
+        "noShow": "Rată de absență",
+        "noShowCount": "Absențe: {count}",
+        "avgDuration": "Durată medie",
+        "avgAttended": "Timp mediu de prezență",
+        "late": "Sosiri târzii",
+        "earlyHint": "Plecări anticipate: {rate}",
+        "live": "În direct acum",
+        "peakHint": "Vârf mediu: {peak}"
+      },
+      "charts": {
+        "volume": "Întâlniri și ore",
+        "meetings": "Întâlniri",
+        "hours": "Ore",
+        "attendance": "Prezență și absențe",
+        "attendanceRate": "Rată de prezență",
+        "noShowRate": "Rată de absență"
+      },
+      "tables": {
+        "people": "Participare pe persoană",
+        "person": "Persoană",
+        "attended": "Prezent",
+        "missed": "Ratate",
+        "time": "Timp",
+        "avg": "Prezență medie",
+        "hosts": "Cele mai frecvente gazde"
+      },
+      "me": {
+        "attended": "Prezent",
+        "invitedHint": "Invitat la: {count}",
+        "missed": "Ratate",
+        "hours": "Ore de întâlniri",
+        "hosted": "Organizate",
+        "avgTime": "Timp mediu de prezență",
+        "avgPct": "Prezență medie",
+        "early": "Plecări anticipate",
+        "trend": "Prezența în timp",
+        "history": "Întâlniri recente",
+        "didNotAttend": "Absent"
+      }
+    }
   }
 }

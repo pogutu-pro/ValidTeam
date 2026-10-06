@@ -45,7 +45,10 @@
     "system": "Sistem",
     "updates": "Güncellemeler",
     "ai_transparency": "AI Şeffaflığı",
-    "initiatives": "İnisiyatifler"
+    "initiatives": "İnisiyatifler",
+    "meetings": "Toplantılar",
+    "meetings_all": "Tüm toplantılar",
+    "meetings_analytics": "Analizler"
   },
   "actions": {
     "create_issue": "Konu oluştur",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Toplantılar",
+    "subtitle": "Anında bir toplantı başlatın veya ekip arkadaşlarınız ve harici konuklarla bir toplantı planlayın.",
+    "analytics": "Analizler",
+    "schedule": "Planla",
+    "startMeeting": "Toplantı başlat",
+    "instantTitle": "Anlık toplantı",
+    "start": "Başlat",
+    "join": "Katıl",
+    "recurring": "Yinelenen",
+    "hostedBy": "Düzenleyen: {name}",
+    "participantCount": "Katılımcılar: {count}",
+    "retry": "Tekrar dene",
+    "loading": "Toplantı yükleniyor…",
+    "cancel": "İptal",
+    "scheduled": "Toplantı planlandı",
+    "minutes": "{count} dk",
+    "tabs": {
+      "upcoming": "Yaklaşan",
+      "live": "Canlı",
+      "past": "Geçmiş"
+    },
+    "status": {
+      "scheduled": "Planlandı",
+      "live": "Canlı",
+      "ended": "Sona erdi",
+      "cancelled": "İptal edildi"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Yaklaşan toplantı yok",
+        "body": "Şimdi bir toplantı başlatın veya daha sonrası için planlayın."
+      },
+      "live": {
+        "title": "Canlı toplantı yok",
+        "body": "Devam eden toplantılar burada görünür."
+      },
+      "past": {
+        "title": "Henüz geçmiş toplantı yok",
+        "body": "Biten toplantılar ve katılım bilgileri burada görünür."
+      }
+    },
+    "errors": {
+      "createFailed": "Toplantı oluşturulamadı. Lütfen tekrar deneyin.",
+      "loadFailed": "Toplantılar yüklenemedi.",
+      "titleRequired": "Bir toplantı başlığı girin.",
+      "invalidDateTime": "Geçerli bir tarih ve saat girin.",
+      "pastStart": "Başlangıç saati geçmişte.",
+      "invalidEmails": "Bu e-posta adresleri geçerli değil: {emails}",
+      "invalidCount": "Yineleme sayısı 1 ile 366 arasında bir sayı olmalıdır.",
+      "invalidParticipants": "Seçilen bazı kişiler bu çalışma alanının üyesi değil.",
+      "guestsNotAllowed": "Bu toplantı için harici konuklara izin verilmiyor."
+    },
+    "scheduleDialog": {
+      "title": "Toplantı planla",
+      "description": "Davetiyeler e-postayla gönderilir. Konuklar hesap olmadan bir bağlantıdan katılır.",
+      "submit": "Toplantıyı planla"
+    },
+    "fields": {
+      "title": "Başlık",
+      "date": "Tarih",
+      "startTime": "Başlangıç saati",
+      "duration": "Süre",
+      "timezone": "Saat dilimi",
+      "repeat": "Tekrarla",
+      "occurrences": "Yinelemeler",
+      "occurrencesPlaceholder": "İsteğe bağlı",
+      "people": "Kişiler",
+      "searchPeople": "Kişi ara",
+      "noPeople": "Eşleşen kişi yok",
+      "selectedCount": "Seçilen: {count}",
+      "guests": "Harici konuklar",
+      "allowGuests": "Konuklara izin ver",
+      "guestsPlaceholder": "ad@ornek.com, diger@ornek.com",
+      "guestsHint": "Adresleri virgül veya yeni satırla ayırın. Konukların hesap açmasına gerek yoktur.",
+      "description": "Açıklama (isteğe bağlı)"
+    },
+    "repeat": {
+      "none": "Tekrarlanmaz",
+      "daily": "Günlük",
+      "weekly": "Haftalık",
+      "monthly": "Aylık"
+    },
+    "denied": {
+      "signin": {
+        "title": "Katılmak için oturum açın",
+        "body": "Bu toplantı çalışma alanı üyeleri içindir. Oturum açın veya davetiyenizdeki konuk bağlantısını kullanın.",
+        "action": "Oturum aç"
+      },
+      "notFound": {
+        "title": "Toplantı bulunamadı",
+        "body": "Bağlantı hatalı olabilir veya bu toplantıya erişiminiz olmayabilir."
+      },
+      "closed": {
+        "title": "Bu toplantı sona erdi",
+        "body": "Toplantı bitti veya iptal edildi."
+      },
+      "invalidGuestLink": {
+        "title": "Bu konuk bağlantısı geçerli değil",
+        "body": "Süresi dolmuş veya değiştirilmiş olabilir. Düzenleyenden yeni bir davetiye isteyin."
+      },
+      "error": {
+        "title": "Bir şeyler ters gitti",
+        "body": "Bu toplantı açılamadı. Lütfen tekrar deneyin."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Toplantıdan ayrıldınız",
+        "body": "Toplantı açık olduğu sürece yeniden katılabilirsiniz."
+      },
+      "removed": {
+        "title": "Çıkarıldınız",
+        "body": "Düzenleyen sizi bu toplantıdan çıkardı."
+      },
+      "ended": {
+        "title": "Toplantı sona erdi",
+        "body": "Düzenleyen toplantıyı herkes için sonlandırdı."
+      },
+      "rejoin": "Yeniden katıl",
+      "viewMeeting": "Toplantıyı görüntüle"
+    },
+    "prejoin": {
+      "preview": "Kamera önizlemesi",
+      "micOn": "Mikrofon açık",
+      "micOff": "Mikrofon kapalı",
+      "cameraOn": "Kamera açık",
+      "cameraOff": "Kamera kapalı",
+      "cameraBlocked": "Kamera kullanılamıyor. Tarayıcı izinlerinizi kontrol edin.",
+      "organizedBy": "Düzenleyen: {name}",
+      "inProgress": "Devam ediyor",
+      "joiningAsGuest": "Konuk olarak katılıyorsunuz",
+      "yourName": "Adınız",
+      "joining": "Katılınıyor…",
+      "joinMeeting": "Toplantıya katıl",
+      "errors": {
+        "tooEarly": "Bu toplantı henüz açılmadı. Başlangıç saatine daha yakın bir zamanda tekrar deneyin.",
+        "ended": "Bu toplantı artık açık değil.",
+        "unavailable": "Video hizmeti şu anda kullanılamıyor.",
+        "rateLimited": "Çok fazla deneme. Biraz bekleyip tekrar deneyin.",
+        "invalidGuestLink": "Bu konuk bağlantısı geçerli değil.",
+        "forbidden": "Bu toplantıya davetli değilsiniz.",
+        "generic": "Toplantıya katılınamadı. Lütfen tekrar deneyin."
+      }
+    },
+    "room": {
+      "you": "Siz",
+      "guest": "Konuk",
+      "micOff": "Mikrofon kapalı",
+      "micOn": "Mikrofon açık",
+      "cameraOff": "Kamera kapalı",
+      "cameraOn": "Kamera açık",
+      "removeParticipant": "{name} kişisini çıkar",
+      "people": "Kişiler",
+      "host": "Düzenleyen",
+      "participants": "Katılımcılar",
+      "closePanel": "Paneli kapat",
+      "chat": "Sohbet",
+      "chatNote": "Mesajlar yalnızca toplantı sırasında görünür ve kaydedilmez.",
+      "messagePlaceholder": "Mesaj gönder",
+      "send": "Gönder",
+      "presenting": "{name} sunum yapıyor",
+      "moreParticipants": "+{count} kişi daha",
+      "inMeeting": "Toplantıda: {count}",
+      "reconnecting": "Yeniden bağlanıyor…",
+      "controls": "Toplantı kontrolleri",
+      "muteMic": "Mikrofonu sessize al",
+      "unmuteMic": "Sessizden çıkar",
+      "stopCamera": "Kamerayı kapat",
+      "startCamera": "Kamerayı aç",
+      "stopShare": "Paylaşımı durdur",
+      "shareScreen": "Ekranı paylaş",
+      "endForAll": "Herkes için bitir",
+      "leave": "Ayrıl",
+      "endConfirmTitle": "Toplantı herkes için sonlandırılsın mı?",
+      "endConfirmBody": "Herkesin bağlantısı kesilecek ve toplantı kapanacak.",
+      "cancel": "İptal"
+    },
+    "details": {
+      "didNotAttend": "Katılmadı",
+      "late": "Geç kaldı",
+      "leftEarly": "Erken ayrıldı",
+      "notFoundTitle": "Toplantı bulunamadı",
+      "notFoundBody": "Kaldırılmış olabilir veya erişiminiz olmayabilir.",
+      "loadFailed": "Toplantı yüklenemedi.",
+      "backToMeetings": "Toplantılara dön",
+      "copyFailed": "Bağlantı kopyalanamadı.",
+      "invited": "Davetiyeler gönderildi",
+      "inviteFailed": "Bu kişiler davet edilemedi.",
+      "cancelMeeting": "Toplantıyı iptal et",
+      "endMeeting": "Toplantıyı bitir",
+      "overview": "Genel bakış",
+      "host": "Düzenleyen",
+      "duration": "Süre",
+      "people": "Kişiler",
+      "peopleSummary": "Davetli: {count} · Konuk: {guests}",
+      "type": "Tür",
+      "instant": "Anlık toplantı",
+      "oneTime": "Tek seferlik toplantı",
+      "copied": "Kopyalandı",
+      "copyLink": "Bağlantıyı kopyala",
+      "analytics": "Toplantı analizi",
+      "attended": "Katıldı",
+      "noShows": "Katılmayan: {count}",
+      "peak": "En yüksek katılımcı sayısı",
+      "avgAttendance": "Ortalama katılım",
+      "participantTime": "Toplam katılımcı süresi",
+      "lateArrivals": "Geç gelenler",
+      "earlyDepartures": "Erken ayrılanlar",
+      "joins": "Katılımlar",
+      "leaves": "Ayrılmalar: {count}",
+      "analyticsPending": "Analiz, toplantı bittikten kısa süre sonra kullanılabilir olacak.",
+      "participants": "Katılımcılar",
+      "name": "Ad",
+      "joined": "Katıldı",
+      "left": "Ayrıldı",
+      "attendance": "Katılım",
+      "hostBadge": "Düzenleyen",
+      "guestBadge": "Konuk",
+      "remove": "Çıkar",
+      "inviteMore": "Daha fazla kişi davet et",
+      "sendInvites": "Davetiyeleri gönder",
+      "cancelTitle": "Bu toplantı iptal edilsin mi?",
+      "cancelBody": "Katılımcılar artık katılamayacak.",
+      "cancelSeries": "Tüm seriyi iptal et",
+      "cancelThisOne": "Yalnızca bu toplantıyı iptal et"
+    },
+    "analyticsPage": {
+      "title": "Toplantı analizleri",
+      "subtitle": "Toplantılarınızdaki katılım, süre ve etkileşim.",
+      "back": "Toplantılara dön",
+      "noData": "Bu dönem için veri yok",
+      "loadFailed": "Analizler yüklenemedi.",
+      "invalidRange": "Bitiş tarihi başlangıç tarihinden sonra olmalıdır.",
+      "scope": {
+        "me": "Toplantılarım",
+        "organization": "Kuruluş"
+      },
+      "filters": {
+        "range": "Dönem",
+        "from": "Başlangıç",
+        "to": "Bitiş",
+        "recurrence": "Yineleme",
+        "allMeetings": "Tüm toplantılar",
+        "recurring": "Yinelenen",
+        "oneTime": "Tek seferlik",
+        "guests": "Konuklar",
+        "anyGuests": "Konuklu veya konuksuz",
+        "withGuests": "Harici konuklu",
+        "internalOnly": "Yalnızca dahili"
+      },
+      "presets": {
+        "today": "Bugün",
+        "week": "Bu hafta",
+        "month": "Bu ay",
+        "last30": "Son 30 gün",
+        "last90": "Son 90 gün",
+        "custom": "Özel aralık"
+      },
+      "kpi": {
+        "total": "Toplam toplantı",
+        "completedCancelled": "Tamamlanan: {completed} · İptal edilen: {cancelled}",
+        "hours": "Toplantı saatleri",
+        "attendance": "Katılım oranı",
+        "attendedOfInvited": "Katılan: {attended} / {invited}",
+        "noShow": "Katılmama oranı",
+        "noShowCount": "Katılmayan: {count}",
+        "avgDuration": "Ortalama süre",
+        "avgAttended": "Ortalama katılım süresi",
+        "late": "Geç gelenler",
+        "earlyHint": "Erken ayrılan: {rate}",
+        "live": "Şu anda canlı",
+        "peakHint": "Ortalama zirve: {peak}"
+      },
+      "charts": {
+        "volume": "Toplantılar ve saatler",
+        "meetings": "Toplantılar",
+        "hours": "Saat",
+        "attendance": "Katılım ve katılmayanlar",
+        "attendanceRate": "Katılım oranı",
+        "noShowRate": "Katılmama oranı"
+      },
+      "tables": {
+        "people": "Kişi bazında katılım",
+        "person": "Kişi",
+        "attended": "Katıldı",
+        "missed": "Kaçırılan",
+        "time": "Süre",
+        "avg": "Ort. katılım",
+        "hosts": "En sık düzenleyenler"
+      },
+      "me": {
+        "attended": "Katıldı",
+        "invitedHint": "Davet edilen: {count}",
+        "missed": "Kaçırılan",
+        "hours": "Toplantı saatleri",
+        "hosted": "Düzenlenen",
+        "avgTime": "Ortalama katılım süresi",
+        "avgPct": "Ortalama katılım",
+        "early": "Erken ayrılanlar",
+        "trend": "Zaman içinde katılım",
+        "history": "Son toplantılar",
+        "didNotAttend": "Katılmadı"
+      }
+    }
   }
 }

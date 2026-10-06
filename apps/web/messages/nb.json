@@ -45,7 +45,10 @@
     "system": "System",
     "updates": "Oppdateringer",
     "ai_transparency": "AI-åpenhet",
-    "initiatives": "Initiativer"
+    "initiatives": "Initiativer",
+    "meetings": "Møter",
+    "meetings_all": "Alle møter",
+    "meetings_analytics": "Analyse"
   },
   "actions": {
     "create_issue": "Opprett sak",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Møter",
+    "subtitle": "Start et øyeblikkelig møte, eller planlegg ett med kolleger og eksterne gjester.",
+    "analytics": "Analyse",
+    "schedule": "Planlegg",
+    "startMeeting": "Start et møte",
+    "instantTitle": "Øyeblikkelig møte",
+    "start": "Start",
+    "join": "Bli med",
+    "recurring": "Gjentakende",
+    "hostedBy": "Vert: {name}",
+    "participantCount": "Deltakere: {count}",
+    "retry": "Prøv igjen",
+    "loading": "Laster møtet…",
+    "cancel": "Avbryt",
+    "scheduled": "Møtet er planlagt",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Kommende",
+      "live": "Live",
+      "past": "Tidligere"
+    },
+    "status": {
+      "scheduled": "Planlagt",
+      "live": "Live",
+      "ended": "Avsluttet",
+      "cancelled": "Avlyst"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Ingen kommende møter",
+        "body": "Start et møte nå, eller planlegg ett til senere."
+      },
+      "live": {
+        "title": "Ingen livemøter",
+        "body": "Pågående møter vises her."
+      },
+      "past": {
+        "title": "Ingen tidligere møter ennå",
+        "body": "Avsluttede møter og oppmøtet deres vises her."
+      }
+    },
+    "errors": {
+      "createFailed": "Kunne ikke opprette møtet. Prøv igjen.",
+      "loadFailed": "Kunne ikke laste møtene.",
+      "titleRequired": "Skriv inn en møtetittel.",
+      "invalidDateTime": "Skriv inn en gyldig dato og tid.",
+      "pastStart": "Starttidspunktet er i fortiden.",
+      "invalidEmails": "Disse e-postadressene er ugyldige: {emails}",
+      "invalidCount": "Antall gjentakelser må være et tall fra 1 til 366.",
+      "invalidParticipants": "Noen av de valgte personene er ikke medlemmer av dette arbeidsområdet.",
+      "guestsNotAllowed": "Eksterne gjester er ikke tillatt i dette møtet."
+    },
+    "scheduleDialog": {
+      "title": "Planlegg et møte",
+      "description": "Invitasjoner sendes på e-post. Gjester blir med fra en lenke uten konto.",
+      "submit": "Planlegg møte"
+    },
+    "fields": {
+      "title": "Tittel",
+      "date": "Dato",
+      "startTime": "Starttid",
+      "duration": "Varighet",
+      "timezone": "Tidssone",
+      "repeat": "Gjenta",
+      "occurrences": "Gjentakelser",
+      "occurrencesPlaceholder": "Valgfritt",
+      "people": "Personer",
+      "searchPeople": "Søk etter personer",
+      "noPeople": "Ingen samsvarende personer",
+      "selectedCount": "Valgt: {count}",
+      "guests": "Eksterne gjester",
+      "allowGuests": "Tillat gjester",
+      "guestsPlaceholder": "navn@eksempel.no, annen@eksempel.no",
+      "guestsHint": "Skill adresser med komma eller linjeskift. Gjester trenger ikke konto.",
+      "description": "Beskrivelse (valgfritt)"
+    },
+    "repeat": {
+      "none": "Gjentas ikke",
+      "daily": "Daglig",
+      "weekly": "Ukentlig",
+      "monthly": "Månedlig"
+    },
+    "denied": {
+      "signin": {
+        "title": "Logg inn for å bli med",
+        "body": "Dette møtet er for medlemmer av arbeidsområdet. Logg inn, eller bruk gjestelenken fra invitasjonen din.",
+        "action": "Logg inn"
+      },
+      "notFound": {
+        "title": "Fant ikke møtet",
+        "body": "Lenken kan være feil, eller du har kanskje ikke tilgang til dette møtet."
+      },
+      "closed": {
+        "title": "Dette møtet er avsluttet",
+        "body": "Møtet er over eller ble avlyst."
+      },
+      "invalidGuestLink": {
+        "title": "Denne gjestelenken er ugyldig",
+        "body": "Den kan ha utløpt eller blitt erstattet. Be verten om en ny invitasjon."
+      },
+      "error": {
+        "title": "Noe gikk galt",
+        "body": "Vi kunne ikke åpne dette møtet. Prøv igjen."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Du forlot møtet",
+        "body": "Du kan bli med igjen så lenge møtet er åpent."
+      },
+      "removed": {
+        "title": "Du ble fjernet",
+        "body": "Verten fjernet deg fra dette møtet."
+      },
+      "ended": {
+        "title": "Møtet er avsluttet",
+        "body": "Verten avsluttet møtet for alle."
+      },
+      "rejoin": "Bli med igjen",
+      "viewMeeting": "Se møtet"
+    },
+    "prejoin": {
+      "preview": "Forhåndsvisning av kamera",
+      "micOn": "Mikrofon på",
+      "micOff": "Mikrofon av",
+      "cameraOn": "Kamera på",
+      "cameraOff": "Kamera av",
+      "cameraBlocked": "Kameraet er ikke tilgjengelig. Sjekk nettleserens tillatelser.",
+      "organizedBy": "Arrangert av {name}",
+      "inProgress": "Pågår",
+      "joiningAsGuest": "Du blir med som gjest",
+      "yourName": "Navnet ditt",
+      "joining": "Blir med…",
+      "joinMeeting": "Bli med i møtet",
+      "errors": {
+        "tooEarly": "Dette møtet har ikke åpnet ennå. Prøv igjen nærmere starttidspunktet.",
+        "ended": "Dette møtet er ikke lenger åpent.",
+        "unavailable": "Videotjenesten er ikke tilgjengelig akkurat nå.",
+        "rateLimited": "For mange forsøk. Vent litt og prøv igjen.",
+        "invalidGuestLink": "Denne gjestelenken er ugyldig.",
+        "forbidden": "Du er ikke invitert til dette møtet.",
+        "generic": "Kunne ikke bli med i møtet. Prøv igjen."
+      }
+    },
+    "room": {
+      "you": "Deg",
+      "guest": "Gjest",
+      "micOff": "Mikrofon av",
+      "micOn": "Mikrofon på",
+      "cameraOff": "Kamera av",
+      "cameraOn": "Kamera på",
+      "removeParticipant": "Fjern {name}",
+      "people": "Personer",
+      "host": "Vert",
+      "participants": "Deltakere",
+      "closePanel": "Lukk panelet",
+      "chat": "Chat",
+      "chatNote": "Meldinger er bare synlige under møtet og lagres ikke.",
+      "messagePlaceholder": "Send en melding",
+      "send": "Send",
+      "presenting": "{name} presenterer",
+      "moreParticipants": "+{count} til",
+      "inMeeting": "I møtet: {count}",
+      "reconnecting": "Kobler til på nytt…",
+      "controls": "Møtekontroller",
+      "muteMic": "Slå av mikrofonen",
+      "unmuteMic": "Slå på mikrofonen",
+      "stopCamera": "Slå av kameraet",
+      "startCamera": "Slå på kameraet",
+      "stopShare": "Stopp deling",
+      "shareScreen": "Del skjerm",
+      "endForAll": "Avslutt for alle",
+      "leave": "Forlat",
+      "endConfirmTitle": "Avslutte møtet for alle?",
+      "endConfirmBody": "Alle kobles fra, og møtet lukkes.",
+      "cancel": "Avbryt"
+    },
+    "details": {
+      "didNotAttend": "Deltok ikke",
+      "late": "Forsinket",
+      "leftEarly": "Dro tidlig",
+      "notFoundTitle": "Fant ikke møtet",
+      "notFoundBody": "Det kan ha blitt fjernet, eller du har kanskje ikke tilgang.",
+      "loadFailed": "Kunne ikke laste møtet.",
+      "backToMeetings": "Tilbake til møter",
+      "copyFailed": "Kunne ikke kopiere lenken.",
+      "invited": "Invitasjoner sendt",
+      "inviteFailed": "Kunne ikke invitere disse personene.",
+      "cancelMeeting": "Avlys møtet",
+      "endMeeting": "Avslutt møtet",
+      "overview": "Oversikt",
+      "host": "Vert",
+      "duration": "Varighet",
+      "people": "Personer",
+      "peopleSummary": "Invitert: {count} · Gjester: {guests}",
+      "type": "Type",
+      "instant": "Øyeblikkelig møte",
+      "oneTime": "Enkeltmøte",
+      "copied": "Kopiert",
+      "copyLink": "Kopier lenke",
+      "analytics": "Møteanalyse",
+      "attended": "Deltok",
+      "noShows": "Uteblitt: {count}",
+      "peak": "Høyeste antall deltakere",
+      "avgAttendance": "Gjennomsnittlig oppmøte",
+      "participantTime": "Total deltakertid",
+      "lateArrivals": "Sene ankomster",
+      "earlyDepartures": "Tidlige avganger",
+      "joins": "Tilkoblinger",
+      "leaves": "Avganger: {count}",
+      "analyticsPending": "Analysen er tilgjengelig kort tid etter at møtet er avsluttet.",
+      "participants": "Deltakere",
+      "name": "Navn",
+      "joined": "Ble med",
+      "left": "Forlot",
+      "attendance": "Oppmøte",
+      "hostBadge": "Vert",
+      "guestBadge": "Gjest",
+      "remove": "Fjern",
+      "inviteMore": "Inviter flere personer",
+      "sendInvites": "Send invitasjoner",
+      "cancelTitle": "Avlyse dette møtet?",
+      "cancelBody": "Deltakere kan ikke lenger bli med.",
+      "cancelSeries": "Avlys hele serien",
+      "cancelThisOne": "Avlys bare dette møtet"
+    },
+    "analyticsPage": {
+      "title": "Møteanalyse",
+      "subtitle": "Oppmøte, tid og deltakelse på tvers av møtene dine.",
+      "back": "Tilbake til møter",
+      "noData": "Ingen data for denne perioden",
+      "loadFailed": "Kunne ikke laste analysen.",
+      "invalidRange": "Sluttdatoen må være etter startdatoen.",
+      "scope": {
+        "me": "Mine møter",
+        "organization": "Organisasjon"
+      },
+      "filters": {
+        "range": "Periode",
+        "from": "Fra",
+        "to": "Til",
+        "recurrence": "Gjentakelse",
+        "allMeetings": "Alle møter",
+        "recurring": "Gjentakende",
+        "oneTime": "Enkeltstående",
+        "guests": "Gjester",
+        "anyGuests": "Med eller uten gjester",
+        "withGuests": "Med eksterne gjester",
+        "internalOnly": "Kun interne"
+      },
+      "presets": {
+        "today": "I dag",
+        "week": "Denne uken",
+        "month": "Denne måneden",
+        "last30": "Siste 30 dager",
+        "last90": "Siste 90 dager",
+        "custom": "Egendefinert periode"
+      },
+      "kpi": {
+        "total": "Møter totalt",
+        "completedCancelled": "Gjennomført: {completed} · Avlyst: {cancelled}",
+        "hours": "Møtetimer",
+        "attendance": "Oppmøteprosent",
+        "attendedOfInvited": "Deltok: {attended} av {invited}",
+        "noShow": "Uteblivelsesprosent",
+        "noShowCount": "Uteblitt: {count}",
+        "avgDuration": "Gjennomsnittlig varighet",
+        "avgAttended": "Gjennomsnittlig deltakertid",
+        "late": "Sene ankomster",
+        "earlyHint": "Dro tidlig: {rate}",
+        "live": "Live nå",
+        "peakHint": "Gjennomsnittlig topp: {peak}"
+      },
+      "charts": {
+        "volume": "Møter og timer",
+        "meetings": "Møter",
+        "hours": "Timer",
+        "attendance": "Oppmøte og uteblivelser",
+        "attendanceRate": "Oppmøteprosent",
+        "noShowRate": "Uteblivelsesprosent"
+      },
+      "tables": {
+        "people": "Deltakelse per person",
+        "person": "Person",
+        "attended": "Deltok",
+        "missed": "Gått glipp av",
+        "time": "Tid",
+        "avg": "Snittoppmøte",
+        "hosts": "Hyppigste verter"
+      },
+      "me": {
+        "attended": "Deltok",
+        "invitedHint": "Invitert til: {count}",
+        "missed": "Gått glipp av",
+        "hours": "Møtetimer",
+        "hosted": "Vert for",
+        "avgTime": "Gjennomsnittlig deltakertid",
+        "avgPct": "Gjennomsnittlig oppmøte",
+        "early": "Tidlige avganger",
+        "trend": "Oppmøte over tid",
+        "history": "Nylige møter",
+        "didNotAttend": "Deltok ikke"
+      }
+    }
   }
 }

@@ -45,7 +45,10 @@
     "system": "System",
     "updates": "Updates",
     "ai_transparency": "KI-Transparenz",
-    "initiatives": "Initiativen"
+    "initiatives": "Initiativen",
+    "meetings": "Meetings",
+    "meetings_all": "Alle Meetings",
+    "meetings_analytics": "Auswertungen"
   },
   "actions": {
     "create_issue": "Aufgabe erstellen",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Meetings",
+    "subtitle": "Starte ein spontanes Meeting oder plane eines mit Kolleginnen, Kollegen und externen Gästen.",
+    "analytics": "Auswertungen",
+    "schedule": "Planen",
+    "startMeeting": "Meeting starten",
+    "instantTitle": "Spontanes Meeting",
+    "start": "Starten",
+    "join": "Beitreten",
+    "recurring": "Wiederkehrend",
+    "hostedBy": "Organisiert von {name}",
+    "participantCount": "Teilnehmende: {count}",
+    "retry": "Erneut versuchen",
+    "loading": "Meeting wird geladen …",
+    "cancel": "Abbrechen",
+    "scheduled": "Meeting geplant",
+    "minutes": "{count} Min.",
+    "tabs": {
+      "upcoming": "Anstehend",
+      "live": "Live",
+      "past": "Vergangen"
+    },
+    "status": {
+      "scheduled": "Geplant",
+      "live": "Live",
+      "ended": "Beendet",
+      "cancelled": "Abgesagt"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Keine anstehenden Meetings",
+        "body": "Starte jetzt ein Meeting oder plane eines für später."
+      },
+      "live": {
+        "title": "Keine Live-Meetings",
+        "body": "Laufende Meetings erscheinen hier."
+      },
+      "past": {
+        "title": "Noch keine vergangenen Meetings",
+        "body": "Beendete Meetings und ihre Anwesenheit erscheinen hier."
+      }
+    },
+    "errors": {
+      "createFailed": "Das Meeting konnte nicht erstellt werden. Bitte versuche es erneut.",
+      "loadFailed": "Meetings konnten nicht geladen werden.",
+      "titleRequired": "Gib einen Meeting-Titel ein.",
+      "invalidDateTime": "Gib ein gültiges Datum und eine gültige Uhrzeit ein.",
+      "pastStart": "Die Startzeit liegt in der Vergangenheit.",
+      "invalidEmails": "Diese E-Mail-Adressen sind ungültig: {emails}",
+      "invalidCount": "Die Anzahl der Wiederholungen muss zwischen 1 und 366 liegen.",
+      "invalidParticipants": "Einige ausgewählte Personen sind keine Mitglieder dieses Arbeitsbereichs.",
+      "guestsNotAllowed": "Externe Gäste sind für dieses Meeting nicht erlaubt."
+    },
+    "scheduleDialog": {
+      "title": "Meeting planen",
+      "description": "Einladungen werden per E-Mail verschickt. Gäste treten über einen Link ohne Konto bei.",
+      "submit": "Meeting planen"
+    },
+    "fields": {
+      "title": "Titel",
+      "date": "Datum",
+      "startTime": "Startzeit",
+      "duration": "Dauer",
+      "timezone": "Zeitzone",
+      "repeat": "Wiederholen",
+      "occurrences": "Wiederholungen",
+      "occurrencesPlaceholder": "Optional",
+      "people": "Personen",
+      "searchPeople": "Personen suchen",
+      "noPeople": "Keine passenden Personen",
+      "selectedCount": "Ausgewählt: {count}",
+      "guests": "Externe Gäste",
+      "allowGuests": "Gäste erlauben",
+      "guestsPlaceholder": "name@beispiel.de, weitere@beispiel.de",
+      "guestsHint": "Trenne E-Mail-Adressen mit Kommas oder Zeilenumbrüchen. Gäste benötigen kein Konto.",
+      "description": "Beschreibung (optional)"
+    },
+    "repeat": {
+      "none": "Keine Wiederholung",
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "monthly": "Monatlich"
+    },
+    "denied": {
+      "signin": {
+        "title": "Zum Beitreten anmelden",
+        "body": "Dieses Meeting ist für Mitglieder des Arbeitsbereichs. Melde dich an oder nutze den Gästelink aus deiner Einladung.",
+        "action": "Anmelden"
+      },
+      "notFound": {
+        "title": "Meeting nicht gefunden",
+        "body": "Der Link ist möglicherweise falsch oder du hast keinen Zugriff auf dieses Meeting."
+      },
+      "closed": {
+        "title": "Dieses Meeting ist beendet",
+        "body": "Das Meeting ist vorbei oder wurde abgesagt."
+      },
+      "invalidGuestLink": {
+        "title": "Dieser Gästelink ist ungültig",
+        "body": "Er ist möglicherweise abgelaufen oder ersetzt worden. Bitte den Organisator um eine neue Einladung."
+      },
+      "error": {
+        "title": "Etwas ist schiefgelaufen",
+        "body": "Wir konnten dieses Meeting nicht öffnen. Bitte versuche es erneut."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Du hast das Meeting verlassen",
+        "body": "Du kannst erneut beitreten, solange das Meeting offen ist."
+      },
+      "removed": {
+        "title": "Du wurdest entfernt",
+        "body": "Der Organisator hat dich aus diesem Meeting entfernt."
+      },
+      "ended": {
+        "title": "Das Meeting wurde beendet",
+        "body": "Der Organisator hat das Meeting für alle beendet."
+      },
+      "rejoin": "Erneut beitreten",
+      "viewMeeting": "Meeting ansehen"
+    },
+    "prejoin": {
+      "preview": "Kameravorschau",
+      "micOn": "Mikrofon an",
+      "micOff": "Mikrofon aus",
+      "cameraOn": "Kamera an",
+      "cameraOff": "Kamera aus",
+      "cameraBlocked": "Die Kamera ist nicht verfügbar. Prüfe die Berechtigungen deines Browsers.",
+      "organizedBy": "Organisiert von {name}",
+      "inProgress": "Läuft",
+      "joiningAsGuest": "Beitritt als Gast",
+      "yourName": "Dein Name",
+      "joining": "Beitritt …",
+      "joinMeeting": "Meeting beitreten",
+      "errors": {
+        "tooEarly": "Dieses Meeting ist noch nicht geöffnet. Versuche es näher am Startzeitpunkt erneut.",
+        "ended": "Dieses Meeting ist nicht mehr geöffnet.",
+        "unavailable": "Der Videodienst ist derzeit nicht verfügbar.",
+        "rateLimited": "Zu viele Versuche. Warte einen Moment und versuche es erneut.",
+        "invalidGuestLink": "Dieser Gästelink ist ungültig.",
+        "forbidden": "Du bist nicht zu diesem Meeting eingeladen.",
+        "generic": "Dem Meeting konnte nicht beigetreten werden. Bitte versuche es erneut."
+      }
+    },
+    "room": {
+      "you": "Du",
+      "guest": "Gast",
+      "micOff": "Mikrofon aus",
+      "micOn": "Mikrofon an",
+      "cameraOff": "Kamera aus",
+      "cameraOn": "Kamera an",
+      "removeParticipant": "{name} entfernen",
+      "people": "Personen",
+      "host": "Organisator",
+      "participants": "Teilnehmende",
+      "closePanel": "Bereich schließen",
+      "chat": "Chat",
+      "chatNote": "Nachrichten sind nur während des Meetings sichtbar und werden nicht gespeichert.",
+      "messagePlaceholder": "Nachricht senden",
+      "send": "Senden",
+      "presenting": "{name} präsentiert",
+      "moreParticipants": "+{count} weitere",
+      "inMeeting": "Im Meeting: {count}",
+      "reconnecting": "Verbindung wird wiederhergestellt …",
+      "controls": "Meeting-Steuerung",
+      "muteMic": "Mikrofon stummschalten",
+      "unmuteMic": "Stummschaltung aufheben",
+      "stopCamera": "Kamera ausschalten",
+      "startCamera": "Kamera einschalten",
+      "stopShare": "Teilen beenden",
+      "shareScreen": "Bildschirm teilen",
+      "endForAll": "Für alle beenden",
+      "leave": "Verlassen",
+      "endConfirmTitle": "Meeting für alle beenden?",
+      "endConfirmBody": "Alle werden getrennt und das Meeting wird geschlossen.",
+      "cancel": "Abbrechen"
+    },
+    "details": {
+      "didNotAttend": "Nicht teilgenommen",
+      "late": "Verspätet",
+      "leftEarly": "Früher gegangen",
+      "notFoundTitle": "Meeting nicht gefunden",
+      "notFoundBody": "Es wurde möglicherweise entfernt oder du hast keinen Zugriff.",
+      "loadFailed": "Das Meeting konnte nicht geladen werden.",
+      "backToMeetings": "Zurück zu Meetings",
+      "copyFailed": "Der Link konnte nicht kopiert werden.",
+      "invited": "Einladungen gesendet",
+      "inviteFailed": "Diese Personen konnten nicht eingeladen werden.",
+      "cancelMeeting": "Meeting absagen",
+      "endMeeting": "Meeting beenden",
+      "overview": "Übersicht",
+      "host": "Organisator",
+      "duration": "Dauer",
+      "people": "Personen",
+      "peopleSummary": "Eingeladen: {count} · Gäste: {guests}",
+      "type": "Art",
+      "instant": "Spontanes Meeting",
+      "oneTime": "Einmaliges Meeting",
+      "copied": "Kopiert",
+      "copyLink": "Link kopieren",
+      "analytics": "Meeting-Auswertung",
+      "attended": "Teilgenommen",
+      "noShows": "Nicht erschienen: {count}",
+      "peak": "Höchstzahl Teilnehmende",
+      "avgAttendance": "Durchschnittliche Anwesenheit",
+      "participantTime": "Gesamte Teilnahmezeit",
+      "lateArrivals": "Verspätete Ankünfte",
+      "earlyDepartures": "Frühe Abgänge",
+      "joins": "Beitritte",
+      "leaves": "Austritte: {count}",
+      "analyticsPending": "Die Auswertung ist kurz nach Ende des Meetings verfügbar.",
+      "participants": "Teilnehmende",
+      "name": "Name",
+      "joined": "Beigetreten",
+      "left": "Verlassen",
+      "attendance": "Anwesenheit",
+      "hostBadge": "Organisator",
+      "guestBadge": "Gast",
+      "remove": "Entfernen",
+      "inviteMore": "Weitere Personen einladen",
+      "sendInvites": "Einladungen senden",
+      "cancelTitle": "Dieses Meeting absagen?",
+      "cancelBody": "Teilnehmende können nicht mehr beitreten.",
+      "cancelSeries": "Gesamte Serie absagen",
+      "cancelThisOne": "Nur dieses Meeting absagen"
+    },
+    "analyticsPage": {
+      "title": "Meeting-Auswertungen",
+      "subtitle": "Anwesenheit, Zeit und Beteiligung über deine Meetings hinweg.",
+      "back": "Zurück zu Meetings",
+      "noData": "Keine Daten für diesen Zeitraum",
+      "loadFailed": "Auswertungen konnten nicht geladen werden.",
+      "invalidRange": "Das Enddatum muss nach dem Startdatum liegen.",
+      "scope": {
+        "me": "Meine Meetings",
+        "organization": "Organisation"
+      },
+      "filters": {
+        "range": "Zeitraum",
+        "from": "Von",
+        "to": "Bis",
+        "recurrence": "Wiederholung",
+        "allMeetings": "Alle Meetings",
+        "recurring": "Wiederkehrend",
+        "oneTime": "Einmalig",
+        "guests": "Gäste",
+        "anyGuests": "Mit oder ohne Gäste",
+        "withGuests": "Mit externen Gästen",
+        "internalOnly": "Nur intern"
+      },
+      "presets": {
+        "today": "Heute",
+        "week": "Diese Woche",
+        "month": "Dieser Monat",
+        "last30": "Letzte 30 Tage",
+        "last90": "Letzte 90 Tage",
+        "custom": "Eigener Zeitraum"
+      },
+      "kpi": {
+        "total": "Meetings gesamt",
+        "completedCancelled": "Abgeschlossen: {completed} · Abgesagt: {cancelled}",
+        "hours": "Meeting-Stunden",
+        "attendance": "Anwesenheitsquote",
+        "attendedOfInvited": "Teilgenommen: {attended} von {invited}",
+        "noShow": "Nichterscheinen-Quote",
+        "noShowCount": "Nicht erschienen: {count}",
+        "avgDuration": "Durchschnittliche Dauer",
+        "avgAttended": "Durchschnittliche Teilnahmezeit",
+        "late": "Verspätete Ankünfte",
+        "earlyHint": "Früh gegangen: {rate}",
+        "live": "Jetzt live",
+        "peakHint": "Durchschnittlicher Höchstwert: {peak}"
+      },
+      "charts": {
+        "volume": "Meetings und Stunden",
+        "meetings": "Meetings",
+        "hours": "Stunden",
+        "attendance": "Anwesenheit und Nichterscheinen",
+        "attendanceRate": "Anwesenheitsquote",
+        "noShowRate": "Nichterscheinen-Quote"
+      },
+      "tables": {
+        "people": "Beteiligung pro Person",
+        "person": "Person",
+        "attended": "Teilgenommen",
+        "missed": "Verpasst",
+        "time": "Zeit",
+        "avg": "Ø Anwesenheit",
+        "hosts": "Häufigste Organisatoren"
+      },
+      "me": {
+        "attended": "Teilgenommen",
+        "invitedHint": "Eingeladen: {count}",
+        "missed": "Verpasst",
+        "hours": "Meeting-Stunden",
+        "hosted": "Organisiert",
+        "avgTime": "Durchschnittliche Teilnahmezeit",
+        "avgPct": "Durchschnittliche Anwesenheit",
+        "early": "Frühe Abgänge",
+        "trend": "Anwesenheit im Zeitverlauf",
+        "history": "Letzte Meetings",
+        "didNotAttend": "Nicht teilgenommen"
+      }
+    }
   }
 }

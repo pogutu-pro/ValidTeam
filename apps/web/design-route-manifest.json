@@ -25,32 +25,81 @@
     "terminal": "end",
     "maxMakerCheckerCycles": 3,
     "nodes": [
-      { "id": "inventory", "kind": "evidence" },
-      { "id": "contract", "kind": "decision" },
-      { "id": "owner", "kind": "implementation" },
-      { "id": "static-gates", "kind": "verification" },
-      { "id": "browser-check", "kind": "verification" },
-      { "id": "triage", "kind": "decision" },
-      { "id": "end", "kind": "terminal" }
+      {
+        "id": "inventory",
+        "kind": "evidence"
+      },
+      {
+        "id": "contract",
+        "kind": "decision"
+      },
+      {
+        "id": "owner",
+        "kind": "implementation"
+      },
+      {
+        "id": "static-gates",
+        "kind": "verification"
+      },
+      {
+        "id": "browser-check",
+        "kind": "verification"
+      },
+      {
+        "id": "triage",
+        "kind": "decision"
+      },
+      {
+        "id": "end",
+        "kind": "terminal"
+      }
     ],
     "edges": [
-      { "from": "inventory", "to": "contract", "when": "evidence-ready" },
-      { "from": "contract", "to": "owner", "when": "owner-selected" },
-      { "from": "owner", "to": "static-gates", "when": "change-ready" },
+      {
+        "from": "inventory",
+        "to": "contract",
+        "when": "evidence-ready"
+      },
+      {
+        "from": "contract",
+        "to": "owner",
+        "when": "owner-selected"
+      },
+      {
+        "from": "owner",
+        "to": "static-gates",
+        "when": "change-ready"
+      },
       {
         "from": "static-gates",
         "to": "owner",
         "when": "failed-and-cycle-remains"
       },
-      { "from": "static-gates", "to": "browser-check", "when": "passed" },
+      {
+        "from": "static-gates",
+        "to": "browser-check",
+        "when": "passed"
+      },
       {
         "from": "browser-check",
         "to": "owner",
         "when": "actionable-finding-and-cycle-remains"
       },
-      { "from": "browser-check", "to": "end", "when": "no-high-or-medium-finding" },
-      { "from": "browser-check", "to": "triage", "when": "cycle-limit-reached" },
-      { "from": "triage", "to": "end", "when": "structured-handoff-recorded" }
+      {
+        "from": "browser-check",
+        "to": "end",
+        "when": "no-high-or-medium-finding"
+      },
+      {
+        "from": "browser-check",
+        "to": "triage",
+        "when": "cycle-limit-reached"
+      },
+      {
+        "from": "triage",
+        "to": "end",
+        "when": "structured-handoff-recorded"
+      }
     ]
   },
   "routes": [
@@ -333,6 +382,26 @@
       "source": "src/app/[locale]/(app)/admin/page.tsx",
       "archetype": "configuration",
       "decision": "Inspect system state and perform privileged actions with impact made explicit."
+    },
+    {
+      "source": "src/app/[locale]/(app)/meetings/page.tsx",
+      "archetype": "command",
+      "decision": "Start or schedule a meeting, or join one that is live."
+    },
+    {
+      "source": "src/app/[locale]/(app)/meetings/[slug]/page.tsx",
+      "archetype": "detail",
+      "decision": "Review a meeting's people, status and attendance, and manage it as host."
+    },
+    {
+      "source": "src/app/[locale]/(app)/meetings/analytics/page.tsx",
+      "archetype": "analysis",
+      "decision": "Judge attendance, no-shows and meeting load over a period and decide what to change."
+    },
+    {
+      "source": "src/app/meet/[slug]/page.tsx",
+      "archetype": "command",
+      "decision": "Check camera and microphone, then join the meeting as a member or invited guest."
     }
   ]
 }

@@ -45,7 +45,10 @@
     "system": "Hệ thống",
     "updates": "Cập nhật",
     "ai_transparency": "Minh bạch AI",
-    "initiatives": "Sáng kiến"
+    "initiatives": "Sáng kiến",
+    "meetings": "Cuộc họp",
+    "meetings_all": "Tất cả cuộc họp",
+    "meetings_analytics": "Phân tích"
   },
   "actions": {
     "create_issue": "Tạo vấn đề",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Cuộc họp",
+    "subtitle": "Bắt đầu cuộc họp ngay hoặc lên lịch cuộc họp với đồng nghiệp và khách bên ngoài.",
+    "analytics": "Phân tích",
+    "schedule": "Lên lịch",
+    "startMeeting": "Bắt đầu cuộc họp",
+    "instantTitle": "Cuộc họp tức thì",
+    "start": "Bắt đầu",
+    "join": "Tham gia",
+    "recurring": "Định kỳ",
+    "hostedBy": "Tổ chức bởi {name}",
+    "participantCount": "Người tham gia: {count}",
+    "retry": "Thử lại",
+    "loading": "Đang tải cuộc họp…",
+    "cancel": "Hủy",
+    "scheduled": "Đã lên lịch cuộc họp",
+    "minutes": "{count} phút",
+    "tabs": {
+      "upcoming": "Sắp tới",
+      "live": "Trực tiếp",
+      "past": "Đã qua"
+    },
+    "status": {
+      "scheduled": "Đã lên lịch",
+      "live": "Trực tiếp",
+      "ended": "Đã kết thúc",
+      "cancelled": "Đã hủy"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Không có cuộc họp sắp tới",
+        "body": "Hãy bắt đầu cuộc họp ngay hoặc lên lịch cho lúc khác."
+      },
+      "live": {
+        "title": "Không có cuộc họp trực tiếp",
+        "body": "Các cuộc họp đang diễn ra sẽ hiển thị ở đây."
+      },
+      "past": {
+        "title": "Chưa có cuộc họp nào đã qua",
+        "body": "Các cuộc họp đã kết thúc và mức tham dự sẽ hiển thị ở đây."
+      }
+    },
+    "errors": {
+      "createFailed": "Không thể tạo cuộc họp. Vui lòng thử lại.",
+      "loadFailed": "Không thể tải các cuộc họp.",
+      "titleRequired": "Nhập tiêu đề cuộc họp.",
+      "invalidDateTime": "Nhập ngày và giờ hợp lệ.",
+      "pastStart": "Giờ bắt đầu đã qua.",
+      "invalidEmails": "Các địa chỉ email này không hợp lệ: {emails}",
+      "invalidCount": "Số lần lặp phải là một số từ 1 đến 366.",
+      "invalidParticipants": "Một số người được chọn không phải là thành viên của không gian làm việc này.",
+      "guestsNotAllowed": "Không cho phép khách bên ngoài trong cuộc họp này."
+    },
+    "scheduleDialog": {
+      "title": "Lên lịch cuộc họp",
+      "description": "Lời mời được gửi qua email. Khách tham gia từ liên kết mà không cần tài khoản.",
+      "submit": "Lên lịch cuộc họp"
+    },
+    "fields": {
+      "title": "Tiêu đề",
+      "date": "Ngày",
+      "startTime": "Giờ bắt đầu",
+      "duration": "Thời lượng",
+      "timezone": "Múi giờ",
+      "repeat": "Lặp lại",
+      "occurrences": "Số lần lặp",
+      "occurrencesPlaceholder": "Tùy chọn",
+      "people": "Mọi người",
+      "searchPeople": "Tìm người",
+      "noPeople": "Không có người phù hợp",
+      "selectedCount": "Đã chọn: {count}",
+      "guests": "Khách bên ngoài",
+      "allowGuests": "Cho phép khách",
+      "guestsPlaceholder": "ten@vidu.com, khac@vidu.com",
+      "guestsHint": "Phân tách các địa chỉ bằng dấu phẩy hoặc xuống dòng. Khách không cần tài khoản.",
+      "description": "Mô tả (tùy chọn)"
+    },
+    "repeat": {
+      "none": "Không lặp lại",
+      "daily": "Hằng ngày",
+      "weekly": "Hằng tuần",
+      "monthly": "Hằng tháng"
+    },
+    "denied": {
+      "signin": {
+        "title": "Đăng nhập để tham gia",
+        "body": "Cuộc họp này dành cho thành viên không gian làm việc. Hãy đăng nhập hoặc dùng liên kết khách trong lời mời.",
+        "action": "Đăng nhập"
+      },
+      "notFound": {
+        "title": "Không tìm thấy cuộc họp",
+        "body": "Liên kết có thể sai hoặc bạn không có quyền truy cập cuộc họp này."
+      },
+      "closed": {
+        "title": "Cuộc họp này đã kết thúc",
+        "body": "Cuộc họp đã xong hoặc đã bị hủy."
+      },
+      "invalidGuestLink": {
+        "title": "Liên kết khách này không hợp lệ",
+        "body": "Có thể đã hết hạn hoặc bị thay thế. Hãy nhờ người tổ chức gửi lời mời mới."
+      },
+      "error": {
+        "title": "Đã xảy ra lỗi",
+        "body": "Chúng tôi không thể mở cuộc họp này. Vui lòng thử lại."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Bạn đã rời cuộc họp",
+        "body": "Bạn có thể tham gia lại khi cuộc họp còn mở."
+      },
+      "removed": {
+        "title": "Bạn đã bị xóa",
+        "body": "Người tổ chức đã xóa bạn khỏi cuộc họp này."
+      },
+      "ended": {
+        "title": "Cuộc họp đã kết thúc",
+        "body": "Người tổ chức đã kết thúc cuộc họp cho tất cả mọi người."
+      },
+      "rejoin": "Tham gia lại",
+      "viewMeeting": "Xem cuộc họp"
+    },
+    "prejoin": {
+      "preview": "Xem trước camera",
+      "micOn": "Micrô đang bật",
+      "micOff": "Micrô đang tắt",
+      "cameraOn": "Camera đang bật",
+      "cameraOff": "Camera đang tắt",
+      "cameraBlocked": "Camera không khả dụng. Hãy kiểm tra quyền của trình duyệt.",
+      "organizedBy": "Tổ chức bởi {name}",
+      "inProgress": "Đang diễn ra",
+      "joiningAsGuest": "Bạn đang tham gia với tư cách khách",
+      "yourName": "Tên của bạn",
+      "joining": "Đang tham gia…",
+      "joinMeeting": "Tham gia cuộc họp",
+      "errors": {
+        "tooEarly": "Cuộc họp này chưa mở. Hãy thử lại gần giờ bắt đầu hơn.",
+        "ended": "Cuộc họp này không còn mở.",
+        "unavailable": "Dịch vụ video hiện không khả dụng.",
+        "rateLimited": "Quá nhiều lần thử. Hãy đợi một lát rồi thử lại.",
+        "invalidGuestLink": "Liên kết khách này không hợp lệ.",
+        "forbidden": "Bạn không được mời tham gia cuộc họp này.",
+        "generic": "Không thể tham gia cuộc họp. Vui lòng thử lại."
+      }
+    },
+    "room": {
+      "you": "Bạn",
+      "guest": "Khách",
+      "micOff": "Micrô đang tắt",
+      "micOn": "Micrô đang bật",
+      "cameraOff": "Camera đang tắt",
+      "cameraOn": "Camera đang bật",
+      "removeParticipant": "Xóa {name}",
+      "people": "Mọi người",
+      "host": "Người tổ chức",
+      "participants": "Người tham gia",
+      "closePanel": "Đóng bảng",
+      "chat": "Trò chuyện",
+      "chatNote": "Tin nhắn chỉ hiển thị trong cuộc họp và không được lưu.",
+      "messagePlaceholder": "Gửi tin nhắn",
+      "send": "Gửi",
+      "presenting": "{name} đang trình bày",
+      "moreParticipants": "+{count} người nữa",
+      "inMeeting": "Trong cuộc họp: {count}",
+      "reconnecting": "Đang kết nối lại…",
+      "controls": "Điều khiển cuộc họp",
+      "muteMic": "Tắt tiếng micrô",
+      "unmuteMic": "Bật tiếng micrô",
+      "stopCamera": "Tắt camera",
+      "startCamera": "Bật camera",
+      "stopShare": "Dừng chia sẻ",
+      "shareScreen": "Chia sẻ màn hình",
+      "endForAll": "Kết thúc cho tất cả",
+      "leave": "Rời đi",
+      "endConfirmTitle": "Kết thúc cuộc họp cho tất cả mọi người?",
+      "endConfirmBody": "Mọi người sẽ bị ngắt kết nối và cuộc họp sẽ đóng.",
+      "cancel": "Hủy"
+    },
+    "details": {
+      "didNotAttend": "Không tham dự",
+      "late": "Đến muộn",
+      "leftEarly": "Rời sớm",
+      "notFoundTitle": "Không tìm thấy cuộc họp",
+      "notFoundBody": "Có thể đã bị xóa hoặc bạn không có quyền truy cập.",
+      "loadFailed": "Không thể tải cuộc họp.",
+      "backToMeetings": "Quay lại cuộc họp",
+      "copyFailed": "Không thể sao chép liên kết.",
+      "invited": "Đã gửi lời mời",
+      "inviteFailed": "Không thể mời những người này.",
+      "cancelMeeting": "Hủy cuộc họp",
+      "endMeeting": "Kết thúc cuộc họp",
+      "overview": "Tổng quan",
+      "host": "Người tổ chức",
+      "duration": "Thời lượng",
+      "people": "Mọi người",
+      "peopleSummary": "Đã mời: {count} · Khách: {guests}",
+      "type": "Loại",
+      "instant": "Cuộc họp tức thì",
+      "oneTime": "Cuộc họp một lần",
+      "copied": "Đã sao chép",
+      "copyLink": "Sao chép liên kết",
+      "analytics": "Phân tích cuộc họp",
+      "attended": "Đã tham dự",
+      "noShows": "Vắng mặt: {count}",
+      "peak": "Số người tham gia cao nhất",
+      "avgAttendance": "Mức tham dự trung bình",
+      "participantTime": "Tổng thời gian của người tham gia",
+      "lateArrivals": "Số lần đến muộn",
+      "earlyDepartures": "Số lần rời sớm",
+      "joins": "Lượt tham gia",
+      "leaves": "Lượt rời: {count}",
+      "analyticsPending": "Phân tích sẽ có sau khi cuộc họp kết thúc ít lâu.",
+      "participants": "Người tham gia",
+      "name": "Tên",
+      "joined": "Tham gia lúc",
+      "left": "Rời lúc",
+      "attendance": "Mức tham dự",
+      "hostBadge": "Người tổ chức",
+      "guestBadge": "Khách",
+      "remove": "Xóa",
+      "inviteMore": "Mời thêm người",
+      "sendInvites": "Gửi lời mời",
+      "cancelTitle": "Hủy cuộc họp này?",
+      "cancelBody": "Người tham gia sẽ không thể tham gia nữa.",
+      "cancelSeries": "Hủy toàn bộ chuỗi",
+      "cancelThisOne": "Chỉ hủy cuộc họp này"
+    },
+    "analyticsPage": {
+      "title": "Phân tích cuộc họp",
+      "subtitle": "Mức tham dự, thời gian và sự tham gia trong các cuộc họp của bạn.",
+      "back": "Quay lại cuộc họp",
+      "noData": "Không có dữ liệu cho giai đoạn này",
+      "loadFailed": "Không thể tải phân tích.",
+      "invalidRange": "Ngày kết thúc phải sau ngày bắt đầu.",
+      "scope": {
+        "me": "Cuộc họp của tôi",
+        "organization": "Tổ chức"
+      },
+      "filters": {
+        "range": "Giai đoạn",
+        "from": "Từ",
+        "to": "Đến",
+        "recurrence": "Tính định kỳ",
+        "allMeetings": "Tất cả cuộc họp",
+        "recurring": "Định kỳ",
+        "oneTime": "Một lần",
+        "guests": "Khách",
+        "anyGuests": "Có hoặc không có khách",
+        "withGuests": "Có khách bên ngoài",
+        "internalOnly": "Chỉ nội bộ"
+      },
+      "presets": {
+        "today": "Hôm nay",
+        "week": "Tuần này",
+        "month": "Tháng này",
+        "last30": "30 ngày qua",
+        "last90": "90 ngày qua",
+        "custom": "Khoảng tùy chỉnh"
+      },
+      "kpi": {
+        "total": "Tổng số cuộc họp",
+        "completedCancelled": "Hoàn thành: {completed} · Đã hủy: {cancelled}",
+        "hours": "Giờ họp",
+        "attendance": "Tỷ lệ tham dự",
+        "attendedOfInvited": "Đã tham dự: {attended}/{invited}",
+        "noShow": "Tỷ lệ vắng mặt",
+        "noShowCount": "Vắng mặt: {count}",
+        "avgDuration": "Thời lượng trung bình",
+        "avgAttended": "Thời gian tham dự trung bình",
+        "late": "Số lần đến muộn",
+        "earlyHint": "Rời sớm: {rate}",
+        "live": "Đang trực tiếp",
+        "peakHint": "Đỉnh trung bình: {peak}"
+      },
+      "charts": {
+        "volume": "Cuộc họp và giờ",
+        "meetings": "Cuộc họp",
+        "hours": "Giờ",
+        "attendance": "Tham dự và vắng mặt",
+        "attendanceRate": "Tỷ lệ tham dự",
+        "noShowRate": "Tỷ lệ vắng mặt"
+      },
+      "tables": {
+        "people": "Mức tham gia theo người",
+        "person": "Người",
+        "attended": "Đã tham dự",
+        "missed": "Đã bỏ lỡ",
+        "time": "Thời gian",
+        "avg": "Tham dự TB",
+        "hosts": "Người tổ chức thường xuyên nhất"
+      },
+      "me": {
+        "attended": "Đã tham dự",
+        "invitedHint": "Được mời: {count}",
+        "missed": "Đã bỏ lỡ",
+        "hours": "Giờ họp",
+        "hosted": "Đã tổ chức",
+        "avgTime": "Thời gian tham dự trung bình",
+        "avgPct": "Mức tham dự trung bình",
+        "early": "Số lần rời sớm",
+        "trend": "Mức tham dự theo thời gian",
+        "history": "Cuộc họp gần đây",
+        "didNotAttend": "Không tham dự"
+      }
+    }
   }
 }

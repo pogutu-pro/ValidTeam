@@ -45,7 +45,10 @@
     "system": "Sistema",
     "updates": "Actualizaciones",
     "ai_transparency": "Transparencia de IA",
-    "initiatives": "Iniciativas"
+    "initiatives": "Iniciativas",
+    "meetings": "Reuniones",
+    "meetings_all": "Todas las reuniones",
+    "meetings_analytics": "Analíticas"
   },
   "actions": {
     "create_issue": "Crear incidencia",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Reuniones",
+    "subtitle": "Inicia una reunión al instante o programa una con compañeros e invitados externos.",
+    "analytics": "Analíticas",
+    "schedule": "Programar",
+    "startMeeting": "Iniciar una reunión",
+    "instantTitle": "Reunión instantánea",
+    "start": "Iniciar",
+    "join": "Unirse",
+    "recurring": "Periódica",
+    "hostedBy": "Organizada por {name}",
+    "participantCount": "Participantes: {count}",
+    "retry": "Reintentar",
+    "loading": "Cargando reunión…",
+    "cancel": "Cancelar",
+    "scheduled": "Reunión programada",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Próximas",
+      "live": "En vivo",
+      "past": "Pasadas"
+    },
+    "status": {
+      "scheduled": "Programada",
+      "live": "En vivo",
+      "ended": "Finalizada",
+      "cancelled": "Cancelada"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "No hay reuniones próximas",
+        "body": "Inicia una reunión ahora o programa una para más tarde."
+      },
+      "live": {
+        "title": "No hay reuniones en vivo",
+        "body": "Las reuniones en curso aparecen aquí."
+      },
+      "past": {
+        "title": "Aún no hay reuniones pasadas",
+        "body": "Las reuniones finalizadas y su asistencia aparecen aquí."
+      }
+    },
+    "errors": {
+      "createFailed": "No se pudo crear la reunión. Inténtalo de nuevo.",
+      "loadFailed": "No se pudieron cargar las reuniones.",
+      "titleRequired": "Introduce un título para la reunión.",
+      "invalidDateTime": "Introduce una fecha y hora válidas.",
+      "pastStart": "La hora de inicio ya pasó.",
+      "invalidEmails": "Estas direcciones de correo no son válidas: {emails}",
+      "invalidCount": "Las repeticiones deben ser un número del 1 al 366.",
+      "invalidParticipants": "Algunas personas seleccionadas no son miembros de este espacio de trabajo.",
+      "guestsNotAllowed": "No se permiten invitados externos en esta reunión."
+    },
+    "scheduleDialog": {
+      "title": "Programar una reunión",
+      "description": "Las invitaciones se envían por correo. Los invitados se unen desde un enlace sin cuenta.",
+      "submit": "Programar reunión"
+    },
+    "fields": {
+      "title": "Título",
+      "date": "Fecha",
+      "startTime": "Hora de inicio",
+      "duration": "Duración",
+      "timezone": "Zona horaria",
+      "repeat": "Repetir",
+      "occurrences": "Repeticiones",
+      "occurrencesPlaceholder": "Opcional",
+      "people": "Personas",
+      "searchPeople": "Buscar personas",
+      "noPeople": "No hay personas que coincidan",
+      "selectedCount": "Seleccionadas: {count}",
+      "guests": "Invitados externos",
+      "allowGuests": "Permitir invitados",
+      "guestsPlaceholder": "nombre@ejemplo.com, otro@ejemplo.com",
+      "guestsHint": "Separa las direcciones con comas o saltos de línea. Los invitados no necesitan cuenta.",
+      "description": "Descripción (opcional)"
+    },
+    "repeat": {
+      "none": "No se repite",
+      "daily": "Diaria",
+      "weekly": "Semanal",
+      "monthly": "Mensual"
+    },
+    "denied": {
+      "signin": {
+        "title": "Inicia sesión para unirte",
+        "body": "Esta reunión es para miembros del espacio de trabajo. Inicia sesión o usa el enlace de invitado de tu invitación.",
+        "action": "Iniciar sesión"
+      },
+      "notFound": {
+        "title": "Reunión no encontrada",
+        "body": "El enlace puede ser incorrecto o es posible que no tengas acceso a esta reunión."
+      },
+      "closed": {
+        "title": "Esta reunión ha finalizado",
+        "body": "La reunión terminó o fue cancelada."
+      },
+      "invalidGuestLink": {
+        "title": "Este enlace de invitado no es válido",
+        "body": "Puede haber caducado o haber sido reemplazado. Pide al anfitrión una nueva invitación."
+      },
+      "error": {
+        "title": "Algo salió mal",
+        "body": "No pudimos abrir esta reunión. Inténtalo de nuevo."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Saliste de la reunión",
+        "body": "Puedes volver a unirte mientras la reunión siga abierta."
+      },
+      "removed": {
+        "title": "Te expulsaron",
+        "body": "El anfitrión te expulsó de esta reunión."
+      },
+      "ended": {
+        "title": "La reunión ha finalizado",
+        "body": "El anfitrión finalizó la reunión para todos."
+      },
+      "rejoin": "Volver a unirse",
+      "viewMeeting": "Ver reunión"
+    },
+    "prejoin": {
+      "preview": "Vista previa de la cámara",
+      "micOn": "Micrófono activado",
+      "micOff": "Micrófono desactivado",
+      "cameraOn": "Cámara activada",
+      "cameraOff": "Cámara desactivada",
+      "cameraBlocked": "La cámara no está disponible. Revisa los permisos del navegador.",
+      "organizedBy": "Organizada por {name}",
+      "inProgress": "En curso",
+      "joiningAsGuest": "Te unes como invitado",
+      "yourName": "Tu nombre",
+      "joining": "Uniéndose…",
+      "joinMeeting": "Unirse a la reunión",
+      "errors": {
+        "tooEarly": "Esta reunión aún no se ha abierto. Inténtalo más cerca de la hora de inicio.",
+        "ended": "Esta reunión ya no está abierta.",
+        "unavailable": "El servicio de vídeo no está disponible ahora mismo.",
+        "rateLimited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+        "invalidGuestLink": "Este enlace de invitado no es válido.",
+        "forbidden": "No estás invitado a esta reunión.",
+        "generic": "No se pudo unir a la reunión. Inténtalo de nuevo."
+      }
+    },
+    "room": {
+      "you": "Tú",
+      "guest": "Invitado",
+      "micOff": "Micrófono desactivado",
+      "micOn": "Micrófono activado",
+      "cameraOff": "Cámara desactivada",
+      "cameraOn": "Cámara activada",
+      "removeParticipant": "Expulsar a {name}",
+      "people": "Personas",
+      "host": "Anfitrión",
+      "participants": "Participantes",
+      "closePanel": "Cerrar panel",
+      "chat": "Chat",
+      "chatNote": "Los mensajes solo son visibles durante la reunión y no se guardan.",
+      "messagePlaceholder": "Enviar un mensaje",
+      "send": "Enviar",
+      "presenting": "{name} está presentando",
+      "moreParticipants": "+{count} más",
+      "inMeeting": "En la reunión: {count}",
+      "reconnecting": "Reconectando…",
+      "controls": "Controles de la reunión",
+      "muteMic": "Silenciar micrófono",
+      "unmuteMic": "Activar micrófono",
+      "stopCamera": "Apagar cámara",
+      "startCamera": "Encender cámara",
+      "stopShare": "Dejar de compartir",
+      "shareScreen": "Compartir pantalla",
+      "endForAll": "Finalizar para todos",
+      "leave": "Salir",
+      "endConfirmTitle": "¿Finalizar la reunión para todos?",
+      "endConfirmBody": "Todos serán desconectados y la reunión se cerrará.",
+      "cancel": "Cancelar"
+    },
+    "details": {
+      "didNotAttend": "No asistió",
+      "late": "Tarde",
+      "leftEarly": "Salió antes",
+      "notFoundTitle": "Reunión no encontrada",
+      "notFoundBody": "Puede que se haya eliminado o que no tengas acceso.",
+      "loadFailed": "No se pudo cargar la reunión.",
+      "backToMeetings": "Volver a reuniones",
+      "copyFailed": "No se pudo copiar el enlace.",
+      "invited": "Invitaciones enviadas",
+      "inviteFailed": "No se pudo invitar a estas personas.",
+      "cancelMeeting": "Cancelar reunión",
+      "endMeeting": "Finalizar reunión",
+      "overview": "Resumen",
+      "host": "Anfitrión",
+      "duration": "Duración",
+      "people": "Personas",
+      "peopleSummary": "Invitados: {count} · Externos: {guests}",
+      "type": "Tipo",
+      "instant": "Reunión instantánea",
+      "oneTime": "Reunión única",
+      "copied": "Copiado",
+      "copyLink": "Copiar enlace",
+      "analytics": "Analíticas de la reunión",
+      "attended": "Asistieron",
+      "noShows": "Ausencias: {count}",
+      "peak": "Pico de participantes",
+      "avgAttendance": "Asistencia media",
+      "participantTime": "Tiempo total de participantes",
+      "lateArrivals": "Llegadas tarde",
+      "earlyDepartures": "Salidas anticipadas",
+      "joins": "Conexiones",
+      "leaves": "Salidas: {count}",
+      "analyticsPending": "Las analíticas estarán disponibles poco después de que termine la reunión.",
+      "participants": "Participantes",
+      "name": "Nombre",
+      "joined": "Se unió",
+      "left": "Salió",
+      "attendance": "Asistencia",
+      "hostBadge": "Anfitrión",
+      "guestBadge": "Invitado",
+      "remove": "Quitar",
+      "inviteMore": "Invitar a más personas",
+      "sendInvites": "Enviar invitaciones",
+      "cancelTitle": "¿Cancelar esta reunión?",
+      "cancelBody": "Los participantes ya no podrán unirse.",
+      "cancelSeries": "Cancelar toda la serie",
+      "cancelThisOne": "Cancelar solo esta reunión"
+    },
+    "analyticsPage": {
+      "title": "Analíticas de reuniones",
+      "subtitle": "Asistencia, tiempo y participación en tus reuniones.",
+      "back": "Volver a reuniones",
+      "noData": "No hay datos para este periodo",
+      "loadFailed": "No se pudieron cargar las analíticas.",
+      "invalidRange": "La fecha de fin debe ser posterior a la de inicio.",
+      "scope": {
+        "me": "Mis reuniones",
+        "organization": "Organización"
+      },
+      "filters": {
+        "range": "Periodo",
+        "from": "Desde",
+        "to": "Hasta",
+        "recurrence": "Periodicidad",
+        "allMeetings": "Todas las reuniones",
+        "recurring": "Periódicas",
+        "oneTime": "Únicas",
+        "guests": "Invitados",
+        "anyGuests": "Con o sin invitados",
+        "withGuests": "Con invitados externos",
+        "internalOnly": "Solo internas"
+      },
+      "presets": {
+        "today": "Hoy",
+        "week": "Esta semana",
+        "month": "Este mes",
+        "last30": "Últimos 30 días",
+        "last90": "Últimos 90 días",
+        "custom": "Rango personalizado"
+      },
+      "kpi": {
+        "total": "Reuniones totales",
+        "completedCancelled": "Completadas: {completed} · Canceladas: {cancelled}",
+        "hours": "Horas de reunión",
+        "attendance": "Tasa de asistencia",
+        "attendedOfInvited": "Asistieron: {attended} de {invited}",
+        "noShow": "Tasa de ausencias",
+        "noShowCount": "Ausencias: {count}",
+        "avgDuration": "Duración media",
+        "avgAttended": "Tiempo medio de asistencia",
+        "late": "Llegadas tarde",
+        "earlyHint": "Salidas anticipadas: {rate}",
+        "live": "En vivo ahora",
+        "peakHint": "Pico medio: {peak}"
+      },
+      "charts": {
+        "volume": "Reuniones y horas",
+        "meetings": "Reuniones",
+        "hours": "Horas",
+        "attendance": "Asistencia y ausencias",
+        "attendanceRate": "Tasa de asistencia",
+        "noShowRate": "Tasa de ausencias"
+      },
+      "tables": {
+        "people": "Participación por persona",
+        "person": "Persona",
+        "attended": "Asistió",
+        "missed": "Perdidas",
+        "time": "Tiempo",
+        "avg": "Asist. media",
+        "hosts": "Anfitriones más frecuentes"
+      },
+      "me": {
+        "attended": "Asistió",
+        "invitedHint": "Invitado a: {count}",
+        "missed": "Perdidas",
+        "hours": "Horas de reunión",
+        "hosted": "Organizadas",
+        "avgTime": "Tiempo medio de asistencia",
+        "avgPct": "Asistencia media",
+        "early": "Salidas anticipadas",
+        "trend": "Asistencia a lo largo del tiempo",
+        "history": "Reuniones recientes",
+        "didNotAttend": "No asistió"
+      }
+    }
   }
 }

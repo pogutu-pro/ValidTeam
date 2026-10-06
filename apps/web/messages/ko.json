@@ -45,7 +45,10 @@
     "system": "시스템",
     "updates": "업데이트",
     "ai_transparency": "AI 투명성",
-    "initiatives": "이니셔티브"
+    "initiatives": "이니셔티브",
+    "meetings": "회의",
+    "meetings_all": "모든 회의",
+    "meetings_analytics": "분석"
   },
   "actions": {
     "create_issue": "이슈 만들기",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "회의",
+    "subtitle": "즉시 회의를 시작하거나 팀원 및 외부 게스트와 회의를 예약하세요.",
+    "analytics": "분석",
+    "schedule": "예약",
+    "startMeeting": "회의 시작",
+    "instantTitle": "즉석 회의",
+    "start": "시작",
+    "join": "참가",
+    "recurring": "반복",
+    "hostedBy": "주최자: {name}",
+    "participantCount": "참석자: {count}",
+    "retry": "다시 시도",
+    "loading": "회의를 불러오는 중…",
+    "cancel": "취소",
+    "scheduled": "회의가 예약되었습니다",
+    "minutes": "{count}분",
+    "tabs": {
+      "upcoming": "예정",
+      "live": "라이브",
+      "past": "지난 회의"
+    },
+    "status": {
+      "scheduled": "예약됨",
+      "live": "라이브",
+      "ended": "종료됨",
+      "cancelled": "취소됨"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "예정된 회의가 없습니다",
+        "body": "지금 회의를 시작하거나 나중을 위해 예약하세요."
+      },
+      "live": {
+        "title": "라이브 회의가 없습니다",
+        "body": "진행 중인 회의가 여기에 표시됩니다."
+      },
+      "past": {
+        "title": "아직 지난 회의가 없습니다",
+        "body": "종료된 회의와 참석 현황이 여기에 표시됩니다."
+      }
+    },
+    "errors": {
+      "createFailed": "회의를 만들 수 없습니다. 다시 시도해 주세요.",
+      "loadFailed": "회의를 불러올 수 없습니다.",
+      "titleRequired": "회의 제목을 입력하세요.",
+      "invalidDateTime": "올바른 날짜와 시간을 입력하세요.",
+      "pastStart": "시작 시간이 과거입니다.",
+      "invalidEmails": "다음 이메일 주소가 올바르지 않습니다: {emails}",
+      "invalidCount": "반복 횟수는 1에서 366 사이의 숫자여야 합니다.",
+      "invalidParticipants": "선택한 일부 사용자는 이 워크스페이스의 구성원이 아닙니다.",
+      "guestsNotAllowed": "이 회의에서는 외부 게스트가 허용되지 않습니다."
+    },
+    "scheduleDialog": {
+      "title": "회의 예약",
+      "description": "초대는 이메일로 전송됩니다. 게스트는 계정 없이 링크로 참가합니다.",
+      "submit": "회의 예약"
+    },
+    "fields": {
+      "title": "제목",
+      "date": "날짜",
+      "startTime": "시작 시간",
+      "duration": "소요 시간",
+      "timezone": "시간대",
+      "repeat": "반복",
+      "occurrences": "반복 횟수",
+      "occurrencesPlaceholder": "선택 사항",
+      "people": "사용자",
+      "searchPeople": "사용자 검색",
+      "noPeople": "일치하는 사용자가 없습니다",
+      "selectedCount": "선택됨: {count}",
+      "guests": "외부 게스트",
+      "allowGuests": "게스트 허용",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "주소는 쉼표 또는 줄바꿈으로 구분하세요. 게스트는 계정이 필요 없습니다.",
+      "description": "설명(선택 사항)"
+    },
+    "repeat": {
+      "none": "반복 안 함",
+      "daily": "매일",
+      "weekly": "매주",
+      "monthly": "매월"
+    },
+    "denied": {
+      "signin": {
+        "title": "참가하려면 로그인하세요",
+        "body": "이 회의는 워크스페이스 구성원용입니다. 로그인하거나 초대장의 게스트 링크를 사용하세요.",
+        "action": "로그인"
+      },
+      "notFound": {
+        "title": "회의를 찾을 수 없습니다",
+        "body": "링크가 잘못되었거나 이 회의에 대한 액세스 권한이 없을 수 있습니다."
+      },
+      "closed": {
+        "title": "이 회의는 종료되었습니다",
+        "body": "회의가 끝났거나 취소되었습니다."
+      },
+      "invalidGuestLink": {
+        "title": "이 게스트 링크는 유효하지 않습니다",
+        "body": "만료되었거나 교체되었을 수 있습니다. 주최자에게 새 초대를 요청하세요."
+      },
+      "error": {
+        "title": "문제가 발생했습니다",
+        "body": "이 회의를 열 수 없습니다. 다시 시도해 주세요."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "회의에서 나갔습니다",
+        "body": "회의가 열려 있는 동안 다시 참가할 수 있습니다."
+      },
+      "removed": {
+        "title": "제거되었습니다",
+        "body": "주최자가 이 회의에서 회원님을 제거했습니다."
+      },
+      "ended": {
+        "title": "회의가 종료되었습니다",
+        "body": "주최자가 모든 사람에 대해 회의를 종료했습니다."
+      },
+      "rejoin": "다시 참가",
+      "viewMeeting": "회의 보기"
+    },
+    "prejoin": {
+      "preview": "카메라 미리보기",
+      "micOn": "마이크 켜짐",
+      "micOff": "마이크 꺼짐",
+      "cameraOn": "카메라 켜짐",
+      "cameraOff": "카메라 꺼짐",
+      "cameraBlocked": "카메라를 사용할 수 없습니다. 브라우저 권한을 확인하세요.",
+      "organizedBy": "주최자: {name}",
+      "inProgress": "진행 중",
+      "joiningAsGuest": "게스트로 참가합니다",
+      "yourName": "이름",
+      "joining": "참가 중…",
+      "joinMeeting": "회의 참가",
+      "errors": {
+        "tooEarly": "이 회의는 아직 열리지 않았습니다. 시작 시간에 가까워졌을 때 다시 시도하세요.",
+        "ended": "이 회의는 더 이상 열려 있지 않습니다.",
+        "unavailable": "지금은 비디오 서비스를 사용할 수 없습니다.",
+        "rateLimited": "시도 횟수가 너무 많습니다. 잠시 기다린 후 다시 시도하세요.",
+        "invalidGuestLink": "이 게스트 링크는 유효하지 않습니다.",
+        "forbidden": "이 회의에 초대되지 않았습니다.",
+        "generic": "회의에 참가할 수 없습니다. 다시 시도해 주세요."
+      }
+    },
+    "room": {
+      "you": "나",
+      "guest": "게스트",
+      "micOff": "마이크 꺼짐",
+      "micOn": "마이크 켜짐",
+      "cameraOff": "카메라 꺼짐",
+      "cameraOn": "카메라 켜짐",
+      "removeParticipant": "{name} 제거",
+      "people": "사용자",
+      "host": "주최자",
+      "participants": "참석자",
+      "closePanel": "패널 닫기",
+      "chat": "채팅",
+      "chatNote": "메시지는 회의 중에만 표시되며 저장되지 않습니다.",
+      "messagePlaceholder": "메시지 보내기",
+      "send": "보내기",
+      "presenting": "{name}님이 발표 중",
+      "moreParticipants": "+{count}명 더",
+      "inMeeting": "회의 중: {count}",
+      "reconnecting": "다시 연결 중…",
+      "controls": "회의 컨트롤",
+      "muteMic": "마이크 음소거",
+      "unmuteMic": "음소거 해제",
+      "stopCamera": "카메라 끄기",
+      "startCamera": "카메라 켜기",
+      "stopShare": "공유 중지",
+      "shareScreen": "화면 공유",
+      "endForAll": "모두에게 종료",
+      "leave": "나가기",
+      "endConfirmTitle": "모든 사람에 대해 회의를 종료할까요?",
+      "endConfirmBody": "모든 사람의 연결이 끊어지고 회의가 닫힙니다.",
+      "cancel": "취소"
+    },
+    "details": {
+      "didNotAttend": "불참",
+      "late": "지각",
+      "leftEarly": "일찍 퇴장",
+      "notFoundTitle": "회의를 찾을 수 없습니다",
+      "notFoundBody": "삭제되었거나 액세스 권한이 없을 수 있습니다.",
+      "loadFailed": "회의를 불러올 수 없습니다.",
+      "backToMeetings": "회의로 돌아가기",
+      "copyFailed": "링크를 복사할 수 없습니다.",
+      "invited": "초대를 보냈습니다",
+      "inviteFailed": "이 사용자들을 초대할 수 없습니다.",
+      "cancelMeeting": "회의 취소",
+      "endMeeting": "회의 종료",
+      "overview": "개요",
+      "host": "주최자",
+      "duration": "소요 시간",
+      "people": "사용자",
+      "peopleSummary": "초대됨: {count} · 게스트: {guests}",
+      "type": "유형",
+      "instant": "즉석 회의",
+      "oneTime": "일회성 회의",
+      "copied": "복사됨",
+      "copyLink": "링크 복사",
+      "analytics": "회의 분석",
+      "attended": "참석",
+      "noShows": "불참: {count}",
+      "peak": "최대 참석자 수",
+      "avgAttendance": "평균 참석률",
+      "participantTime": "참석자 총 시간",
+      "lateArrivals": "지각",
+      "earlyDepartures": "일찍 퇴장",
+      "joins": "참가 횟수",
+      "leaves": "퇴장 횟수: {count}",
+      "analyticsPending": "회의가 끝난 직후 분석을 확인할 수 있습니다.",
+      "participants": "참석자",
+      "name": "이름",
+      "joined": "참가",
+      "left": "퇴장",
+      "attendance": "참석",
+      "hostBadge": "주최자",
+      "guestBadge": "게스트",
+      "remove": "제거",
+      "inviteMore": "더 많은 사용자 초대",
+      "sendInvites": "초대 보내기",
+      "cancelTitle": "이 회의를 취소할까요?",
+      "cancelBody": "참석자는 더 이상 참가할 수 없습니다.",
+      "cancelSeries": "전체 시리즈 취소",
+      "cancelThisOne": "이 회의만 취소"
+    },
+    "analyticsPage": {
+      "title": "회의 분석",
+      "subtitle": "내 회의 전반의 참석, 시간 및 참여 현황입니다.",
+      "back": "회의로 돌아가기",
+      "noData": "이 기간에는 데이터가 없습니다",
+      "loadFailed": "분석을 불러올 수 없습니다.",
+      "invalidRange": "종료 날짜는 시작 날짜 이후여야 합니다.",
+      "scope": {
+        "me": "내 회의",
+        "organization": "조직"
+      },
+      "filters": {
+        "range": "기간",
+        "from": "시작",
+        "to": "종료",
+        "recurrence": "반복 여부",
+        "allMeetings": "모든 회의",
+        "recurring": "반복",
+        "oneTime": "일회성",
+        "guests": "게스트",
+        "anyGuests": "게스트 포함 또는 제외",
+        "withGuests": "외부 게스트 포함",
+        "internalOnly": "내부만"
+      },
+      "presets": {
+        "today": "오늘",
+        "week": "이번 주",
+        "month": "이번 달",
+        "last30": "최근 30일",
+        "last90": "최근 90일",
+        "custom": "사용자 지정 범위"
+      },
+      "kpi": {
+        "total": "전체 회의",
+        "completedCancelled": "완료: {completed} · 취소: {cancelled}",
+        "hours": "회의 시간",
+        "attendance": "참석률",
+        "attendedOfInvited": "참석: {invited}명 중 {attended}명",
+        "noShow": "불참률",
+        "noShowCount": "불참: {count}",
+        "avgDuration": "평균 소요 시간",
+        "avgAttended": "평균 참석 시간",
+        "late": "지각",
+        "earlyHint": "일찍 퇴장: {rate}",
+        "live": "지금 라이브",
+        "peakHint": "평균 최대: {peak}"
+      },
+      "charts": {
+        "volume": "회의 및 시간",
+        "meetings": "회의",
+        "hours": "시간",
+        "attendance": "참석 및 불참",
+        "attendanceRate": "참석률",
+        "noShowRate": "불참률"
+      },
+      "tables": {
+        "people": "사용자별 참여",
+        "person": "사용자",
+        "attended": "참석",
+        "missed": "놓침",
+        "time": "시간",
+        "avg": "평균 참석률",
+        "hosts": "가장 많은 주최자"
+      },
+      "me": {
+        "attended": "참석",
+        "invitedHint": "초대됨: {count}",
+        "missed": "놓침",
+        "hours": "회의 시간",
+        "hosted": "주최함",
+        "avgTime": "평균 참석 시간",
+        "avgPct": "평균 참석률",
+        "early": "일찍 퇴장",
+        "trend": "시간에 따른 참석",
+        "history": "최근 회의",
+        "didNotAttend": "불참"
+      }
+    }
   }
 }

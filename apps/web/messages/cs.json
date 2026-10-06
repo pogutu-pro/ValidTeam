@@ -45,7 +45,10 @@
     "system": "Systém",
     "updates": "Aktualizace",
     "ai_transparency": "Transparentnost AI",
-    "initiatives": "Iniciativy"
+    "initiatives": "Iniciativy",
+    "meetings": "Schůzky",
+    "meetings_all": "Všechny schůzky",
+    "meetings_analytics": "Analytika"
   },
   "actions": {
     "create_issue": "Vytvořit úkol",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Schůzky",
+    "subtitle": "Zahajte okamžitou schůzku nebo ji naplánujte s kolegy a externími hosty.",
+    "analytics": "Analytika",
+    "schedule": "Naplánovat",
+    "startMeeting": "Zahájit schůzku",
+    "instantTitle": "Okamžitá schůzka",
+    "start": "Zahájit",
+    "join": "Připojit se",
+    "recurring": "Opakující se",
+    "hostedBy": "Pořadatel: {name}",
+    "participantCount": "Účastníci: {count}",
+    "retry": "Zkusit znovu",
+    "loading": "Načítání schůzky…",
+    "cancel": "Zrušit",
+    "scheduled": "Schůzka naplánována",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Nadcházející",
+      "live": "Živě",
+      "past": "Proběhlé"
+    },
+    "status": {
+      "scheduled": "Naplánovaná",
+      "live": "Živě",
+      "ended": "Ukončená",
+      "cancelled": "Zrušená"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Žádné nadcházející schůzky",
+        "body": "Zahajte schůzku hned nebo ji naplánujte na později."
+      },
+      "live": {
+        "title": "Žádné živé schůzky",
+        "body": "Probíhající schůzky se zobrazí zde."
+      },
+      "past": {
+        "title": "Zatím žádné proběhlé schůzky",
+        "body": "Ukončené schůzky a jejich účast se zobrazí zde."
+      }
+    },
+    "errors": {
+      "createFailed": "Schůzku se nepodařilo vytvořit. Zkuste to znovu.",
+      "loadFailed": "Schůzky se nepodařilo načíst.",
+      "titleRequired": "Zadejte název schůzky.",
+      "invalidDateTime": "Zadejte platné datum a čas.",
+      "pastStart": "Čas zahájení je v minulosti.",
+      "invalidEmails": "Tyto e-mailové adresy nejsou platné: {emails}",
+      "invalidCount": "Počet opakování musí být číslo od 1 do 366.",
+      "invalidParticipants": "Někteří vybraní lidé nejsou členy tohoto pracovního prostoru.",
+      "guestsNotAllowed": "Externí hosté nejsou na této schůzce povoleni."
+    },
+    "scheduleDialog": {
+      "title": "Naplánovat schůzku",
+      "description": "Pozvánky se odesílají e-mailem. Hosté se připojují z odkazu bez účtu.",
+      "submit": "Naplánovat schůzku"
+    },
+    "fields": {
+      "title": "Název",
+      "date": "Datum",
+      "startTime": "Čas zahájení",
+      "duration": "Délka",
+      "timezone": "Časové pásmo",
+      "repeat": "Opakovat",
+      "occurrences": "Opakování",
+      "occurrencesPlaceholder": "Volitelné",
+      "people": "Lidé",
+      "searchPeople": "Hledat lidi",
+      "noPeople": "Žádní odpovídající lidé",
+      "selectedCount": "Vybráno: {count}",
+      "guests": "Externí hosté",
+      "allowGuests": "Povolit hosty",
+      "guestsPlaceholder": "jmeno@priklad.cz, dalsi@priklad.cz",
+      "guestsHint": "Adresy oddělte čárkami nebo novými řádky. Hosté nepotřebují účet.",
+      "description": "Popis (volitelné)"
+    },
+    "repeat": {
+      "none": "Neopakuje se",
+      "daily": "Denně",
+      "weekly": "Týdně",
+      "monthly": "Měsíčně"
+    },
+    "denied": {
+      "signin": {
+        "title": "Pro připojení se přihlaste",
+        "body": "Tato schůzka je pro členy pracovního prostoru. Přihlaste se nebo použijte odkaz pro hosty z pozvánky.",
+        "action": "Přihlásit se"
+      },
+      "notFound": {
+        "title": "Schůzka nenalezena",
+        "body": "Odkaz může být chybný nebo k této schůzce nemáte přístup."
+      },
+      "closed": {
+        "title": "Tato schůzka skončila",
+        "body": "Schůzka skončila nebo byla zrušena."
+      },
+      "invalidGuestLink": {
+        "title": "Tento odkaz pro hosty není platný",
+        "body": "Mohl vypršet nebo být nahrazen. Požádejte pořadatele o novou pozvánku."
+      },
+      "error": {
+        "title": "Něco se pokazilo",
+        "body": "Tuto schůzku se nepodařilo otevřít. Zkuste to znovu."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Opustili jste schůzku",
+        "body": "Dokud je schůzka otevřená, můžete se znovu připojit."
+      },
+      "removed": {
+        "title": "Byli jste odebráni",
+        "body": "Pořadatel vás ze schůzky odebral."
+      },
+      "ended": {
+        "title": "Schůzka skončila",
+        "body": "Pořadatel ukončil schůzku pro všechny."
+      },
+      "rejoin": "Připojit se znovu",
+      "viewMeeting": "Zobrazit schůzku"
+    },
+    "prejoin": {
+      "preview": "Náhled kamery",
+      "micOn": "Mikrofon zapnut",
+      "micOff": "Mikrofon vypnut",
+      "cameraOn": "Kamera zapnuta",
+      "cameraOff": "Kamera vypnuta",
+      "cameraBlocked": "Kamera není dostupná. Zkontrolujte oprávnění prohlížeče.",
+      "organizedBy": "Pořadatel: {name}",
+      "inProgress": "Probíhá",
+      "joiningAsGuest": "Připojujete se jako host",
+      "yourName": "Vaše jméno",
+      "joining": "Připojování…",
+      "joinMeeting": "Připojit se ke schůzce",
+      "errors": {
+        "tooEarly": "Tato schůzka ještě není otevřená. Zkuste to znovu blíže k času zahájení.",
+        "ended": "Tato schůzka již není otevřená.",
+        "unavailable": "Videoslužba je momentálně nedostupná.",
+        "rateLimited": "Příliš mnoho pokusů. Chvíli počkejte a zkuste to znovu.",
+        "invalidGuestLink": "Tento odkaz pro hosty není platný.",
+        "forbidden": "Na tuto schůzku nejste pozváni.",
+        "generic": "K schůzce se nepodařilo připojit. Zkuste to znovu."
+      }
+    },
+    "room": {
+      "you": "Vy",
+      "guest": "Host",
+      "micOff": "Mikrofon vypnut",
+      "micOn": "Mikrofon zapnut",
+      "cameraOff": "Kamera vypnuta",
+      "cameraOn": "Kamera zapnuta",
+      "removeParticipant": "Odebrat: {name}",
+      "people": "Lidé",
+      "host": "Pořadatel",
+      "participants": "Účastníci",
+      "closePanel": "Zavřít panel",
+      "chat": "Chat",
+      "chatNote": "Zprávy jsou viditelné jen během schůzky a neukládají se.",
+      "messagePlaceholder": "Odeslat zprávu",
+      "send": "Odeslat",
+      "presenting": "{name} prezentuje",
+      "moreParticipants": "+{count} dalších",
+      "inMeeting": "Na schůzce: {count}",
+      "reconnecting": "Opětovné připojování…",
+      "controls": "Ovládání schůzky",
+      "muteMic": "Ztlumit mikrofon",
+      "unmuteMic": "Zrušit ztlumení",
+      "stopCamera": "Vypnout kameru",
+      "startCamera": "Zapnout kameru",
+      "stopShare": "Zastavit sdílení",
+      "shareScreen": "Sdílet obrazovku",
+      "endForAll": "Ukončit pro všechny",
+      "leave": "Odejít",
+      "endConfirmTitle": "Ukončit schůzku pro všechny?",
+      "endConfirmBody": "Všichni budou odpojeni a schůzka se uzavře.",
+      "cancel": "Zrušit"
+    },
+    "details": {
+      "didNotAttend": "Nezúčastnil se",
+      "late": "Pozdě",
+      "leftEarly": "Odešel dříve",
+      "notFoundTitle": "Schůzka nenalezena",
+      "notFoundBody": "Možná byla odstraněna nebo k ní nemáte přístup.",
+      "loadFailed": "Schůzku se nepodařilo načíst.",
+      "backToMeetings": "Zpět na schůzky",
+      "copyFailed": "Odkaz se nepodařilo zkopírovat.",
+      "invited": "Pozvánky odeslány",
+      "inviteFailed": "Tyto lidi se nepodařilo pozvat.",
+      "cancelMeeting": "Zrušit schůzku",
+      "endMeeting": "Ukončit schůzku",
+      "overview": "Přehled",
+      "host": "Pořadatel",
+      "duration": "Délka",
+      "people": "Lidé",
+      "peopleSummary": "Pozváno: {count} · Hosté: {guests}",
+      "type": "Typ",
+      "instant": "Okamžitá schůzka",
+      "oneTime": "Jednorázová schůzka",
+      "copied": "Zkopírováno",
+      "copyLink": "Kopírovat odkaz",
+      "analytics": "Analytika schůzky",
+      "attended": "Zúčastnili se",
+      "noShows": "Neúčast: {count}",
+      "peak": "Maximum účastníků",
+      "avgAttendance": "Průměrná účast",
+      "participantTime": "Celkový čas účastníků",
+      "lateArrivals": "Pozdní příchody",
+      "earlyDepartures": "Předčasné odchody",
+      "joins": "Připojení",
+      "leaves": "Odchody: {count}",
+      "analyticsPending": "Analytika bude k dispozici krátce po skončení schůzky.",
+      "participants": "Účastníci",
+      "name": "Jméno",
+      "joined": "Připojil se",
+      "left": "Odešel",
+      "attendance": "Účast",
+      "hostBadge": "Pořadatel",
+      "guestBadge": "Host",
+      "remove": "Odebrat",
+      "inviteMore": "Pozvat další lidi",
+      "sendInvites": "Odeslat pozvánky",
+      "cancelTitle": "Zrušit tuto schůzku?",
+      "cancelBody": "Účastníci se již nebudou moci připojit.",
+      "cancelSeries": "Zrušit celou sérii",
+      "cancelThisOne": "Zrušit pouze tuto schůzku"
+    },
+    "analyticsPage": {
+      "title": "Analytika schůzek",
+      "subtitle": "Účast, čas a zapojení napříč vašimi schůzkami.",
+      "back": "Zpět na schůzky",
+      "noData": "Pro toto období nejsou data",
+      "loadFailed": "Analytiku se nepodařilo načíst.",
+      "invalidRange": "Datum konce musí být po datu začátku.",
+      "scope": {
+        "me": "Moje schůzky",
+        "organization": "Organizace"
+      },
+      "filters": {
+        "range": "Období",
+        "from": "Od",
+        "to": "Do",
+        "recurrence": "Opakování",
+        "allMeetings": "Všechny schůzky",
+        "recurring": "Opakující se",
+        "oneTime": "Jednorázové",
+        "guests": "Hosté",
+        "anyGuests": "S hosty i bez nich",
+        "withGuests": "S externími hosty",
+        "internalOnly": "Pouze interní"
+      },
+      "presets": {
+        "today": "Dnes",
+        "week": "Tento týden",
+        "month": "Tento měsíc",
+        "last30": "Posledních 30 dnů",
+        "last90": "Posledních 90 dnů",
+        "custom": "Vlastní rozsah"
+      },
+      "kpi": {
+        "total": "Schůzky celkem",
+        "completedCancelled": "Dokončeno: {completed} · Zrušeno: {cancelled}",
+        "hours": "Hodiny schůzek",
+        "attendance": "Míra účasti",
+        "attendedOfInvited": "Zúčastnili se: {attended} z {invited}",
+        "noShow": "Míra neúčasti",
+        "noShowCount": "Neúčast: {count}",
+        "avgDuration": "Průměrná délka",
+        "avgAttended": "Průměrný čas účasti",
+        "late": "Pozdní příchody",
+        "earlyHint": "Předčasné odchody: {rate}",
+        "live": "Právě živě",
+        "peakHint": "Průměrné maximum: {peak}"
+      },
+      "charts": {
+        "volume": "Schůzky a hodiny",
+        "meetings": "Schůzky",
+        "hours": "Hodiny",
+        "attendance": "Účast a neúčast",
+        "attendanceRate": "Míra účasti",
+        "noShowRate": "Míra neúčasti"
+      },
+      "tables": {
+        "people": "Zapojení podle osob",
+        "person": "Osoba",
+        "attended": "Zúčastnil se",
+        "missed": "Zmeškané",
+        "time": "Čas",
+        "avg": "Prům. účast",
+        "hosts": "Nejčastější pořadatelé"
+      },
+      "me": {
+        "attended": "Zúčastnil se",
+        "invitedHint": "Pozván: {count}",
+        "missed": "Zmeškané",
+        "hours": "Hodiny schůzek",
+        "hosted": "Pořádané",
+        "avgTime": "Průměrný čas účasti",
+        "avgPct": "Průměrná účast",
+        "early": "Předčasné odchody",
+        "trend": "Účast v čase",
+        "history": "Nedávné schůzky",
+        "didNotAttend": "Nezúčastnil se"
+      }
+    }
   }
 }

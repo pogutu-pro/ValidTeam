@@ -45,7 +45,10 @@
     "system": "Systeem",
     "updates": "Updates",
     "ai_transparency": "AI-transparantie",
-    "initiatives": "Initiatieven"
+    "initiatives": "Initiatieven",
+    "meetings": "Vergaderingen",
+    "meetings_all": "Alle vergaderingen",
+    "meetings_analytics": "Analyses"
   },
   "actions": {
     "create_issue": "Issue aanmaken",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "Vergaderingen",
+    "subtitle": "Start een directe vergadering of plan er een met collega's en externe gasten.",
+    "analytics": "Analyses",
+    "schedule": "Plannen",
+    "startMeeting": "Vergadering starten",
+    "instantTitle": "Directe vergadering",
+    "start": "Starten",
+    "join": "Deelnemen",
+    "recurring": "Terugkerend",
+    "hostedBy": "Georganiseerd door {name}",
+    "participantCount": "Deelnemers: {count}",
+    "retry": "Opnieuw proberen",
+    "loading": "Vergadering laden…",
+    "cancel": "Annuleren",
+    "scheduled": "Vergadering gepland",
+    "minutes": "{count} min",
+    "tabs": {
+      "upcoming": "Aankomend",
+      "live": "Live",
+      "past": "Afgelopen"
+    },
+    "status": {
+      "scheduled": "Gepland",
+      "live": "Live",
+      "ended": "Beëindigd",
+      "cancelled": "Geannuleerd"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "Geen aankomende vergaderingen",
+        "body": "Start nu een vergadering of plan er een voor later."
+      },
+      "live": {
+        "title": "Geen live vergaderingen",
+        "body": "Lopende vergaderingen verschijnen hier."
+      },
+      "past": {
+        "title": "Nog geen afgelopen vergaderingen",
+        "body": "Beëindigde vergaderingen en hun aanwezigheid verschijnen hier."
+      }
+    },
+    "errors": {
+      "createFailed": "De vergadering kon niet worden gemaakt. Probeer het opnieuw.",
+      "loadFailed": "Vergaderingen konden niet worden geladen.",
+      "titleRequired": "Voer een titel voor de vergadering in.",
+      "invalidDateTime": "Voer een geldige datum en tijd in.",
+      "pastStart": "De starttijd ligt in het verleden.",
+      "invalidEmails": "Deze e-mailadressen zijn ongeldig: {emails}",
+      "invalidCount": "Het aantal herhalingen moet een getal van 1 tot 366 zijn.",
+      "invalidParticipants": "Sommige geselecteerde personen zijn geen lid van deze werkruimte.",
+      "guestsNotAllowed": "Externe gasten zijn niet toegestaan voor deze vergadering."
+    },
+    "scheduleDialog": {
+      "title": "Een vergadering plannen",
+      "description": "Uitnodigingen worden per e-mail verstuurd. Gasten nemen deel via een link zonder account.",
+      "submit": "Vergadering plannen"
+    },
+    "fields": {
+      "title": "Titel",
+      "date": "Datum",
+      "startTime": "Starttijd",
+      "duration": "Duur",
+      "timezone": "Tijdzone",
+      "repeat": "Herhalen",
+      "occurrences": "Herhalingen",
+      "occurrencesPlaceholder": "Optioneel",
+      "people": "Personen",
+      "searchPeople": "Personen zoeken",
+      "noPeople": "Geen overeenkomende personen",
+      "selectedCount": "Geselecteerd: {count}",
+      "guests": "Externe gasten",
+      "allowGuests": "Gasten toestaan",
+      "guestsPlaceholder": "naam@voorbeeld.nl, andere@voorbeeld.nl",
+      "guestsHint": "Scheid e-mailadressen met komma's of nieuwe regels. Gasten hebben geen account nodig.",
+      "description": "Beschrijving (optioneel)"
+    },
+    "repeat": {
+      "none": "Herhaalt niet",
+      "daily": "Dagelijks",
+      "weekly": "Wekelijks",
+      "monthly": "Maandelijks"
+    },
+    "denied": {
+      "signin": {
+        "title": "Meld je aan om deel te nemen",
+        "body": "Deze vergadering is voor leden van de werkruimte. Meld je aan of gebruik de gastlink uit je uitnodiging.",
+        "action": "Aanmelden"
+      },
+      "notFound": {
+        "title": "Vergadering niet gevonden",
+        "body": "De link is mogelijk onjuist of je hebt geen toegang tot deze vergadering."
+      },
+      "closed": {
+        "title": "Deze vergadering is beëindigd",
+        "body": "De vergadering is voorbij of geannuleerd."
+      },
+      "invalidGuestLink": {
+        "title": "Deze gastlink is ongeldig",
+        "body": "Hij is mogelijk verlopen of vervangen. Vraag de organisator om een nieuwe uitnodiging."
+      },
+      "error": {
+        "title": "Er is iets misgegaan",
+        "body": "We konden deze vergadering niet openen. Probeer het opnieuw."
+      }
+    },
+    "left": {
+      "left": {
+        "title": "Je hebt de vergadering verlaten",
+        "body": "Je kunt opnieuw deelnemen zolang de vergadering open is."
+      },
+      "removed": {
+        "title": "Je bent verwijderd",
+        "body": "De organisator heeft je uit deze vergadering verwijderd."
+      },
+      "ended": {
+        "title": "De vergadering is beëindigd",
+        "body": "De organisator heeft de vergadering voor iedereen beëindigd."
+      },
+      "rejoin": "Opnieuw deelnemen",
+      "viewMeeting": "Vergadering bekijken"
+    },
+    "prejoin": {
+      "preview": "Camera-voorbeeld",
+      "micOn": "Microfoon aan",
+      "micOff": "Microfoon uit",
+      "cameraOn": "Camera aan",
+      "cameraOff": "Camera uit",
+      "cameraBlocked": "De camera is niet beschikbaar. Controleer de rechten van je browser.",
+      "organizedBy": "Georganiseerd door {name}",
+      "inProgress": "Bezig",
+      "joiningAsGuest": "Deelnemen als gast",
+      "yourName": "Je naam",
+      "joining": "Deelnemen…",
+      "joinMeeting": "Deelnemen aan vergadering",
+      "errors": {
+        "tooEarly": "Deze vergadering is nog niet geopend. Probeer het opnieuw dichter bij de starttijd.",
+        "ended": "Deze vergadering is niet meer open.",
+        "unavailable": "De videodienst is momenteel niet beschikbaar.",
+        "rateLimited": "Te veel pogingen. Wacht even en probeer het opnieuw.",
+        "invalidGuestLink": "Deze gastlink is ongeldig.",
+        "forbidden": "Je bent niet uitgenodigd voor deze vergadering.",
+        "generic": "Deelnemen aan de vergadering is mislukt. Probeer het opnieuw."
+      }
+    },
+    "room": {
+      "you": "Jij",
+      "guest": "Gast",
+      "micOff": "Microfoon uit",
+      "micOn": "Microfoon aan",
+      "cameraOff": "Camera uit",
+      "cameraOn": "Camera aan",
+      "removeParticipant": "{name} verwijderen",
+      "people": "Personen",
+      "host": "Organisator",
+      "participants": "Deelnemers",
+      "closePanel": "Paneel sluiten",
+      "chat": "Chat",
+      "chatNote": "Berichten zijn alleen zichtbaar tijdens de vergadering en worden niet opgeslagen.",
+      "messagePlaceholder": "Bericht versturen",
+      "send": "Verzenden",
+      "presenting": "{name} presenteert",
+      "moreParticipants": "+{count} meer",
+      "inMeeting": "In vergadering: {count}",
+      "reconnecting": "Opnieuw verbinden…",
+      "controls": "Vergaderbediening",
+      "muteMic": "Microfoon dempen",
+      "unmuteMic": "Demping opheffen",
+      "stopCamera": "Camera uitzetten",
+      "startCamera": "Camera aanzetten",
+      "stopShare": "Delen stoppen",
+      "shareScreen": "Scherm delen",
+      "endForAll": "Voor iedereen beëindigen",
+      "leave": "Verlaten",
+      "endConfirmTitle": "De vergadering voor iedereen beëindigen?",
+      "endConfirmBody": "Iedereen wordt losgekoppeld en de vergadering wordt gesloten.",
+      "cancel": "Annuleren"
+    },
+    "details": {
+      "didNotAttend": "Niet aanwezig",
+      "late": "Te laat",
+      "leftEarly": "Eerder vertrokken",
+      "notFoundTitle": "Vergadering niet gevonden",
+      "notFoundBody": "Mogelijk is hij verwijderd of heb je geen toegang.",
+      "loadFailed": "De vergadering kon niet worden geladen.",
+      "backToMeetings": "Terug naar vergaderingen",
+      "copyFailed": "De link kon niet worden gekopieerd.",
+      "invited": "Uitnodigingen verstuurd",
+      "inviteFailed": "Deze personen konden niet worden uitgenodigd.",
+      "cancelMeeting": "Vergadering annuleren",
+      "endMeeting": "Vergadering beëindigen",
+      "overview": "Overzicht",
+      "host": "Organisator",
+      "duration": "Duur",
+      "people": "Personen",
+      "peopleSummary": "Uitgenodigd: {count} · Gasten: {guests}",
+      "type": "Type",
+      "instant": "Directe vergadering",
+      "oneTime": "Eenmalige vergadering",
+      "copied": "Gekopieerd",
+      "copyLink": "Link kopiëren",
+      "analytics": "Vergaderanalyse",
+      "attended": "Aanwezig",
+      "noShows": "Niet verschenen: {count}",
+      "peak": "Piek aan deelnemers",
+      "avgAttendance": "Gemiddelde aanwezigheid",
+      "participantTime": "Totale deelnametijd",
+      "lateArrivals": "Te late aankomsten",
+      "earlyDepartures": "Vroege vertrekken",
+      "joins": "Deelnames",
+      "leaves": "Vertrekken: {count}",
+      "analyticsPending": "De analyse is kort na afloop van de vergadering beschikbaar.",
+      "participants": "Deelnemers",
+      "name": "Naam",
+      "joined": "Deelgenomen",
+      "left": "Vertrokken",
+      "attendance": "Aanwezigheid",
+      "hostBadge": "Organisator",
+      "guestBadge": "Gast",
+      "remove": "Verwijderen",
+      "inviteMore": "Meer mensen uitnodigen",
+      "sendInvites": "Uitnodigingen versturen",
+      "cancelTitle": "Deze vergadering annuleren?",
+      "cancelBody": "Deelnemers kunnen niet meer deelnemen.",
+      "cancelSeries": "Hele reeks annuleren",
+      "cancelThisOne": "Alleen deze vergadering annuleren"
+    },
+    "analyticsPage": {
+      "title": "Vergaderanalyses",
+      "subtitle": "Aanwezigheid, tijd en deelname in al je vergaderingen.",
+      "back": "Terug naar vergaderingen",
+      "noData": "Geen gegevens voor deze periode",
+      "loadFailed": "Analyses konden niet worden geladen.",
+      "invalidRange": "De einddatum moet na de startdatum liggen.",
+      "scope": {
+        "me": "Mijn vergaderingen",
+        "organization": "Organisatie"
+      },
+      "filters": {
+        "range": "Periode",
+        "from": "Van",
+        "to": "Tot",
+        "recurrence": "Herhaling",
+        "allMeetings": "Alle vergaderingen",
+        "recurring": "Terugkerend",
+        "oneTime": "Eenmalig",
+        "guests": "Gasten",
+        "anyGuests": "Met of zonder gasten",
+        "withGuests": "Met externe gasten",
+        "internalOnly": "Alleen intern"
+      },
+      "presets": {
+        "today": "Vandaag",
+        "week": "Deze week",
+        "month": "Deze maand",
+        "last30": "Laatste 30 dagen",
+        "last90": "Laatste 90 dagen",
+        "custom": "Aangepast bereik"
+      },
+      "kpi": {
+        "total": "Totaal vergaderingen",
+        "completedCancelled": "Afgerond: {completed} · Geannuleerd: {cancelled}",
+        "hours": "Vergaderuren",
+        "attendance": "Aanwezigheidspercentage",
+        "attendedOfInvited": "Aanwezig: {attended} van {invited}",
+        "noShow": "Percentage niet verschenen",
+        "noShowCount": "Niet verschenen: {count}",
+        "avgDuration": "Gemiddelde duur",
+        "avgAttended": "Gemiddelde aanwezigheidstijd",
+        "late": "Te late aankomsten",
+        "earlyHint": "Eerder vertrokken: {rate}",
+        "live": "Nu live",
+        "peakHint": "Gemiddelde piek: {peak}"
+      },
+      "charts": {
+        "volume": "Vergaderingen en uren",
+        "meetings": "Vergaderingen",
+        "hours": "Uren",
+        "attendance": "Aanwezigheid en niet verschenen",
+        "attendanceRate": "Aanwezigheidspercentage",
+        "noShowRate": "Percentage niet verschenen"
+      },
+      "tables": {
+        "people": "Deelname per persoon",
+        "person": "Persoon",
+        "attended": "Aanwezig",
+        "missed": "Gemist",
+        "time": "Tijd",
+        "avg": "Gem. aanwezigheid",
+        "hosts": "Meest actieve organisatoren"
+      },
+      "me": {
+        "attended": "Aanwezig",
+        "invitedHint": "Uitgenodigd: {count}",
+        "missed": "Gemist",
+        "hours": "Vergaderuren",
+        "hosted": "Georganiseerd",
+        "avgTime": "Gemiddelde aanwezigheidstijd",
+        "avgPct": "Gemiddelde aanwezigheid",
+        "early": "Vroege vertrekken",
+        "trend": "Aanwezigheid in de tijd",
+        "history": "Recente vergaderingen",
+        "didNotAttend": "Niet aanwezig"
+      }
+    }
   }
 }

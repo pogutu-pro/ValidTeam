@@ -45,7 +45,10 @@
     "system": "系統",
     "updates": "更新",
     "ai_transparency": "AI 透明度",
-    "initiatives": "計畫"
+    "initiatives": "計畫",
+    "meetings": "會議",
+    "meetings_all": "所有會議",
+    "meetings_analytics": "分析"
   },
   "actions": {
     "create_issue": "建立工作項目",
@@ -7166,5 +7169,311 @@
     "sent": "Request sent. I will review it personally.",
     "error": "Something went wrong. Email me directly at pogutu010@gmail.com.",
     "spamNotice": "This only sends me a note. No account is created until I approve."
+  },
+  "meetings": {
+    "title": "會議",
+    "subtitle": "立即開始會議，或與同事和外部訪客安排會議。",
+    "analytics": "分析",
+    "schedule": "排程",
+    "startMeeting": "開始會議",
+    "instantTitle": "即時會議",
+    "start": "開始",
+    "join": "加入",
+    "recurring": "重複",
+    "hostedBy": "主持人：{name}",
+    "participantCount": "與會人數：{count}",
+    "retry": "重試",
+    "loading": "正在載入會議…",
+    "cancel": "取消",
+    "scheduled": "會議已排程",
+    "minutes": "{count} 分鐘",
+    "tabs": {
+      "upcoming": "即將開始",
+      "live": "進行中",
+      "past": "已結束"
+    },
+    "status": {
+      "scheduled": "已排程",
+      "live": "進行中",
+      "ended": "已結束",
+      "cancelled": "已取消"
+    },
+    "empty": {
+      "upcoming": {
+        "title": "沒有即將開始的會議",
+        "body": "立即開始會議，或排程到稍後。"
+      },
+      "live": {
+        "title": "沒有進行中的會議",
+        "body": "進行中的會議會顯示在這裡。"
+      },
+      "past": {
+        "title": "尚無過往會議",
+        "body": "已結束的會議及其出席情況會顯示在這裡。"
+      }
+    },
+    "errors": {
+      "createFailed": "無法建立會議，請重試。",
+      "loadFailed": "無法載入會議。",
+      "titleRequired": "請輸入會議標題。",
+      "invalidDateTime": "請輸入有效的日期和時間。",
+      "pastStart": "開始時間已過。",
+      "invalidEmails": "這些電子郵件地址無效：{emails}",
+      "invalidCount": "重複次數必須是 1 到 366 之間的數字。",
+      "invalidParticipants": "部分所選人員不是此工作區的成員。",
+      "guestsNotAllowed": "此會議不允許外部訪客。"
+    },
+    "scheduleDialog": {
+      "title": "排程會議",
+      "description": "邀請將以電子郵件寄出。訪客無需帳號，透過連結即可加入。",
+      "submit": "排程會議"
+    },
+    "fields": {
+      "title": "標題",
+      "date": "日期",
+      "startTime": "開始時間",
+      "duration": "時長",
+      "timezone": "時區",
+      "repeat": "重複",
+      "occurrences": "重複次數",
+      "occurrencesPlaceholder": "選填",
+      "people": "人員",
+      "searchPeople": "搜尋人員",
+      "noPeople": "沒有符合的人員",
+      "selectedCount": "已選取：{count}",
+      "guests": "外部訪客",
+      "allowGuests": "允許訪客",
+      "guestsPlaceholder": "name@example.com, other@example.com",
+      "guestsHint": "請以逗號或換行分隔地址。訪客無需帳號。",
+      "description": "說明（選填）"
+    },
+    "repeat": {
+      "none": "不重複",
+      "daily": "每天",
+      "weekly": "每週",
+      "monthly": "每月"
+    },
+    "denied": {
+      "signin": {
+        "title": "請登入後加入",
+        "body": "此會議僅限工作區成員。請登入，或使用邀請中的訪客連結。",
+        "action": "登入"
+      },
+      "notFound": {
+        "title": "找不到會議",
+        "body": "連結可能有誤，或您無權存取此會議。"
+      },
+      "closed": {
+        "title": "此會議已結束",
+        "body": "會議已結束或已被取消。"
+      },
+      "invalidGuestLink": {
+        "title": "此訪客連結無效",
+        "body": "它可能已過期或已被取代。請向主持人索取新的邀請。"
+      },
+      "error": {
+        "title": "發生錯誤",
+        "body": "無法開啟此會議，請重試。"
+      }
+    },
+    "left": {
+      "left": {
+        "title": "您已離開會議",
+        "body": "會議仍開放時，您可以重新加入。"
+      },
+      "removed": {
+        "title": "您已被移除",
+        "body": "主持人已將您從此會議移除。"
+      },
+      "ended": {
+        "title": "會議已結束",
+        "body": "主持人已為所有人結束會議。"
+      },
+      "rejoin": "重新加入",
+      "viewMeeting": "檢視會議"
+    },
+    "prejoin": {
+      "preview": "相機預覽",
+      "micOn": "麥克風已開啟",
+      "micOff": "麥克風已關閉",
+      "cameraOn": "相機已開啟",
+      "cameraOff": "相機已關閉",
+      "cameraBlocked": "無法使用相機，請檢查瀏覽器權限。",
+      "organizedBy": "主持人：{name}",
+      "inProgress": "進行中",
+      "joiningAsGuest": "您將以訪客身分加入",
+      "yourName": "您的姓名",
+      "joining": "正在加入…",
+      "joinMeeting": "加入會議",
+      "errors": {
+        "tooEarly": "此會議尚未開放，請在接近開始時間時重試。",
+        "ended": "此會議已不再開放。",
+        "unavailable": "視訊服務目前無法使用。",
+        "rateLimited": "嘗試次數過多，請稍候再試。",
+        "invalidGuestLink": "此訪客連結無效。",
+        "forbidden": "您未受邀參加此會議。",
+        "generic": "無法加入會議，請重試。"
+      }
+    },
+    "room": {
+      "you": "您",
+      "guest": "訪客",
+      "micOff": "麥克風已關閉",
+      "micOn": "麥克風已開啟",
+      "cameraOff": "相機已關閉",
+      "cameraOn": "相機已開啟",
+      "removeParticipant": "移除 {name}",
+      "people": "人員",
+      "host": "主持人",
+      "participants": "與會者",
+      "closePanel": "關閉面板",
+      "chat": "聊天",
+      "chatNote": "訊息僅在會議期間可見，不會被儲存。",
+      "messagePlaceholder": "傳送訊息",
+      "send": "傳送",
+      "presenting": "{name} 正在簡報",
+      "moreParticipants": "另有 {count} 人",
+      "inMeeting": "會議中：{count}",
+      "reconnecting": "正在重新連線…",
+      "controls": "會議控制項",
+      "muteMic": "將麥克風靜音",
+      "unmuteMic": "取消靜音",
+      "stopCamera": "關閉相機",
+      "startCamera": "開啟相機",
+      "stopShare": "停止分享",
+      "shareScreen": "分享螢幕",
+      "endForAll": "為所有人結束",
+      "leave": "離開",
+      "endConfirmTitle": "為所有人結束會議？",
+      "endConfirmBody": "所有人都將中斷連線，會議將關閉。",
+      "cancel": "取消"
+    },
+    "details": {
+      "didNotAttend": "缺席",
+      "late": "遲到",
+      "leftEarly": "提前離開",
+      "notFoundTitle": "找不到會議",
+      "notFoundBody": "它可能已被刪除，或您無權存取。",
+      "loadFailed": "無法載入會議。",
+      "backToMeetings": "返回會議",
+      "copyFailed": "無法複製連結。",
+      "invited": "邀請已寄出",
+      "inviteFailed": "無法邀請這些人員。",
+      "cancelMeeting": "取消會議",
+      "endMeeting": "結束會議",
+      "overview": "概覽",
+      "host": "主持人",
+      "duration": "時長",
+      "people": "人員",
+      "peopleSummary": "已邀請：{count} · 訪客：{guests}",
+      "type": "類型",
+      "instant": "即時會議",
+      "oneTime": "一次性會議",
+      "copied": "已複製",
+      "copyLink": "複製連結",
+      "analytics": "會議分析",
+      "attended": "已出席",
+      "noShows": "未到：{count}",
+      "peak": "與會人數高峰",
+      "avgAttendance": "平均出席率",
+      "participantTime": "與會者總時長",
+      "lateArrivals": "遲到",
+      "earlyDepartures": "提前離開",
+      "joins": "加入次數",
+      "leaves": "離開次數：{count}",
+      "analyticsPending": "會議結束後不久即可檢視分析。",
+      "participants": "與會者",
+      "name": "姓名",
+      "joined": "加入時間",
+      "left": "離開時間",
+      "attendance": "出席",
+      "hostBadge": "主持人",
+      "guestBadge": "訪客",
+      "remove": "移除",
+      "inviteMore": "邀請更多人員",
+      "sendInvites": "傳送邀請",
+      "cancelTitle": "取消此會議？",
+      "cancelBody": "與會者將無法再加入。",
+      "cancelSeries": "取消整個系列",
+      "cancelThisOne": "僅取消此會議"
+    },
+    "analyticsPage": {
+      "title": "會議分析",
+      "subtitle": "您所有會議的出席、時間和參與情況。",
+      "back": "返回會議",
+      "noData": "此期間沒有資料",
+      "loadFailed": "無法載入分析。",
+      "invalidRange": "結束日期必須晚於開始日期。",
+      "scope": {
+        "me": "我的會議",
+        "organization": "組織"
+      },
+      "filters": {
+        "range": "期間",
+        "from": "從",
+        "to": "至",
+        "recurrence": "重複性",
+        "allMeetings": "所有會議",
+        "recurring": "重複",
+        "oneTime": "一次性",
+        "guests": "訪客",
+        "anyGuests": "有或沒有訪客",
+        "withGuests": "有外部訪客",
+        "internalOnly": "僅內部"
+      },
+      "presets": {
+        "today": "今天",
+        "week": "本週",
+        "month": "本月",
+        "last30": "最近 30 天",
+        "last90": "最近 90 天",
+        "custom": "自訂範圍"
+      },
+      "kpi": {
+        "total": "會議總數",
+        "completedCancelled": "已完成：{completed} · 已取消：{cancelled}",
+        "hours": "會議時數",
+        "attendance": "出席率",
+        "attendedOfInvited": "已出席：{invited} 人中 {attended} 人",
+        "noShow": "缺席率",
+        "noShowCount": "未到：{count}",
+        "avgDuration": "平均時長",
+        "avgAttended": "平均出席時間",
+        "late": "遲到",
+        "earlyHint": "提前離開：{rate}",
+        "live": "正在進行",
+        "peakHint": "平均高峰：{peak}"
+      },
+      "charts": {
+        "volume": "會議與時數",
+        "meetings": "會議",
+        "hours": "小時",
+        "attendance": "出席與缺席",
+        "attendanceRate": "出席率",
+        "noShowRate": "缺席率"
+      },
+      "tables": {
+        "people": "依人員統計的參與情況",
+        "person": "人員",
+        "attended": "已出席",
+        "missed": "錯過",
+        "time": "時間",
+        "avg": "平均出席率",
+        "hosts": "最常見的主持人"
+      },
+      "me": {
+        "attended": "已出席",
+        "invitedHint": "已邀請：{count}",
+        "missed": "錯過",
+        "hours": "會議時數",
+        "hosted": "主持",
+        "avgTime": "平均出席時間",
+        "avgPct": "平均出席率",
+        "early": "提前離開",
+        "trend": "出席趨勢",
+        "history": "最近的會議",
+        "didNotAttend": "未出席"
+      }
+    }
   }
 }
