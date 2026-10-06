@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Tämä vierailinkki ei kelpaa.",
         "forbidden": "Sinua ei ole kutsuttu tähän kokoukseen.",
         "generic": "Kokoukseen liittyminen epäonnistui. Yritä uudelleen."
-      }
+      },
+      "readyToJoin": "Valmis liittymään?",
+      "microphone": "Mikrofoni",
+      "camera": "Kamera",
+      "defaultDevice": "Oletus",
+      "cameraOffNotice": "Kamera on pois päältä",
+      "nameHint": "Muut kokouksessa näkevät tämän nimen."
     },
     "room": {
       "you": "Sinä",
@@ -7346,7 +7352,35 @@
       "leave": "Poistu",
       "endConfirmTitle": "Päätetäänkö kokous kaikille?",
       "endConfirmBody": "Kaikkien yhteys katkaistaan ja kokous suljetaan.",
-      "cancel": "Peruuta"
+      "cancel": "Peruuta",
+      "reactions": "Reaktiot",
+      "reactionLabels": {
+        "thumbsUp": "Peukku ylös",
+        "clap": "Aplodit",
+        "heart": "Sydän",
+        "laugh": "Nauru",
+        "wow": "Yllättynyt",
+        "party": "Juhli"
+      },
+      "raiseHand": "Nosta käsi",
+      "lowerHand": "Laske käsi",
+      "handRaised": "{name} nosti kätensä",
+      "more": "Lisää asetuksia",
+      "layout": "Asettelu",
+      "layoutGrid": "Ruudukko",
+      "layoutSpeaker": "Puhuja",
+      "fullscreen": "Koko näyttö",
+      "exitFullscreen": "Poistu koko näytöstä",
+      "copyLink": "Kopioi kokouslinkki",
+      "linkCopied": "Kokouslinkki kopioitu",
+      "linkCopyFailed": "Linkkiä ei voitu kopioida.",
+      "pin": "Kiinnitä {name}",
+      "unpin": "Irrota {name}",
+      "searchPeople": "Hae henkilöitä",
+      "leaveOptions": "Lisää poistumisvaihtoehtoja",
+      "leaveKeepOpen": "Poistu ja pidä kokous auki",
+      "shortcutsHint": "Pikanäppäimet: M mikrofoni, V kamera, H käsi, C keskustelu, P henkilöt",
+      "elapsed": "Aika kokouksessa"
     },
     "details": {
       "didNotAttend": "Ei osallistunut",
@@ -7472,8 +7506,25 @@
         "early": "Aikaiset poistumiset",
         "trend": "Osallistuminen ajan yli",
         "history": "Viimeaikaiset kokoukset",
-        "didNotAttend": "Ei osallistunut"
-      }
-    }
+        "didNotAttend": "Ei osallistunut",
+        "pendingHint": "Tulevat tai käynnissä olevat kokoukset: {count}. Ne lasketaan, kun ne päättyvät."
+      },
+      "orgPendingHint": "Tällä ajanjaksolla ei ole vielä päättynyt yhtään kokousta. Osallistuminen, tunnit ja osuudet lasketaan, kun kokous päättyy."
+    },
+    "newMeeting": "Uusi kokous",
+    "newInstant": "Aloita pikakokous",
+    "newSchedule": "Ajasta myöhemmäksi",
+    "startOrJoin": "Aloita tai liity kokoukseen",
+    "joinCodePlaceholder": "Anna koodi tai linkki",
+    "joinWithCode": "Liity",
+    "joinCodeInvalid": "Anna kelvollinen kokouslinkki tai -koodi.",
+    "liveNow": "Livenä nyt",
+    "joinNow": "Liity nyt",
+    "today": "Tänään",
+    "tomorrow": "Huomenna",
+    "copyLink": "Kopioi linkki",
+    "linkCopied": "Linkki kopioitu",
+    "linkCopyFailed": "Linkkiä ei voitu kopioida.",
+    "viewDetails": "Tiedot"
   }
 }

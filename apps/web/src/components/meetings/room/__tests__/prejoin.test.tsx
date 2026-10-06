@@ -5,6 +5,7 @@ import { Prejoin, type PrejoinInfo } from '../prejoin';
 const previewMock = jest.fn();
 jest.mock('@livekit/components-react', () => ({
   usePreviewTracks: (...a: unknown[]) => previewMock(...a),
+  useTrackVolume: () => 0,
 }));
 
 const info = (over: Partial<PrejoinInfo> = {}): PrejoinInfo => ({
@@ -66,7 +67,13 @@ describe('Prejoin', () => {
     await userEvent.type(screen.getByLabelText(/your name/i), '  John Smith ');
     expect(join).toBeEnabled();
     await userEvent.click(join);
-    expect(onJoin).toHaveBeenCalledWith({ name: 'John Smith', mic: true, camera: true });
+    expect(onJoin).toHaveBeenCalledWith({
+      name: 'John Smith',
+      mic: true,
+      camera: true,
+      micDeviceId: undefined,
+      cameraDeviceId: undefined,
+    });
   });
 
   it('passes the chosen microphone/camera state and shows state without relying on colour', async () => {
@@ -89,7 +96,51 @@ describe('Prejoin', () => {
     );
     expect(screen.getByText(/microphone off · camera off/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /join meeting/i }));
-    expect(onJoin).toHaveBeenCalledWith({ name: 'Ada', mic: false, camera: false });
+    expect(onJoin).toHaveBeenCalledWith({
+      name: 'Ada',
+      mic: false,
+      camera: false,
+      micDeviceId: undefined,
+      cameraDeviceId: undefined,
+    });
+  });
+
+  it('lets people pick their microphone and camera, and passes the choice to the join', async () => {
+    const devices = [
+      { kind: 'audioinput', deviceId: 'mic-2', label: 'USB Headset' },
+      { kind: 'videoinput', deviceId: 'cam-2', label: 'External Webcam' },
+    ] as MediaDeviceInfo[];
+    Object.defineProperty(navigator, 'mediaDevices', {
+      configurable: true,
+      value: {
+        enumerateDevices: async () => devices,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      },
+    });
+    const onJoin = jest.fn();
+    render(
+      <Prejoin
+        info={info()}
+        initialName="Ada"
+        nameEditable={false}
+        joining={false}
+        error={null}
+        onJoin={onJoin}
+      />
+    );
+    await screen.findByRole('option', { name: 'USB Headset' });
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: /^microphone$/i }), 'mic-2');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: /^camera$/i }), 'cam-2');
+    await userEvent.click(screen.getByRole('button', { name: /join meeting/i }));
+    expect(onJoin).toHaveBeenCalledWith({
+      name: 'Ada',
+      mic: true,
+      camera: true,
+      micDeviceId: 'mic-2',
+      cameraDeviceId: 'cam-2',
+    });
+    Object.defineProperty(navigator, 'mediaDevices', { configurable: true, value: undefined });
   });
 
   it('surfaces join errors and disables the button while joining', () => {

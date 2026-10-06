@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "此访客链接无效。",
         "forbidden": "您未被邀请参加此会议。",
         "generic": "无法加入会议，请重试。"
-      }
+      },
+      "readyToJoin": "准备好加入了吗？",
+      "microphone": "麦克风",
+      "camera": "摄像头",
+      "defaultDevice": "默认",
+      "cameraOffNotice": "摄像头已关闭",
+      "nameHint": "会议中的其他人会看到此名称。"
     },
     "room": {
       "you": "您",
@@ -7346,7 +7352,35 @@
       "leave": "离开",
       "endConfirmTitle": "为所有人结束会议？",
       "endConfirmBody": "所有人都将断开连接，会议将关闭。",
-      "cancel": "取消"
+      "cancel": "取消",
+      "reactions": "表情回应",
+      "reactionLabels": {
+        "thumbsUp": "点赞",
+        "clap": "鼓掌",
+        "heart": "爱心",
+        "laugh": "大笑",
+        "wow": "惊讶",
+        "party": "庆祝"
+      },
+      "raiseHand": "举手",
+      "lowerHand": "放下手",
+      "handRaised": "{name} 举手了",
+      "more": "更多选项",
+      "layout": "布局",
+      "layoutGrid": "网格",
+      "layoutSpeaker": "发言人",
+      "fullscreen": "全屏",
+      "exitFullscreen": "退出全屏",
+      "copyLink": "复制会议链接",
+      "linkCopied": "会议链接已复制",
+      "linkCopyFailed": "无法复制链接。",
+      "pin": "固定 {name}",
+      "unpin": "取消固定 {name}",
+      "searchPeople": "搜索人员",
+      "leaveOptions": "更多离开选项",
+      "leaveKeepOpen": "离开并保持会议开放",
+      "shortcutsHint": "快捷键：M 麦克风，V 摄像头，H 举手，C 聊天，P 人员",
+      "elapsed": "会议时长"
     },
     "details": {
       "didNotAttend": "缺席",
@@ -7472,8 +7506,25 @@
         "early": "提前离开",
         "trend": "出席趋势",
         "history": "最近的会议",
-        "didNotAttend": "未出席"
-      }
-    }
+        "didNotAttend": "未出席",
+        "pendingHint": "即将开始或正在进行的会议：{count}。结束后将计入统计。"
+      },
+      "orgPendingHint": "此时间段内还没有已结束的会议。出席、时长和比率会在会议结束时计算。"
+    },
+    "newMeeting": "新会议",
+    "newInstant": "开始即时会议",
+    "newSchedule": "安排到稍后",
+    "startOrJoin": "开始或加入会议",
+    "joinCodePlaceholder": "输入代码或链接",
+    "joinWithCode": "加入",
+    "joinCodeInvalid": "请输入有效的会议链接或代码。",
+    "liveNow": "正在进行",
+    "joinNow": "立即加入",
+    "today": "今天",
+    "tomorrow": "明天",
+    "copyLink": "复制链接",
+    "linkCopied": "链接已复制",
+    "linkCopyFailed": "无法复制链接。",
+    "viewDetails": "详情"
   }
 }

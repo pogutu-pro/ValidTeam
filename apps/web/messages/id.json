@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Tautan tamu ini tidak valid.",
         "forbidden": "Anda tidak diundang ke rapat ini.",
         "generic": "Tidak dapat bergabung ke rapat. Silakan coba lagi."
-      }
+      },
+      "readyToJoin": "Siap bergabung?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Default",
+      "cameraOffNotice": "Kamera mati",
+      "nameHint": "Orang lain di rapat akan melihat nama ini."
     },
     "room": {
       "you": "Anda",
@@ -7346,7 +7352,35 @@
       "leave": "Keluar",
       "endConfirmTitle": "Akhiri rapat untuk semua orang?",
       "endConfirmBody": "Semua orang akan diputus dan rapat akan ditutup.",
-      "cancel": "Batal"
+      "cancel": "Batal",
+      "reactions": "Reaksi",
+      "reactionLabels": {
+        "thumbsUp": "Jempol",
+        "clap": "Tepuk tangan",
+        "heart": "Hati",
+        "laugh": "Tertawa",
+        "wow": "Terkejut",
+        "party": "Rayakan"
+      },
+      "raiseHand": "Angkat tangan",
+      "lowerHand": "Turunkan tangan",
+      "handRaised": "{name} mengangkat tangan",
+      "more": "Opsi lainnya",
+      "layout": "Tata letak",
+      "layoutGrid": "Kisi",
+      "layoutSpeaker": "Pembicara",
+      "fullscreen": "Layar penuh",
+      "exitFullscreen": "Keluar dari layar penuh",
+      "copyLink": "Salin tautan rapat",
+      "linkCopied": "Tautan rapat disalin",
+      "linkCopyFailed": "Tautan tidak dapat disalin.",
+      "pin": "Sematkan {name}",
+      "unpin": "Lepas sematan {name}",
+      "searchPeople": "Cari orang",
+      "leaveOptions": "Opsi keluar lainnya",
+      "leaveKeepOpen": "Keluar dan biarkan rapat tetap terbuka",
+      "shortcutsHint": "Pintasan: M mikrofon, V kamera, H tangan, C obrolan, P orang",
+      "elapsed": "Waktu dalam rapat"
     },
     "details": {
       "didNotAttend": "Tidak hadir",
@@ -7472,8 +7506,25 @@
         "early": "Kepergian lebih awal",
         "trend": "Kehadiran dari waktu ke waktu",
         "history": "Rapat terbaru",
-        "didNotAttend": "Tidak hadir"
-      }
-    }
+        "didNotAttend": "Tidak hadir",
+        "pendingHint": "Rapat mendatang atau langsung: {count}. Akan dihitung setelah selesai."
+      },
+      "orgPendingHint": "Belum ada rapat yang selesai pada periode ini. Kehadiran, jam, dan persentase dihitung saat rapat berakhir."
+    },
+    "newMeeting": "Rapat baru",
+    "newInstant": "Mulai rapat instan",
+    "newSchedule": "Jadwalkan untuk nanti",
+    "startOrJoin": "Mulai atau gabung rapat",
+    "joinCodePlaceholder": "Masukkan kode atau tautan",
+    "joinWithCode": "Gabung",
+    "joinCodeInvalid": "Masukkan tautan atau kode rapat yang valid.",
+    "liveNow": "Langsung sekarang",
+    "joinNow": "Gabung sekarang",
+    "today": "Hari ini",
+    "tomorrow": "Besok",
+    "copyLink": "Salin tautan",
+    "linkCopied": "Tautan disalin",
+    "linkCopyFailed": "Tautan tidak dapat disalin.",
+    "viewDetails": "Detail"
   }
 }

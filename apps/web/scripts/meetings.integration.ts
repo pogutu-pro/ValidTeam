@@ -1032,6 +1032,180 @@ async function main() {
     }
   );
 
+  console.log('self-healing without cron or webhooks');
+  await check(
+    'browser pulse records attendance when the LiveKit webhook never arrives; leave closes it',
+    async () => {
+      const mid = await mk('PulseOnly', 5, 'UTC', { userIds: [u.a], guests: [] });
+      const m = (await db.select().from(meetings).where(eq(meetings.id, mid)))[0]!;
+      const live = await svc.ensureMeetingLive(m);
+      const pa = await part(mid, u.a);
+      const identity = buildMeetingIdentity(pa.id, 'pulsesess01');
+      await svc.recordPulseWithSession(live, pa.id, identity);
+      await svc.recordPulseWithSession(live, pa.id, identity); // replay is a no-op
+      let sessions = await db
+        .select()
+        .from(meetingAttendanceSessions)
+        .where(eq(meetingAttendanceSessions.meetingId, mid));
+      assert.equal(sessions.length, 1);
+      assert.equal(sessions[0]!.source, 'pulse');
+      assert.equal(sessions[0]!.leftAt, null);
+      await svc.recordParticipantLeft({ meetingId: mid, identity, at: new Date(), reason: 'left' });
+      sessions = await db
+        .select()
+        .from(meetingAttendanceSessions)
+        .where(eq(meetingAttendanceSessions.meetingId, mid));
+      assert.ok(sessions[0]!.leftAt);
+      // A removed participant cannot re-open a session via pulse either.
+      await svc.removeParticipant(live, pa.id, u.host);
+      await svc.recordPulseWithSession(live, pa.id, buildMeetingIdentity(pa.id, 'pulsesess02'));
+      assert.equal(
+        (
+          await db
+            .select()
+            .from(meetingAttendanceSessions)
+            .where(eq(meetingAttendanceSessions.meetingId, mid))
+        ).length,
+        1
+      );
+    }
+  );
+  await check(
+    'opening analytics ends abandoned meetings and computes their stats (no cron)',
+    async () => {
+      const mid = await mk('Abandoned', -20, 'UTC', { userIds: [u.b], guests: [] });
+      const pb = await part(mid, u.b);
+      await db
+        .update(meetings)
+        .set({
+          status: 'live',
+          actualStartedAt: new Date(Date.now() - 20 * minute),
+          livekitRoomName: `vm-ab-${sfx}`,
+        })
+        .where(eq(meetings.id, mid));
+      await db
+        .insert(meetingAttendanceSessions)
+        .values({
+          meetingId: mid,
+          organizationId: org.A,
+          participantId: pb.id,
+          identity: buildMeetingIdentity(pb.id, 'abandonsess'),
+          joinedAt: new Date(Date.now() - 19 * minute),
+          leftAt: new Date(Date.now() - 12 * minute),
+          leaveReason: 'left',
+          lastSeenAt: new Date(),
+        });
+      await svc.sweepOrganizationMeetings(org.A);
+      const [m] = await db.select().from(meetings).where(eq(meetings.id, mid));
+      assert.equal(m!.status, 'ended');
+      assert.equal(m!.endReason, 'empty_room');
+      const [st] = await db.select().from(meetingStats).where(eq(meetingStats.meetingId, mid));
+      assert.equal(st!.attendedCount, 1);
+      // Another organization's sweep never touches it.
+      const other = await mk('StillLive', -20, 'UTC', { userIds: [u.b], guests: [] });
+      await db
+        .update(meetings)
+        .set({
+          status: 'live',
+          actualStartedAt: new Date(Date.now() - 20 * minute),
+          livekitRoomName: `vm-ol-${sfx}`,
+        })
+        .where(eq(meetings.id, other));
+      await svc.sweepOrganizationMeetings(org.B);
+      assert.equal(
+        (await db.select().from(meetings).where(eq(meetings.id, other)))[0]!.status,
+        'live'
+      );
+    }
+  );
+  await check(
+    'personal analytics report pending (upcoming/live) meetings instead of only zeros',
+    async () => {
+      const q = {
+        organizationId: org.A,
+        from: new Date(now.getTime() - 24 * 3600_000).toISOString(),
+        to: new Date(now.getTime() + 48 * 3600_000).toISOString(),
+        bucket: 'day' as const,
+        timezone: 'UTC',
+        scope: 'me' as const,
+      };
+      const me = await analytics.getPersonalMeetingAnalytics(u.a, q);
+      assert.ok(me.summary.pending >= 1, 'upcoming meetings are surfaced');
+      assert.ok(me.summary.attended >= 1);
+    }
+  );
+
+  console.log('immediate dispatch (no waiting for cron)');
+  const { dispatchInvitations, dispatchSummaries } = await import('../src/lib/meetings/dispatch');
+  await check(
+    'creating a meeting invites everyone immediately, once, and cron never re-sends',
+    async () => {
+      const got: Array<{ kind: string; participantId: string }> = [];
+      const capture = async (p: { kind: string; participant: { id: string } }) => {
+        got.push({ kind: p.kind, participantId: p.participant.id });
+        return { status: 'sent' as const };
+      };
+      const r = await svc.createMeeting(u.host, {
+        organizationId: org.A,
+        title: 'Dispatch Me',
+        mode: 'scheduled',
+        startAt: new Date(Date.now() + 3 * 3600_000).toISOString(),
+        durationMinutes: 30,
+        timezone: 'UTC',
+        participantUserIds: [u.a, u.b],
+        guests: [{ email: `d-${sfx}@example.test` }],
+        access: 'invited',
+        allowGuests: true,
+      });
+      await dispatchInvitations(r.meeting.id, { sender: capture, force: true });
+      assert.equal(got.length, 3); // a, b, guest — not the host
+      assert.ok(got.every((g) => g.kind === 'invitation'));
+      await dispatchInvitations(r.meeting.id, { sender: capture, force: true });
+      await runMeetingTick({
+        now: new Date(),
+        notificationsEnabled: true,
+        sender: capture,
+        roomIdentities: async () => null,
+        useLock: false,
+      });
+      assert.equal(
+        got.filter((g) => g.kind === 'invitation').length,
+        3,
+        'replays and the cron tick must not duplicate'
+      );
+      // Adding someone later invites only the new person.
+      const before = got.length;
+      await svc.addParticipants(r.meeting, { userIds: [u.c], guests: [] });
+      await dispatchInvitations(r.meeting.id, { sender: capture, force: true });
+      assert.equal(got.length, before + 1);
+    }
+  );
+  await check(
+    'ending a meeting sends the summary immediately to people it applies to',
+    async () => {
+      const got: Array<{ kind: string; meetingId: string }> = [];
+      const capture = async (p: { kind: string; meeting: { id: string } }) => {
+        got.push({ kind: p.kind, meetingId: p.meeting.id });
+        return { status: 'sent' as const };
+      };
+      const mid = await mk('SummaryNow', 5, 'UTC', { userIds: [u.a], guests: [] });
+      const m = (await db.select().from(meetings).where(eq(meetings.id, mid)))[0]!;
+      const live = await svc.ensureMeetingLive(m);
+      const pa = await part(mid, u.a);
+      await svc.recordPulseWithSession(
+        live,
+        pa.id,
+        buildMeetingIdentity(pa.id, 'summarysess1'),
+        new Date(Date.now() - 4 * minute)
+      );
+      await svc.endMeeting(mid, { by: u.host, reason: 'host_ended' });
+      await dispatchSummaries({ meetingId: mid }, { sender: capture, force: true });
+      assert.equal(got.filter((g) => g.meetingId === mid && g.kind === 'summary').length, 2); // host + attendee
+      await dispatchSummaries({ meetingId: mid }, { sender: capture, force: true });
+      assert.equal(got.filter((g) => g.meetingId === mid).length, 2);
+    }
+  );
+
   // cleanup (cascades)
   await db.delete(meetingSeries).where(eq(meetingSeries.organizationId, org.A));
   await db.delete(organizations).where(sql`${organizations.id} IN (${org.A}, ${org.B})`);

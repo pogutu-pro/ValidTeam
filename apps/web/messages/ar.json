@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "رابط الضيف هذا غير صالح.",
         "forbidden": "أنت غير مدعو إلى هذا الاجتماع.",
         "generic": "تعذّر الانضمام إلى الاجتماع. حاول مرة أخرى."
-      }
+      },
+      "readyToJoin": "هل أنت مستعد للانضمام؟",
+      "microphone": "الميكروفون",
+      "camera": "الكاميرا",
+      "defaultDevice": "الافتراضي",
+      "cameraOffNotice": "الكاميرا متوقفة",
+      "nameHint": "سيرى الآخرون في الاجتماع هذا الاسم."
     },
     "room": {
       "you": "أنت",
@@ -7346,7 +7352,35 @@
       "leave": "مغادرة",
       "endConfirmTitle": "إنهاء الاجتماع للجميع؟",
       "endConfirmBody": "سيُفصل الجميع وسيُغلق الاجتماع.",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "reactions": "التفاعلات",
+      "reactionLabels": {
+        "thumbsUp": "إعجاب",
+        "clap": "تصفيق",
+        "heart": "قلب",
+        "laugh": "ضحك",
+        "wow": "مندهش",
+        "party": "احتفال"
+      },
+      "raiseHand": "رفع اليد",
+      "lowerHand": "خفض اليد",
+      "handRaised": "{name} رفع يده",
+      "more": "خيارات أخرى",
+      "layout": "التخطيط",
+      "layoutGrid": "شبكة",
+      "layoutSpeaker": "المتحدث",
+      "fullscreen": "ملء الشاشة",
+      "exitFullscreen": "الخروج من ملء الشاشة",
+      "copyLink": "نسخ رابط الاجتماع",
+      "linkCopied": "تم نسخ رابط الاجتماع",
+      "linkCopyFailed": "تعذّر نسخ الرابط.",
+      "pin": "تثبيت {name}",
+      "unpin": "إلغاء تثبيت {name}",
+      "searchPeople": "بحث عن أشخاص",
+      "leaveOptions": "خيارات مغادرة أخرى",
+      "leaveKeepOpen": "المغادرة مع إبقاء الاجتماع مفتوحًا",
+      "shortcutsHint": "الاختصارات: M الميكروفون، V الكاميرا، H اليد، C الدردشة، P الأشخاص",
+      "elapsed": "الوقت في الاجتماع"
     },
     "details": {
       "didNotAttend": "لم يحضر",
@@ -7472,8 +7506,25 @@
         "early": "حالات المغادرة المبكرة",
         "trend": "الحضور عبر الزمن",
         "history": "الاجتماعات الأخيرة",
-        "didNotAttend": "لم يحضر"
-      }
-    }
+        "didNotAttend": "لم يحضر",
+        "pendingHint": "اجتماعات قادمة أو مباشرة: {count}. ستُحتسب عند انتهائها."
+      },
+      "orgPendingHint": "لم ينتهِ أي اجتماع في هذه الفترة بعد. تُحسب الحضور والساعات والنسب عند انتهاء الاجتماع."
+    },
+    "newMeeting": "اجتماع جديد",
+    "newInstant": "بدء اجتماع فوري",
+    "newSchedule": "جدولة لوقت لاحق",
+    "startOrJoin": "بدء اجتماع أو الانضمام إليه",
+    "joinCodePlaceholder": "أدخل رمزًا أو رابطًا",
+    "joinWithCode": "انضمام",
+    "joinCodeInvalid": "أدخل رابط اجتماع أو رمزًا صالحًا.",
+    "liveNow": "مباشر الآن",
+    "joinNow": "انضم الآن",
+    "today": "اليوم",
+    "tomorrow": "غدًا",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط",
+    "linkCopyFailed": "تعذّر نسخ الرابط.",
+    "viewDetails": "التفاصيل"
   }
 }

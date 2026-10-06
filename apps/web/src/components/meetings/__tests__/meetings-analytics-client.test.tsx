@@ -80,6 +80,7 @@ const me = {
     attended: 8,
     missed: 2,
     hosted: 3,
+    pending: 2,
     totalMeetingHours: 9.5,
     avgAttendanceSeconds: 3000,
     avgAttendancePct: 91,
@@ -120,6 +121,30 @@ describe('MeetingsAnalyticsClient', () => {
     expect(
       analyticsMock.mock.calls.every(([p]) => p.scope !== 'organization' || p.enabled === false)
     ).toBe(true);
+  });
+
+  it('explains pending meetings instead of leaving bare zeros', () => {
+    role = 'member';
+    render(<MeetingsAnalyticsClient />);
+    expect(screen.getByRole('status')).toHaveTextContent(/still upcoming or live: 2/i);
+  });
+
+  it('admins land on the organization view and see why numbers are empty before meetings end', () => {
+    analyticsMock.mockImplementation((p: { scope: string; enabled: boolean }) => ({
+      data: !p.enabled
+        ? undefined
+        : p.scope === 'organization'
+          ? { ...org, volume: { ...org.volume, completed: 0, total: 3 } }
+          : me,
+      isLoading: false,
+      isError: false,
+    }));
+    render(<MeetingsAnalyticsClient />);
+    expect(screen.getByRole('tab', { name: /organization/i })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    );
+    expect(screen.getByRole('status')).toHaveTextContent(/no meetings have finished/i);
   });
 
   it('admins can switch to organization KPIs; unavailable rates render as an em dash', async () => {

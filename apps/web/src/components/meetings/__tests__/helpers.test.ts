@@ -85,3 +85,37 @@ describe('formatting and join window', () => {
     expect(canJoinNow(m(0, 'ended'), true)).toBe(false);
   });
 });
+
+import { extractMeetingSlug, groupByDay } from '../meeting-format';
+
+describe('extractMeetingSlug', () => {
+  it('accepts bare codes and links, drops guest tokens, rejects junk', () => {
+    expect(extractMeetingSlug('  abcdefgh1234  ')).toBe('abcdefgh1234');
+    expect(extractMeetingSlug('https://app.example.com/meet/abcdefgh1234?g=tok')).toBe(
+      'abcdefgh1234'
+    );
+    expect(extractMeetingSlug('app.example.com/meet/abcdefgh1234')).toBe('abcdefgh1234');
+    expect(extractMeetingSlug('https://app.example.com/other/abcdefgh1234')).toBeNull();
+    expect(extractMeetingSlug('short')).toBeNull();
+    expect(extractMeetingSlug('has spaces in it')).toBeNull();
+    expect(extractMeetingSlug('')).toBeNull();
+  });
+});
+
+describe('groupByDay', () => {
+  it('groups by local calendar day with Today/Tomorrow keys, preserving order', () => {
+    const now = new Date(2026, 9, 7, 9, 0);
+    const at = (d: number, h: number) => new Date(2026, 9, 7 + d, h, 0).toISOString();
+    const groups = groupByDay(
+      [
+        { id: 'a', scheduledStartAt: at(0, 10) },
+        { id: 'b', scheduledStartAt: at(0, 15) },
+        { id: 'c', scheduledStartAt: at(1, 9) },
+        { id: 'd', scheduledStartAt: at(5, 9) },
+      ],
+      now
+    );
+    expect(groups.map((g) => g.key)).toEqual(['today', 'tomorrow', '2026-10-12']);
+    expect(groups[0]!.items.map((i) => i.id)).toEqual(['a', 'b']);
+  });
+});

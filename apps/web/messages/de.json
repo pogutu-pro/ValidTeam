@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Dieser Gästelink ist ungültig.",
         "forbidden": "Du bist nicht zu diesem Meeting eingeladen.",
         "generic": "Dem Meeting konnte nicht beigetreten werden. Bitte versuche es erneut."
-      }
+      },
+      "readyToJoin": "Bereit zum Beitreten?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Standard",
+      "cameraOffNotice": "Die Kamera ist aus",
+      "nameHint": "Andere Personen im Meeting sehen diesen Namen."
     },
     "room": {
       "you": "Du",
@@ -7346,7 +7352,35 @@
       "leave": "Verlassen",
       "endConfirmTitle": "Meeting für alle beenden?",
       "endConfirmBody": "Alle werden getrennt und das Meeting wird geschlossen.",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "reactions": "Reaktionen",
+      "reactionLabels": {
+        "thumbsUp": "Daumen hoch",
+        "clap": "Applaus",
+        "heart": "Herz",
+        "laugh": "Lachen",
+        "wow": "Überrascht",
+        "party": "Feiern"
+      },
+      "raiseHand": "Hand heben",
+      "lowerHand": "Hand senken",
+      "handRaised": "{name} hat die Hand gehoben",
+      "more": "Weitere Optionen",
+      "layout": "Layout",
+      "layoutGrid": "Raster",
+      "layoutSpeaker": "Sprecher",
+      "fullscreen": "Vollbild",
+      "exitFullscreen": "Vollbild beenden",
+      "copyLink": "Meeting-Link kopieren",
+      "linkCopied": "Meeting-Link kopiert",
+      "linkCopyFailed": "Der Link konnte nicht kopiert werden.",
+      "pin": "{name} anheften",
+      "unpin": "{name} lösen",
+      "searchPeople": "Personen suchen",
+      "leaveOptions": "Weitere Optionen zum Verlassen",
+      "leaveKeepOpen": "Verlassen und Meeting offen lassen",
+      "shortcutsHint": "Tastenkürzel: M Mikrofon, V Kamera, H Hand, C Chat, P Personen",
+      "elapsed": "Zeit im Meeting"
     },
     "details": {
       "didNotAttend": "Nicht teilgenommen",
@@ -7472,8 +7506,25 @@
         "early": "Frühe Abgänge",
         "trend": "Anwesenheit im Zeitverlauf",
         "history": "Letzte Meetings",
-        "didNotAttend": "Nicht teilgenommen"
-      }
-    }
+        "didNotAttend": "Nicht teilgenommen",
+        "pendingHint": "Anstehende oder laufende Meetings: {count}. Sie werden gezählt, sobald sie enden."
+      },
+      "orgPendingHint": "In diesem Zeitraum ist noch kein Meeting beendet. Anwesenheit, Stunden und Quoten werden berechnet, sobald ein Meeting endet."
+    },
+    "newMeeting": "Neues Meeting",
+    "newInstant": "Spontanes Meeting starten",
+    "newSchedule": "Für später planen",
+    "startOrJoin": "Meeting starten oder beitreten",
+    "joinCodePlaceholder": "Code oder Link eingeben",
+    "joinWithCode": "Beitreten",
+    "joinCodeInvalid": "Gib einen gültigen Meeting-Link oder Code ein.",
+    "liveNow": "Jetzt live",
+    "joinNow": "Jetzt beitreten",
+    "today": "Heute",
+    "tomorrow": "Morgen",
+    "copyLink": "Link kopieren",
+    "linkCopied": "Link kopiert",
+    "linkCopyFailed": "Der Link konnte nicht kopiert werden.",
+    "viewDetails": "Details"
   }
 }

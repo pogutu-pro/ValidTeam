@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Este enlace de invitado no es válido.",
         "forbidden": "No estás invitado a esta reunión.",
         "generic": "No se pudo unir a la reunión. Inténtalo de nuevo."
-      }
+      },
+      "readyToJoin": "¿Listo para unirte?",
+      "microphone": "Micrófono",
+      "camera": "Cámara",
+      "defaultDevice": "Predeterminado",
+      "cameraOffNotice": "La cámara está apagada",
+      "nameHint": "Las demás personas de la reunión verán este nombre."
     },
     "room": {
       "you": "Tú",
@@ -7346,7 +7352,35 @@
       "leave": "Salir",
       "endConfirmTitle": "¿Finalizar la reunión para todos?",
       "endConfirmBody": "Todos serán desconectados y la reunión se cerrará.",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "reactions": "Reacciones",
+      "reactionLabels": {
+        "thumbsUp": "Me gusta",
+        "clap": "Aplausos",
+        "heart": "Corazón",
+        "laugh": "Risa",
+        "wow": "Sorpresa",
+        "party": "Celebrar"
+      },
+      "raiseHand": "Levantar la mano",
+      "lowerHand": "Bajar la mano",
+      "handRaised": "{name} levantó la mano",
+      "more": "Más opciones",
+      "layout": "Disposición",
+      "layoutGrid": "Cuadrícula",
+      "layoutSpeaker": "Orador",
+      "fullscreen": "Pantalla completa",
+      "exitFullscreen": "Salir de pantalla completa",
+      "copyLink": "Copiar enlace de la reunión",
+      "linkCopied": "Enlace de la reunión copiado",
+      "linkCopyFailed": "No se pudo copiar el enlace.",
+      "pin": "Fijar a {name}",
+      "unpin": "Dejar de fijar a {name}",
+      "searchPeople": "Buscar personas",
+      "leaveOptions": "Más opciones de salida",
+      "leaveKeepOpen": "Salir y mantener la reunión abierta",
+      "shortcutsHint": "Atajos: M micrófono, V cámara, H mano, C chat, P personas",
+      "elapsed": "Tiempo en la reunión"
     },
     "details": {
       "didNotAttend": "No asistió",
@@ -7472,8 +7506,25 @@
         "early": "Salidas anticipadas",
         "trend": "Asistencia a lo largo del tiempo",
         "history": "Reuniones recientes",
-        "didNotAttend": "No asistió"
-      }
-    }
+        "didNotAttend": "No asistió",
+        "pendingHint": "Reuniones próximas o en vivo: {count}. Se contarán cuando terminen."
+      },
+      "orgPendingHint": "Aún no ha terminado ninguna reunión en este periodo. La asistencia, las horas y las tasas se calculan cuando termina una reunión."
+    },
+    "newMeeting": "Nueva reunión",
+    "newInstant": "Iniciar una reunión instantánea",
+    "newSchedule": "Programar para más tarde",
+    "startOrJoin": "Iniciar o unirse a una reunión",
+    "joinCodePlaceholder": "Introduce un código o enlace",
+    "joinWithCode": "Unirse",
+    "joinCodeInvalid": "Introduce un enlace o código de reunión válido.",
+    "liveNow": "En vivo ahora",
+    "joinNow": "Unirse ahora",
+    "today": "Hoy",
+    "tomorrow": "Mañana",
+    "copyLink": "Copiar enlace",
+    "linkCopied": "Enlace copiado",
+    "linkCopyFailed": "No se pudo copiar el enlace.",
+    "viewDetails": "Detalles"
   }
 }

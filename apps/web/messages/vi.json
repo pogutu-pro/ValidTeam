@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Liên kết khách này không hợp lệ.",
         "forbidden": "Bạn không được mời tham gia cuộc họp này.",
         "generic": "Không thể tham gia cuộc họp. Vui lòng thử lại."
-      }
+      },
+      "readyToJoin": "Sẵn sàng tham gia?",
+      "microphone": "Micrô",
+      "camera": "Camera",
+      "defaultDevice": "Mặc định",
+      "cameraOffNotice": "Camera đang tắt",
+      "nameHint": "Những người khác trong cuộc họp sẽ thấy tên này."
     },
     "room": {
       "you": "Bạn",
@@ -7346,7 +7352,35 @@
       "leave": "Rời đi",
       "endConfirmTitle": "Kết thúc cuộc họp cho tất cả mọi người?",
       "endConfirmBody": "Mọi người sẽ bị ngắt kết nối và cuộc họp sẽ đóng.",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "reactions": "Biểu cảm",
+      "reactionLabels": {
+        "thumbsUp": "Thích",
+        "clap": "Vỗ tay",
+        "heart": "Trái tim",
+        "laugh": "Cười",
+        "wow": "Ngạc nhiên",
+        "party": "Ăn mừng"
+      },
+      "raiseHand": "Giơ tay",
+      "lowerHand": "Hạ tay",
+      "handRaised": "{name} đã giơ tay",
+      "more": "Thêm tùy chọn",
+      "layout": "Bố cục",
+      "layoutGrid": "Lưới",
+      "layoutSpeaker": "Người nói",
+      "fullscreen": "Toàn màn hình",
+      "exitFullscreen": "Thoát toàn màn hình",
+      "copyLink": "Sao chép liên kết cuộc họp",
+      "linkCopied": "Đã sao chép liên kết cuộc họp",
+      "linkCopyFailed": "Không thể sao chép liên kết.",
+      "pin": "Ghim {name}",
+      "unpin": "Bỏ ghim {name}",
+      "searchPeople": "Tìm người",
+      "leaveOptions": "Thêm tùy chọn rời đi",
+      "leaveKeepOpen": "Rời đi và giữ cuộc họp mở",
+      "shortcutsHint": "Phím tắt: M micrô, V camera, H giơ tay, C trò chuyện, P mọi người",
+      "elapsed": "Thời gian trong cuộc họp"
     },
     "details": {
       "didNotAttend": "Không tham dự",
@@ -7472,8 +7506,25 @@
         "early": "Số lần rời sớm",
         "trend": "Mức tham dự theo thời gian",
         "history": "Cuộc họp gần đây",
-        "didNotAttend": "Không tham dự"
-      }
-    }
+        "didNotAttend": "Không tham dự",
+        "pendingHint": "Cuộc họp sắp tới hoặc đang diễn ra: {count}. Sẽ được tính khi kết thúc."
+      },
+      "orgPendingHint": "Chưa có cuộc họp nào kết thúc trong giai đoạn này. Mức tham dự, giờ và tỷ lệ được tính khi cuộc họp kết thúc."
+    },
+    "newMeeting": "Cuộc họp mới",
+    "newInstant": "Bắt đầu cuộc họp tức thì",
+    "newSchedule": "Lên lịch để sau",
+    "startOrJoin": "Bắt đầu hoặc tham gia cuộc họp",
+    "joinCodePlaceholder": "Nhập mã hoặc liên kết",
+    "joinWithCode": "Tham gia",
+    "joinCodeInvalid": "Nhập liên kết hoặc mã cuộc họp hợp lệ.",
+    "liveNow": "Đang trực tiếp",
+    "joinNow": "Tham gia ngay",
+    "today": "Hôm nay",
+    "tomorrow": "Ngày mai",
+    "copyLink": "Sao chép liên kết",
+    "linkCopied": "Đã sao chép liên kết",
+    "linkCopyFailed": "Không thể sao chép liên kết.",
+    "viewDetails": "Chi tiết"
   }
 }

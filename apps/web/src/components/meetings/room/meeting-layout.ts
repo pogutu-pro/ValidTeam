@@ -51,3 +51,32 @@ export function initials(name: string | undefined | null): string {
   const last = parts.length > 1 ? (parts[parts.length - 1]![0] ?? '') : '';
   return (first + last).toUpperCase();
 }
+
+const TONES = [
+  'bg-accent-blue/20 text-accent-blue',
+  'bg-accent-emerald/20 text-accent-emerald',
+  'bg-accent-amber/20 text-accent-amber',
+  'bg-accent-rose/20 text-accent-rose',
+  'bg-accent-violet/20 text-accent-violet',
+  'bg-accent-cyan/20 text-accent-cyan',
+] as const;
+
+/** Deterministic avatar colour so a person looks the same to everyone. */
+export function avatarTone(name: string | undefined | null): string {
+  const text = name ?? '';
+  let h = 0;
+  for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) >>> 0;
+  return TONES[h % TONES.length]!;
+}
+
+/** "m", "v" ... shortcuts must never fire while typing. */
+export function isTypingTarget(el: EventTarget | null): boolean {
+  const node = el as HTMLElement | null;
+  return Boolean(
+    node &&
+      (node.tagName === 'INPUT' ||
+        node.tagName === 'TEXTAREA' ||
+        node.tagName === 'SELECT' ||
+        node.isContentEditable)
+  );
+}

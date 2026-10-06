@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Deze gastlink is ongeldig.",
         "forbidden": "Je bent niet uitgenodigd voor deze vergadering.",
         "generic": "Deelnemen aan de vergadering is mislukt. Probeer het opnieuw."
-      }
+      },
+      "readyToJoin": "Klaar om deel te nemen?",
+      "microphone": "Microfoon",
+      "camera": "Camera",
+      "defaultDevice": "Standaard",
+      "cameraOffNotice": "De camera staat uit",
+      "nameHint": "Andere deelnemers zien deze naam."
     },
     "room": {
       "you": "Jij",
@@ -7346,7 +7352,35 @@
       "leave": "Verlaten",
       "endConfirmTitle": "De vergadering voor iedereen beëindigen?",
       "endConfirmBody": "Iedereen wordt losgekoppeld en de vergadering wordt gesloten.",
-      "cancel": "Annuleren"
+      "cancel": "Annuleren",
+      "reactions": "Reacties",
+      "reactionLabels": {
+        "thumbsUp": "Duim omhoog",
+        "clap": "Applaus",
+        "heart": "Hart",
+        "laugh": "Lachen",
+        "wow": "Verrast",
+        "party": "Vieren"
+      },
+      "raiseHand": "Hand opsteken",
+      "lowerHand": "Hand laten zakken",
+      "handRaised": "{name} heeft de hand opgestoken",
+      "more": "Meer opties",
+      "layout": "Indeling",
+      "layoutGrid": "Raster",
+      "layoutSpeaker": "Spreker",
+      "fullscreen": "Volledig scherm",
+      "exitFullscreen": "Volledig scherm sluiten",
+      "copyLink": "Vergaderlink kopiëren",
+      "linkCopied": "Vergaderlink gekopieerd",
+      "linkCopyFailed": "De link kon niet worden gekopieerd.",
+      "pin": "{name} vastzetten",
+      "unpin": "{name} losmaken",
+      "searchPeople": "Personen zoeken",
+      "leaveOptions": "Meer opties om te verlaten",
+      "leaveKeepOpen": "Verlaten en vergadering open laten",
+      "shortcutsHint": "Sneltoetsen: M microfoon, V camera, H hand, C chat, P personen",
+      "elapsed": "Tijd in vergadering"
     },
     "details": {
       "didNotAttend": "Niet aanwezig",
@@ -7472,8 +7506,25 @@
         "early": "Vroege vertrekken",
         "trend": "Aanwezigheid in de tijd",
         "history": "Recente vergaderingen",
-        "didNotAttend": "Niet aanwezig"
-      }
-    }
+        "didNotAttend": "Niet aanwezig",
+        "pendingHint": "Aankomende of live vergaderingen: {count}. Ze tellen mee zodra ze eindigen."
+      },
+      "orgPendingHint": "In deze periode is nog geen vergadering afgelopen. Aanwezigheid, uren en percentages worden berekend zodra een vergadering eindigt."
+    },
+    "newMeeting": "Nieuwe vergadering",
+    "newInstant": "Een directe vergadering starten",
+    "newSchedule": "Plannen voor later",
+    "startOrJoin": "Een vergadering starten of eraan deelnemen",
+    "joinCodePlaceholder": "Voer een code of link in",
+    "joinWithCode": "Deelnemen",
+    "joinCodeInvalid": "Voer een geldige vergaderlink of code in.",
+    "liveNow": "Nu live",
+    "joinNow": "Nu deelnemen",
+    "today": "Vandaag",
+    "tomorrow": "Morgen",
+    "copyLink": "Link kopiëren",
+    "linkCopied": "Link gekopieerd",
+    "linkCopyFailed": "De link kon niet worden gekopieerd.",
+    "viewDetails": "Details"
   }
 }

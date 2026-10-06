@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@/lib/hooks/use-user';
 import { MeetingApiError, meetingFetch, type MeetingDetail } from '@/lib/hooks/use-meetings';
 import { MeetingRoom } from './meeting-room';
-import { Prejoin, type PrejoinInfo } from './prejoin';
+import { Prejoin, type JoinChoices, type PrejoinInfo } from './prejoin';
 
 interface JoinResponse {
   url: string;
@@ -25,7 +25,7 @@ type Phase =
       kind: 'room';
       join: JoinResponse;
       info: PrejoinInfo;
-      initial: { mic: boolean; camera: boolean };
+      initial: JoinChoices;
     }
   | { kind: 'left'; reason: 'left' | 'removed' | 'ended' };
 
@@ -130,7 +130,7 @@ export function MeetExperience({ slug }: { slug: string }) {
   }, [slug, userLoading, reloadKey]);
 
   const join = useCallback(
-    async (opts: { name: string; mic: boolean; camera: boolean }) => {
+    async (opts: JoinChoices) => {
       if (phase.kind !== 'prejoin') return;
       setJoining(true);
       setError(null);
@@ -153,7 +153,7 @@ export function MeetExperience({ slug }: { slug: string }) {
           kind: 'room',
           join: res,
           info: phase.info,
-          initial: { mic: opts.mic, camera: opts.camera },
+          initial: opts,
         });
       } catch (e) {
         const code = e instanceof MeetingApiError ? e.code : 'error';
@@ -178,20 +178,49 @@ export function MeetExperience({ slug }: { slug: string }) {
     [phase, slug, t]
   );
 
-  // Browser keep-alive: only a fallback for the server-side LiveKit reconciliation.
+  // Attendance safety net. LiveKit's webhooks are the primary source, but the
+  // browser also reports in: an immediate pulse (opens the session if the join
+  // webhook never arrives), a 30 s heartbeat, and a leave signal on exit or
+  // page close. All of them are idempotent server-side.
+  const reportLeave = useCallback(() => {
+    const body = JSON.stringify({
+      clientSessionId: clientSessionId.current,
+      ...(guestToken.current ? { guestToken: guestToken.current } : {}),
+    });
+    const url = `/api/meetings/${encodeURIComponent(slug)}/leave`;
+    if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+      navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+    } else {
+      void fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        keepalive: true,
+      }).catch(() => undefined);
+    }
+  }, [slug]);
+
   useEffect(() => {
     if (phase.kind !== 'room') return;
     const send = () => {
       void fetch(`/api/meetings/${encodeURIComponent(slug)}/pulse`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(guestToken.current ? { guestToken: guestToken.current } : {}),
+        body: JSON.stringify({
+          clientSessionId: clientSessionId.current,
+          ...(guestToken.current ? { guestToken: guestToken.current } : {}),
+        }),
         keepalive: true,
       }).catch(() => undefined);
     };
+    send();
     const id = window.setInterval(send, PULSE_MS);
-    return () => window.clearInterval(id);
-  }, [phase.kind, slug]);
+    window.addEventListener('pagehide', reportLeave);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener('pagehide', reportLeave);
+    };
+  }, [phase.kind, slug, reportLeave]);
 
   const base = `/api/meetings/${encodeURIComponent(slug)}`;
 
@@ -257,8 +286,20 @@ export function MeetExperience({ slug }: { slug: string }) {
       serverUrl={phase.join.url}
       token={phase.join.token}
       connect
-      audio={phase.initial.mic}
-      video={phase.initial.camera}
+      audio={
+        phase.initial.mic
+          ? phase.initial.micDeviceId
+            ? { deviceId: phase.initial.micDeviceId }
+            : true
+          : false
+      }
+      video={
+        phase.initial.camera
+          ? phase.initial.cameraDeviceId
+            ? { deviceId: phase.initial.cameraDeviceId }
+            : true
+          : false
+      }
       onDisconnected={(reason) => {
         if (reason === DisconnectReason.PARTICIPANT_REMOVED)
           setPhase({ kind: 'left', reason: 'removed' });
@@ -270,8 +311,12 @@ export function MeetExperience({ slug }: { slug: string }) {
     >
       <MeetingRoom
         title={phase.info.title}
+        slug={slug}
         isHost={phase.join.role === 'host'}
-        onLeave={() => setPhase((p) => (p.kind === 'room' ? { kind: 'left', reason: 'left' } : p))}
+        onLeave={() => {
+          reportLeave();
+          setPhase((p) => (p.kind === 'room' ? { kind: 'left', reason: 'left' } : p));
+        }}
         onEndForAll={async () => {
           await meetingFetch(`${base}/end`, { method: 'POST' });
         }}

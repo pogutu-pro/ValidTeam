@@ -25,7 +25,7 @@ import {
   useMeetingStats,
   type MeetingDetail,
 } from '@/lib/hooks/use-meetings';
-import { canJoinNow, formatDuration, pct, statusVariant } from './meeting-format';
+import { CTA_BLUE, canJoinNow, formatDuration, pct, statusVariant } from './meeting-format';
 import { parseGuestEmails } from './schedule-validation';
 
 type Person = MeetingDetail['participants'][number];
@@ -151,7 +151,7 @@ export function MeetingDetailsClient({ slug }: { slug: string }) {
         actions={
           <>
             {joinable ? (
-              <Button asChild>
+              <Button asChild className={CTA_BLUE}>
                 <Link href={`/meet/${slug}`}>
                   <Video aria-hidden="true" />
                   {data.you.isHost && m.status === 'scheduled' ? tm('start') : tm('join')}

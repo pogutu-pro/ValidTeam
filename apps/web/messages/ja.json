@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "このゲストリンクは無効です。",
         "forbidden": "このミーティングには招待されていません。",
         "generic": "ミーティングに参加できませんでした。もう一度お試しください。"
-      }
+      },
+      "readyToJoin": "参加の準備はできましたか？",
+      "microphone": "マイク",
+      "camera": "カメラ",
+      "defaultDevice": "デフォルト",
+      "cameraOffNotice": "カメラはオフです",
+      "nameHint": "ミーティングの他の参加者にはこの名前が表示されます。"
     },
     "room": {
       "you": "あなた",
@@ -7346,7 +7352,35 @@
       "leave": "退出",
       "endConfirmTitle": "全員に対してミーティングを終了しますか？",
       "endConfirmBody": "全員の接続が切断され、ミーティングが閉じられます。",
-      "cancel": "キャンセル"
+      "cancel": "キャンセル",
+      "reactions": "リアクション",
+      "reactionLabels": {
+        "thumbsUp": "いいね",
+        "clap": "拍手",
+        "heart": "ハート",
+        "laugh": "笑い",
+        "wow": "驚き",
+        "party": "お祝い"
+      },
+      "raiseHand": "手を挙げる",
+      "lowerHand": "手を下げる",
+      "handRaised": "{name}さんが手を挙げました",
+      "more": "その他のオプション",
+      "layout": "レイアウト",
+      "layoutGrid": "グリッド",
+      "layoutSpeaker": "スピーカー",
+      "fullscreen": "全画面表示",
+      "exitFullscreen": "全画面表示を終了",
+      "copyLink": "ミーティングリンクをコピー",
+      "linkCopied": "ミーティングリンクをコピーしました",
+      "linkCopyFailed": "リンクをコピーできませんでした。",
+      "pin": "{name}をピン留め",
+      "unpin": "{name}のピン留めを解除",
+      "searchPeople": "ユーザーを検索",
+      "leaveOptions": "その他の退出オプション",
+      "leaveKeepOpen": "退出してミーティングを開いたままにする",
+      "shortcutsHint": "ショートカット: M マイク、V カメラ、H 挙手、C チャット、P 参加者",
+      "elapsed": "ミーティング時間"
     },
     "details": {
       "didNotAttend": "欠席",
@@ -7472,8 +7506,25 @@
         "early": "早退",
         "trend": "出席の推移",
         "history": "最近のミーティング",
-        "didNotAttend": "欠席"
-      }
-    }
+        "didNotAttend": "欠席",
+        "pendingHint": "今後またはライブのミーティング: {count}件。終了後に集計されます。"
+      },
+      "orgPendingHint": "この期間に終了したミーティングはまだありません。出席、時間、割合はミーティング終了時に計算されます。"
+    },
+    "newMeeting": "新しいミーティング",
+    "newInstant": "インスタントミーティングを開始",
+    "newSchedule": "後でスケジュール",
+    "startOrJoin": "ミーティングを開始または参加",
+    "joinCodePlaceholder": "コードまたはリンクを入力",
+    "joinWithCode": "参加",
+    "joinCodeInvalid": "有効なミーティングリンクまたはコードを入力してください。",
+    "liveNow": "現在ライブ",
+    "joinNow": "今すぐ参加",
+    "today": "今日",
+    "tomorrow": "明日",
+    "copyLink": "リンクをコピー",
+    "linkCopied": "リンクをコピーしました",
+    "linkCopyFailed": "リンクをコピーできませんでした。",
+    "viewDetails": "詳細"
   }
 }

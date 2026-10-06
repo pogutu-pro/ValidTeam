@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Ten link dla gości jest nieprawidłowy.",
         "forbidden": "Nie masz zaproszenia na to spotkanie.",
         "generic": "Nie udało się dołączyć do spotkania. Spróbuj ponownie."
-      }
+      },
+      "readyToJoin": "Gotowy do dołączenia?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Domyślne",
+      "cameraOffNotice": "Kamera jest wyłączona",
+      "nameHint": "Inni uczestnicy zobaczą to imię i nazwisko."
     },
     "room": {
       "you": "Ty",
@@ -7346,7 +7352,35 @@
       "leave": "Opuść",
       "endConfirmTitle": "Zakończyć spotkanie dla wszystkich?",
       "endConfirmBody": "Wszyscy zostaną rozłączeni, a spotkanie zostanie zamknięte.",
-      "cancel": "Anuluj"
+      "cancel": "Anuluj",
+      "reactions": "Reakcje",
+      "reactionLabels": {
+        "thumbsUp": "Kciuk w górę",
+        "clap": "Brawa",
+        "heart": "Serce",
+        "laugh": "Śmiech",
+        "wow": "Zaskoczenie",
+        "party": "Świętuj"
+      },
+      "raiseHand": "Podnieś rękę",
+      "lowerHand": "Opuść rękę",
+      "handRaised": "{name} podniósł(a) rękę",
+      "more": "Więcej opcji",
+      "layout": "Układ",
+      "layoutGrid": "Siatka",
+      "layoutSpeaker": "Mówca",
+      "fullscreen": "Pełny ekran",
+      "exitFullscreen": "Zamknij pełny ekran",
+      "copyLink": "Kopiuj link do spotkania",
+      "linkCopied": "Skopiowano link do spotkania",
+      "linkCopyFailed": "Nie udało się skopiować linku.",
+      "pin": "Przypnij: {name}",
+      "unpin": "Odepnij: {name}",
+      "searchPeople": "Szukaj osób",
+      "leaveOptions": "Więcej opcji wyjścia",
+      "leaveKeepOpen": "Wyjdź i zostaw spotkanie otwarte",
+      "shortcutsHint": "Skróty: M mikrofon, V kamera, H ręka, C czat, P osoby",
+      "elapsed": "Czas w spotkaniu"
     },
     "details": {
       "didNotAttend": "Nieobecny",
@@ -7472,8 +7506,25 @@
         "early": "Wcześniejsze wyjścia",
         "trend": "Frekwencja w czasie",
         "history": "Ostatnie spotkania",
-        "didNotAttend": "Nieobecny"
-      }
-    }
+        "didNotAttend": "Nieobecny",
+        "pendingHint": "Nadchodzące lub trwające spotkania: {count}. Zostaną policzone po zakończeniu."
+      },
+      "orgPendingHint": "W tym okresie nie zakończyło się jeszcze żadne spotkanie. Frekwencja, godziny i wskaźniki są obliczane po zakończeniu spotkania."
+    },
+    "newMeeting": "Nowe spotkanie",
+    "newInstant": "Rozpocznij spotkanie natychmiastowe",
+    "newSchedule": "Zaplanuj na później",
+    "startOrJoin": "Rozpocznij lub dołącz do spotkania",
+    "joinCodePlaceholder": "Wpisz kod lub link",
+    "joinWithCode": "Dołącz",
+    "joinCodeInvalid": "Wpisz prawidłowy link lub kod spotkania.",
+    "liveNow": "Teraz na żywo",
+    "joinNow": "Dołącz teraz",
+    "today": "Dzisiaj",
+    "tomorrow": "Jutro",
+    "copyLink": "Kopiuj link",
+    "linkCopied": "Skopiowano link",
+    "linkCopyFailed": "Nie udało się skopiować linku.",
+    "viewDetails": "Szczegóły"
   }
 }

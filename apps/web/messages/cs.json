@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Tento odkaz pro hosty není platný.",
         "forbidden": "Na tuto schůzku nejste pozváni.",
         "generic": "K schůzce se nepodařilo připojit. Zkuste to znovu."
-      }
+      },
+      "readyToJoin": "Připraveni se připojit?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Výchozí",
+      "cameraOffNotice": "Kamera je vypnutá",
+      "nameHint": "Ostatní účastníci schůzky uvidí toto jméno."
     },
     "room": {
       "you": "Vy",
@@ -7346,7 +7352,35 @@
       "leave": "Odejít",
       "endConfirmTitle": "Ukončit schůzku pro všechny?",
       "endConfirmBody": "Všichni budou odpojeni a schůzka se uzavře.",
-      "cancel": "Zrušit"
+      "cancel": "Zrušit",
+      "reactions": "Reakce",
+      "reactionLabels": {
+        "thumbsUp": "Palec nahoru",
+        "clap": "Potlesk",
+        "heart": "Srdce",
+        "laugh": "Smích",
+        "wow": "Překvapení",
+        "party": "Oslava"
+      },
+      "raiseHand": "Zvednout ruku",
+      "lowerHand": "Snížit ruku",
+      "handRaised": "{name} zvedl(a) ruku",
+      "more": "Další možnosti",
+      "layout": "Rozložení",
+      "layoutGrid": "Mřížka",
+      "layoutSpeaker": "Řečník",
+      "fullscreen": "Celá obrazovka",
+      "exitFullscreen": "Ukončit celou obrazovku",
+      "copyLink": "Kopírovat odkaz na schůzku",
+      "linkCopied": "Odkaz na schůzku zkopírován",
+      "linkCopyFailed": "Odkaz se nepodařilo zkopírovat.",
+      "pin": "Připnout: {name}",
+      "unpin": "Odepnout: {name}",
+      "searchPeople": "Hledat lidi",
+      "leaveOptions": "Další možnosti odchodu",
+      "leaveKeepOpen": "Odejít a nechat schůzku otevřenou",
+      "shortcutsHint": "Zkratky: M mikrofon, V kamera, H ruka, C chat, P lidé",
+      "elapsed": "Čas na schůzce"
     },
     "details": {
       "didNotAttend": "Nezúčastnil se",
@@ -7472,8 +7506,25 @@
         "early": "Předčasné odchody",
         "trend": "Účast v čase",
         "history": "Nedávné schůzky",
-        "didNotAttend": "Nezúčastnil se"
-      }
-    }
+        "didNotAttend": "Nezúčastnil se",
+        "pendingHint": "Nadcházející nebo živé schůzky: {count}. Započítají se po skončení."
+      },
+      "orgPendingHint": "V tomto období ještě neskončila žádná schůzka. Účast, hodiny a míry se počítají po skončení schůzky."
+    },
+    "newMeeting": "Nová schůzka",
+    "newInstant": "Zahájit okamžitou schůzku",
+    "newSchedule": "Naplánovat na později",
+    "startOrJoin": "Zahájit schůzku nebo se připojit",
+    "joinCodePlaceholder": "Zadejte kód nebo odkaz",
+    "joinWithCode": "Připojit se",
+    "joinCodeInvalid": "Zadejte platný odkaz nebo kód schůzky.",
+    "liveNow": "Právě živě",
+    "joinNow": "Připojit se hned",
+    "today": "Dnes",
+    "tomorrow": "Zítra",
+    "copyLink": "Kopírovat odkaz",
+    "linkCopied": "Odkaz zkopírován",
+    "linkCopyFailed": "Odkaz se nepodařilo zkopírovat.",
+    "viewDetails": "Podrobnosti"
   }
 }

@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "This guest link is not valid.",
         "forbidden": "You are not invited to this meeting.",
         "generic": "Could not join the meeting. Please try again."
-      }
+      },
+      "readyToJoin": "Ready to join?",
+      "microphone": "Microphone",
+      "camera": "Camera",
+      "defaultDevice": "Default",
+      "cameraOffNotice": "Camera is off",
+      "nameHint": "Other people in the meeting will see this name."
     },
     "room": {
       "you": "You",
@@ -7346,7 +7352,35 @@
       "leave": "Leave",
       "endConfirmTitle": "End the meeting for everyone?",
       "endConfirmBody": "Everyone will be disconnected and the meeting will close.",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "reactions": "Reactions",
+      "reactionLabels": {
+        "thumbsUp": "Thumbs up",
+        "clap": "Applause",
+        "heart": "Heart",
+        "laugh": "Laughing",
+        "wow": "Surprised",
+        "party": "Celebrate"
+      },
+      "raiseHand": "Raise hand",
+      "lowerHand": "Lower hand",
+      "handRaised": "{name} raised a hand",
+      "more": "More options",
+      "layout": "Layout",
+      "layoutGrid": "Grid",
+      "layoutSpeaker": "Speaker",
+      "fullscreen": "Full screen",
+      "exitFullscreen": "Exit full screen",
+      "copyLink": "Copy meeting link",
+      "linkCopied": "Meeting link copied",
+      "linkCopyFailed": "Could not copy the link.",
+      "pin": "Pin {name}",
+      "unpin": "Unpin {name}",
+      "searchPeople": "Search people",
+      "leaveOptions": "More leave options",
+      "leaveKeepOpen": "Leave and keep the meeting open",
+      "shortcutsHint": "Shortcuts: M mic, V camera, H hand, C chat, P people",
+      "elapsed": "Time in meeting"
     },
     "details": {
       "didNotAttend": "Did not attend",
@@ -7472,8 +7506,25 @@
         "early": "Early departures",
         "trend": "Attendance over time",
         "history": "Recent meetings",
-        "didNotAttend": "Did not attend"
-      }
-    }
+        "didNotAttend": "Did not attend",
+        "pendingHint": "Meetings still upcoming or live: {count}. They are counted once they end."
+      },
+      "orgPendingHint": "No meetings have finished in this period yet. Attendance, hours and rates are calculated when a meeting ends."
+    },
+    "newMeeting": "New meeting",
+    "newInstant": "Start an instant meeting",
+    "newSchedule": "Schedule for later",
+    "startOrJoin": "Start or join a meeting",
+    "joinCodePlaceholder": "Enter a code or link",
+    "joinWithCode": "Join",
+    "joinCodeInvalid": "Enter a valid meeting link or code.",
+    "liveNow": "Live now",
+    "joinNow": "Join now",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "linkCopyFailed": "Could not copy the link.",
+    "viewDetails": "Details"
   }
 }

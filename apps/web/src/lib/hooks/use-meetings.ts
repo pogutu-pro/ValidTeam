@@ -246,6 +246,7 @@ export interface PersonalMeetingAnalytics {
     attended: number;
     missed: number;
     hosted: number;
+    pending: number;
     totalMeetingHours: number;
     avgAttendanceSeconds: number | null;
     avgAttendancePct: number | null;

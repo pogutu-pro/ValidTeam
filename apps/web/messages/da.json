@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Dette gæstelink er ugyldigt.",
         "forbidden": "Du er ikke inviteret til dette møde.",
         "generic": "Det lykkedes ikke at deltage i mødet. Prøv igen."
-      }
+      },
+      "readyToJoin": "Klar til at deltage?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Standard",
+      "cameraOffNotice": "Kameraet er slukket",
+      "nameHint": "Andre i mødet kan se dette navn."
     },
     "room": {
       "you": "Dig",
@@ -7346,7 +7352,35 @@
       "leave": "Forlad",
       "endConfirmTitle": "Afslut mødet for alle?",
       "endConfirmBody": "Alle afbrydes, og mødet lukkes.",
-      "cancel": "Annuller"
+      "cancel": "Annuller",
+      "reactions": "Reaktioner",
+      "reactionLabels": {
+        "thumbsUp": "Tommelfinger op",
+        "clap": "Klapsalver",
+        "heart": "Hjerte",
+        "laugh": "Grin",
+        "wow": "Overrasket",
+        "party": "Fejr"
+      },
+      "raiseHand": "Ræk hånden op",
+      "lowerHand": "Sænk hånden",
+      "handRaised": "{name} rakte hånden op",
+      "more": "Flere muligheder",
+      "layout": "Layout",
+      "layoutGrid": "Gitter",
+      "layoutSpeaker": "Taler",
+      "fullscreen": "Fuld skærm",
+      "exitFullscreen": "Forlad fuld skærm",
+      "copyLink": "Kopiér mødelink",
+      "linkCopied": "Mødelink kopieret",
+      "linkCopyFailed": "Linket kunne ikke kopieres.",
+      "pin": "Fastgør {name}",
+      "unpin": "Frigør {name}",
+      "searchPeople": "Søg efter personer",
+      "leaveOptions": "Flere måder at forlade på",
+      "leaveKeepOpen": "Forlad og hold mødet åbent",
+      "shortcutsHint": "Genveje: M mikrofon, V kamera, H hånd, C chat, P personer",
+      "elapsed": "Tid i mødet"
     },
     "details": {
       "didNotAttend": "Deltog ikke",
@@ -7472,8 +7506,25 @@
         "early": "Tidlige afgange",
         "trend": "Fremmøde over tid",
         "history": "Seneste møder",
-        "didNotAttend": "Deltog ikke"
-      }
-    }
+        "didNotAttend": "Deltog ikke",
+        "pendingHint": "Kommende eller igangværende møder: {count}. De tælles med, når de er slut."
+      },
+      "orgPendingHint": "Der er endnu ikke afsluttet nogen møder i denne periode. Fremmøde, timer og procenter beregnes, når et møde slutter."
+    },
+    "newMeeting": "Nyt møde",
+    "newInstant": "Start et øjeblikkeligt møde",
+    "newSchedule": "Planlæg til senere",
+    "startOrJoin": "Start eller deltag i et møde",
+    "joinCodePlaceholder": "Indtast en kode eller et link",
+    "joinWithCode": "Deltag",
+    "joinCodeInvalid": "Indtast et gyldigt mødelink eller en gyldig kode.",
+    "liveNow": "Live nu",
+    "joinNow": "Deltag nu",
+    "today": "I dag",
+    "tomorrow": "I morgen",
+    "copyLink": "Kopiér link",
+    "linkCopied": "Link kopieret",
+    "linkCopyFailed": "Linket kunne ikke kopieres.",
+    "viewDetails": "Detaljer"
   }
 }

@@ -56,6 +56,8 @@ describe('issueMeetingToken', () => {
         canPublishData: true,
       });
       expect(Boolean(claims.video.roomAdmin)).toBe(admin);
+      // Raise-hand state is stored in participant attributes, which needs this grant.
+      expect(claims.video.canUpdateOwnMetadata).toBe(true);
       expect(claims.sub).toBe('vm:part1:abcdefgh12');
       expect(out.url).toBe('wss://lk.example.test');
       // The API secret never appears in anything returned to the browser.

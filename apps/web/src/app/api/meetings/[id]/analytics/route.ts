@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { db, meetingParticipants, users, and, eq } from '@validteam/db';
 import { getMeetingAnalyticsDetail } from '@/lib/meetings/analytics';
 import { errorResponse, loadMeetingForMember } from '@/lib/meetings/api';
+import { sweepOrganizationMeetings } from '@/lib/meetings/service';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,6 +11,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const { meeting, principal } = await loadMeetingForMember(request, id);
+    await sweepOrganizationMeetings(meeting.organizationId);
     const stats = await getMeetingAnalyticsDetail(meeting.id, meeting.organizationId);
     if (!stats) return NextResponse.json({ available: false, status: meeting.status });
 

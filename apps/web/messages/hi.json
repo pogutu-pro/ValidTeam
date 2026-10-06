@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "यह अतिथि लिंक मान्य नहीं है।",
         "forbidden": "आपको इस मीटिंग में आमंत्रित नहीं किया गया है।",
         "generic": "मीटिंग में शामिल नहीं हो सके। कृपया फिर कोशिश करें।"
-      }
+      },
+      "readyToJoin": "शामिल होने के लिए तैयार हैं?",
+      "microphone": "माइक्रोफ़ोन",
+      "camera": "कैमरा",
+      "defaultDevice": "डिफ़ॉल्ट",
+      "cameraOffNotice": "कैमरा बंद है",
+      "nameHint": "मीटिंग में मौजूद अन्य लोग यह नाम देखेंगे।"
     },
     "room": {
       "you": "आप",
@@ -7346,7 +7352,35 @@
       "leave": "छोड़ें",
       "endConfirmTitle": "सभी के लिए मीटिंग समाप्त करें?",
       "endConfirmBody": "सभी का कनेक्शन कट जाएगा और मीटिंग बंद हो जाएगी।",
-      "cancel": "रद्द करें"
+      "cancel": "रद्द करें",
+      "reactions": "प्रतिक्रियाएँ",
+      "reactionLabels": {
+        "thumbsUp": "पसंद",
+        "clap": "तालियाँ",
+        "heart": "दिल",
+        "laugh": "हँसी",
+        "wow": "हैरान",
+        "party": "जश्न"
+      },
+      "raiseHand": "हाथ उठाएँ",
+      "lowerHand": "हाथ नीचे करें",
+      "handRaised": "{name} ने हाथ उठाया",
+      "more": "और विकल्प",
+      "layout": "लेआउट",
+      "layoutGrid": "ग्रिड",
+      "layoutSpeaker": "वक्ता",
+      "fullscreen": "पूर्ण स्क्रीन",
+      "exitFullscreen": "पूर्ण स्क्रीन से बाहर निकलें",
+      "copyLink": "मीटिंग लिंक कॉपी करें",
+      "linkCopied": "मीटिंग लिंक कॉपी हो गया",
+      "linkCopyFailed": "लिंक कॉपी नहीं हो सका।",
+      "pin": "{name} को पिन करें",
+      "unpin": "{name} को अनपिन करें",
+      "searchPeople": "लोग खोजें",
+      "leaveOptions": "छोड़ने के और विकल्प",
+      "leaveKeepOpen": "छोड़ें और मीटिंग खुली रखें",
+      "shortcutsHint": "शॉर्टकट: M माइक, V कैमरा, H हाथ, C चैट, P लोग",
+      "elapsed": "मीटिंग में समय"
     },
     "details": {
       "didNotAttend": "उपस्थित नहीं हुए",
@@ -7472,8 +7506,25 @@
         "early": "जल्दी प्रस्थान",
         "trend": "समय के साथ उपस्थिति",
         "history": "हाल की मीटिंग",
-        "didNotAttend": "उपस्थित नहीं हुए"
-      }
-    }
+        "didNotAttend": "उपस्थित नहीं हुए",
+        "pendingHint": "आगामी या लाइव मीटिंग: {count}। समाप्त होने पर इन्हें गिना जाएगा।"
+      },
+      "orgPendingHint": "इस अवधि में अभी कोई मीटिंग समाप्त नहीं हुई है। उपस्थिति, घंटे और दरें मीटिंग समाप्त होने पर गिनी जाती हैं।"
+    },
+    "newMeeting": "नई मीटिंग",
+    "newInstant": "तुरंत मीटिंग शुरू करें",
+    "newSchedule": "बाद के लिए शेड्यूल करें",
+    "startOrJoin": "मीटिंग शुरू करें या शामिल हों",
+    "joinCodePlaceholder": "कोड या लिंक दर्ज करें",
+    "joinWithCode": "शामिल हों",
+    "joinCodeInvalid": "मान्य मीटिंग लिंक या कोड दर्ज करें।",
+    "liveNow": "अभी लाइव",
+    "joinNow": "अभी शामिल हों",
+    "today": "आज",
+    "tomorrow": "कल",
+    "copyLink": "लिंक कॉपी करें",
+    "linkCopied": "लिंक कॉपी हो गया",
+    "linkCopyFailed": "लिंक कॉपी नहीं हो सका।",
+    "viewDetails": "विवरण"
   }
 }

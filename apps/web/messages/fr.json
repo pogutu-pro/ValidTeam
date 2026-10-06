@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Ce lien invité n'est pas valide.",
         "forbidden": "Vous n'êtes pas invité à cette réunion.",
         "generic": "Impossible de rejoindre la réunion. Veuillez réessayer."
-      }
+      },
+      "readyToJoin": "Prêt à rejoindre ?",
+      "microphone": "Micro",
+      "camera": "Caméra",
+      "defaultDevice": "Par défaut",
+      "cameraOffNotice": "La caméra est désactivée",
+      "nameHint": "Les autres participants verront ce nom."
     },
     "room": {
       "you": "Vous",
@@ -7346,7 +7352,35 @@
       "leave": "Quitter",
       "endConfirmTitle": "Terminer la réunion pour tous ?",
       "endConfirmBody": "Tout le monde sera déconnecté et la réunion sera fermée.",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "reactions": "Réactions",
+      "reactionLabels": {
+        "thumbsUp": "J'aime",
+        "clap": "Applaudissements",
+        "heart": "Cœur",
+        "laugh": "Rire",
+        "wow": "Surprise",
+        "party": "Fête"
+      },
+      "raiseHand": "Lever la main",
+      "lowerHand": "Baisser la main",
+      "handRaised": "{name} a levé la main",
+      "more": "Plus d'options",
+      "layout": "Disposition",
+      "layoutGrid": "Grille",
+      "layoutSpeaker": "Intervenant",
+      "fullscreen": "Plein écran",
+      "exitFullscreen": "Quitter le plein écran",
+      "copyLink": "Copier le lien de la réunion",
+      "linkCopied": "Lien de la réunion copié",
+      "linkCopyFailed": "Impossible de copier le lien.",
+      "pin": "Épingler {name}",
+      "unpin": "Désépingler {name}",
+      "searchPeople": "Rechercher des personnes",
+      "leaveOptions": "Autres options pour quitter",
+      "leaveKeepOpen": "Quitter et laisser la réunion ouverte",
+      "shortcutsHint": "Raccourcis : M micro, V caméra, H main, C chat, P participants",
+      "elapsed": "Durée de la réunion"
     },
     "details": {
       "didNotAttend": "Absent",
@@ -7472,8 +7506,25 @@
         "early": "Départs anticipés",
         "trend": "Présence au fil du temps",
         "history": "Réunions récentes",
-        "didNotAttend": "Absent"
-      }
-    }
+        "didNotAttend": "Absent",
+        "pendingHint": "Réunions à venir ou en direct : {count}. Elles seront comptabilisées une fois terminées."
+      },
+      "orgPendingHint": "Aucune réunion n'est encore terminée sur cette période. La présence, les heures et les taux sont calculés à la fin d'une réunion."
+    },
+    "newMeeting": "Nouvelle réunion",
+    "newInstant": "Démarrer une réunion instantanée",
+    "newSchedule": "Planifier pour plus tard",
+    "startOrJoin": "Démarrer ou rejoindre une réunion",
+    "joinCodePlaceholder": "Saisissez un code ou un lien",
+    "joinWithCode": "Rejoindre",
+    "joinCodeInvalid": "Saisissez un lien ou un code de réunion valide.",
+    "liveNow": "En direct",
+    "joinNow": "Rejoindre maintenant",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié",
+    "linkCopyFailed": "Impossible de copier le lien.",
+    "viewDetails": "Détails"
   }
 }

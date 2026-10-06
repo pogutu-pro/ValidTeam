@@ -15,6 +15,16 @@ The format is based on [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.
   meeting and organization/personal analytics; invitation, reminder, no-show and
   summary emails with an `.ics` attachment; `/api/cron/meetings-tick`.
   Migration `0069_meetings`. Translated in all 30 catalogs.
+- Meetings: redesigned home (New meeting menu, join by code/link, Live now, upcoming
+  grouped by day), Meet-style pre-join with device pickers and mic level, and a
+  dark room with reactions, raise hand, pin/speaker layouts and self-view.
+
+### Fixed
+
+- Meetings: invitation and summary emails no longer depend on the cron tick;
+  attendance is also recorded from the browser when LiveKit webhooks do not
+  arrive; analytics no longer stay empty when meetings are never explicitly
+  ended.
 
 ## [0.17.3] - 2026-09-26
 

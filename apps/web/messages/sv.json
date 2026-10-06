@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Den här gästlänken är ogiltig.",
         "forbidden": "Du är inte inbjuden till det här mötet.",
         "generic": "Det gick inte att ansluta till mötet. Försök igen."
-      }
+      },
+      "readyToJoin": "Redo att ansluta?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Standard",
+      "cameraOffNotice": "Kameran är av",
+      "nameHint": "Andra i mötet ser det här namnet."
     },
     "room": {
       "you": "Du",
@@ -7346,7 +7352,35 @@
       "leave": "Lämna",
       "endConfirmTitle": "Avsluta mötet för alla?",
       "endConfirmBody": "Alla kopplas från och mötet stängs.",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "reactions": "Reaktioner",
+      "reactionLabels": {
+        "thumbsUp": "Tummen upp",
+        "clap": "Applåder",
+        "heart": "Hjärta",
+        "laugh": "Skratt",
+        "wow": "Förvånad",
+        "party": "Fira"
+      },
+      "raiseHand": "Räck upp handen",
+      "lowerHand": "Sänk handen",
+      "handRaised": "{name} räckte upp handen",
+      "more": "Fler alternativ",
+      "layout": "Layout",
+      "layoutGrid": "Rutnät",
+      "layoutSpeaker": "Talare",
+      "fullscreen": "Helskärm",
+      "exitFullscreen": "Avsluta helskärm",
+      "copyLink": "Kopiera mötesländ",
+      "linkCopied": "Mötesländ kopierad",
+      "linkCopyFailed": "Det gick inte att kopiera länken.",
+      "pin": "Fäst {name}",
+      "unpin": "Lossa {name}",
+      "searchPeople": "Sök personer",
+      "leaveOptions": "Fler sätt att lämna",
+      "leaveKeepOpen": "Lämna och låt mötet vara öppet",
+      "shortcutsHint": "Kortkommandon: M mikrofon, V kamera, H hand, C chatt, P personer",
+      "elapsed": "Tid i mötet"
     },
     "details": {
       "didNotAttend": "Deltog inte",
@@ -7472,8 +7506,25 @@
         "early": "Tidiga avgångar",
         "trend": "Närvaro över tid",
         "history": "Senaste möten",
-        "didNotAttend": "Deltog inte"
-      }
-    }
+        "didNotAttend": "Deltog inte",
+        "pendingHint": "Kommande eller pågående möten: {count}. De räknas när de avslutats."
+      },
+      "orgPendingHint": "Inget möte har avslutats under den här perioden än. Närvaro, timmar och andelar beräknas när ett möte avslutas."
+    },
+    "newMeeting": "Nytt möte",
+    "newInstant": "Starta ett direktmöte",
+    "newSchedule": "Boka till senare",
+    "startOrJoin": "Starta eller anslut till ett möte",
+    "joinCodePlaceholder": "Ange en kod eller länk",
+    "joinWithCode": "Anslut",
+    "joinCodeInvalid": "Ange en giltig mötesländ eller kod.",
+    "liveNow": "Live nu",
+    "joinNow": "Anslut nu",
+    "today": "Idag",
+    "tomorrow": "Imorgon",
+    "copyLink": "Kopiera länk",
+    "linkCopied": "Länk kopierad",
+    "linkCopyFailed": "Det gick inte att kopiera länken.",
+    "viewDetails": "Detaljer"
   }
 }

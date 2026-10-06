@@ -273,7 +273,7 @@ export async function getPersonalMeetingAnalytics(userId: string, q: AnalyticsQu
     lt(meetings.scheduledStartAt, to)
   );
 
-  const [[totals], trend, history, [hosted]] = await Promise.all([
+  const [[totals], trend, history, [hosted], [open]] = await Promise.all([
     db
       .select({
         invited: sql<number>`count(*)::int`,
@@ -332,6 +332,21 @@ export async function getPersonalMeetingAnalytics(userId: string, q: AnalyticsQu
           lt(meetings.scheduledStartAt, to)
         )
       ),
+    db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(meetingParticipants)
+      .innerJoin(meetings, eq(meetings.id, meetingParticipants.meetingId))
+      .where(
+        and(
+          eq(meetingParticipants.organizationId, q.organizationId),
+          eq(meetings.organizationId, q.organizationId),
+          eq(meetingParticipants.userId, userId),
+          sql`${meetingParticipants.removedAt} IS NULL`,
+          sql`${meetings.status} IN ('scheduled', 'live')`,
+          gte(meetings.scheduledStartAt, from),
+          lt(meetings.scheduledStartAt, to)
+        )
+      ),
   ]);
 
   const attended = n(totals?.attended);
@@ -342,6 +357,8 @@ export async function getPersonalMeetingAnalytics(userId: string, q: AnalyticsQu
       attended,
       missed: n(totals?.missed),
       hosted: n(hosted?.count),
+      // Invited meetings that are still upcoming or live: not in attendance numbers until they end.
+      pending: n(open?.count),
       totalMeetingHours: Math.round((n(totals?.seconds) / 3600) * 10) / 10,
       avgAttendanceSeconds: attended > 0 ? Math.round(n(totals?.seconds) / attended) : null,
       avgAttendancePct:

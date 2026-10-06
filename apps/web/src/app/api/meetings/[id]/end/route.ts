@@ -1,6 +1,8 @@
 /** POST /api/meetings/:slug/end — end the meeting for everyone (host or org admin). */
 import { NextResponse } from 'next/server';
 import { MeetingError } from '@/lib/meetings/errors';
+import { runAfterResponse } from '@/lib/meetings/background';
+import { dispatchSummaries } from '@/lib/meetings/dispatch';
 import { endMeeting } from '@/lib/meetings/service';
 import { deleteRoomQuietly } from '@/lib/meetings/livekit-admin';
 import { errorResponse, loadMeetingForMember } from '@/lib/meetings/api';
@@ -19,6 +21,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const result = await endMeeting(meeting.id, { by: actor.userId, reason: 'host_ended' });
     // Kick everyone still connected; the DB is already the source of truth.
     if (result.ended && meeting.livekitRoomName) await deleteRoomQuietly(meeting.livekitRoomName);
+    if (result.ended)
+      runAfterResponse('summary dispatch', () => dispatchSummaries({ meetingId: meeting.id }));
     return NextResponse.json({ ended: result.ended });
   } catch (error) {
     return errorResponse(error);

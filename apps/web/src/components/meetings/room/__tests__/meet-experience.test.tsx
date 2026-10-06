@@ -9,6 +9,7 @@ const userState = {
 jest.mock('@/lib/hooks/use-user', () => ({ useUser: () => userState }));
 jest.mock('@livekit/components-react', () => ({
   usePreviewTracks: () => undefined,
+  useTrackVolume: () => 0,
   LiveKitRoom: ({
     children,
     token,
@@ -195,6 +196,38 @@ describe('MeetExperience', () => {
     await userEvent.click(await screen.findByRole('button', { name: /join meeting/i }));
     expect(await screen.findByRole('alert')).toHaveTextContent(/has not opened yet/i);
     expect(screen.getByRole('button', { name: /join meeting/i })).toBeEnabled();
+  });
+
+  it('reports attendance itself: an immediate pulse on entering, and a leave signal on exit', async () => {
+    const beacon = jest.fn().mockReturnValue(true);
+    Object.defineProperty(navigator, 'sendBeacon', { configurable: true, value: beacon });
+    respond({
+      '/api/meetings/slug123': {
+        body: {
+          meeting: {
+            title: 'P',
+            status: 'live',
+            scheduledStartAt: '2026-10-07T07:00:00Z',
+            host: { name: 'P' },
+          },
+        },
+      },
+      '/join': { body: { url: 'wss://lk.test', token: 't', role: 'participant' } },
+      '/pulse': { body: { ok: true } },
+    });
+    render(<MeetExperience slug="slug123" />);
+    await userEvent.click(await screen.findByRole('button', { name: /join meeting/i }));
+    await screen.findByText('in-room:P:guest');
+    const pulse = calls.find((c) => c.url.endsWith('/pulse'));
+    expect(pulse).toBeDefined();
+    const pulseBody = JSON.parse(String(pulse!.init?.body));
+    const joinBody = JSON.parse(String(calls.find((c) => c.url.endsWith('/join'))!.init?.body));
+    expect(pulseBody.clientSessionId).toBe(joinBody.clientSessionId); // same tab identity as the LiveKit token
+    await userEvent.click(screen.getByText('leave-now'));
+    expect(beacon).toHaveBeenCalledWith(
+      expect.stringMatching(/\/api\/meetings\/slug123\/leave$/),
+      expect.anything()
+    );
   });
 
   it('after leaving, offers rejoin which reloads the pre-join step', async () => {

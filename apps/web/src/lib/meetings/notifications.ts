@@ -100,12 +100,22 @@ const joined = () =>
       )
     );
 
+export interface NotificationScope {
+  meetingId?: string;
+  organizationId?: string;
+}
+
 export async function findCandidates(
   kind: MeetingNotificationKind,
   now: Date,
-  limit: number
+  limit: number,
+  scope?: NotificationScope
 ): Promise<Candidate[]> {
   const ms = (n: number) => new Date(now.getTime() + n);
+  const scoped = [
+    scope?.meetingId ? eq(meetings.id, scope.meetingId) : undefined,
+    scope?.organizationId ? eq(meetings.organizationId, scope.organizationId) : undefined,
+  ];
   switch (kind) {
     case 'invitation':
       return joined()
@@ -116,9 +126,12 @@ export async function findCandidates(
             isNull(meetingParticipants.removedAt),
             eq(meetingParticipants.role, 'participant'),
             // A series is announced once, on its first occurrence — not 60 emails.
-            sql`(${meetings.seriesId} IS NULL OR ${meetings.occurrenceKey} = (
+            sql`(${meetings.seriesId} IS NULL
+              OR ${meetingParticipants.createdAt} > ${meetings.createdAt} + interval '1 minute'
+              OR ${meetings.occurrenceKey} = (
               SELECT min(m2.occurrence_key) FROM meetings m2 WHERE m2.series_id = ${meetings.seriesId}))`,
-            notYetHandled(kind)
+            notYetHandled(kind),
+            ...scoped
           )
         )
         .orderBy(meetings.scheduledStartAt)
@@ -132,7 +145,8 @@ export async function findCandidates(
             gte(meetings.scheduledStartAt, now),
             lte(meetings.scheduledStartAt, ms(REMINDER_LEAD_MS)),
             isNull(meetingParticipants.removedAt),
-            notYetHandled(kind)
+            notYetHandled(kind),
+            ...scoped
           )
         )
         .orderBy(meetings.scheduledStartAt)
@@ -147,7 +161,8 @@ export async function findCandidates(
             gte(meetings.scheduledStartAt, ms(-NO_SHOW_MAX_AGE_MS)),
             isNull(meetingParticipants.removedAt),
             sql`NOT EXISTS (SELECT 1 FROM meeting_attendance_sessions s WHERE s.participant_id = ${meetingParticipants.id})`,
-            notYetHandled(kind)
+            notYetHandled(kind),
+            ...scoped
           )
         )
         .orderBy(meetings.scheduledStartAt)
@@ -161,7 +176,8 @@ export async function findCandidates(
             gte(meetings.endedAt, ms(-SUMMARY_MAX_AGE_MS)),
             sql`${meetingStats.attendedCount} > 0`,
             isNull(meetingParticipants.removedAt),
-            notYetHandled(kind)
+            notYetHandled(kind),
+            ...scoped
           )
         )
         .orderBy(meetings.endedAt)
@@ -190,8 +206,16 @@ export async function processNotifications(opts: {
   concurrency?: number;
   /** Epoch ms after which no new deliveries start (the rest wait for the next tick). */
   deadlineMs?: number;
+  /** Restrict to some kinds (default: all) and/or to one meeting / organization. */
+  kinds?: MeetingNotificationKind[];
+  scope?: NotificationScope;
 }): Promise<Record<MeetingNotificationKind, NotificationRunSummary>> {
-  const kinds: MeetingNotificationKind[] = ['invitation', 'reminder_30m', 'no_show_30m', 'summary'];
+  const kinds: MeetingNotificationKind[] = opts.kinds ?? [
+    'invitation',
+    'reminder_30m',
+    'no_show_30m',
+    'summary',
+  ];
   const out = {} as Record<MeetingNotificationKind, NotificationRunSummary>;
 
   for (const kind of kinds) {
@@ -208,7 +232,8 @@ export async function processNotifications(opts: {
     const candidates = await findCandidates(
       kind,
       opts.now,
-      opts.limitPerKind ?? DEFAULT_LIMIT_PER_KIND
+      opts.limitPerKind ?? DEFAULT_LIMIT_PER_KIND,
+      opts.scope
     );
     const size = opts.concurrency ?? NOTIFICATION_CONCURRENCY;
     for (let i = 0; i < candidates.length; i += size) {

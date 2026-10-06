@@ -47,6 +47,8 @@ export function grantForRole(roomName: string, role: MeetingLivekitRole): VideoG
     canPublish: true,
     canSubscribe: true,
     canPublishData: true,
+    // Raise-hand state is stored in participant attributes.
+    canUpdateOwnMetadata: true,
   };
   return role === 'host' ? { ...base, roomAdmin: true } : { ...base, roomAdmin: false };
 }

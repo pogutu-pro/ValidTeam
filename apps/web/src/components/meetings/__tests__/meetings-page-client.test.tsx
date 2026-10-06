@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MeetingsPageClient } from '../meetings-page-client';
 import type { MeetingListItem } from '@/lib/hooks/use-meetings';
@@ -22,55 +22,71 @@ jest.mock('@/lib/hooks/use-meetings', () => ({
 }));
 
 const item = (over: Partial<MeetingListItem> = {}): MeetingListItem => ({
-  slug: 'abc123',
+  slug: 'abc123xyz',
   title: 'Product Planning',
-  status: 'live',
+  status: 'scheduled',
   isInstant: false,
-  isRecurring: true,
-  scheduledStartAt: new Date(Date.now() - 600_000).toISOString(),
-  scheduledEndAt: new Date(Date.now() + 3_000_000).toISOString(),
+  isRecurring: false,
+  scheduledStartAt: new Date(Date.now() + 5 * 60_000).toISOString(),
+  scheduledEndAt: new Date(Date.now() + 65 * 60_000).toISOString(),
   timezone: 'UTC',
-  joinPath: '/meet/abc123',
+  joinPath: '/meet/abc123xyz',
   host: { id: 'u1', name: 'Paul', email: 'p@x.io' },
   participantCount: 8,
   isHost: false,
   ...over,
 });
 
+const respond = (byScope: Record<string, MeetingListItem[]>) =>
+  useMeetingsMock.mockImplementation((_org: string, scope: string) => ({
+    data: { meetings: byScope[scope] ?? [], nextOffset: null },
+    isLoading: false,
+    isError: false,
+    refetch: jest.fn(),
+  }));
+
+jest.setTimeout(20_000);
+
 describe('MeetingsPageClient', () => {
+  beforeAll(() => {
+    class RO {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    }
+    Object.defineProperty(window, 'ResizeObserver', {
+      configurable: true,
+      writable: true,
+      value: RO,
+    });
+    Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: jest.fn(),
+    });
+  });
   beforeEach(() => {
     jest.clearAllMocks();
-    useMeetingsMock.mockImplementation((_org: string, scope: string) => ({
-      data: { meetings: scope === 'past' ? [] : [item()], nextOffset: null },
-      isLoading: false,
-      isError: false,
-      refetch: jest.fn(),
-    }));
+    respond({ upcoming: [item()], live: [] });
   });
 
-  it('offers one obvious primary action and a secondary schedule action', () => {
+  it('puts one big "New meeting" action next to a join-by-code field', () => {
     render(<MeetingsPageClient />);
-    expect(screen.getByRole('button', { name: /start a meeting/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /^schedule$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /new meeting/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /enter a code or link/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^join$/i })).toBeDisabled();
     expect(screen.getByRole('link', { name: /analytics/i })).toHaveAttribute(
       'href',
       '/meetings/analytics'
     );
   });
 
-  it('shows title, host, participants, status and a Join link for a live meeting', () => {
+  it('New meeting menu: instant meeting goes straight to the room', async () => {
+    mutate.mockImplementation((_p, opts) => opts.onSuccess({ meeting: { slug: 'newslug00' } }));
     render(<MeetingsPageClient />);
-    expect(screen.getByText('Product Planning')).toBeInTheDocument();
-    expect(screen.getByText(/hosted by paul/i)).toBeInTheDocument();
-    expect(screen.getByText(/participants: 8/i)).toBeInTheDocument();
-    expect(screen.getAllByText('Live').length).toBeGreaterThan(0);
-    expect(screen.getByRole('link', { name: /join/i })).toHaveAttribute('href', '/meet/abc123');
-  });
-
-  it('starts an instant meeting and goes straight to the room', async () => {
-    mutate.mockImplementation((_payload, opts) => opts.onSuccess({ meeting: { slug: 'newslug' } }));
-    render(<MeetingsPageClient />);
-    await userEvent.click(screen.getByRole('button', { name: /start a meeting/i }));
+    await userEvent.click(screen.getByRole('button', { name: /new meeting/i }));
+    await userEvent.click(
+      await screen.findByRole('menuitem', { name: /start an instant meeting/i })
+    );
     expect(mutate).toHaveBeenCalledWith(
       expect.objectContaining({
         organizationId: 'org1',
@@ -80,11 +96,77 @@ describe('MeetingsPageClient', () => {
       }),
       expect.anything()
     );
-    await waitFor(() => expect(push).toHaveBeenCalledWith('/meet/newslug'));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/meet/newslug00'));
   });
 
-  it('shows an actionable empty state for the Past tab and an error state with retry', async () => {
+  it('New meeting menu: schedule for later opens the scheduling dialog', async () => {
     render(<MeetingsPageClient />);
+    await userEvent.click(screen.getByRole('button', { name: /new meeting/i }));
+    await userEvent.click(await screen.findByRole('menuitem', { name: /schedule for later/i }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('join by code accepts a bare code or a pasted link (dropping any guest token)', async () => {
+    render(<MeetingsPageClient />);
+    const field = screen.getByRole('textbox', { name: /enter a code or link/i });
+    await userEvent.click(field);
+    await userEvent.paste('https://app.test/meet/abcdefgh1234?g=secrettoken');
+    await userEvent.click(screen.getByRole('button', { name: /^join$/i }));
+    expect(push).toHaveBeenCalledWith('/meet/abcdefgh1234');
+    push.mockClear();
+    await userEvent.clear(field);
+    await userEvent.click(field);
+    await userEvent.paste('not a code!');
+    await userEvent.click(screen.getByRole('button', { name: /^join$/i }));
+    expect(push).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert')).toHaveTextContent(/valid meeting link or code/i);
+  });
+
+  it('shows a Live now strip with a big Join now button', () => {
+    respond({
+      upcoming: [],
+      live: [item({ slug: 'liveslug99', status: 'live', title: 'Standup' })],
+    });
+    render(<MeetingsPageClient />);
+    const section = screen.getByRole('region', { name: /live now/i });
+    expect(within(section).getByText('Standup')).toBeInTheDocument();
+    expect(within(section).getByRole('link', { name: /join now/i })).toHaveAttribute(
+      'href',
+      '/meet/liveslug99'
+    );
+  });
+
+  it('groups upcoming meetings by day and offers Join when the window is open, Details otherwise', () => {
+    const later = new Date(Date.now() + 3 * 86_400_000);
+    respond({
+      upcoming: [
+        item({ slug: 'soonsoon1', title: 'Soon' }),
+        item({
+          slug: 'latelate1',
+          title: 'Later',
+          scheduledStartAt: later.toISOString(),
+          scheduledEndAt: new Date(later.getTime() + 3_600_000).toISOString(),
+        }),
+      ],
+      live: [],
+    });
+    render(<MeetingsPageClient />);
+    expect(screen.getByText(/^today/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /^join$/i })).toHaveAttribute(
+      'href',
+      '/meet/soonsoon1'
+    );
+    expect(screen.getByRole('link', { name: /details/i })).toHaveAttribute(
+      'href',
+      '/meetings/latelate1'
+    );
+    expect(screen.getAllByText(/hosted by paul/i).length).toBe(2);
+  });
+
+  it('empty states are actionable, and errors can be retried', async () => {
+    respond({ upcoming: [], past: [], live: [] });
+    render(<MeetingsPageClient />);
+    expect(screen.getByText(/no upcoming meetings/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole('tab', { name: /past/i }));
     expect(screen.getByText(/no past meetings yet/i)).toBeInTheDocument();
 

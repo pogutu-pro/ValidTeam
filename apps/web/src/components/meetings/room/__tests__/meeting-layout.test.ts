@@ -32,3 +32,31 @@ describe('participant metadata', () => {
     expect(initials('')).toBe('?');
   });
 });
+
+import { avatarTone, isTypingTarget } from '../meeting-layout';
+import { parseReaction, REACTIONS } from '../reactions';
+
+describe('avatarTone / typing guard', () => {
+  it('is deterministic per name and always a known tone', () => {
+    expect(avatarTone('Paul')).toBe(avatarTone('Paul'));
+    expect(avatarTone('Paul')).toMatch(/^bg-accent-/);
+    expect(avatarTone(undefined)).toMatch(/^bg-accent-/);
+  });
+  it('does not treat the document body as a typing target', () => {
+    expect(isTypingTarget(document.body)).toBe(false);
+    expect(isTypingTarget(document.createElement('input'))).toBe(true);
+    expect(isTypingTarget(document.createElement('textarea'))).toBe(true);
+    expect(isTypingTarget(null)).toBe(false);
+  });
+});
+
+describe('parseReaction (data-channel input is untrusted)', () => {
+  const enc = (v: unknown) => new TextEncoder().encode(JSON.stringify(v));
+  it('accepts only allow-listed reaction keys', () => {
+    for (const r of REACTIONS) expect(parseReaction(enc({ r: r.key }))).toBe(r.key);
+    expect(parseReaction(enc({ r: '<img src=x onerror=alert(1)>' }))).toBeNull();
+    expect(parseReaction(enc({ r: '👍' }))).toBeNull(); // raw emoji is not a key
+    expect(parseReaction(enc({ r: 42 }))).toBeNull();
+    expect(parseReaction(new TextEncoder().encode('not json'))).toBeNull();
+  });
+});

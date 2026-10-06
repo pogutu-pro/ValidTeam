@@ -49,8 +49,14 @@ The values below are a dated inventory, not agent instructions:
   analytics are computed from those sessions. Invitation, 30-minute reminder,
   30-minute no-show and post-meeting summary emails use the existing SMTP
   pipeline through an idempotent claim ledger driven by
-  `/api/cron/meetings-tick` (about once a minute). Meeting chat is transient
-  LiveKit data-channel chat. Recording, transcription, captions and AI
+  `/api/cron/meetings-tick` (about once a minute). Invitations and summaries are
+  also dispatched immediately (after creating/adding people and after a meeting
+  ends) through the same ledger, and finished meetings are closed out whenever
+  the list or analytics load, so the scheduler is only required for the
+  30-minute reminder and no-show emails. The room is a dark, Meet/Zoom-style
+  surface with grid/speaker/pinned layouts, emoji reactions and raised hands
+  (transient, LiveKit data channel and participant attributes), device pickers
+  and transient chat. Recording, transcription, captions and AI
   summaries are reserved in the schema (`none`) and deliberately not run.
 - Enterprise controls: SAML/SCIM lifecycle and scoped tokens, audit/SIEM,
   database-backed LiveKit/SMTP/storage settings, session revocation, trust and

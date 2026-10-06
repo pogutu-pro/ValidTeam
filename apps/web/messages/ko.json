@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "이 게스트 링크는 유효하지 않습니다.",
         "forbidden": "이 회의에 초대되지 않았습니다.",
         "generic": "회의에 참가할 수 없습니다. 다시 시도해 주세요."
-      }
+      },
+      "readyToJoin": "참가할 준비가 되셨나요?",
+      "microphone": "마이크",
+      "camera": "카메라",
+      "defaultDevice": "기본값",
+      "cameraOffNotice": "카메라가 꺼져 있습니다",
+      "nameHint": "회의의 다른 사람들에게 이 이름이 표시됩니다."
     },
     "room": {
       "you": "나",
@@ -7346,7 +7352,35 @@
       "leave": "나가기",
       "endConfirmTitle": "모든 사람에 대해 회의를 종료할까요?",
       "endConfirmBody": "모든 사람의 연결이 끊어지고 회의가 닫힙니다.",
-      "cancel": "취소"
+      "cancel": "취소",
+      "reactions": "반응",
+      "reactionLabels": {
+        "thumbsUp": "좋아요",
+        "clap": "박수",
+        "heart": "하트",
+        "laugh": "웃음",
+        "wow": "놀람",
+        "party": "축하"
+      },
+      "raiseHand": "손 들기",
+      "lowerHand": "손 내리기",
+      "handRaised": "{name}님이 손을 들었습니다",
+      "more": "옵션 더보기",
+      "layout": "레이아웃",
+      "layoutGrid": "그리드",
+      "layoutSpeaker": "발표자",
+      "fullscreen": "전체 화면",
+      "exitFullscreen": "전체 화면 종료",
+      "copyLink": "회의 링크 복사",
+      "linkCopied": "회의 링크를 복사했습니다",
+      "linkCopyFailed": "링크를 복사할 수 없습니다.",
+      "pin": "{name} 고정",
+      "unpin": "{name} 고정 해제",
+      "searchPeople": "사용자 검색",
+      "leaveOptions": "나가기 옵션 더보기",
+      "leaveKeepOpen": "나가고 회의는 열어 두기",
+      "shortcutsHint": "단축키: M 마이크, V 카메라, H 손 들기, C 채팅, P 참석자",
+      "elapsed": "회의 시간"
     },
     "details": {
       "didNotAttend": "불참",
@@ -7472,8 +7506,25 @@
         "early": "일찍 퇴장",
         "trend": "시간에 따른 참석",
         "history": "최근 회의",
-        "didNotAttend": "불참"
-      }
-    }
+        "didNotAttend": "불참",
+        "pendingHint": "예정되었거나 라이브 중인 회의: {count}개. 종료되면 집계됩니다."
+      },
+      "orgPendingHint": "이 기간에는 아직 종료된 회의가 없습니다. 참석, 시간, 비율은 회의가 끝나면 계산됩니다."
+    },
+    "newMeeting": "새 회의",
+    "newInstant": "즉석 회의 시작",
+    "newSchedule": "나중을 위해 예약",
+    "startOrJoin": "회의 시작 또는 참가",
+    "joinCodePlaceholder": "코드 또는 링크 입력",
+    "joinWithCode": "참가",
+    "joinCodeInvalid": "올바른 회의 링크 또는 코드를 입력하세요.",
+    "liveNow": "지금 라이브",
+    "joinNow": "지금 참가",
+    "today": "오늘",
+    "tomorrow": "내일",
+    "copyLink": "링크 복사",
+    "linkCopied": "링크를 복사했습니다",
+    "linkCopyFailed": "링크를 복사할 수 없습니다.",
+    "viewDetails": "세부정보"
   }
 }

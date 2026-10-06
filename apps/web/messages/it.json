@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Questo link ospite non è valido.",
         "forbidden": "Non sei invitato a questa riunione.",
         "generic": "Impossibile partecipare alla riunione. Riprova."
-      }
+      },
+      "readyToJoin": "Pronto a partecipare?",
+      "microphone": "Microfono",
+      "camera": "Fotocamera",
+      "defaultDevice": "Predefinito",
+      "cameraOffNotice": "La fotocamera è disattivata",
+      "nameHint": "Gli altri partecipanti vedranno questo nome."
     },
     "room": {
       "you": "Tu",
@@ -7346,7 +7352,35 @@
       "leave": "Esci",
       "endConfirmTitle": "Terminare la riunione per tutti?",
       "endConfirmBody": "Tutti verranno disconnessi e la riunione verrà chiusa.",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "reactions": "Reazioni",
+      "reactionLabels": {
+        "thumbsUp": "Mi piace",
+        "clap": "Applausi",
+        "heart": "Cuore",
+        "laugh": "Risata",
+        "wow": "Sorpresa",
+        "party": "Festeggia"
+      },
+      "raiseHand": "Alza la mano",
+      "lowerHand": "Abbassa la mano",
+      "handRaised": "{name} ha alzato la mano",
+      "more": "Altre opzioni",
+      "layout": "Layout",
+      "layoutGrid": "Griglia",
+      "layoutSpeaker": "Relatore",
+      "fullscreen": "Schermo intero",
+      "exitFullscreen": "Esci dallo schermo intero",
+      "copyLink": "Copia il link della riunione",
+      "linkCopied": "Link della riunione copiato",
+      "linkCopyFailed": "Impossibile copiare il link.",
+      "pin": "Fissa {name}",
+      "unpin": "Non fissare più {name}",
+      "searchPeople": "Cerca persone",
+      "leaveOptions": "Altre opzioni di uscita",
+      "leaveKeepOpen": "Esci e lascia aperta la riunione",
+      "shortcutsHint": "Scorciatoie: M microfono, V fotocamera, H mano, C chat, P persone",
+      "elapsed": "Tempo in riunione"
     },
     "details": {
       "didNotAttend": "Assente",
@@ -7472,8 +7506,25 @@
         "early": "Uscite anticipate",
         "trend": "Presenza nel tempo",
         "history": "Riunioni recenti",
-        "didNotAttend": "Assente"
-      }
-    }
+        "didNotAttend": "Assente",
+        "pendingHint": "Riunioni in programma o in diretta: {count}. Verranno conteggiate al termine."
+      },
+      "orgPendingHint": "In questo periodo non è ancora terminata alcuna riunione. Presenze, ore e percentuali vengono calcolate quando una riunione termina."
+    },
+    "newMeeting": "Nuova riunione",
+    "newInstant": "Avvia una riunione immediata",
+    "newSchedule": "Pianifica per dopo",
+    "startOrJoin": "Avvia o partecipa a una riunione",
+    "joinCodePlaceholder": "Inserisci un codice o un link",
+    "joinWithCode": "Partecipa",
+    "joinCodeInvalid": "Inserisci un link o un codice di riunione valido.",
+    "liveNow": "In diretta ora",
+    "joinNow": "Partecipa ora",
+    "today": "Oggi",
+    "tomorrow": "Domani",
+    "copyLink": "Copia link",
+    "linkCopied": "Link copiato",
+    "linkCopyFailed": "Impossibile copiare il link.",
+    "viewDetails": "Dettagli"
   }
 }

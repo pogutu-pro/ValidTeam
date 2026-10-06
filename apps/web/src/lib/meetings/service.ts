@@ -17,6 +17,7 @@ import {
   inArray,
   isNull,
   gte,
+  lt,
   sql,
   type Meeting,
   type MeetingParticipant,
@@ -27,7 +28,7 @@ import { recordMeetingEvent } from './events';
 import { computeMeetingStats } from './attendance';
 import { generateGuestToken, generateMeetingSlug } from './guest-tokens';
 import { buildMeetingRoomName } from './livekit';
-import { joinDeadline } from './notification-rules';
+import { joinDeadline, neverStartedDeadline } from './notification-rules';
 import { generateOccurrences, recurrenceRuleSchema, type RecurrenceRule } from './recurrence';
 import { isValidTimeZone } from './time';
 import { activeMemberIds, resolveInvitees, type ResolvedInvitees } from './participants';
@@ -562,7 +563,7 @@ export async function recordParticipantJoined(input: {
   participantId: string;
   identity: string;
   at: Date;
-  source?: 'webhook' | 'reconcile';
+  source?: 'webhook' | 'reconcile' | 'pulse';
 }): Promise<JoinRecordResult> {
   const [row] = await db
     .select({
@@ -942,3 +943,104 @@ export async function findOpenSessionCount(meetingId: string): Promise<number> {
 }
 
 export type { RecurrenceRule };
+
+// ------------------------------------------------- self-healing lifecycle --
+
+/** A live room with nobody in it ends after this long (matches LiveKit's empty-room timeout). */
+export const EMPTY_ROOM_GRACE_MS = 5 * 60_000;
+
+/**
+ * Close out meetings that are over: live rooms that have been empty for
+ * EMPTY_ROOM_GRACE_MS, and scheduled meetings nobody ever opened. Idempotent
+ * (atomic status transition) and safe to call from request handlers, so
+ * analytics stay correct even when the cron tick or LiveKit webhooks are not
+ * running. The cron tick calls the same function with no organization filter.
+ */
+export async function autoEndMeetings(opts: {
+  now?: Date;
+  organizationId?: string;
+  limit?: number;
+}): Promise<number> {
+  const now = opts.now ?? new Date();
+  const limit = opts.limit ?? 100;
+  const org = opts.organizationId ? eq(meetings.organizationId, opts.organizationId) : undefined;
+  let ended = 0;
+
+  const emptyBefore = new Date(now.getTime() - EMPTY_ROOM_GRACE_MS);
+  const empties = await db
+    .select({ id: meetings.id })
+    .from(meetings)
+    .where(
+      and(
+        org,
+        eq(meetings.status, 'live'),
+        lt(meetings.actualStartedAt, emptyBefore),
+        sql`NOT EXISTS (SELECT 1 FROM meeting_attendance_sessions s WHERE s.meeting_id = ${meetings.id}
+            AND (s.left_at IS NULL OR s.left_at > ${emptyBefore.toISOString()}::timestamptz))`
+      )
+    )
+    .limit(limit);
+  for (const m of empties) {
+    if ((await endMeeting(m.id, { reason: 'empty_room', at: now })).ended) ended += 1;
+  }
+
+  const pending = await db
+    .select({
+      id: meetings.id,
+      scheduledStartAt: meetings.scheduledStartAt,
+      scheduledEndAt: meetings.scheduledEndAt,
+    })
+    .from(meetings)
+    .where(
+      and(
+        org,
+        eq(meetings.status, 'scheduled'),
+        lt(meetings.scheduledStartAt, new Date(now.getTime() - 30 * 60_000))
+      )
+    )
+    .limit(limit * 2);
+  for (const m of pending) {
+    if (now.getTime() <= neverStartedDeadline(m).getTime()) continue;
+    if ((await endMeeting(m.id, { reason: 'never_started', at: now })).ended) ended += 1;
+  }
+  return ended;
+}
+
+/** Best-effort sweep used by read endpoints; never fails the request. */
+export async function sweepOrganizationMeetings(organizationId: string): Promise<void> {
+  try {
+    const ended = await autoEndMeetings({ organizationId, limit: 25 });
+    if (ended > 0) {
+      // Post-meeting summaries go out now, not whenever the scheduler next runs.
+      const { dispatchSummaries } = await import('./dispatch');
+      const { runAfterResponse } = await import('./background');
+      runAfterResponse('summary dispatch', () => dispatchSummaries({ organizationId }));
+    }
+  } catch (error) {
+    console.error('[meetings] sweep failed:', error instanceof Error ? error.message : error);
+  }
+}
+
+/**
+ * Browser heartbeat. Besides refreshing `last_seen_at`, it OPENS the session if
+ * LiveKit's join webhook never arrived (misconfigured webhook URL, outage):
+ * the identity is derived server-side from the authenticated participant, so
+ * a client can only ever record attendance for itself.
+ */
+export async function recordPulseWithSession(
+  meeting: Pick<Meeting, 'id' | 'status'>,
+  participantId: string,
+  identity: string | null,
+  now: Date = new Date()
+): Promise<void> {
+  if (identity && meeting.status === 'live') {
+    await recordParticipantJoined({
+      meetingId: meeting.id,
+      participantId,
+      identity,
+      at: now,
+      source: 'pulse',
+    });
+  }
+  await recordPulse(meeting.id, participantId, now);
+}

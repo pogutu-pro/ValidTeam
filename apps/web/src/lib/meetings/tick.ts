@@ -17,11 +17,10 @@ import {
   and,
   eq,
   isNull,
-  lt,
   sql,
 } from '@validteam/db';
 import {
-  endMeeting,
+  autoEndMeetings,
   computeAndPersistStats,
   materializeSeries,
   recordParticipantJoined,
@@ -30,13 +29,11 @@ import {
 } from './service';
 import { listRoomIdentities } from './livekit-admin';
 import { parseMeetingIdentity } from './livekit';
-import { neverStartedDeadline } from './notification-rules';
 import { processNotifications } from './notifications';
 import { createMeetingEmailSender } from './email-sender';
 import { meetingNotificationsEnabled, type MeetingNotificationSender } from './notification-sender';
 
-/** A live room with nobody in it ends after this long (matches LiveKit's empty-room timeout). */
-export const EMPTY_ROOM_GRACE_MS = 5 * 60_000;
+export { EMPTY_ROOM_GRACE_MS } from './service';
 /** A just-opened session is not reconciled away (webhook may still be in flight). */
 export const RECONCILE_GRACE_MS = 60_000;
 /** Pulse-only fallback: used only when LiveKit cannot be queried. */
@@ -192,45 +189,7 @@ async function runTickBody(deps: TickDeps): Promise<TickReport> {
   });
 
   await guard('auto-end', async () => {
-    // Live meetings that have been empty for EMPTY_ROOM_GRACE_MS.
-    const emptyBefore = new Date(now.getTime() - EMPTY_ROOM_GRACE_MS);
-    const empties = await db
-      .select({ id: meetings.id })
-      .from(meetings)
-      .where(
-        and(
-          eq(meetings.status, 'live'),
-          lt(meetings.actualStartedAt, emptyBefore),
-          sql`NOT EXISTS (SELECT 1 FROM meeting_attendance_sessions s WHERE s.meeting_id = ${meetings.id}
-              AND (s.left_at IS NULL OR s.left_at > ${emptyBefore.toISOString()}::timestamptz))`
-        )
-      )
-      .limit(100);
-    for (const m of empties) {
-      const r = await endMeeting(m.id, { reason: 'empty_room', at: now });
-      if (r.ended) report.meetingsEnded += 1;
-    }
-
-    // Scheduled meetings nobody ever opened.
-    const pending = await db
-      .select({
-        id: meetings.id,
-        scheduledStartAt: meetings.scheduledStartAt,
-        scheduledEndAt: meetings.scheduledEndAt,
-      })
-      .from(meetings)
-      .where(
-        and(
-          eq(meetings.status, 'scheduled'),
-          lt(meetings.scheduledStartAt, new Date(now.getTime() - 30 * 60_000))
-        )
-      )
-      .limit(200);
-    for (const m of pending) {
-      if (now.getTime() <= neverStartedDeadline(m).getTime()) continue;
-      const r = await endMeeting(m.id, { reason: 'never_started', at: now });
-      if (r.ended) report.meetingsEnded += 1;
-    }
+    report.meetingsEnded += await autoEndMeetings({ now });
   });
 
   await guard('stats-backfill', async () => {

@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Acest link de invitat nu este valid.",
         "forbidden": "Nu ești invitat la această întâlnire.",
         "generic": "Nu te-ai putut alătura întâlnirii. Încearcă din nou."
-      }
+      },
+      "readyToJoin": "Gata să te alături?",
+      "microphone": "Microfon",
+      "camera": "Cameră",
+      "defaultDevice": "Implicit",
+      "cameraOffNotice": "Camera este oprită",
+      "nameHint": "Ceilalți participanți vor vedea acest nume."
     },
     "room": {
       "you": "Tu",
@@ -7346,7 +7352,35 @@
       "leave": "Părăsește",
       "endConfirmTitle": "Încheii întâlnirea pentru toți?",
       "endConfirmBody": "Toți vor fi deconectați, iar întâlnirea se va închide.",
-      "cancel": "Anulează"
+      "cancel": "Anulează",
+      "reactions": "Reacții",
+      "reactionLabels": {
+        "thumbsUp": "Like",
+        "clap": "Aplauze",
+        "heart": "Inimă",
+        "laugh": "Râs",
+        "wow": "Surprins",
+        "party": "Sărbătorește"
+      },
+      "raiseHand": "Ridică mâna",
+      "lowerHand": "Coboară mâna",
+      "handRaised": "{name} a ridicat mâna",
+      "more": "Mai multe opțiuni",
+      "layout": "Aspect",
+      "layoutGrid": "Grilă",
+      "layoutSpeaker": "Vorbitor",
+      "fullscreen": "Ecran complet",
+      "exitFullscreen": "Ieși din ecranul complet",
+      "copyLink": "Copiază linkul întâlnirii",
+      "linkCopied": "Linkul întâlnirii a fost copiat",
+      "linkCopyFailed": "Linkul nu a putut fi copiat.",
+      "pin": "Fixează pe {name}",
+      "unpin": "Anulează fixarea pentru {name}",
+      "searchPeople": "Caută persoane",
+      "leaveOptions": "Mai multe opțiuni de ieșire",
+      "leaveKeepOpen": "Ieși și păstrează întâlnirea deschisă",
+      "shortcutsHint": "Comenzi rapide: M microfon, V cameră, H mână, C chat, P persoane",
+      "elapsed": "Timp în întâlnire"
     },
     "details": {
       "didNotAttend": "Absent",
@@ -7472,8 +7506,25 @@
         "early": "Plecări anticipate",
         "trend": "Prezența în timp",
         "history": "Întâlniri recente",
-        "didNotAttend": "Absent"
-      }
-    }
+        "didNotAttend": "Absent",
+        "pendingHint": "Întâlniri viitoare sau în direct: {count}. Vor fi numărate după ce se încheie."
+      },
+      "orgPendingHint": "În această perioadă nu s-a încheiat încă nicio întâlnire. Prezența, orele și ratele se calculează când o întâlnire se termină."
+    },
+    "newMeeting": "Întâlnire nouă",
+    "newInstant": "Pornește o întâlnire instantanee",
+    "newSchedule": "Programează pentru mai târziu",
+    "startOrJoin": "Pornește sau alătură-te unei întâlniri",
+    "joinCodePlaceholder": "Introdu un cod sau un link",
+    "joinWithCode": "Alătură-te",
+    "joinCodeInvalid": "Introdu un link sau un cod de întâlnire valid.",
+    "liveNow": "În direct acum",
+    "joinNow": "Alătură-te acum",
+    "today": "Astăzi",
+    "tomorrow": "Mâine",
+    "copyLink": "Copiază linkul",
+    "linkCopied": "Link copiat",
+    "linkCopyFailed": "Linkul nu a putut fi copiat.",
+    "viewDetails": "Detalii"
   }
 }

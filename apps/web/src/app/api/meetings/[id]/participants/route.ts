@@ -6,6 +6,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { MeetingError } from '@/lib/meetings/errors';
+import { runAfterResponse } from '@/lib/meetings/background';
+import { dispatchInvitations } from '@/lib/meetings/dispatch';
 import { addParticipants, listParticipants, removeParticipant } from '@/lib/meetings/service';
 import { removeParticipantQuietly } from '@/lib/meetings/livekit-admin';
 import { errorResponse, loadMeetingForMember, parseJson } from '@/lib/meetings/api';
@@ -54,6 +56,8 @@ export async function POST(request: Request, { params }: Ctx) {
       userIds: body.participantUserIds,
       guests: body.guests,
     });
+    if (result.added > 0)
+      runAfterResponse('invitation dispatch', () => dispatchInvitations(meeting.id));
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
     return errorResponse(error);

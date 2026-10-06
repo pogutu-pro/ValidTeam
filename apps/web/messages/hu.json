@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Ez a vendéghivatkozás érvénytelen.",
         "forbidden": "Nem vagy meghívva erre a megbeszélésre.",
         "generic": "Nem sikerült csatlakozni a megbeszéléshez. Próbáld újra."
-      }
+      },
+      "readyToJoin": "Készen állsz a csatlakozásra?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Alapértelmezett",
+      "cameraOffNotice": "A kamera ki van kapcsolva",
+      "nameHint": "A megbeszélés többi résztvevője ezt a nevet fogja látni."
     },
     "room": {
       "you": "Te",
@@ -7346,7 +7352,35 @@
       "leave": "Kilépés",
       "endConfirmTitle": "Befejezed a megbeszélést mindenkinek?",
       "endConfirmBody": "Mindenki le lesz választva, és a megbeszélés bezárul.",
-      "cancel": "Mégse"
+      "cancel": "Mégse",
+      "reactions": "Reakciók",
+      "reactionLabels": {
+        "thumbsUp": "Tetszik",
+        "clap": "Taps",
+        "heart": "Szív",
+        "laugh": "Nevetés",
+        "wow": "Meglepetés",
+        "party": "Ünneplés"
+      },
+      "raiseHand": "Jelentkezés",
+      "lowerHand": "Jelentkezés visszavonása",
+      "handRaised": "{name} jelentkezett",
+      "more": "További lehetőségek",
+      "layout": "Elrendezés",
+      "layoutGrid": "Rács",
+      "layoutSpeaker": "Előadó",
+      "fullscreen": "Teljes képernyő",
+      "exitFullscreen": "Kilépés a teljes képernyőből",
+      "copyLink": "Megbeszélési hivatkozás másolása",
+      "linkCopied": "Megbeszélési hivatkozás másolva",
+      "linkCopyFailed": "A hivatkozást nem sikerült másolni.",
+      "pin": "{name} kitűzése",
+      "unpin": "{name} kitűzésének feloldása",
+      "searchPeople": "Személyek keresése",
+      "leaveOptions": "További kilépési lehetőségek",
+      "leaveKeepOpen": "Kilépés, a megbeszélés nyitva marad",
+      "shortcutsHint": "Billentyűk: M mikrofon, V kamera, H kéz, C csevegés, P személyek",
+      "elapsed": "Idő a megbeszélésen"
     },
     "details": {
       "didNotAttend": "Nem jelent meg",
@@ -7472,8 +7506,25 @@
         "early": "Korai távozások",
         "trend": "Részvétel az idő során",
         "history": "Legutóbbi megbeszélések",
-        "didNotAttend": "Nem jelent meg"
-      }
-    }
+        "didNotAttend": "Nem jelent meg",
+        "pendingHint": "Közelgő vagy élő megbeszélések: {count}. A befejezésük után számítanak be."
+      },
+      "orgPendingHint": "Ebben az időszakban még nem fejeződött be megbeszélés. A részvételt, az órákat és az arányokat a megbeszélés végén számoljuk."
+    },
+    "newMeeting": "Új megbeszélés",
+    "newInstant": "Azonnali megbeszélés indítása",
+    "newSchedule": "Ütemezés későbbre",
+    "startOrJoin": "Megbeszélés indítása vagy csatlakozás",
+    "joinCodePlaceholder": "Adj meg egy kódot vagy hivatkozást",
+    "joinWithCode": "Csatlakozás",
+    "joinCodeInvalid": "Adj meg érvényes megbeszélési hivatkozást vagy kódot.",
+    "liveNow": "Most élő",
+    "joinNow": "Csatlakozás most",
+    "today": "Ma",
+    "tomorrow": "Holnap",
+    "copyLink": "Hivatkozás másolása",
+    "linkCopied": "Hivatkozás másolva",
+    "linkCopyFailed": "A hivatkozást nem sikerült másolni.",
+    "viewDetails": "Részletek"
   }
 }

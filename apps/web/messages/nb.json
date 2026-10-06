@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Denne gjestelenken er ugyldig.",
         "forbidden": "Du er ikke invitert til dette møtet.",
         "generic": "Kunne ikke bli med i møtet. Prøv igjen."
-      }
+      },
+      "readyToJoin": "Klar til å bli med?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Standard",
+      "cameraOffNotice": "Kameraet er av",
+      "nameHint": "Andre i møtet ser dette navnet."
     },
     "room": {
       "you": "Deg",
@@ -7346,7 +7352,35 @@
       "leave": "Forlat",
       "endConfirmTitle": "Avslutte møtet for alle?",
       "endConfirmBody": "Alle kobles fra, og møtet lukkes.",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "reactions": "Reaksjoner",
+      "reactionLabels": {
+        "thumbsUp": "Tommel opp",
+        "clap": "Applaus",
+        "heart": "Hjerte",
+        "laugh": "Latter",
+        "wow": "Overrasket",
+        "party": "Feir"
+      },
+      "raiseHand": "Rekk opp hånden",
+      "lowerHand": "Senk hånden",
+      "handRaised": "{name} rakte opp hånden",
+      "more": "Flere alternativer",
+      "layout": "Oppsett",
+      "layoutGrid": "Rutenett",
+      "layoutSpeaker": "Taler",
+      "fullscreen": "Fullskjerm",
+      "exitFullscreen": "Avslutt fullskjerm",
+      "copyLink": "Kopier møtelenke",
+      "linkCopied": "Møtelenke kopiert",
+      "linkCopyFailed": "Kunne ikke kopiere lenken.",
+      "pin": "Fest {name}",
+      "unpin": "Løsne {name}",
+      "searchPeople": "Søk etter personer",
+      "leaveOptions": "Flere måter å forlate på",
+      "leaveKeepOpen": "Forlat og la møtet være åpent",
+      "shortcutsHint": "Hurtigtaster: M mikrofon, V kamera, H hånd, C chat, P personer",
+      "elapsed": "Tid i møtet"
     },
     "details": {
       "didNotAttend": "Deltok ikke",
@@ -7472,8 +7506,25 @@
         "early": "Tidlige avganger",
         "trend": "Oppmøte over tid",
         "history": "Nylige møter",
-        "didNotAttend": "Deltok ikke"
-      }
-    }
+        "didNotAttend": "Deltok ikke",
+        "pendingHint": "Kommende eller pågående møter: {count}. De telles med når de er avsluttet."
+      },
+      "orgPendingHint": "Ingen møter har avsluttet i denne perioden ennå. Oppmøte, timer og andeler beregnes når et møte er over."
+    },
+    "newMeeting": "Nytt møte",
+    "newInstant": "Start et øyeblikkelig møte",
+    "newSchedule": "Planlegg til senere",
+    "startOrJoin": "Start eller bli med i et møte",
+    "joinCodePlaceholder": "Skriv inn en kode eller lenke",
+    "joinWithCode": "Bli med",
+    "joinCodeInvalid": "Skriv inn en gyldig møtelenke eller kode.",
+    "liveNow": "Live nå",
+    "joinNow": "Bli med nå",
+    "today": "I dag",
+    "tomorrow": "I morgen",
+    "copyLink": "Kopier lenke",
+    "linkCopied": "Lenke kopiert",
+    "linkCopyFailed": "Kunne ikke kopiere lenken.",
+    "viewDetails": "Detaljer"
   }
 }

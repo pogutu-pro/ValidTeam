@@ -2,7 +2,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { resolveGuestPrincipal } from '@/lib/meetings/access';
-import { recordPulse } from '@/lib/meetings/service';
+import { buildMeetingIdentity } from '@/lib/meetings/livekit';
+import { recordPulseWithSession } from '@/lib/meetings/service';
 import {
   clientIp,
   enforceRateLimit,
@@ -13,7 +14,13 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-const bodySchema = z.object({ guestToken: z.string().max(200).optional() });
+const bodySchema = z.object({
+  guestToken: z.string().max(200).optional(),
+  clientSessionId: z
+    .string()
+    .regex(/^[A-Za-z0-9_-]{8,64}$/)
+    .optional(),
+});
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -22,10 +29,24 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     enforceRateLimit(`meetings:pulse:${clientIp(request)}:${id}`, 20, 60_000);
     if (body.guestToken) {
       const { meeting, principal } = await resolveGuestPrincipal(id, body.guestToken);
-      await recordPulse(meeting.id, principal.participant.id);
+      await recordPulseWithSession(
+        meeting,
+        principal.participant.id,
+        body.clientSessionId
+          ? buildMeetingIdentity(principal.participant.id, body.clientSessionId)
+          : null
+      );
     } else {
       const { meeting, principal } = await loadMeetingForMember(request, id);
-      if (principal.participant) await recordPulse(meeting.id, principal.participant.id);
+      if (principal.participant) {
+        await recordPulseWithSession(
+          meeting,
+          principal.participant.id,
+          body.clientSessionId
+            ? buildMeetingIdentity(principal.participant.id, body.clientSessionId)
+            : null
+        );
+      }
     }
     return NextResponse.json({ ok: true });
   } catch (error) {

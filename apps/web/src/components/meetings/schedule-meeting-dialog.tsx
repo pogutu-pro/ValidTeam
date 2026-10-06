@@ -23,6 +23,7 @@ import {
   useCreateMeeting,
   type CreateMeetingPayload,
 } from '@/lib/hooks/use-meetings';
+import { CTA_BLUE } from './meeting-format';
 import { parseGuestEmails, zonedInputToIso } from './schedule-validation';
 
 const DURATIONS = [15, 30, 45, 60, 90, 120];
@@ -332,7 +333,11 @@ export function ScheduleMeetingDialog({
             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
               {t('cancel')}
             </Button>
-            <Button type="submit" disabled={create.isPending || !organizationId}>
+            <Button
+              type="submit"
+              className={CTA_BLUE}
+              disabled={create.isPending || !organizationId}
+            >
               {t('scheduleDialog.submit')}
             </Button>
           </DialogFooter>

@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "קישור האורח הזה אינו תקין.",
         "forbidden": "לא הוזמנתם לפגישה זו.",
         "generic": "לא ניתן היה להצטרף לפגישה. נסו שוב."
-      }
+      },
+      "readyToJoin": "מוכנים להצטרף?",
+      "microphone": "מיקרופון",
+      "camera": "מצלמה",
+      "defaultDevice": "ברירת מחדל",
+      "cameraOffNotice": "המצלמה כבויה",
+      "nameHint": "אנשים אחרים בפגישה יראו את השם הזה."
     },
     "room": {
       "you": "את/ה",
@@ -7346,7 +7352,35 @@
       "leave": "עזיבה",
       "endConfirmTitle": "לסיים את הפגישה עבור כולם?",
       "endConfirmBody": "כולם ינותקו והפגישה תיסגר.",
-      "cancel": "ביטול"
+      "cancel": "ביטול",
+      "reactions": "תגובות",
+      "reactionLabels": {
+        "thumbsUp": "לייק",
+        "clap": "מחיאות כפיים",
+        "heart": "לב",
+        "laugh": "צחוק",
+        "wow": "הפתעה",
+        "party": "חגיגה"
+      },
+      "raiseHand": "הרמת יד",
+      "lowerHand": "הורדת יד",
+      "handRaised": "{name} הרים/ה יד",
+      "more": "אפשרויות נוספות",
+      "layout": "פריסה",
+      "layoutGrid": "רשת",
+      "layoutSpeaker": "דובר",
+      "fullscreen": "מסך מלא",
+      "exitFullscreen": "יציאה ממסך מלא",
+      "copyLink": "העתקת קישור לפגישה",
+      "linkCopied": "הקישור לפגישה הועתק",
+      "linkCopyFailed": "לא ניתן היה להעתיק את הקישור.",
+      "pin": "הצמדת {name}",
+      "unpin": "ביטול הצמדה של {name}",
+      "searchPeople": "חיפוש אנשים",
+      "leaveOptions": "אפשרויות יציאה נוספות",
+      "leaveKeepOpen": "יציאה והשארת הפגישה פתוחה",
+      "shortcutsHint": "קיצורים: M מיקרופון, V מצלמה, H יד, C צ׳אט, P אנשים",
+      "elapsed": "זמן בפגישה"
     },
     "details": {
       "didNotAttend": "לא הגיע/ה",
@@ -7472,8 +7506,25 @@
         "early": "עזיבות מוקדמות",
         "trend": "נוכחות לאורך זמן",
         "history": "פגישות אחרונות",
-        "didNotAttend": "לא הגיע/ה"
-      }
-    }
+        "didNotAttend": "לא הגיע/ה",
+        "pendingHint": "פגישות קרובות או חיות: {count}. הן ייספרו לאחר שיסתיימו."
+      },
+      "orgPendingHint": "בתקופה זו עדיין לא הסתיימה אף פגישה. נוכחות, שעות ושיעורים מחושבים כשהפגישה מסתיימת."
+    },
+    "newMeeting": "פגישה חדשה",
+    "newInstant": "התחלת פגישה מיידית",
+    "newSchedule": "תזמון למועד מאוחר יותר",
+    "startOrJoin": "התחלת פגישה או הצטרפות",
+    "joinCodePlaceholder": "הזינו קוד או קישור",
+    "joinWithCode": "הצטרפות",
+    "joinCodeInvalid": "הזינו קישור או קוד פגישה תקינים.",
+    "liveNow": "שידור חי עכשיו",
+    "joinNow": "הצטרפות עכשיו",
+    "today": "היום",
+    "tomorrow": "מחר",
+    "copyLink": "העתקת קישור",
+    "linkCopied": "הקישור הועתק",
+    "linkCopyFailed": "לא ניתן היה להעתיק את הקישור.",
+    "viewDetails": "פרטים"
   }
 }

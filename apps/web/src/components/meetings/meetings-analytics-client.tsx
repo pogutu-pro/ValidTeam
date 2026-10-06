@@ -91,6 +91,14 @@ function OrgView({ data }: { data: OrgMeetingAnalytics }) {
   const trends = data.trends;
   return (
     <div className="space-y-4">
+      {data.volume.completed === 0 && data.volume.total > 0 ? (
+        <p
+          role="status"
+          className="border-border bg-muted/50 text-muted-foreground rounded-md border px-4 py-3 text-sm"
+        >
+          {t('orgPendingHint')}
+        </p>
+      ) : null}
       <MetricStrip
         items={[
           {
@@ -268,6 +276,14 @@ function MeView({ data }: { data: PersonalMeetingAnalytics }) {
   const s = data.summary;
   return (
     <div className="space-y-4">
+      {s.pending > 0 ? (
+        <p
+          role="status"
+          className="border-border bg-muted/50 text-muted-foreground rounded-md border px-4 py-3 text-sm"
+        >
+          {t('me.pendingHint', { count: s.pending })}
+        </p>
+      ) : null}
       <MetricStrip
         items={[
           {
@@ -348,13 +364,13 @@ export function MeetingsAnalyticsClient() {
   const { data: members } = useOrganizationMembers(currentOrganizationId);
   const isAdmin = members?.userRole === 'owner' || members?.userRole === 'admin';
 
-  const [scope, setScope] = useState<'organization' | 'me'>('me');
+  const [scope, setScope] = useState<'organization' | 'me' | null>(null);
   const [preset, setPreset] = useState<RangePreset>('last30');
   const [custom, setCustom] = useState<{ from: string; to: string }>({ from: '', to: '' });
   const [recurring, setRecurring] = useState<'all' | 'true' | 'false'>('all');
   const [external, setExternal] = useState<'all' | 'true' | 'false'>('all');
 
-  const effectiveScope = isAdmin ? scope : 'me';
+  const effectiveScope: 'organization' | 'me' = isAdmin ? (scope ?? 'organization') : 'me';
   const range = useMemo(() => resolveRange(preset, new Date(), custom), [preset, custom]);
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
   const valid = range.to > range.from;
@@ -395,7 +411,7 @@ export function MeetingsAnalyticsClient() {
 
       <div className="flex flex-wrap items-center gap-2">
         {isAdmin ? (
-          <Tabs value={scope} onValueChange={(v) => setScope(v as typeof scope)}>
+          <Tabs value={effectiveScope} onValueChange={(v) => setScope(v as 'organization' | 'me')}>
             <TabsList>
               <TabsTrigger value="me">{t('scope.me')}</TabsTrigger>
               <TabsTrigger value="organization">{t('scope.organization')}</TabsTrigger>

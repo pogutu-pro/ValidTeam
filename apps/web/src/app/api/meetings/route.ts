@@ -7,7 +7,13 @@ import { z } from 'zod';
 import { db, meetings, users, and, eq, gte, lt, inArray, or, sql, desc, asc } from '@validteam/db';
 import { resolveOrganizationAccess } from '@/lib/auth/access-control';
 import { MeetingError } from '@/lib/meetings/errors';
-import { createMeeting, createMeetingSchema } from '@/lib/meetings/service';
+import { runAfterResponse } from '@/lib/meetings/background';
+import { dispatchInvitations } from '@/lib/meetings/dispatch';
+import {
+  createMeeting,
+  createMeetingSchema,
+  sweepOrganizationMeetings,
+} from '@/lib/meetings/service';
 import {
   enforceRateLimit,
   errorResponse,
@@ -44,6 +50,8 @@ export async function GET(request: Request) {
     if (q.view === 'all' && !isManager)
       throw new MeetingError('forbidden', 403, 'Only admins can list all meetings');
 
+    // Close out finished meetings so Live/Upcoming/Past are accurate without cron.
+    await sweepOrganizationMeetings(q.organizationId);
     const now = new Date();
     const scopeFilter =
       q.scope === 'live'
@@ -110,6 +118,8 @@ export async function POST(request: Request) {
     enforceRateLimit(`meetings:create:${actor.userId}`, 30, 60_000);
 
     const result = await createMeeting(actor.userId, input);
+    // Invite everyone right away (the cron tick is only the safety net).
+    runAfterResponse('invitation dispatch', () => dispatchInvitations(result.meeting.id));
     return NextResponse.json(
       {
         meeting: meetingSummary(result.meeting),

@@ -7313,7 +7313,13 @@
         "invalidGuestLink": "Bu konuk bağlantısı geçerli değil.",
         "forbidden": "Bu toplantıya davetli değilsiniz.",
         "generic": "Toplantıya katılınamadı. Lütfen tekrar deneyin."
-      }
+      },
+      "readyToJoin": "Katılmaya hazır mısınız?",
+      "microphone": "Mikrofon",
+      "camera": "Kamera",
+      "defaultDevice": "Varsayılan",
+      "cameraOffNotice": "Kamera kapalı",
+      "nameHint": "Toplantıdaki diğer kişiler bu adı görecek."
     },
     "room": {
       "you": "Siz",
@@ -7346,7 +7352,35 @@
       "leave": "Ayrıl",
       "endConfirmTitle": "Toplantı herkes için sonlandırılsın mı?",
       "endConfirmBody": "Herkesin bağlantısı kesilecek ve toplantı kapanacak.",
-      "cancel": "İptal"
+      "cancel": "İptal",
+      "reactions": "Tepkiler",
+      "reactionLabels": {
+        "thumbsUp": "Beğen",
+        "clap": "Alkış",
+        "heart": "Kalp",
+        "laugh": "Gülme",
+        "wow": "Şaşkın",
+        "party": "Kutla"
+      },
+      "raiseHand": "El kaldır",
+      "lowerHand": "Eli indir",
+      "handRaised": "{name} el kaldırdı",
+      "more": "Daha fazla seçenek",
+      "layout": "Düzen",
+      "layoutGrid": "Izgara",
+      "layoutSpeaker": "Konuşmacı",
+      "fullscreen": "Tam ekran",
+      "exitFullscreen": "Tam ekrandan çık",
+      "copyLink": "Toplantı bağlantısını kopyala",
+      "linkCopied": "Toplantı bağlantısı kopyalandı",
+      "linkCopyFailed": "Bağlantı kopyalanamadı.",
+      "pin": "{name} kişisini sabitle",
+      "unpin": "{name} sabitlemesini kaldır",
+      "searchPeople": "Kişi ara",
+      "leaveOptions": "Daha fazla ayrılma seçeneği",
+      "leaveKeepOpen": "Ayrıl ve toplantıyı açık bırak",
+      "shortcutsHint": "Kısayollar: M mikrofon, V kamera, H el, C sohbet, P kişiler",
+      "elapsed": "Toplantıda geçen süre"
     },
     "details": {
       "didNotAttend": "Katılmadı",
@@ -7472,8 +7506,25 @@
         "early": "Erken ayrılanlar",
         "trend": "Zaman içinde katılım",
         "history": "Son toplantılar",
-        "didNotAttend": "Katılmadı"
-      }
-    }
+        "didNotAttend": "Katılmadı",
+        "pendingHint": "Yaklaşan veya canlı toplantılar: {count}. Bittiklerinde sayılacaklar."
+      },
+      "orgPendingHint": "Bu dönemde henüz biten toplantı yok. Katılım, saatler ve oranlar bir toplantı bittiğinde hesaplanır."
+    },
+    "newMeeting": "Yeni toplantı",
+    "newInstant": "Anlık toplantı başlat",
+    "newSchedule": "Daha sonrası için planla",
+    "startOrJoin": "Toplantı başlat veya katıl",
+    "joinCodePlaceholder": "Bir kod veya bağlantı girin",
+    "joinWithCode": "Katıl",
+    "joinCodeInvalid": "Geçerli bir toplantı bağlantısı veya kodu girin.",
+    "liveNow": "Şu anda canlı",
+    "joinNow": "Şimdi katıl",
+    "today": "Bugün",
+    "tomorrow": "Yarın",
+    "copyLink": "Bağlantıyı kopyala",
+    "linkCopied": "Bağlantı kopyalandı",
+    "linkCopyFailed": "Bağlantı kopyalanamadı.",
+    "viewDetails": "Ayrıntılar"
   }
 }

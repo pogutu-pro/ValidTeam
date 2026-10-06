@@ -12,6 +12,7 @@ import {
   getPersonalMeetingAnalytics,
 } from '@/lib/meetings/analytics';
 import { errorResponse, parseQuery, requireActor } from '@/lib/meetings/api';
+import { sweepOrganizationMeetings } from '@/lib/meetings/service';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +36,9 @@ export async function GET(request: Request) {
       allowSuperAdmin: false,
     });
     if (!access.allowed) throw new MeetingError('not_found', 404, 'Organization not found');
+
+    // Finished meetings only count once ended; make sure they are.
+    await sweepOrganizationMeetings(q.organizationId);
 
     if (q.scope === 'me') {
       return NextResponse.json(await getPersonalMeetingAnalytics(actor.userId, q));
