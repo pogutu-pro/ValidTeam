@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { companyName } from '@/config/brand';
 import { CTA_BLUE } from '../meeting-format';
 import { PersonAvatar } from './stage';
 
@@ -248,6 +249,15 @@ export function Prejoin({
       </section>
 
       <section className="w-full space-y-5">
+        <div className="flex items-center gap-2.5">
+          <img src="/stratnovo-logo.png" alt="" aria-hidden="true" className="h-9 w-auto" />
+          <span
+            className="text-foreground text-lg font-bold tracking-tight"
+            style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
+          >
+            {companyName}
+          </span>
+        </div>
         <div className="space-y-2">
           <p className="kicker">{t('readyToJoin')}</p>
           <h1 className="text-foreground text-balance text-3xl font-semibold leading-tight tracking-tight">

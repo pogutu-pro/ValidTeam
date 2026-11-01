@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { companyName } from '@/config/brand';
 import { useTranslations } from 'next-intl';
 import {
   RoomAudioRenderer,
@@ -123,9 +124,23 @@ export function MeetingRoom({
   return (
     <TooltipProvider delayDuration={300}>
       <div className="bg-background text-foreground fixed inset-0 z-50 flex flex-col [--ring:214_52%_66%]">
-        <header className="flex h-14 shrink-0 items-center justify-between gap-3 px-4">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-3 px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <h1 className="truncate text-sm font-semibold sm:text-base">{title}</h1>
+            <img
+              src="/stratnovo-logo.png"
+              alt=""
+              aria-hidden="true"
+              className="h-8 w-auto shrink-0"
+            />
+            <div className="flex min-w-0 flex-col">
+              <span
+                className="text-muted-foreground text-[10px] font-semibold uppercase tracking-[0.18em]"
+                style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
+              >
+                {companyName}
+              </span>
+              <h1 className="truncate text-sm font-semibold sm:text-base">{title}</h1>
+            </div>
             <span
               className="text-muted-foreground bg-muted rounded-md px-2 py-0.5 text-xs tabular-nums"
               aria-label={t('elapsed')}

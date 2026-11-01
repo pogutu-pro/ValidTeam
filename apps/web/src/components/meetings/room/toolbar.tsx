@@ -36,12 +36,13 @@ import { cn } from '@/lib/utils';
 import { ReactionButtons, type ReactionKey } from './reactions';
 import type { StageLayout } from './stage';
 
-type Tone = 'neutral' | 'off' | 'active';
+type Tone = 'neutral' | 'off' | 'active' | 'brand';
 
 const TONE: Record<Tone, string> = {
   neutral: 'bg-secondary text-secondary-foreground hover:bg-secondary/75',
   off: 'bg-destructive text-destructive-foreground hover:bg-destructive/85',
   active: 'bg-accent-blue text-white hover:bg-accent-blue/90 dark:text-slate-950',
+  brand: 'bg-[#FF5A1F] text-white hover:bg-[#E84E14] focus-visible:ring-[#FF5A1F]',
 };
 
 const ROUND =
@@ -119,7 +120,7 @@ export function Toolbar(p: ToolbarProps) {
       <div className="bg-card border-border flex max-w-full items-center gap-1.5 rounded-full border p-1.5 shadow-lg sm:gap-2 sm:p-2">
         <RoundButton
           label={p.mic.enabled ? t('muteMic') : t('unmuteMic')}
-          tone={p.mic.enabled ? 'neutral' : 'off'}
+          tone={p.mic.enabled ? 'brand' : 'off'}
           pressed={p.mic.enabled}
           onClick={() => void p.mic.toggle()}
           disabled={p.mic.pending}
