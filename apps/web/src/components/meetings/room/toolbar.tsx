@@ -121,7 +121,7 @@ export function Toolbar(p: ToolbarProps) {
           label={p.mic.enabled ? t('muteMic') : t('unmuteMic')}
           tone={p.mic.enabled ? 'neutral' : 'off'}
           pressed={p.mic.enabled}
-          onClick={p.mic.toggle}
+          onClick={() => void p.mic.toggle()}
           disabled={p.mic.pending}
         >
           {p.mic.enabled ? <Mic aria-hidden="true" /> : <MicOff aria-hidden="true" />}
@@ -130,7 +130,7 @@ export function Toolbar(p: ToolbarProps) {
           label={p.cam.enabled ? t('stopCamera') : t('startCamera')}
           tone={p.cam.enabled ? 'neutral' : 'off'}
           pressed={p.cam.enabled}
-          onClick={p.cam.toggle}
+          onClick={() => void p.cam.toggle()}
           disabled={p.cam.pending}
         >
           {p.cam.enabled ? <Camera aria-hidden="true" /> : <CameraOff aria-hidden="true" />}
@@ -141,7 +141,7 @@ export function Toolbar(p: ToolbarProps) {
             label={p.share.enabled ? t('stopShare') : t('shareScreen')}
             tone={p.share.enabled ? 'active' : 'neutral'}
             pressed={p.share.enabled}
-            onClick={p.share.toggle}
+            onClick={() => void p.share.toggle()}
             disabled={p.share.pending}
           >
             <MonitorUp aria-hidden="true" />

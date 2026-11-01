@@ -168,9 +168,9 @@ describe('MeetingRoom', () => {
     await userEvent.click(screen.getByRole('button', { name: /mute microphone/i }));
     await userEvent.click(screen.getByRole('button', { name: /turn camera off/i }));
     await userEvent.click(screen.getByRole('button', { name: /share screen/i }));
-    expect(toggles.microphone!.toggle).toHaveBeenCalled();
-    expect(toggles.camera!.toggle).toHaveBeenCalled();
-    expect(toggles.screen_share!.toggle).toHaveBeenCalled();
+    expect(toggles.microphone!.toggle).toHaveBeenCalledWith();
+    expect(toggles.camera!.toggle).toHaveBeenCalledWith();
+    expect(toggles.screen_share!.toggle).toHaveBeenCalledWith();
 
     toggles.microphone!.enabled = false;
     setup();
