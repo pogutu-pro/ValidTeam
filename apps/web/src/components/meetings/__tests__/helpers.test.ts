@@ -118,4 +118,18 @@ describe('groupByDay', () => {
     expect(groups.map((g) => g.key)).toEqual(['today', 'tomorrow', '2026-10-12']);
     expect(groups[0]!.items.map((i) => i.id)).toEqual(['a', 'b']);
   });
+
+  it('groups by the meeting zone, not the viewer device zone', () => {
+    // 20:00 on Nov 2 in America/Chicago (CST, UTC-6) is 02:00Z on Nov 3.
+    const start = '2026-11-03T02:00:00.000Z';
+    const now = new Date('2026-11-02T15:00:00.000Z'); // 09:00 CST, same Chicago day
+    const groups = groupByDay(
+      [{ id: 'a', scheduledStartAt: start, timezone: 'America/Chicago' }],
+      now
+    );
+    expect(groups).toHaveLength(1);
+    expect(groups[0]!.key).toBe('today');
+    // The anchor is UTC noon of the meeting's calendar day (Nov 2).
+    expect(groups[0]!.date.toISOString()).toBe('2026-11-02T12:00:00.000Z');
+  });
 });

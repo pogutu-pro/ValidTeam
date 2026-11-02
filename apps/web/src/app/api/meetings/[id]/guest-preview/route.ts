@@ -30,6 +30,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         status: meeting.status,
         scheduledStartAt: meeting.scheduledStartAt,
         scheduledEndAt: meeting.scheduledEndAt,
+        timezone: meeting.timezone,
         host: { name: host?.name ?? host?.email ?? null },
       },
       guest: { name: principal.participant.guestName },

@@ -1,4 +1,5 @@
 import type { MeetingStatus } from '@/lib/hooks/use-meetings';
+import { toLocalDateTime } from '@/lib/meetings/time';
 
 export function formatDuration(totalSeconds: number | null | undefined): string {
   if (totalSeconds === null || totalSeconds === undefined) return '—';
@@ -65,30 +66,53 @@ export function extractMeetingSlug(input: string): string | null {
 export interface DayGroup<T> {
   /** 'today' | 'tomorrow' | YYYY-MM-DD (local). */
   key: string;
+  /** UTC-noon anchor for the group's calendar day; format with `timeZone: 'UTC'`. */
   date: Date;
   items: T[];
 }
 
-const startOfLocalDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const pad2 = (n: number) => String(n).padStart(2, '0');
 
-/** Group by LOCAL calendar day, preserving the input order inside each day. */
-export function groupByDay<T extends { scheduledStartAt: string }>(
+/**
+ * The zone a meeting's wall-clock time is authored in. Falls back to the
+ * runtime zone only for legacy rows that somehow lack one.
+ */
+export function meetingTimeZone(timeZone: string | undefined | null): string {
+  return timeZone?.trim() || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
+/** Calendar day of an instant in a zone (pure Intl, no offset arithmetic). */
+function zoneDay(instant: Date, timeZone: string) {
+  const local = toLocalDateTime(instant, timeZone);
+  return { year: local.year, month: local.month, day: local.day };
+}
+
+const dayStamp = (d: { year: number; month: number; day: number }) =>
+  Date.UTC(d.year, d.month - 1, d.day);
+
+/**
+ * Group by calendar day **in each meeting's own zone**, so a meeting authored
+ * at 8 PM never drifts into the previous/next day when the viewer's device is
+ * in a different time zone. `date` is a UTC-noon anchor for that calendar day;
+ * format it with `timeZone: 'UTC'`.
+ */
+export function groupByDay<T extends { scheduledStartAt: string; timezone?: string }>(
   items: T[],
   now: Date = new Date()
 ): DayGroup<T>[] {
-  const today = startOfLocalDay(now).getTime();
   const groups = new Map<string, DayGroup<T>>();
   for (const item of items) {
-    const d = new Date(item.scheduledStartAt);
-    const day = startOfLocalDay(d);
-    const diff = Math.round((day.getTime() - today) / 86_400_000);
+    const timeZone = meetingTimeZone(item.timezone);
+    const day = zoneDay(new Date(item.scheduledStartAt), timeZone);
+    const diff = Math.round((dayStamp(day) - dayStamp(zoneDay(now, timeZone))) / 86_400_000);
     const key =
       diff === 0
         ? 'today'
         : diff === 1
           ? 'tomorrow'
-          : `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
-    const g = groups.get(key) ?? { key, date: day, items: [] };
+          : `${day.year}-${pad2(day.month)}-${pad2(day.day)}`;
+    const date = new Date(Date.UTC(day.year, day.month - 1, day.day, 12));
+    const g = groups.get(key) ?? { key, date, items: [] };
     g.items.push(item);
     groups.set(key, g);
   }

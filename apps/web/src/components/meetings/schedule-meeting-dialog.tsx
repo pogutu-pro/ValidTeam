@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -62,6 +62,7 @@ export function ScheduleMeetingDialog({
   organizationId: string | null;
 }) {
   const t = useTranslations('meetings');
+  const format = useFormatter();
   const router = useRouter();
   const { toast } = useToast();
   const create = useCreateMeeting();
@@ -84,6 +85,10 @@ export function ScheduleMeetingDialog({
   const [guestsRaw, setGuestsRaw] = useState('');
   const [allowGuests, setAllowGuests] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Show the exact start instant in the selected zone so the chosen time zone
+  // can never be silently wrong (e.g. a device set to another region).
+  const previewIso = zonedInputToIso(date, time, timezone);
 
   const guests = parseGuestEmails(guestsRaw);
   const candidates = (members?.members ?? []).filter(
@@ -251,6 +256,18 @@ export function ScheduleMeetingDialog({
               ) : null}
             </div>
           </div>
+
+          {previewIso ? (
+            <p className="text-muted-foreground text-xs tabular-nums">
+              {format.dateTime(new Date(previewIso), {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+                timeZone: timezone,
+              })}
+              {' · '}
+              {timezone}
+            </p>
+          ) : null}
 
           <fieldset className="space-y-2">
             <legend className="text-sm font-medium">{t('fields.people')}</legend>

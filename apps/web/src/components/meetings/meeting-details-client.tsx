@@ -143,8 +143,12 @@ export function MeetingDetailsClient({ slug }: { slug: string }) {
         }
         description={
           <>
-            {format.dateTime(start, { dateStyle: 'full', timeStyle: 'short' })} –{' '}
-            {format.dateTime(end, { timeStyle: 'short' })}
+            {format.dateTime(start, {
+              dateStyle: 'full',
+              timeStyle: 'short',
+              timeZone: m.timezone,
+            })}{' '}
+            – {format.dateTime(end, { timeStyle: 'short', timeZone: m.timezone })}
             {m.timezone ? ` · ${m.timezone}` : ''}
           </>
         }
@@ -301,6 +305,7 @@ export function MeetingDetailsClient({ slug }: { slug: string }) {
                     {p.attendance?.firstJoinedAt
                       ? format.dateTime(new Date(p.attendance.firstJoinedAt), {
                           timeStyle: 'short',
+                          timeZone: m.timezone,
                         })
                       : '—'}
                   </td>
@@ -308,7 +313,10 @@ export function MeetingDetailsClient({ slug }: { slug: string }) {
                 {ended ? (
                   <td className="py-2 tabular-nums">
                     {p.attendance?.lastLeftAt
-                      ? format.dateTime(new Date(p.attendance.lastLeftAt), { timeStyle: 'short' })
+                      ? format.dateTime(new Date(p.attendance.lastLeftAt), {
+                          timeStyle: 'short',
+                          timeZone: m.timezone,
+                        })
                       : '—'}
                   </td>
                 ) : null}

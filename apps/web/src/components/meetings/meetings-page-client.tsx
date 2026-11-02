@@ -101,10 +101,14 @@ function MeetingRow({ meeting }: { meeting: MeetingListItem }) {
     <li className="border-border hover:bg-muted/40 flex items-center gap-3 border-b px-3 py-3.5 last:border-b-0 sm:gap-5 sm:px-5">
       <div className="w-[4.5rem] shrink-0 text-end tabular-nums sm:w-24">
         <p className="text-foreground text-sm font-semibold sm:text-base">
-          {format.dateTime(start, { hour: 'numeric', minute: '2-digit' })}
+          {format.dateTime(start, {
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZone: meeting.timezone,
+          })}
         </p>
         <p className="text-muted-foreground text-xs">
-          {format.dateTime(end, { hour: 'numeric', minute: '2-digit' })}
+          {format.dateTime(end, { hour: 'numeric', minute: '2-digit', timeZone: meeting.timezone })}
         </p>
       </div>
       <span className="bg-accent-blue/70 h-10 w-1 shrink-0 rounded-full" aria-hidden="true" />
@@ -180,14 +184,19 @@ function DayHeading({ groupKey, date }: { groupKey: string; date: Date }) {
       ? t('today')
       : groupKey === 'tomorrow'
         ? t('tomorrow')
-        : format.dateTime(date, { weekday: 'long', month: 'short', day: 'numeric' });
+        : format.dateTime(date, {
+            weekday: 'long',
+            month: 'short',
+            day: 'numeric',
+            timeZone: 'UTC',
+          });
   return (
     <h3 className="bg-muted/40 text-muted-foreground border-border border-b px-4 py-2 text-xs font-semibold uppercase tracking-wide sm:px-5">
       {groupKey === 'today' || groupKey === 'tomorrow' ? (
         <>
           {label}
           <span className="ms-2 font-normal normal-case">
-            {format.dateTime(date, { month: 'short', day: 'numeric' })}
+            {format.dateTime(date, { month: 'short', day: 'numeric', timeZone: 'UTC' })}
           </span>
         </>
       ) : (

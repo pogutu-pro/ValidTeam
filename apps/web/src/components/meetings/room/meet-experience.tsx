@@ -69,6 +69,7 @@ export function MeetExperience({ slug }: { slug: string }) {
               title: string;
               status: string;
               scheduledStartAt: string;
+              timezone: string;
               host: { name: string | null };
             };
             guest: { name: string | null };
@@ -85,6 +86,7 @@ export function MeetExperience({ slug }: { slug: string }) {
               title: r.meeting.title,
               hostName: r.meeting.host.name,
               scheduledStartAt: r.meeting.scheduledStartAt,
+              timezone: r.meeting.timezone,
               status: r.meeting.status,
               isGuest: true,
             },
@@ -104,6 +106,7 @@ export function MeetExperience({ slug }: { slug: string }) {
             title: m.title,
             hostName: m.host.name,
             scheduledStartAt: m.scheduledStartAt,
+            timezone: m.timezone,
             status: m.status,
             isGuest: false,
           },

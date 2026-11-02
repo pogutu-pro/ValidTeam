@@ -18,6 +18,8 @@ export interface PrejoinInfo {
   title: string;
   hostName: string | null;
   scheduledStartAt: string;
+  /** IANA zone the meeting was scheduled in. */
+  timezone: string;
   status: string;
   isGuest: boolean;
 }
@@ -266,7 +268,11 @@ export function Prejoin({
           <p className="text-muted-foreground text-sm">
             {info.hostName ? t('organizedBy', { name: info.hostName }) : null}
             {info.hostName ? ' · ' : ''}
-            {format.dateTime(start, { dateStyle: 'medium', timeStyle: 'short' })}
+            {format.dateTime(start, {
+              dateStyle: 'medium',
+              timeStyle: 'short',
+              timeZone: info.timezone,
+            })}
           </p>
           <div className="flex flex-wrap gap-2">
             {info.status === 'live' ? <Badge variant="success">{t('inProgress')}</Badge> : null}
